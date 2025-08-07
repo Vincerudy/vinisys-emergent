@@ -1,0 +1,35 @@
+.user-management {
+    padding: 20px;
+    background-color: #fff;
+    width: 96%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .user-management h2 {
+    text-align: center;
+    color: #3454d1;
+    margin-bottom: 20px;
+  }
+  
+  .ant-btn-primary {
+    background-color: #3454d1;
+    border-color: #3454d1;
+  }
+  
+  .ant-table {
+    margin-top: 20px;
+  }
+  .photo-preview {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .photo-preview img {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  

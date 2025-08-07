@@ -1,0 +1,70 @@
+.tax-configuration-container {
+    width: 96%;
+    margin: 0 auto;
+    padding: 24px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    
+ 
+}
+
+.add-tax-button {
+    position: absolute; /* Positionnement absolu */
+    top: 24px; /* Ajustez la valeur pour un espacement vertical */
+    right: 24px; /* Ajustez la valeur pour un espacement horizontal */
+    padding: 8px 16px; /* Ajoutez du rembourrage pour le bouton */
+    background-color: #3454d1; /* Couleur de fond du bouton */
+    color: #fff; /* Couleur du texte */
+    border: none; /* Supprimez les bordures par défaut */
+    border-radius: 5px; /* Coins arrondis */
+    cursor: pointer; /* Change le curseur au survol */
+    transition: background-color 0.3s; /* Ajoute une transition pour un effet au survol */
+}
+
+.zoneScrolle {
+    max-height: 600px; /* Ajustez la hauteur selon vos besoins */
+    overflow-y: auto; /* Active le défilement vertical */
+    padding-right: 10px; /* Ajoute un peu d'espace entre le contenu et la scrollbar */
+}
+
+/* Personnaliser l'ascenseur de défilement en bleu */
+.zoneScrolle::-webkit-scrollbar {
+    width: 10px; /* Largeur de la scrollbar */
+}
+
+.zoneScrolle::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Couleur de fond de la piste de la scrollbar */
+    border-radius: 10px; /* Coins arrondis */
+}
+
+.zoneScrolle::-webkit-scrollbar-thumb {
+    background-color: #18538e; /* Couleur bleue pour l'ascenseur */
+    border-radius: 10px; /* Coins arrondis de l'ascenseur */
+    border: 2px solid #f1f1f1; /* Bordure pour un effet d'ascenseur en relief */
+}
+
+.zoneScrolle::-webkit-scrollbar-thumb:hover {
+    background-color: #3454d1; /* Couleur bleue plus foncée lors du survol */
+}
+
+/* Pour Firefox */
+.zoneScrolle {
+    scrollbar-width: thin; /* Réduit la taille de la scrollbar */
+    scrollbar-color: #18538e #f1f1f1; /* Couleurs pour l'ascenseur et la piste */
+}
+
+
+/* Ajoutez un effet au survol */
+.add-tax-button:hover {
+    background-color: #3454d1; /* Couleur de fond au survol */
+}
+
+/* Ajoutez des styles pour le formulaire */
+.custom-tax {
+    margin-bottom: 20px;
+}
+
+.custom-tax .ant-form-item {
+    margin-bottom: 10px;
+}

@@ -1,0 +1,73 @@
+/* MailSettingsForm.css */
+.form-container {
+    width: 100%;
+ 
+    padding: 24px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .form {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 colonnes */
+    gap: 20px; /* Espace entre les champs */
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box; /* Assure que padding et border sont inclus dans la largeur */
+  }
+  
+  /* Correction pour les éléments <select> */
+  .form-group select {
+    -webkit-appearance: menulist; /* Assure que la flèche s'affiche correctement sur Webkit (Chrome, Safari) */
+    -moz-appearance: menulist; /* Assure que la flèche s'affiche correctement sur Mozilla */
+    appearance: menulist; /* Style par défaut avec la flèche */
+    background-color: #fff;
+    width: 100%;
+    cursor: pointer;
+  }
+  
+  /* Champ en pleine largeur pour le bouton */
+  .full-width {
+    grid-column: span 2; /* Le bouton prend la largeur des 2 colonnes */
+    display: flex;
+    justify-content: center;
+  }
+  
+  .submit-button {
+    padding: 10px 20px;
+    background-color: #18538e;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .submit-button:hover {
+    background-color: #3454d1;
+  }
+  
+  @media (max-width: 600px) {
+    /* Design mobile : revenir à une seule colonne sur les petits écrans */
+    .form {
+      grid-template-columns: 1fr;
+    }
+  }

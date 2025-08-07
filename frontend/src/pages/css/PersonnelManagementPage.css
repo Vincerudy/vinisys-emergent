@@ -1,0 +1,46 @@
+.personnel-management-container {
+    padding: 20px;
+  }
+  
+  .page-title {
+    font-size: 24px; 
+    margin-bottom: 20px;
+  }
+  
+  .filters {
+    margin-bottom: 20px;
+  }
+  .containerAbsence{
+ 
+    margin-right: 20px;
+  }
+  .search-bar {
+    width: 200px;
+    margin-right: 10px;
+  }
+  
+  .date-picker {
+    margin-right: 10px;
+  }
+  
+  .status-filter {
+    margin-right: 10px;
+  }
+  
+  .create-button {
+    margin-bottom: 20px;
+  }
+  
+  .tabs .ant-tabs-tab {
+    font-size: 16px;
+  }
+  
+  .employee-table, .absence-table, .salary-table, .recruitment-table, .evaluation-table, .training-table, .skills-table {
+    margin-top: 20px;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+  

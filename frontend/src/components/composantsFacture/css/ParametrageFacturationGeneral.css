@@ -1,0 +1,160 @@
+/* Assurer que la card-containerParametrage prend toute la hauteur du parent */
+.card-containerParametrage {
+  padding: 20px;
+  height: 80vh;
+  display: flex;
+  
+  overflow: auto;
+  flex-direction: column;
+  align-items: center;  /* Centrer verticalement */
+ 
+  border-radius: 10px;
+  gap: 20px;  /* Ajoute de l'espace entre les cartes */
+  scroll-behavior: smooth;  /* Effet de défilement fluide */
+}
+ 
+.full-width-divider {
+  width: 100% !important;
+  min-width: 100% !important;
+  background-color: #3454d1;
+  color: #ffffff;
+  display: flex;
+  flex-direction:row;
+  align-items:center;
+
+  justify-content: center;
+  border-radius: 5px;
+}
+.textDivider{
+  color: #ffffff;
+  inline-size: none;
+  text-align: center;
+  font-weight: bold;
+}
+
+
+/* Personnalisation de la barre de défilement pour Webkit (Chrome, Edge, Safari) */
+.card-containerParametrage::-webkit-scrollbar {
+  width: 8px; /* Largeur de la barre */
+  border-radius: 10px;  /* Coins arrondis */
+}
+
+.card-containerParametrage::-webkit-scrollbar-thumb {
+  background-color: #3454d1; /* Couleur de la barre */
+  border-radius: 10px; /* Coins arrondis du "thumb" */
+  border: 2px solid transparent; /* Crée un petit espace autour de la barre pour un effet propre */
+  background-clip: content-box; /* Ne colore que l'intérieur du "thumb" */
+  transition: background-color 0.3s ease; /* Transition douce pour la couleur */
+}
+
+.card-containerParametrage::-webkit-scrollbar-thumb:hover {
+  background-color: #00bcd4; /* Couleur au survol */
+}
+
+.card-containerParametrage::-webkit-scrollbar-track {
+  background-color: transparent;  /* Pas de fond pour la piste */
+  border-radius: 10px; /* Coins arrondis de la piste */
+}
+
+/* Pour Firefox */
+.card-containerParametrage {
+  scrollbar-color: #3454d1 transparent;  /* Couleur de la barre et de la piste */
+  scrollbar-width: thin;  /* Barre fine */
+}
+
+.card-containerParametrage:hover::-webkit-scrollbar {
+  opacity: 1;  /* Affiche la barre de défilement lors du survol */
+}
+
+
+  .card-containerParametrage {
+    padding: 20px;
+    height: 80vh;
+    display: flex;
+    overflow: auto;
+    flex-direction: column;
+    justify-content: start;
+    align-items: end;  /* Centrer verticalement */
+    background-color: #ffffff;
+    border-radius: 10px;
+    gap: 20px;  /* Ajoute de l'espace entre les cartes */
+    scroll-behavior: smooth;  /* Effet de défilement fluide */
+}
+
+/* Personnalisation de la barre de défilement pour Webkit (Chrome, Edge, Safari) */
+.email-customization-page::-webkit-scrollbar {
+    width: 8px; /* Largeur de la barre */
+    border-radius: 10px;  /* Coins arrondis */
+}
+
+.email-customization-page::-webkit-scrollbar-thumb {
+    background-color: #3454d1; /* Couleur de la barre */
+    border-radius: 10px; /* Coins arrondis du "thumb" */
+    border: 2px solid transparent; /* Crée un petit espace autour de la barre pour un effet propre */
+    background-clip: content-box; /* Ne colore que l'intérieur du "thumb" */
+    transition: background-color 0.3s ease; /* Transition douce pour la couleur */
+}
+
+.email-customization-page::-webkit-scrollbar-thumb:hover {
+    background-color: #00bcd4; /* Couleur au survol */
+}
+
+.email-customization-page::-webkit-scrollbar-track {
+    background-color: transparent;  /* Pas de fond pour la piste */
+    border-radius: 10px; /* Coins arrondis de la piste */
+}
+
+/* Pour Firefox */
+.email-customization-page {
+    scrollbar-color: #3454d1 transparent;  /* Couleur de la barre et de la piste */
+    scrollbar-width: thin;  /* Barre fine */
+}
+
+.email-customization-page:hover::-webkit-scrollbar {
+    opacity: 1;  /* Affiche la barre de défilement lors du survol */
+}
+
+  
+ 
+  
+  /* Enlever les bordures des cartes */
+  .ant-card-para {
+    margin: auto;
+    width: 45%;  /* Ajuste selon tes besoins */
+    min-width: 400px;  /* Empêche la carte d’être trop petite sur des petits écrans */
+    margin-bottom: 20px;  /* Espace entre les cartes */
+    border: none;  /* Enlève la bordure de la carte */
+    box-shadow: none;  /* Enlève l'ombre de la carte */
+  }
+  
+  /* Centrer le titre des cartes */
+  .ant-card-head-title {
+    text-align: center;
+  }
+  
+  @media screen and (max-width: 768px) {
+    
+    .card-containerParametrage {
+      padding: 0px;
+      height: 80vh;
+      display: flex;
+      padding-top: 20px;
+      overflow-x: hidden; /* Empêche le scroll horizontal */
+      overflow-y: auto; /* Vous pouvez laisser le scroll vertical si nécessaire */
+      flex-direction: column;
+      align-items: center; /* Centrer verticalement */
+      border-radius: 10px;
+      gap: 20px; /* Ajoute de l'espace entre les cartes */
+       
+    }
+    .ant-card-para {
+      width: 100%;  /* Sur les petits écrans, la carte occupe 100% de la largeur */
+      min-width: 100%;  /* Assurez-vous que la carte prend toute la largeur */
+      padding: 15px;  /* Réduire le padding pour mieux s'adapter */
+    }
+  }
+ 
+  
+ 
+ 
+ 

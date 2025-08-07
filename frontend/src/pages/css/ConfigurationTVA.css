@@ -1,0 +1,10 @@
+.tva-row {
+    width: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    .tva-row > .ant-col {
+      width: 100% !important;
+    }
+  }
+  

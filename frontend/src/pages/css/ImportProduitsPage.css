@@ -1,0 +1,15 @@
+@media (max-width: 768px) {
+    .page-title {
+      font-size: 20px;
+      text-align: center;
+    }
+  
+    .ant-btn {
+      width: 100%;
+    }
+  
+    .ant-alert {
+      font-size: 14px;
+    }
+  }
+  

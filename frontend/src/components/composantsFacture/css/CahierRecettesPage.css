@@ -1,0 +1,80 @@
+.cahier-recettes {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #3454d1;
+  }
+
+  .backGroundColorBlue{
+    background-color: #3454d1;
+    color: white;
+  }
+  
+  .filters {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+  }
+  
+  .table-container {
+    overflow-y: auto;
+    max-height: 800px; /* Définir la hauteur maximale pour permettre le défilement */
+    margin-top: 20px;
+ 
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .table th {
+    background-color: #3454d1;
+    color: white;
+  }
+  
+  .table tr:nth-child(even) {
+    background-color: #e7f0fb;
+  }
+  
+  .table tr:hover {
+    background-color: #bcd7f8;
+  }
+  
+  .table td {
+    font-size: 14px;
+  }
+  thead{
+    background-color: #3454d1;
+  }
+  
+  .table td, .table th {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .table td:last-child {
+    text-align: center;
+  }
+  
+  .table th, .table td {
+    white-space: nowrap;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .table th, .table td {
+      padding: 8px;
+      font-size: 12px;
+    }
+  }
+  

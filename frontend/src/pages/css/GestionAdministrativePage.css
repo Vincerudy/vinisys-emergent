@@ -1,0 +1,26 @@
+.gestion-administrative-container {
+    padding: 20px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .create-button {
+    margin-bottom: 20px;
+  }
+  
+  .document-table, .user-table {
+    margin-bottom: 30px;
+  }
+  @media (max-width: 768px) {
+    .gestion-administrative-container {
+      padding: 0px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+ 
+    }
+  }
+  

@@ -1,0 +1,102 @@
+.agenda-container {
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    padding: 20px;
+    
+  }
+  
+  .header-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-left: 10px;
+    padding-right: 20px;
+    border-radius: 10px;
+    height: 150px;
+    background-color: #3454d1;
+  }
+  .blocTableauEtGraph{
+    display: flex;
+    flex-direction: row;
+ 
+  }
+  .header-banner h1 {
+    font-size: 24px;
+    color: white;
+  }
+  .blocTableau{
+    width: 100%;
+  }
+  .request-button {
+    background-color: red;
+    border: none;
+  }
+  
+  .content-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .agenda-section {
+    background-color: #f0f2f5;
+    padding: 20px;
+    flex: 3;
+    margin-right: 20px;
+    border-radius: 10px;
+  }
+  
+  .Absencesidebar {
+    height: 100%;
+    width: 15%;
+    padding: 20px;
+    background-color: #f0f2f5;
+ 
+    border-radius: 8px;
+  }
+  
+  .navigation-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .navigation-controls h2 {
+    margin: 0;
+    color: white;
+  }
+  
+  .agenda-table {
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  
+  .agenda-table .ant-table-cell {
+    border: 1px solid #ddd; /* Ajout de bordures visibles */
+  }
+  
+  .event-cell {
+    background-color: #87CEEB; /* Bleu ciel */
+    text-align: center;
+    padding: 5px;
+  }
+  
+  .no-event-cell {
+    background-color: white;
+    text-align: center;
+    padding: 5px;
+  }
+  
+  .solde-block {
+    margin-top: 20px;
+  }
+  
+  .solde-details p {
+    margin: 0;
+    font-size: 14px;
+  }
+  

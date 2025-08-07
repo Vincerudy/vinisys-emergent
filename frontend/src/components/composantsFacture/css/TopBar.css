@@ -1,0 +1,32 @@
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #3454d1;
+  color: #fff;
+  padding: 0 20px;
+  height: 60px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Ombre en bas */
+}
+  
+
+.logo-container{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+.user-info {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #3454d1;
+}
+@media (max-width: 768px) {
+
+  .topbarMobile{
+    display: none;
+  }
+}
