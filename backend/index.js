@@ -162,6 +162,15 @@ const routes = [
   require('./routes/ticket/listeTicketMaintenance'),
   require('./routes/ticket/TicketDetailMaintenance'),
   require('./routes/ticket/MaintenanceMessageRead'),
+  // Routes pour le module Dépenses
+  require('./routes/depenses/listeDepenses'),
+  require('./routes/depenses/insertDepense'),
+  require('./routes/depenses/detailDepense'),
+  require('./routes/depenses/updateDepense'),
+  require('./routes/depenses/validationDepense'),
+  require('./routes/depenses/categoriesDepenses'),
+  require('./routes/depenses/baremesKilometriques'),
+  require('./routes/depenses/exportStats'),
 //  require('./routes/ticket/testSentTicket'),
 ];
 
