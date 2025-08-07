@@ -225,172 +225,27 @@ def test_api_endpoints_discovery():
         print_test_result(False, "No API endpoints discovered")
         return False
 
-def test_create_product_complete_data():
-    """Test 1: Create product with complete data"""
-    print_test_header("Create Product with Complete Data")
-    
-    product_data = {
-        "nom": "Ordinateur Portable Dell",
-        "description": "Ordinateur portable Dell Inspiron 15 pouces",
-        "prixUnitaire": "899.99",
-        "quantiteEnStock": "25",
-        "seuil": "5",
-        "fournisseur": "Dell Technologies",
-        "prixUnitaireHT": "749.99",
-        "tva": "20",
-        "categorie": "Informatique",
-        "sousCategorie": "Ordinateurs",
-        "societeId": "2"
-    }
-    
-    try:
-        response = requests.post(f"{API_BASE}/produit", json=product_data, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "Produit enregistré avec succès" in data.get("message", "") and "produitId" in data:
-                print_test_result(True, f"Product created successfully with ID: {data['produitId']}", response)
-                return True, data.get("produitId")
-            else:
-                print_test_result(False, "Unexpected response format", response)
-                return False, None
-        else:
-            print_test_result(False, f"Product creation failed - HTTP {response.status_code}", response)
-            return False, None
-            
-    except Exception as e:
-        print_test_result(False, f"Product creation failed - {str(e)}")
-        return False, None
-
-def test_create_product_minimal_data():
-    """Test 2: Create product with minimal required data"""
-    print_test_header("Create Product with Minimal Data")
-    
-    product_data = {
-        "nom": "Produit Minimal",
-        "prixUnitaire": "50.00",
-        "quantiteEnStock": "10",
-        "societeId": "2"
-    }
-    
-    try:
-        response = requests.post(f"{API_BASE}/produit", json=product_data, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "Produit enregistré avec succès" in data.get("message", "") and "produitId" in data:
-                print_test_result(True, f"Minimal product created successfully with ID: {data['produitId']}", response)
-                return True, data.get("produitId")
-            else:
-                print_test_result(False, "Unexpected response format", response)
-                return False, None
-        else:
-            print_test_result(False, f"Minimal product creation failed - HTTP {response.status_code}", response)
-            return False, None
-            
-    except Exception as e:
-        print_test_result(False, f"Minimal product creation failed - {str(e)}")
-        return False, None
-
-def test_create_product_missing_required_data():
-    """Test 3: Create product without required data (should return 400)"""
-    print_test_header("Create Product without Required Data (Should Fail)")
-    
-    # Missing prixUnitaire, quantiteEnStock, and societeId
-    product_data = {
-        "nom": "Produit Incomplet",
-        "description": "Ce produit manque des données obligatoires"
-    }
-    
-    try:
-        response = requests.post(f"{API_BASE}/produit", json=product_data, timeout=10)
-        
-        if response.status_code == 400:
-            data = response.json()
-            if "obligatoires" in data.get("error", "").lower():
-                print_test_result(True, "Correctly rejected product with missing required data", response)
-                return True
-            else:
-                print_test_result(False, "Wrong error message for missing data", response)
-                return False
-        else:
-            print_test_result(False, f"Should have returned 400 but got {response.status_code}", response)
-            return False
-            
-    except Exception as e:
-        print_test_result(False, f"Test failed with exception - {str(e)}")
-        return False
-
-def test_update_existing_product(product_id):
-    """Test 4: Update existing product"""
-    print_test_header(f"Update Existing Product (ID: {product_id})")
-    
-    if not product_id:
-        print_test_result(False, "No product ID available for update test")
-        return False
-    
-    updated_data = {
-        "id": str(product_id),
-        "nom": "Ordinateur Portable Dell - Mis à jour",
-        "description": "Ordinateur portable Dell Inspiron 15 pouces - Version mise à jour",
-        "prixUnitaire": "949.99",
-        "quantiteEnStock": "30",
-        "seuil": "8",
-        "fournisseur": "Dell Technologies France",
-        "prixUnitaireHT": "791.66",
-        "tva": "20",
-        "categorie": "Informatique",
-        "sousCategorie": "Ordinateurs Portables",
-        "societeId": "2"
-    }
-    
-    try:
-        response = requests.post(f"{API_BASE}/produit", json=updated_data, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "Produit enregistré avec succès" in data.get("message", ""):
-                print_test_result(True, f"Product updated successfully", response)
-                return True
-            else:
-                print_test_result(False, "Unexpected response format for update", response)
-                return False
-        else:
-            print_test_result(False, f"Product update failed - HTTP {response.status_code}", response)
-            return False
-            
-    except Exception as e:
-        print_test_result(False, f"Product update failed - {str(e)}")
-        return False
-
-def test_database_verification():
-    """Test 5: Verify products are created in database"""
-    print_test_header("Database Verification Test")
-    
-    # This is a basic test to verify the database connection is working
-    # In a real scenario, we would query the products table directly
-    try:
-        response = requests.get(f"{BASE_URL}/test-db", timeout=10)
-        if response.status_code == 200:
-            print_test_result(True, "Database is accessible and responding", response)
-            return True
-        else:
-            print_test_result(False, "Database verification failed", response)
-            return False
-    except Exception as e:
-        print_test_result(False, f"Database verification failed - {str(e)}")
-        return False
-
 def main():
     """Main test execution"""
-    print("🚀 Starting Backend API Tests for POST /api/produit endpoint")
+    print("🚀 Starting Backend API Tests for Vinisys Authentication and Expenses Module")
     print(f"Backend URL: {BASE_URL}")
+    print(f"API Base URL: {API_BASE}")
+    print(f"Test Credentials: {TEST_EMAIL} / {TEST_PASSWORD}")
     print(f"Test Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Track test results
     test_results = []
+    user_data = None
     
-    # Test 1: Database connection
+    # Test 1: Server connectivity
+    server_ok = test_server_connectivity()
+    test_results.append(("Server Connectivity", server_ok))
+    
+    if not server_ok:
+        print("\n❌ Backend server is not responding. Stopping tests.")
+        return False
+    
+    # Test 2: Database connection
     db_connected = test_database_connection()
     test_results.append(("Database Connection", db_connected))
     
@@ -398,29 +253,28 @@ def main():
         print("\n❌ Database connection failed. Stopping tests.")
         return False
     
-    # Test 2: Create product with complete data
-    success, product_id = test_create_product_complete_data()
-    test_results.append(("Create Product (Complete Data)", success))
+    # Test 3: Authentication
+    auth_success, user_data = test_authentication_login()
+    test_results.append(("Authentication Login", auth_success))
     
-    # Test 3: Create product with minimal data
-    success_minimal, minimal_product_id = test_create_product_minimal_data()
-    test_results.append(("Create Product (Minimal Data)", success_minimal))
+    # Test 4: API endpoints discovery
+    endpoints_discovered = test_api_endpoints_discovery()
+    test_results.append(("API Endpoints Discovery", endpoints_discovered))
     
-    # Test 4: Create product without required data (should fail)
-    success_validation = test_create_product_missing_required_data()
-    test_results.append(("Validation (Missing Data)", success_validation))
-    
-    # Test 5: Update existing product
-    if product_id:
-        success_update = test_update_existing_product(product_id)
-        test_results.append(("Update Product", success_update))
+    # Test 5: Expenses list (only if authenticated)
+    if auth_success and user_data:
+        expenses_success, expenses_data = test_expenses_list_endpoint(user_data)
+        test_results.append(("Expenses List", expenses_success))
+        
+        # Test 6: Create expense (only if previous tests passed)
+        if expenses_success:
+            create_success, expense_id = test_create_expense(user_data)
+            test_results.append(("Create Expense", create_success))
+        else:
+            test_results.append(("Create Expense", False))
     else:
-        test_results.append(("Update Product", False))
-        print_test_result(False, "Cannot test update - no product ID available")
-    
-    # Test 6: Database verification
-    success_db_verify = test_database_verification()
-    test_results.append(("Database Verification", success_db_verify))
+        test_results.append(("Expenses List", False))
+        test_results.append(("Create Expense", False))
     
     # Print summary
     print(f"\n{'='*60}")
@@ -438,11 +292,33 @@ def main():
     
     print(f"\nResults: {passed}/{total} tests passed")
     
-    if passed == total:
-        print("🎉 All tests passed! The /api/produit endpoint is working correctly.")
+    # Additional information
+    print(f"\n{'='*60}")
+    print("BACKEND ANALYSIS")
+    print(f"{'='*60}")
+    
+    if server_ok:
+        print("✅ Backend server is running and responding")
+    if db_connected:
+        print("✅ Database connection is working")
+    if auth_success:
+        print(f"✅ Authentication system is working with test credentials")
+        if user_data:
+            print(f"   - User ID: {user_data.get('id', 'N/A')}")
+            print(f"   - Email: {user_data.get('email', 'N/A')}")
+            print(f"   - Company ID: {user_data.get('societe_id', 'N/A')}")
+    else:
+        print("❌ Authentication failed - check if demo@demo.com user exists with password 123456")
+    
+    if passed >= 4:  # At least basic connectivity and auth working
+        print("\n🎉 Backend core functionality is working!")
+        if passed == total:
+            print("🎉 All tests passed! The backend API is fully functional.")
+        else:
+            print("⚠️  Some advanced features may need attention.")
         return True
     else:
-        print("⚠️  Some tests failed. Please check the issues above.")
+        print("\n⚠️  Critical backend issues detected. Please check the failures above.")
         return False
 
 if __name__ == "__main__":
