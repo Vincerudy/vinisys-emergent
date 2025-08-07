@@ -52,8 +52,13 @@ const Connexion = () => {
   }
 
   const handleAuthSubmit = async (e) => {
-
-    console.log('Connexion test', )
+    console.log('=== CONNEXION DEBUG START ===');
+    console.log('handleAuthSubmit called');
+    console.log('Event:', e);
+    console.log('isLogin:', isLogin);
+    console.log('email:', email);
+    console.log('password:', password ? '*****' : 'empty');
+    
     e.preventDefault();
     setMessage('');
     setError('');
