@@ -567,7 +567,7 @@ const AjoutDepense = () => {
                   
                   {montantCalcule && (
                     <div className="alert alert-info">
-                      <FiCalculator className="me-2" />
+                      <FiPercent className="me-2" />
                       <strong>Calcul automatique:</strong> {formData.distanceKm} km × {montantCalcule.tarifParKm}€ = {montantCalcule.montantCalcule}€
                     </div>
                   )}
