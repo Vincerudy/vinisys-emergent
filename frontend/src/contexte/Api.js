@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: '/api',  // Utilise le proxy Vite
   withCredentials: true, // ⚠️ important pour l'envoi des cookies
 });
 
