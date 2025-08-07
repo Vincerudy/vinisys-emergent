@@ -48,7 +48,6 @@ export const menuList = [
         name: "Dépenses",
         path: "#",
         icon: 'feather-credit-card',
-        hasDropdown: true,
         dropdownMenu: [
             {
                 id: 1,
