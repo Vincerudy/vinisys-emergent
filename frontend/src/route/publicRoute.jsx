@@ -414,10 +414,10 @@ export const publicRoute = createHashRouter([
                 element: <ProtectedRoute element={<SettingsSupport />} />,
             },
             // Routes Dépenses
-            // {
-            //     path: "/depenses",
-            //     element: <ProtectedRoute element={<DepensesPage />} />,
-            // },
+            {
+                path: "/depenses",
+                element: <ProtectedRoute element={<DepensesPageSimple />} />,
+            },
             // {
             //     path: "/depenses/nouveau",
             //     element: <ProtectedRoute element={<NouvelleDepensePage />} />,
