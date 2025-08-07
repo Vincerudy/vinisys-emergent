@@ -90,7 +90,11 @@ app.use((req, res, next) => {
   console.log('🧹 Tous les tokens ont été réinitialisés après redémarrage.');
 })();
 
-app.get('/test-db', async (req, res) => {
+app.get('/', (req, res) => {
+  res.send('✅ Express fonctionne !');
+});
+
+app.get('/api/test-db', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT 1');
     res.json({ message: 'Connexion réussie à la base de données', result: rows });
@@ -98,10 +102,6 @@ app.get('/test-db', async (req, res) => {
     console.error('Erreur de connexion à la base de données :', err);
     res.status(500).json({ message: 'Erreur de connexion à la base de données', error: err.message });
   }
-});
-
-app.get('/', (req, res) => {
-  res.send('✅ Express fonctionne !');
 });
 
 const routes = [
