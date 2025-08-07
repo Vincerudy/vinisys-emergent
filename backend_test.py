@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application
-Tests the authentication system and expenses (dépenses) module API endpoints.
+Backend API Testing Script for Vinisys Application - Phase 2
+Tests the refactored separated modules: Achats (Purchases) and Notes de frais (Expense Reports)
 """
 
 import requests
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, date
 
-# Backend URL configuration
-BASE_URL = "http://localhost:8001"
+# Backend URL configuration - Using external URL from frontend env
+BASE_URL = "https://api.vinisys.com"  # External URL from backend .env
 API_BASE = f"{BASE_URL}/api"
 
 # Test credentials
 TEST_EMAIL = "demo@demo.com"
 TEST_PASSWORD = "123456"
+TEST_SOCIETE_ID = 2  # Company ID for testing
 
 def print_test_header(test_name):
     """Print formatted test header"""
