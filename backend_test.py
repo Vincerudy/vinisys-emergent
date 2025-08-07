@@ -66,8 +66,8 @@ def test_database_connection():
         response = requests.get(f"{API_BASE}/test-db", timeout=10)
         if response.status_code == 200:
             data = response.json()
-            if "Connexion réussie" in data.get("message", ""):
-                print_test_result(True, "Database connection successful", response)
+            if "Connexion réussie" in data.get("message", "") and "modules" in data:
+                print_test_result(True, "Database connection successful with modules info", response)
                 return True
             else:
                 print_test_result(False, "Database connection failed - unexpected response", response)
