@@ -54,28 +54,24 @@ export const menuList = [
                 name: "Tableau de bord",
                 path: "/depenses",
                 subdropdownMenu: false,
-                permission: 'view_expenses',
             },
             {
                 id: 2,
                 name: "Nouvelle dépense",
                 path: "/depenses/nouveau",
                 subdropdownMenu: false,
-                permission: 'create_expenses',
             },
             {
                 id: 3,
                 name: "Validation",
                 path: "/depenses/validation",
                 subdropdownMenu: false,
-                permission: 'validate_expenses',
             },
             {
                 id: 4,
                 name: "Paramètres",
                 path: "/depenses/parametres",
                 subdropdownMenu: false,
-                permission: 'manage_expense_settings',
             }
         ]
     },
