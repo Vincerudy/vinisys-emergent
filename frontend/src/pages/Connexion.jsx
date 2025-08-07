@@ -65,6 +65,8 @@ const Connexion = () => {
 
     try {
       if (isLogin) {
+        console.log('LOGIN API CALL ATTEMPT');
+        console.log('API URL:', `${import.meta.env.VITE_API_URL}/login`);
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password });
         const data = response.data;
         login(data);
