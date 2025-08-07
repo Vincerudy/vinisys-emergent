@@ -85,8 +85,11 @@ import AlertFacturation from "../components/composantsFacture/AlertFacturation"
 import ResetPassword from "../pages/ResetPassword";
 
 // Pages Dépenses
-import DepensesPageSimple from "../pages/DepensesPageSimple";
-// import NouvelleDepensePage from "../pages/NouvelleDepensePage";
+import TableauBordDepenses from "../pages/TableauBordDepenses";
+import AjoutDepense from "../pages/AjoutDepense";
+import DetailsDepense from "../pages/DetailsDepense";
+import ParametresDepenses from "../pages/ParametresDepenses";
+import ValidationDepenses from "../pages/ValidationDepenses";
 
 import axios from "axios";
 import ImportProduitsPage from "../pages/ImportProduitsPage";
