@@ -419,12 +419,32 @@ export const publicRoute = createHashRouter([
             // Routes Dépenses
             {
                 path: "/depenses",
-                element: <ProtectedRoute element={<DepensesPageSimple />} />,
+                element: <ProtectedRoute element={<TableauBordDepenses />} />,
             },
-            // {
-            //     path: "/depenses/nouveau",
-            //     element: <ProtectedRoute element={<NouvelleDepensePage />} />,
-            // },
+            {
+                path: "/depenses/tableau-bord",
+                element: <ProtectedRoute element={<TableauBordDepenses />} />,
+            },
+            {
+                path: "/depenses/nouveau",
+                element: <ProtectedRoute element={<AjoutDepense />} />,
+            },
+            {
+                path: "/depenses/:id/details",
+                element: <ProtectedRoute element={<DetailsDepense />} />,
+            },
+            {
+                path: "/depenses/:id/modifier",
+                element: <ProtectedRoute element={<AjoutDepense />} />,
+            },
+            {
+                path: "/depenses/validation",
+                element: <ProtectedRoute element={<ValidationDepenses />} />,
+            },
+            {
+                path: "/depenses/parametres",
+                element: <ProtectedRoute element={<ParametresDepenses />} />,
+            },
             {
                 path: "/reset-password/:token",
                 element: <ResetPassword />,
