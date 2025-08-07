@@ -85,7 +85,7 @@ import AlertFacturation from "../components/composantsFacture/AlertFacturation"
 import ResetPassword from "../pages/ResetPassword";
 
 // Pages Dépenses
-// import DepensesPage from "../pages/DepensesPage";
+import DepensesPageSimple from "../pages/DepensesPageSimple";
 // import NouvelleDepensePage from "../pages/NouvelleDepensePage";
 
 import axios from "axios";
