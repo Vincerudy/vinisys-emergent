@@ -414,14 +414,14 @@ export const publicRoute = createHashRouter([
                 element: <ProtectedRoute element={<SettingsSupport />} />,
             },
             // Routes Dépenses
-            {
-                path: "/depenses",
-                element: <ProtectedRoute element={<DepensesPage />} />,
-            },
-            {
-                path: "/depenses/nouveau",
-                element: <ProtectedRoute element={<NouvelleDepensePage />} />,
-            },
+            // {
+            //     path: "/depenses",
+            //     element: <ProtectedRoute element={<DepensesPage />} />,
+            // },
+            // {
+            //     path: "/depenses/nouveau",
+            //     element: <ProtectedRoute element={<NouvelleDepensePage />} />,
+            // },
             {
                 path: "/reset-password/:token",
                 element: <ResetPassword />,
