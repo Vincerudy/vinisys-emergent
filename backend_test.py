@@ -38,11 +38,26 @@ def print_test_result(success, message, response=None):
             print(f"Response Text: {response.text}")
     print("-" * 60)
 
+def test_server_connectivity():
+    """Test 1: Verify backend server is responding"""
+    print_test_header("Backend Server Connectivity Test")
+    try:
+        response = requests.get(BASE_URL, timeout=10)
+        if response.status_code == 200:
+            print_test_result(True, f"Backend server is responding: {response.text.strip()}", response)
+            return True
+        else:
+            print_test_result(False, f"Backend server returned unexpected status: {response.status_code}", response)
+            return False
+    except Exception as e:
+        print_test_result(False, f"Backend server connectivity failed - {str(e)}")
+        return False
+
 def test_database_connection():
-    """Test database connection"""
+    """Test 2: Test database connection"""
     print_test_header("Database Connection Test")
     try:
-        response = requests.get(f"{BASE_URL}/test-db", timeout=10)
+        response = requests.get(f"{API_BASE}/test-db", timeout=10)
         if response.status_code == 200:
             data = response.json()
             if "Connexion réussie" in data.get("message", ""):
@@ -56,6 +71,158 @@ def test_database_connection():
             return False
     except Exception as e:
         print_test_result(False, f"Database connection failed - {str(e)}")
+        return False
+
+def test_authentication_login():
+    """Test 3: Test authentication endpoint with demo credentials"""
+    print_test_header("Authentication Login Test")
+    
+    login_data = {
+        "email": TEST_EMAIL,
+        "password": TEST_PASSWORD
+    }
+    
+    try:
+        response = requests.post(f"{API_BASE}/login", json=login_data, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if "token" in data and "id" in data:
+                print_test_result(True, f"Authentication successful for user: {data.get('email', 'N/A')}", response)
+                return True, data
+            else:
+                print_test_result(False, "Authentication response missing required fields", response)
+                return False, None
+        elif response.status_code == 401:
+            print_test_result(False, "Authentication failed - Invalid credentials", response)
+            return False, None
+        else:
+            print_test_result(False, f"Authentication failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Authentication test failed - {str(e)}")
+        return False, None
+
+def test_expenses_list_endpoint(user_data):
+    """Test 4: Test expenses list endpoint"""
+    print_test_header("Expenses List Endpoint Test")
+    
+    if not user_data or 'id' not in user_data:
+        print_test_result(False, "No user data available for expenses test")
+        return False
+    
+    user_id = user_data['id']
+    
+    try:
+        response = requests.get(f"{API_BASE}/depenses/{user_id}", timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if "depenses" in data and "pagination" in data and "stats" in data:
+                expenses_count = len(data["depenses"])
+                print_test_result(True, f"Expenses list retrieved successfully - {expenses_count} expenses found", response)
+                return True, data
+            else:
+                print_test_result(False, "Expenses response missing required fields", response)
+                return False, None
+        elif response.status_code == 404:
+            print_test_result(False, "User not found for expenses", response)
+            return False, None
+        else:
+            print_test_result(False, f"Expenses list failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Expenses list test failed - {str(e)}")
+        return False, None
+
+def test_create_expense(user_data):
+    """Test 5: Test creating a new expense"""
+    print_test_header("Create Expense Test")
+    
+    if not user_data or 'id' not in user_data:
+        print_test_result(False, "No user data available for expense creation test")
+        return False
+    
+    expense_data = {
+        "userId": user_data['id'],
+        "type": "repas",
+        "dateDepense": "2024-08-07",
+        "description": "Déjeuner d'affaires - Test API",
+        "montantTTC": "45.50",
+        "montantHT": "37.92",
+        "montantTVA": "7.58",
+        "tauxTVA": "20",
+        "lieuRepas": "Restaurant Le Test",
+        "nombrePersonnes": "2",
+        "typeRepas": "dejeuner"
+    }
+    
+    try:
+        response = requests.post(f"{API_BASE}/depense", json=expense_data, timeout=10)
+        
+        if response.status_code == 201:
+            data = response.json()
+            if "message" in data and "depenseId" in data:
+                print_test_result(True, f"Expense created successfully with ID: {data['depenseId']}", response)
+                return True, data.get("depenseId")
+            else:
+                print_test_result(False, "Expense creation response missing required fields", response)
+                return False, None
+        elif response.status_code == 400:
+            print_test_result(False, "Expense creation failed - Bad request", response)
+            return False, None
+        elif response.status_code == 404:
+            print_test_result(False, "Expense creation failed - User not found", response)
+            return False, None
+        else:
+            print_test_result(False, f"Expense creation failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Expense creation test failed - {str(e)}")
+        return False, None
+
+def test_api_endpoints_discovery():
+    """Test 6: Discover available API endpoints"""
+    print_test_header("API Endpoints Discovery Test")
+    
+    # Test common endpoints to see what's available
+    endpoints_to_test = [
+        "/test-db",
+        "/login", 
+        "/depenses/1",  # This will likely return 404 but shows the endpoint exists
+    ]
+    
+    available_endpoints = []
+    
+    for endpoint in endpoints_to_test:
+        try:
+            response = requests.get(f"{API_BASE}{endpoint}", timeout=5)
+            # Consider endpoint available if it doesn't return 404
+            if response.status_code != 404:
+                available_endpoints.append(f"GET {endpoint} - Status: {response.status_code}")
+        except:
+            pass
+    
+    # Test POST endpoints
+    post_endpoints = ["/login", "/depense"]
+    for endpoint in post_endpoints:
+        try:
+            response = requests.post(f"{API_BASE}{endpoint}", json={}, timeout=5)
+            if response.status_code != 404:
+                available_endpoints.append(f"POST {endpoint} - Status: {response.status_code}")
+        except:
+            pass
+    
+    if available_endpoints:
+        print_test_result(True, f"Found {len(available_endpoints)} available endpoints")
+        for endpoint in available_endpoints:
+            print(f"  - {endpoint}")
+        return True
+    else:
+        print_test_result(False, "No API endpoints discovered")
         return False
 
 def test_create_product_complete_data():
