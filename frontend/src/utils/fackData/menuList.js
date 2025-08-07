@@ -129,6 +129,38 @@ export const menuList = [
      
         ]
     },
+    {
+        id: 10,
+        name: "Note de frais",
+        path: "#",
+        icon: 'feather-file-text',
+        dropdownMenu: [
+            {
+                id: 1,
+                name: "Mes notes de frais",
+                path: "/notes-frais",
+                subdropdownMenu: false,
+            },
+            {
+                id: 2,
+                name: "Créer une note",
+                path: "/notes-frais/nouveau",
+                subdropdownMenu: false,
+            },
+            {
+                id: 3,
+                name: "Validation notes",
+                path: "/notes-frais/validation",
+                subdropdownMenu: false,
+            },
+            {
+                id: 4,
+                name: "Historique",
+                path: "/notes-frais/historique",
+                subdropdownMenu: false,
+            }
+        ]
+    },
      
     {
         id: 9,
