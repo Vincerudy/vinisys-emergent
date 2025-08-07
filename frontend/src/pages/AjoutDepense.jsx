@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiArrowLeft, FiUpload, FiCalculator, FiCamera, FiFile, FiCheck, FiEdit3, FiSave } from 'react-icons/fi';
+import { FiArrowLeft, FiUpload, FiPercent, FiCamera, FiFile, FiCheck, FiEdit3, FiSave } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../contexte/Api';
 import { useAuth } from '../contexte/AuthContext';
