@@ -9,7 +9,7 @@ import json
 import sys
 from datetime import datetime, date
 
-# Backend URL configuration - Using external URL from frontend env
+# Backend URL configuration - Using external URL from backend .env
 BASE_URL = "https://api.vinisys.com"  # External URL from backend .env
 API_BASE = f"{BASE_URL}/api"
 
@@ -110,130 +110,341 @@ def test_authentication_login():
         print_test_result(False, f"Authentication test failed - {str(e)}")
         return False, None
 
-def test_expenses_list_endpoint(user_data):
-    """Test 4: Test expenses list endpoint"""
-    print_test_header("Expenses List Endpoint Test")
+def test_achats_dashboard(user_data):
+    """Test 4: Test Achats (Purchases) Dashboard endpoint"""
+    print_test_header("Achats Dashboard Test")
     
-    if not user_data or 'id' not in user_data:
-        print_test_result(False, "No user data available for expenses test")
+    if not user_data or 'societe_id' not in user_data:
+        print_test_result(False, "No company data available for achats dashboard test")
         return False
     
-    user_id = user_data['id']
+    societe_id = user_data['societe_id']
     
     try:
-        response = requests.get(f"{API_BASE}/depenses/{user_id}", timeout=10)
+        response = requests.get(f"{API_BASE}/achats/dashboard/{societe_id}", timeout=10)
         
         if response.status_code == 200:
             data = response.json()
-            if "depenses" in data and "pagination" in data and "stats" in data:
-                expenses_count = len(data["depenses"])
-                print_test_result(True, f"Expenses list retrieved successfully - {expenses_count} expenses found", response)
+            required_fields = ["periode", "indicateurs", "categories", "fournisseurs", "evolution", "validation", "statuts", "paiements"]
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if not missing_fields:
+                print_test_result(True, f"Achats dashboard retrieved successfully - Company ID: {societe_id}", response)
                 return True, data
             else:
-                print_test_result(False, "Expenses response missing required fields", response)
+                print_test_result(False, f"Achats dashboard missing fields: {missing_fields}", response)
                 return False, None
         elif response.status_code == 404:
-            print_test_result(False, "User not found for expenses", response)
+            print_test_result(False, "Company not found for achats dashboard", response)
             return False, None
         else:
-            print_test_result(False, f"Expenses list failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"Achats dashboard failed - HTTP {response.status_code}", response)
             return False, None
             
     except Exception as e:
-        print_test_result(False, f"Expenses list test failed - {str(e)}")
+        print_test_result(False, f"Achats dashboard test failed - {str(e)}")
         return False, None
 
-def test_create_expense(user_data):
-    """Test 5: Test creating a new expense"""
-    print_test_header("Create Expense Test")
+def test_notes_frais_dashboard(user_data):
+    """Test 5: Test Notes de frais (Expense Reports) Dashboard endpoint"""
+    print_test_header("Notes de frais Dashboard Test")
     
-    if not user_data or 'id' not in user_data:
-        print_test_result(False, "No user data available for expense creation test")
+    if not user_data or 'societe_id' not in user_data:
+        print_test_result(False, "No company data available for notes de frais dashboard test")
         return False
     
-    expense_data = {
-        "userId": user_data['id'],
-        "type": "repas",
-        "dateDepense": "2024-08-07",
-        "description": "Déjeuner d'affaires - Test API",
-        "montantTTC": "45.50",
-        "montantHT": "37.92",
-        "montantTVA": "7.58",
-        "tauxTVA": "20",
-        "lieuRepas": "Restaurant Le Test",
-        "nombrePersonnes": "2",
-        "typeRepas": "dejeuner"
+    societe_id = user_data['societe_id']
+    
+    try:
+        response = requests.get(f"{API_BASE}/notes-frais/dashboard/{societe_id}", timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ["periode", "indicateurs", "utilisateurs", "types_frais", "evolution", "statuts", "kilometriques"]
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if not missing_fields:
+                print_test_result(True, f"Notes de frais dashboard retrieved successfully - Company ID: {societe_id}", response)
+                return True, data
+            else:
+                print_test_result(False, f"Notes de frais dashboard missing fields: {missing_fields}", response)
+                return False, None
+        elif response.status_code == 404:
+            print_test_result(False, "Company not found for notes de frais dashboard", response)
+            return False, None
+        else:
+            print_test_result(False, f"Notes de frais dashboard failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Notes de frais dashboard test failed - {str(e)}")
+        return False, None
+
+def test_common_endpoints(user_data):
+    """Test 6: Test common endpoints (types-frais, categories-achats, projets)"""
+    print_test_header("Common Endpoints Test")
+    
+    if not user_data or 'societe_id' not in user_data:
+        print_test_result(False, "No company data available for common endpoints test")
+        return False
+    
+    societe_id = user_data['societe_id']
+    endpoints_results = {}
+    
+    # Test types-frais
+    try:
+        response = requests.get(f"{API_BASE}/types-frais/{societe_id}", timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            if "types" in data:
+                endpoints_results["types-frais"] = True
+                print(f"  ✅ Types de frais: {len(data['types'])} types found")
+            else:
+                endpoints_results["types-frais"] = False
+                print(f"  ❌ Types de frais: Missing 'types' field")
+        else:
+            endpoints_results["types-frais"] = False
+            print(f"  ❌ Types de frais: HTTP {response.status_code}")
+    except Exception as e:
+        endpoints_results["types-frais"] = False
+        print(f"  ❌ Types de frais: {str(e)}")
+    
+    # Test categories-achats
+    try:
+        response = requests.get(f"{API_BASE}/categories-achats/{societe_id}", timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            if "categories" in data:
+                endpoints_results["categories-achats"] = True
+                print(f"  ✅ Catégories achats: {len(data['categories'])} categories found")
+            else:
+                endpoints_results["categories-achats"] = False
+                print(f"  ❌ Catégories achats: Missing 'categories' field")
+        else:
+            endpoints_results["categories-achats"] = False
+            print(f"  ❌ Catégories achats: HTTP {response.status_code}")
+    except Exception as e:
+        endpoints_results["categories-achats"] = False
+        print(f"  ❌ Catégories achats: {str(e)}")
+    
+    # Test projets
+    try:
+        response = requests.get(f"{API_BASE}/projets/{societe_id}", timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            if "projets" in data:
+                endpoints_results["projets"] = True
+                print(f"  ✅ Projets: {len(data['projets'])} projects found")
+            else:
+                endpoints_results["projets"] = False
+                print(f"  ❌ Projets: Missing 'projets' field")
+        else:
+            endpoints_results["projets"] = False
+            print(f"  ❌ Projets: HTTP {response.status_code}")
+    except Exception as e:
+        endpoints_results["projets"] = False
+        print(f"  ❌ Projets: {str(e)}")
+    
+    success_count = sum(endpoints_results.values())
+    total_count = len(endpoints_results)
+    
+    if success_count == total_count:
+        print_test_result(True, f"All common endpoints working ({success_count}/{total_count})")
+        return True, endpoints_results
+    else:
+        print_test_result(False, f"Some common endpoints failed ({success_count}/{total_count})")
+        return False, endpoints_results
+
+def test_create_achat(user_data):
+    """Test 7: Test creating a new achat (purchase)"""
+    print_test_header("Create Achat Test")
+    
+    if not user_data or 'id' not in user_data or 'societe_id' not in user_data:
+        print_test_result(False, "No user data available for achat creation test")
+        return False
+    
+    # First, get categories to use a valid category_id
+    try:
+        categories_response = requests.get(f"{API_BASE}/categories-achats/{user_data['societe_id']}", timeout=10)
+        if categories_response.status_code != 200:
+            print_test_result(False, "Cannot get categories for achat creation")
+            return False
+        
+        categories_data = categories_response.json()
+        if not categories_data.get('categories'):
+            print_test_result(False, "No categories available for achat creation")
+            return False
+        
+        category_id = categories_data['categories'][0]['id']
+    except Exception as e:
+        print_test_result(False, f"Error getting categories: {str(e)}")
+        return False
+    
+    achat_data = {
+        "numero_facture": f"FACT-TEST-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        "fournisseur_id": 1,  # Assuming fournisseur with ID 1 exists
+        "date_achat": date.today().isoformat(),
+        "date_facture": date.today().isoformat(),
+        "montant_ht": "150.00",
+        "taux_tva": "20",
+        "tva_deductible": True,
+        "categorie_achat_id": category_id,
+        "description": "Test achat via API - Fournitures bureau",
+        "mode_paiement": "virement",
+        "utilisateur_id": user_data['id'],
+        "societe_id": user_data['societe_id'],
+        "saisie_ocr": False
     }
     
     try:
-        response = requests.post(f"{API_BASE}/depense", json=expense_data, timeout=10)
+        response = requests.post(f"{API_BASE}/achat", json=achat_data, timeout=10)
         
         if response.status_code == 201:
             data = response.json()
-            if "message" in data and "depenseId" in data:
-                print_test_result(True, f"Expense created successfully with ID: {data['depenseId']}", response)
-                return True, data.get("depenseId")
+            if "message" in data and "achatId" in data:
+                print_test_result(True, f"Achat created successfully with ID: {data['achatId']}, Amount: {data.get('montant_ttc', 'N/A')}€", response)
+                return True, data.get("achatId")
             else:
-                print_test_result(False, "Expense creation response missing required fields", response)
+                print_test_result(False, "Achat creation response missing required fields", response)
                 return False, None
         elif response.status_code == 400:
-            print_test_result(False, "Expense creation failed - Bad request", response)
-            return False, None
-        elif response.status_code == 404:
-            print_test_result(False, "Expense creation failed - User not found", response)
+            print_test_result(False, "Achat creation failed - Bad request", response)
             return False, None
         else:
-            print_test_result(False, f"Expense creation failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"Achat creation failed - HTTP {response.status_code}", response)
             return False, None
             
     except Exception as e:
-        print_test_result(False, f"Expense creation test failed - {str(e)}")
+        print_test_result(False, f"Achat creation test failed - {str(e)}")
         return False, None
 
-def test_api_endpoints_discovery():
-    """Test 6: Discover available API endpoints"""
-    print_test_header("API Endpoints Discovery Test")
+def test_create_note_frais(user_data):
+    """Test 8: Test creating a new note de frais with mileage"""
+    print_test_header("Create Note de frais Test")
     
-    # Test common endpoints to see what's available
-    endpoints_to_test = [
-        "/test-db",
-        "/login", 
-        "/depenses/1",  # This will likely return 404 but shows the endpoint exists
-    ]
-    
-    available_endpoints = []
-    
-    for endpoint in endpoints_to_test:
-        try:
-            response = requests.get(f"{API_BASE}{endpoint}", timeout=5)
-            # Consider endpoint available if it doesn't return 404
-            if response.status_code != 404:
-                available_endpoints.append(f"GET {endpoint} - Status: {response.status_code}")
-        except:
-            pass
-    
-    # Test POST endpoints
-    post_endpoints = ["/login", "/depense"]
-    for endpoint in post_endpoints:
-        try:
-            response = requests.post(f"{API_BASE}{endpoint}", json={}, timeout=5)
-            if response.status_code != 404:
-                available_endpoints.append(f"POST {endpoint} - Status: {response.status_code}")
-        except:
-            pass
-    
-    if available_endpoints:
-        print_test_result(True, f"Found {len(available_endpoints)} available endpoints")
-        for endpoint in available_endpoints:
-            print(f"  - {endpoint}")
-        return True
-    else:
-        print_test_result(False, "No API endpoints discovered")
+    if not user_data or 'id' not in user_data or 'societe_id' not in user_data:
+        print_test_result(False, "No user data available for note de frais creation test")
         return False
+    
+    # First, get types de frais to use a valid type_id for mileage
+    try:
+        types_response = requests.get(f"{API_BASE}/types-frais/{user_data['societe_id']}", timeout=10)
+        if types_response.status_code != 200:
+            print_test_result(False, "Cannot get types de frais for note creation")
+            return False
+        
+        types_data = types_response.json()
+        if not types_data.get('types'):
+            print_test_result(False, "No types de frais available for note creation")
+            return False
+        
+        # Look for mileage type (code 'KM' or similar)
+        km_type = None
+        for type_frais in types_data['types']:
+            if type_frais.get('code') == 'KM' or 'kilom' in type_frais.get('nom', '').lower():
+                km_type = type_frais
+                break
+        
+        if not km_type:
+            # Use first available type
+            km_type = types_data['types'][0]
+            
+        type_frais_id = km_type['id']
+    except Exception as e:
+        print_test_result(False, f"Error getting types de frais: {str(e)}")
+        return False
+    
+    note_data = {
+        "utilisateur_id": user_data['id'],
+        "periode_debut": "2024-01-01",
+        "periode_fin": "2024-01-31",
+        "titre": "Note de frais test - Janvier 2024",
+        "description": "Note de frais de test avec frais kilométriques",
+        "societe_id": user_data['societe_id'],
+        "lignes_frais": [
+            {
+                "type_frais_id": type_frais_id,
+                "date_frais": date.today().isoformat(),
+                "description": "Déplacement client - Bureau vers site client",
+                "montant": "42.50",
+                "distance_km": 85,
+                "lieu_depart": "Bureau Lyon",
+                "lieu_arrivee": "Client ABC Paris",
+                "type_vehicule": "voiture",
+                "saisie_ocr": False
+            }
+        ]
+    }
+    
+    try:
+        response = requests.post(f"{API_BASE}/note-frais", json=note_data, timeout=10)
+        
+        if response.status_code == 201:
+            data = response.json()
+            if "message" in data and "noteId" in data:
+                print_test_result(True, f"Note de frais created successfully - ID: {data['noteId']}, Number: {data.get('numero', 'N/A')}, Amount: {data.get('montant_total', 'N/A')}€", response)
+                return True, data.get("noteId")
+            else:
+                print_test_result(False, "Note de frais creation response missing required fields", response)
+                return False, None
+        elif response.status_code == 400:
+            print_test_result(False, "Note de frais creation failed - Bad request", response)
+            return False, None
+        else:
+            print_test_result(False, f"Note de frais creation failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Note de frais creation test failed - {str(e)}")
+        return False, None
+
+def test_mileage_calculation(user_data):
+    """Test 9: Test mileage calculation endpoint"""
+    print_test_header("Mileage Calculation Test")
+    
+    if not user_data or 'societe_id' not in user_data:
+        print_test_result(False, "No company data available for mileage calculation test")
+        return False
+    
+    calculation_data = {
+        "distance_km": 85,
+        "type_vehicule": "voiture",
+        "annee": 2024,
+        "societe_id": user_data['societe_id']
+    }
+    
+    try:
+        response = requests.post(f"{API_BASE}/notes-frais/calcul-km", json=calculation_data, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ["distance_km", "type_vehicule", "montant", "bareme_id", "detail_calcul"]
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if not missing_fields:
+                print_test_result(True, f"Mileage calculation successful - {data['distance_km']}km = {data['montant']}€", response)
+                return True, data
+            else:
+                print_test_result(False, f"Mileage calculation missing fields: {missing_fields}", response)
+                return False, None
+        elif response.status_code == 404:
+            print_test_result(False, "Mileage calculation failed - Barème not found", response)
+            return False, None
+        elif response.status_code == 400:
+            print_test_result(False, "Mileage calculation failed - Bad request", response)
+            return False, None
+        else:
+            print_test_result(False, f"Mileage calculation failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Mileage calculation test failed - {str(e)}")
+        return False, None
 
 def main():
-    """Main test execution"""
-    print("🚀 Starting Backend API Tests for Vinisys Authentication and Expenses Module")
+    """Main test execution for Phase 2 - Separated Modules Testing"""
+    print("🚀 Starting Backend API Tests for Vinisys Phase 2 - Separated Modules")
+    print("📊 Testing: Achats (Purchases) and Notes de frais (Expense Reports)")
     print(f"Backend URL: {BASE_URL}")
     print(f"API Base URL: {API_BASE}")
     print(f"Test Credentials: {TEST_EMAIL} / {TEST_PASSWORD}")
@@ -263,28 +474,43 @@ def main():
     auth_success, user_data = test_authentication_login()
     test_results.append(("Authentication Login", auth_success))
     
-    # Test 4: API endpoints discovery
-    endpoints_discovered = test_api_endpoints_discovery()
-    test_results.append(("API Endpoints Discovery", endpoints_discovered))
+    if not auth_success or not user_data:
+        print("\n❌ Authentication failed. Cannot proceed with module tests.")
+        return False
     
-    # Test 5: Expenses list (only if authenticated)
-    if auth_success and user_data:
-        expenses_success, expenses_data = test_expenses_list_endpoint(user_data)
-        test_results.append(("Expenses List", expenses_success))
-        
-        # Test 6: Create expense (only if previous tests passed)
-        if expenses_success:
-            create_success, expense_id = test_create_expense(user_data)
-            test_results.append(("Create Expense", create_success))
-        else:
-            test_results.append(("Create Expense", False))
+    # Test 4: Achats Dashboard
+    achats_dashboard_success, achats_data = test_achats_dashboard(user_data)
+    test_results.append(("Achats Dashboard", achats_dashboard_success))
+    
+    # Test 5: Notes de frais Dashboard
+    notes_dashboard_success, notes_data = test_notes_frais_dashboard(user_data)
+    test_results.append(("Notes de frais Dashboard", notes_dashboard_success))
+    
+    # Test 6: Common endpoints
+    common_success, common_data = test_common_endpoints(user_data)
+    test_results.append(("Common Endpoints", common_success))
+    
+    # Test 7: Create Achat (only if common endpoints work)
+    if common_success:
+        achat_create_success, achat_id = test_create_achat(user_data)
+        test_results.append(("Create Achat", achat_create_success))
     else:
-        test_results.append(("Expenses List", False))
-        test_results.append(("Create Expense", False))
+        test_results.append(("Create Achat", False))
+    
+    # Test 8: Create Note de frais (only if common endpoints work)
+    if common_success:
+        note_create_success, note_id = test_create_note_frais(user_data)
+        test_results.append(("Create Note de frais", note_create_success))
+    else:
+        test_results.append(("Create Note de frais", False))
+    
+    # Test 9: Mileage calculation
+    mileage_success, mileage_data = test_mileage_calculation(user_data)
+    test_results.append(("Mileage Calculation", mileage_success))
     
     # Print summary
     print(f"\n{'='*60}")
-    print("TEST SUMMARY")
+    print("TEST SUMMARY - PHASE 2 SEPARATED MODULES")
     print(f"{'='*60}")
     
     passed = 0
@@ -298,33 +524,58 @@ def main():
     
     print(f"\nResults: {passed}/{total} tests passed")
     
-    # Additional information
+    # Module-specific analysis
     print(f"\n{'='*60}")
-    print("BACKEND ANALYSIS")
+    print("MODULE ARCHITECTURE ANALYSIS")
     print(f"{'='*60}")
     
     if server_ok:
-        print("✅ Backend server is running and responding")
+        print("✅ Backend server v2.0 is running with separated modules")
     if db_connected:
-        print("✅ Database connection is working")
+        print("✅ Database connection is working with module support")
     if auth_success:
-        print(f"✅ Authentication system is working with test credentials")
+        print(f"✅ Authentication system is working")
         if user_data:
             print(f"   - User ID: {user_data.get('id', 'N/A')}")
             print(f"   - Email: {user_data.get('email', 'N/A')}")
             print(f"   - Company ID: {user_data.get('societe_id', 'N/A')}")
-    else:
-        print("❌ Authentication failed - check if demo@demo.com user exists with password 123456")
     
-    if passed >= 4:  # At least basic connectivity and auth working
-        print("\n🎉 Backend core functionality is working!")
+    # Module-specific results
+    if achats_dashboard_success:
+        print("✅ Achats (Purchases) module is fully operational")
+    else:
+        print("❌ Achats (Purchases) module has issues")
+        
+    if notes_dashboard_success:
+        print("✅ Notes de frais (Expense Reports) module is fully operational")
+    else:
+        print("❌ Notes de frais (Expense Reports) module has issues")
+        
+    if common_success:
+        print("✅ Common endpoints (types, categories, projects) are working")
+    else:
+        print("❌ Common endpoints have issues")
+        
+    if mileage_success:
+        print("✅ Mileage calculation system is working")
+    else:
+        print("❌ Mileage calculation system has issues")
+    
+    # Final assessment
+    critical_tests = ["Server Connectivity", "Database Connection", "Authentication Login", 
+                     "Achats Dashboard", "Notes de frais Dashboard", "Common Endpoints"]
+    critical_passed = sum(1 for test_name, result in test_results if test_name in critical_tests and result)
+    
+    if critical_passed >= 5:  # At least 5/6 critical tests passing
+        print("\n🎉 Phase 2 separated modules are working correctly!")
         if passed == total:
-            print("🎉 All tests passed! The backend API is fully functional.")
+            print("🎉 All tests passed! The refactored backend is fully functional.")
         else:
-            print("⚠️  Some advanced features may need attention.")
+            print("⚠️  Some advanced features may need attention, but core functionality is solid.")
         return True
     else:
-        print("\n⚠️  Critical backend issues detected. Please check the failures above.")
+        print("\n⚠️  Critical issues detected in the separated modules architecture.")
+        print("   Please check the failures above before proceeding to frontend testing.")
         return False
 
 if __name__ == "__main__":
