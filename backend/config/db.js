@@ -2,9 +2,9 @@ const mysql = require('mysql2');
 
 const pool = mysql.createPool({
   host: 'localhost',
-  port: 8889,  // Port MySQL de MAMP
+  port: 3306,  // Port MySQL standard
   user: 'root',
-  password: 'root',
+  password: '',
   database: 'vinisys',
   multipleStatements: true, // 👉 autorise plusieurs requêtes
   waitForConnections: true,
