@@ -45,8 +45,13 @@ def test_server_connectivity():
     try:
         response = requests.get(BASE_URL, timeout=10)
         if response.status_code == 200:
-            print_test_result(True, f"Backend server is responding: {response.text.strip()}", response)
-            return True
+            data = response.json()
+            if "modules" in data and "achats" in data["modules"] and "notes-frais" in data["modules"]:
+                print_test_result(True, f"Backend server v2.0 is responding with separated modules", response)
+                return True
+            else:
+                print_test_result(False, f"Backend server responding but missing module info", response)
+                return False
         else:
             print_test_result(False, f"Backend server returned unexpected status: {response.status_code}", response)
             return False
