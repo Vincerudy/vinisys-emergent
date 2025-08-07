@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Vinisys Application
-Tests the POST /api/produit endpoint that was recently fixed for 500 errors.
+Tests the authentication system and expenses (dépenses) module API endpoints.
 """
 
 import requests
@@ -12,6 +12,10 @@ from datetime import datetime
 # Backend URL configuration
 BASE_URL = "http://localhost:8001"
 API_BASE = f"{BASE_URL}/api"
+
+# Test credentials
+TEST_EMAIL = "demo@demo.com"
+TEST_PASSWORD = "123456"
 
 def print_test_header(test_name):
     """Print formatted test header"""
