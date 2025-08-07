@@ -348,9 +348,9 @@ const Connexion = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <div className='auth-button neon-button' onClick={handleAuthSubmit}>
+                <button type='submit' className='auth-button neon-button'>
                   C'est parti !
-                </div>
+                </button>
               </>
             )}
             {error && <p className='error-message'>{error}</p>}
