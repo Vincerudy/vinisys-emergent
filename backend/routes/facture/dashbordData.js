@@ -3,8 +3,8 @@ const router = express.Router();
 const db = require('../../config/db');
 
 
-// Lister les sociétés
-router.get('/dashbordData', async (req, res) => {
+// Route directe pour correspondre aux appels frontend
+router.get('/', async (req, res) => {
   const { id } = req.query;
   const userId = id // Récupérer l'ID depuis le frontend via la query string
 
