@@ -23,15 +23,15 @@ const NouvelleNoteFraisPage = () => {
   
   const [justificatif, setJustificatif] = useState(null);
   const [justificatifData, setJustificatifData] = useState({
-    vendeur: 'LA ROMANA',
-    date: '24/10/2024',
+    vendeur: '',
+    date: '',
     pays: 'France',
     devise: 'EUR',
-    totalTTC: '364,00',
-    totalHT: '328,22',
-    tva: '35,78',
+    totalTTC: '',
+    totalHT: '',
+    tva: '',
     moyenPaiement: 'Carte de Crédit Société',
-    statut: 'Traité'
+    statut: 'Brouillon'
   });
 
   const [noteData, setNoteData] = useState({
