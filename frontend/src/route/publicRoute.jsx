@@ -102,8 +102,7 @@ import NoteDetailPage from "../pages/NoteDetailPage";
 import ParametrageFraisPage from "../pages/ParametrageFraisPage";
 import TestNoteFraisPage from "../pages/TestNoteFraisPage";
 import ValidationNotesPage from "../pages/ValidationNotesPage";
-import HistoriqueNotesPage from "../pages/HistoriqueNotesPage";
-import RapportPage from "../pages/RapportPage";
+import FournisseursPage from "../pages/FournisseursPage";
 
 import axios from "axios";
 import ImportProduitsPage from "../pages/ImportProduitsPage";
