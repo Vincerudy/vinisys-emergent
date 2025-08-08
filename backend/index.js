@@ -218,7 +218,7 @@ app.get('/api/projets/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
         const [projets] = await db.execute(
-            'SELECT * FROM projets WHERE societe_id = ? AND statut = "actif" ORDER BY nom ASC',
+            'SELECT * FROM projets WHERE societe_id = ? AND actif = 1 ORDER BY nom ASC',
             [societeId]
         );
         res.json({ projets });
