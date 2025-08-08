@@ -314,6 +314,59 @@ const RapportPage = () => {
           </div>
         </div>
 
+        {/* Section Notes de Frais */}
+        <div className="rapport-section">
+          <h2>
+            <FiUsers />
+            Notes de Frais Employés
+          </h2>
+          
+          <div className="metrics-grid">
+            <div className="metric-card primary">
+              <div className="metric-header">
+                <FiDollarSign />
+                <span>Total Remboursé</span>
+              </div>
+              <div className="metric-value">
+                {formatMontant(rapportData.notes_frais.total_rembourse)}
+              </div>
+            </div>
+            
+            <div className="metric-card">
+              <div className="metric-header">
+                <FiFileText />
+                <span>Nombre de Notes</span>
+              </div>
+              <div className="metric-value">
+                {rapportData.notes_frais.nombre_notes || 0}
+              </div>
+            </div>
+          </div>
+
+          {/* Répartition Notes de Frais par Type */}
+          <div className="categories-repartition">
+            <h3>Répartition Notes de Frais par Type</h3>
+            <div className="categories-grid">
+              {rapportData.notes_frais.categories?.map(cat => {
+                const totalNotesFrais = rapportData.notes_frais.total_rembourse || 1;
+                const pourcentage = (cat.montant / totalNotesFrais) * 100;
+                return (
+                  <div key={cat.nom} className="category-item">
+                    <div className="category-name">{cat.nom}</div>
+                    <div className="category-montant">{formatMontant(cat.montant)}</div>
+                    <div className="category-bar">
+                      <div 
+                        className="category-fill" 
+                        style={{width: `${pourcentage}%`}}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
         {/* Section Bénéfice Net */}
         <div className="rapport-section benefice-section">
           <h2>
