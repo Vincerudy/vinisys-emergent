@@ -380,6 +380,18 @@ const NoteDetailPage = () => {
           onSaved={handleFraisSaved}
         />
       )}
+
+      {/* Modale de confirmation de soumission */}
+      <ConfirmationModal
+        isOpen={showSubmitModal}
+        onClose={() => setShowSubmitModal(false)}
+        onConfirm={confirmSubmitNote}
+        title="Soumettre la note de frais"
+        message={`Êtes-vous sûr de vouloir soumettre cette note de frais (${note?.numero}) ? Elle ne pourra plus être modifiée après soumission et sera envoyée pour validation.`}
+        confirmText="Soumettre"
+        cancelText="Annuler"
+        type="warning"
+      />
     </div>
   );
 };
