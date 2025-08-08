@@ -450,7 +450,7 @@ const NouvelleNoteFraisPage = () => {
             <div className="form-actions">
               <button 
                 className="btn-secondary"
-                onClick={() => window.location.href = '/#/notes-frais'}
+                onClick={() => window.location.href = '/#/notes-frais/liste'}
               >
                 Annuler
               </button>
@@ -468,7 +468,7 @@ const NouvelleNoteFraisPage = () => {
                 disabled={saving}
               >
                 <FiSend />
-                Soumettre
+                {isEditMode ? 'Modifier & Soumettre' : 'Soumettre'}
               </button>
             </div>
           </div>
