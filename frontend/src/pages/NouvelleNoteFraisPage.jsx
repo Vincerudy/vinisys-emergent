@@ -5,15 +5,14 @@ import {
   FiUpload,
   FiSave,
   FiSend,
-  FiPercent,
-  FiMapPin,
-  FiClock,
   FiFileText,
   FiDollarSign,
-  FiUser,
   FiCalendar,
+  FiMapPin,
+  FiUser,
   FiCamera,
-  FiPaperclip
+  FiEdit,
+  FiCheck
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
@@ -22,6 +21,19 @@ import './css/NouvelleNoteFraisPage.css';
 const NouvelleNoteFraisPage = () => {
   const { societe_id, user_id } = useAuth();
   
+  const [justificatif, setJustificatif] = useState(null);
+  const [justificatifData, setJustificatifData] = useState({
+    vendeur: 'LA ROMANA',
+    date: '24/10/2024',
+    pays: 'France',
+    devise: 'EUR',
+    totalTTC: '364,00',
+    totalHT: '328,22',
+    tva: '35,78',
+    moyenPaiement: 'Carte de Crédit Société',
+    statut: 'Traité'
+  });
+
   const [noteData, setNoteData] = useState({
     motif: '',
     destination: '',
@@ -32,10 +44,7 @@ const NouvelleNoteFraisPage = () => {
     statut: 'brouillon'
   });
 
-  const [lignesfrais, setLignesfrais] = useState([]);
-  const [typesFrais, setTypesFrais] = useState([]);
   const [projets, setProjets] = useState([]);
-  const [baremes, setBaremes] = useState({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -45,95 +54,44 @@ const NouvelleNoteFraisPage = () => {
 
   const fetchInitialData = async () => {
     try {
-      const [typesRes, projetsRes, baremesRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL}/types-frais/${societe_id}`),
-        axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`),
-        axios.get(`${import.meta.env.VITE_API_URL}/notes-frais/baremes/${societe_id}`)
-      ]);
-      
-      setTypesFrais(typesRes.data || []);
-      setProjets(projetsRes.data || []);
-      setBaremes(baremesRes.data || {});
+      const projetsRes = await axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`);
+      setProjets(projetsRes.data.projets || []);
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
   };
 
-  const ajouterLigne = (type = '') => {
-    const nouvelleLigne = {
-      id: Date.now() + Math.random(),
-      type_frais: type,
-      date_frais: new Date().toISOString().split('T')[0],
-      description: '',
-      montant: 0,
-      justificatif: null,
-      kilometrage: {
-        km_aller_retour: 0,
-        bareme_km: 0.518, // Barème URSSAF 2025
-        vehicule_type: 'voiture'
-      }
-    };
-    
-    setLignesfrais([...lignesfrais, nouvelleLigne]);
-  };
-
-  const modifierLigne = (id, champ, valeur) => {
-    setLignesfrais(lignesfrais.map(ligne => {
-      if (ligne.id === id) {
-        if (champ.includes('kilometrage.')) {
-          const kmChamp = champ.split('.')[1];
-          const nouveauKm = { ...ligne.kilometrage, [kmChamp]: valeur };
-          
-          // Recalcul automatique du montant kilométrique
-          if (kmChamp === 'km_aller_retour' || kmChamp === 'bareme_km') {
-            nouveauKm.montant_calcule = nouveauKm.km_aller_retour * nouveauKm.bareme_km;
-            return { 
-              ...ligne, 
-              kilometrage: nouveauKm,
-              montant: nouveauKm.montant_calcule
-            };
-          }
-          
-          return { ...ligne, kilometrage: nouveauKm };
-        }
-        return { ...ligne, [champ]: valeur };
-      }
-      return ligne;
-    }));
-  };
-
-  const supprimerLigne = (id) => {
-    setLignesfrais(lignesfrais.filter(ligne => ligne.id !== id));
-  };
-
-  const handleFileUpload = (ligneId, file) => {
-    // Simulation d'upload avec OCR
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('ligne_id', ligneId);
-    
-    // Ici on simulerait l'OCR et l'extraction automatique
-    // Pour la démo, on met juste le nom du fichier
-    modifierLigne(ligneId, 'justificatif', {
-      nom: file.name,
-      taille: file.size,
-      type: file.type,
-      url: URL.createObjectURL(file)
-    });
-    
-    // Simulation extraction OCR
-    if (file.type.includes('image')) {
+  const handleFileUpload = (file) => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setJustificatif({
+        url: url,
+        nom: file.name,
+        type: file.type
+      });
+      
+      // Simulation d'extraction OCR
       setTimeout(() => {
-        // Simulation de données extraites par OCR
-        const montantExtrait = Math.random() * 100;
-        modifierLigne(ligneId, 'montant', montantExtrait.toFixed(2));
-        modifierLigne(ligneId, 'description', `Frais extrait automatiquement - ${file.name}`);
-      }, 2000);
+        setJustificatifData({
+          vendeur: 'LA ROMANA',
+          date: '24/10/2024',
+          pays: 'France',
+          devise: 'EUR',
+          totalTTC: '364,00',
+          totalHT: '328,22',
+          tva: '35,78',
+          moyenPaiement: 'Carte de Crédit Société',
+          statut: 'Traité'
+        });
+      }, 1000);
     }
   };
 
-  const calculerTotal = () => {
-    return lignesfrais.reduce((total, ligne) => total + parseFloat(ligne.montant || 0), 0);
+  const updateJustificatifData = (field, value) => {
+    setJustificatifData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const sauvegarder = async (statut = 'brouillon') => {
@@ -142,12 +100,9 @@ const NouvelleNoteFraisPage = () => {
       
       const noteComplete = {
         ...noteData,
+        ...justificatifData,
         statut,
-        montant_total: calculerTotal(),
-        lignes_frais: lignesfrais.map(ligne => ({
-          ...ligne,
-          montant: parseFloat(ligne.montant || 0)
-        }))
+        montant_total: parseFloat(justificatifData.totalTTC.replace(',', '.')) || 0
       };
 
       const response = await axios.post(
@@ -171,381 +126,255 @@ const NouvelleNoteFraisPage = () => {
     }
   };
 
-  const getTypeFraisIcon = (type) => {
-    const icons = {
-      'kilometrique': FiMapPin,
-      'repas': FiDollarSign,
-      'hebergement': FiUser,
-      'transport': FiMapPin,
-      'fourniture': FiFileText,
-      'autre': FiPlus
-    };
-    return icons[type] || FiFileText;
-  };
+  // Image par défaut du ticket de restaurant
+  const defaultReceiptImage = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDMwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNlNWU3ZWIiLz4KPHN2ZyB4PSI1MCIgeT0iNTAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMzAwIj4KPHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiPgo8cGF0aCBkPSJNMjAgMjBIMTgwVjI4MEgyMFYyMFoiIGZpbGw9IndoaXRlIiBzdHJva2U9IiNkMWQ1ZGIiLz4KPHN2ZyB4PSIyMCIgeT0iMzAiPgo8dGV4dCB4PSI4MCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMxZjJkM2YiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkxBIFJPTUFOQTwvdGV4dD4KPHN2ZyB5PSIxNSI+Cjx0ZXh0IHg9IjgwIiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjM3MzgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4yMCBSVUUgR0FCUklFTCBQRVJJPC90ZXh0Pgo8L3N2Zz4KPHN2ZyB5PSIzNSI+Cjx0ZXh0IHg9IjgwIiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjM3MzgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj45MjMwMCBMRSBNVUxMT1MgRlJBTkNFPC90ZXh0Pgo8L3N2Zz4KPHN2ZyB5PSI1MCI+Cjx0ZXh0IHg9IjgwIiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjM3MzgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5URUwgMDEgNDcgNTggNDIgNzg8L3RleHQ+CjwvdGV4dD4KPC9zdmc+CjxzdmcgeT0iOTAiPgo8dGV4dCB4PSIyMCIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMxZjJkM2YiPjI0LTEwLTI0PC90ZXh0Pgo8dGV4dCB4PSIxNDAiIHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMWYyZDNmIj4xMyA0MyA1NzwvdGV4dD4KPC9zdmc+CjxzdmcgeT0iMTIwIj4KPHR5ZXh0IHg9IjIwIiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMWYyZDNmIj5UQUJMRSAyPC90ZXh0Pgo8dGV4dCB4PSIxMDAiIHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMxZjJkM2YiPigxKSBWZXJkZXVyICMwMDE8L3RleHQ+CjwvdGV4dD4KPHN2ZyB5PSIxNDAiPgo8dGV4dCB4PSIyMCIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzYzNzM4MCI+MTcgQ291dmVydHM8L3RleHQ+Cjx0ZXh0IHg9IjE0MCIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzYzNzM4MCI+UG9zdCAjMTwvdGV4dD4KPC9zdmc+CjxzdmcgeT0iMTgwIj4KPHR5ZXh0IHg9IjgwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2RjMjYyNiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UkVQQVMgQ09NUExFVDwvdGV4dD4KPC9zdmc+CjxzdmcgeT0iMjEwIj4KPHR5ZXh0IHg9IjE0MCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMxZjJkM2YiIHRleHQtYW5jaG9yPSJlbmQiPjM2NCwwMDwvdGV4dD4KPC9zdmc+CjwvdGV4dD4KPC9zdmc+CjwvdGV4dD4KPC9zdmc+";
 
   return (
     <div className="nouvelle-note-frais-page">
       {/* Header */}
       <div className="page-header">
         <div className="header-content">
-          <h1 className="page-title">
-            <FiFileText />
-            Nouvelle note de frais
-          </h1>
-          <p className="page-subtitle">
-            Créez votre demande de remboursement avec justificatifs
-          </p>
+          <div className="montant-info">
+            <FiDollarSign className="montant-icon" />
+            <div className="montant-text">
+              <span className="montant-value">{justificatifData.totalTTC}</span>
+              <span className="montant-currency">EUR</span>
+            </div>
+            <div className="date-info">{justificatifData.date}</div>
+          </div>
+          <div className="statut-badge">
+            <FiCheck />
+            {justificatifData.statut}
+          </div>
         </div>
         <div className="header-actions">
-          <button 
-            className="btn-secondary"
-            onClick={() => window.location.href = '/#/notes-frais'}
-          >
-            Annuler
-          </button>
-          <button 
-            className="btn-save"
-            onClick={() => sauvegarder('brouillon')}
-            disabled={saving}
-          >
-            <FiSave size={18} />
-            Sauvegarder
-          </button>
-          <button 
-            className="btn-primary"
-            onClick={() => sauvegarder('soumise')}
-            disabled={saving || lignesfrais.length === 0}
-          >
-            <FiSend size={18} />
-            Soumettre
+          <button className="btn-modifier">
+            <FiEdit />
+            Modifier
           </button>
         </div>
       </div>
 
-      <div className="form-container">
-        {/* Informations générales */}
-        <div className="form-section">
-          <div className="section-header">
-            <h2>
-              <FiFileText />
-              Informations générales
-            </h2>
+      <div className="content-container">
+        {/* Left Panel - Justificatif Preview */}
+        <div className="justificatif-panel">
+          <div className="justificatif-header">
+            <h3>Aperçu du justificatif</h3>
+            <div className="upload-actions">
+              <input
+                type="file"
+                id="file-upload"
+                accept="image/*,.pdf"
+                onChange={(e) => {
+                  if (e.target.files[0]) {
+                    handleFileUpload(e.target.files[0]);
+                  }
+                }}
+                style={{ display: 'none' }}
+              />
+              <label htmlFor="file-upload" className="upload-btn">
+                <FiUpload />
+                Nouveau scan
+              </label>
+              <button className="camera-btn">
+                <FiCamera />
+                Capture d'écran
+              </button>
+            </div>
           </div>
           
-          <div className="form-grid">
-            <div className="form-group">
-              <label>Motif du déplacement/frais *</label>
-              <input
-                type="text"
-                placeholder="Ex: Visite client, Formation, Déplacement professionnel..."
-                value={noteData.motif}
-                onChange={(e) => setNoteData({...noteData, motif: e.target.value})}
-                required
+          <div className="justificatif-preview">
+            {justificatif ? (
+              <img 
+                src={justificatif.url} 
+                alt="Justificatif" 
+                className="receipt-image"
               />
-            </div>
-
-            <div className="form-group">
-              <label>Destination</label>
-              <input
-                type="text"
-                placeholder="Ville ou lieu de destination"
-                value={noteData.destination}
-                onChange={(e) => setNoteData({...noteData, destination: e.target.value})}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Date début</label>
-              <input
-                type="date"
-                value={noteData.date_debut}
-                onChange={(e) => setNoteData({...noteData, date_debut: e.target.value})}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Date fin</label>
-              <input
-                type="date"
-                value={noteData.date_fin}
-                onChange={(e) => setNoteData({...noteData, date_fin: e.target.value})}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Projet/Centre de coût</label>
-              <select 
-                value={noteData.projet_id}
-                onChange={(e) => setNoteData({...noteData, projet_id: e.target.value})}
-              >
-                <option value="">Sélectionner un projet</option>
-                {projets.map(projet => (
-                  <option key={projet.id} value={projet.id}>
-                    {projet.nom}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group full-width">
-              <label>Commentaire</label>
-              <textarea
-                placeholder="Commentaires additionnels..."
-                value={noteData.commentaire}
-                onChange={(e) => setNoteData({...noteData, commentaire: e.target.value})}
-                rows={3}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Types de frais rapides */}
-        <div className="quick-add-section">
-          <h3>
-            <FiPlus />
-            Ajouter rapidement
-          </h3>
-          <div className="quick-add-buttons">
-            <button 
-              className="quick-add-btn kilometrique"
-              onClick={() => ajouterLigne('kilometrique')}
-            >
-              <FiMapPin />
-              Frais kilométriques
-            </button>
-            <button 
-              className="quick-add-btn repas"
-              onClick={() => ajouterLigne('repas')}
-            >
-              <FiDollarSign />
-              Repas
-            </button>
-            <button 
-              className="quick-add-btn hebergement"
-              onClick={() => ajouterLigne('hebergement')}
-            >
-              <FiUser />
-              Hébergement
-            </button>
-            <button 
-              className="quick-add-btn transport"
-              onClick={() => ajouterLigne('transport')}
-            >
-              <FiMapPin />
-              Transport
-            </button>
-            <button 
-              className="quick-add-btn autre"
-              onClick={() => ajouterLigne('autre')}
-            >
-              <FiPlus />
-              Autres frais
-            </button>
-          </div>
-        </div>
-
-        {/* Lignes de frais */}
-        <div className="lignes-frais-section">
-          <div className="section-header">
-            <h2>
-              <FiPercent />
-              Détail des frais ({lignesfrais.length})
-            </h2>
-            {calculerTotal() > 0 && (
-              <div className="total-badge">
-                Total: {calculerTotal().toFixed(2)} €
+            ) : (
+              <div className="receipt-placeholder">
+                <img 
+                  src={defaultReceiptImage} 
+                  alt="Aperçu ticket" 
+                  className="receipt-default"
+                />
               </div>
             )}
           </div>
-
-          {lignesfrais.length === 0 ? (
-            <div className="empty-state">
-              <FiFileText className="empty-icon" />
-              <h3>Aucun frais ajouté</h3>
-              <p>Utilisez les boutons ci-dessus pour ajouter vos frais</p>
-            </div>
-          ) : (
-            <div className="lignes-container">
-              {lignesfrais.map((ligne) => {
-                const IconComponent = getTypeFraisIcon(ligne.type_frais);
-                
-                return (
-                  <div key={ligne.id} className="ligne-frais-card">
-                    <div className="ligne-header">
-                      <div className="ligne-type">
-                        <IconComponent className="type-icon" />
-                        <select 
-                          value={ligne.type_frais}
-                          onChange={(e) => modifierLigne(ligne.id, 'type_frais', e.target.value)}
-                          className="type-select"
-                        >
-                          <option value="">Type de frais</option>
-                          {typesFrais.map(type => (
-                            <option key={type.id} value={type.nom}>
-                              {type.libelle}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <button 
-                        className="delete-ligne"
-                        onClick={() => supprimerLigne(ligne.id)}
-                      >
-                        <FiTrash2 />
-                      </button>
-                    </div>
-
-                    <div className="ligne-content">
-                      <div className="ligne-form-grid">
-                        <div className="form-group">
-                          <label>Date</label>
-                          <input
-                            type="date"
-                            value={ligne.date_frais}
-                            onChange={(e) => modifierLigne(ligne.id, 'date_frais', e.target.value)}
-                          />
-                        </div>
-
-                        <div className="form-group">
-                          <label>Description</label>
-                          <input
-                            type="text"
-                            placeholder="Description du frais"
-                            value={ligne.description}
-                            onChange={(e) => modifierLigne(ligne.id, 'description', e.target.value)}
-                          />
-                        </div>
-
-                        {ligne.type_frais === 'kilometrique' ? (
-                          <>
-                            <div className="form-group">
-                              <label>Distance A/R (km)</label>
-                              <input
-                                type="number"
-                                step="0.1"
-                                placeholder="0.0"
-                                value={ligne.kilometrage.km_aller_retour}
-                                onChange={(e) => modifierLigne(ligne.id, 'kilometrage.km_aller_retour', parseFloat(e.target.value) || 0)}
-                              />
-                            </div>
-
-                            <div className="form-group">
-                              <label>Barème (€/km)</label>
-                              <select
-                                value={ligne.kilometrage.bareme_km}
-                                onChange={(e) => modifierLigne(ligne.id, 'kilometrage.bareme_km', parseFloat(e.target.value))}
-                              >
-                                <option value={0.518}>Voiture (0,518 €/km)</option>
-                                <option value={0.315}>Moto (0,315 €/km)</option>
-                                <option value={0.25}>Vélo (0,25 €/km)</option>
-                              </select>
-                            </div>
-
-                            <div className="form-group montant-calcule">
-                              <label>Montant calculé</label>
-                              <div className="montant-display">
-                                {(ligne.kilometrage.km_aller_retour * ligne.kilometrage.bareme_km).toFixed(2)} €
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="form-group">
-                            <label>Montant (€)</label>
-                            <input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              value={ligne.montant}
-                              onChange={(e) => modifierLigne(ligne.id, 'montant', parseFloat(e.target.value) || 0)}
-                            />
-                          </div>
-                        )}
-
-                        {/* Upload justificatif */}
-                        <div className="form-group justificatif-group">
-                          <label>Justificatif</label>
-                          {ligne.justificatif ? (
-                            <div className="justificatif-uploaded">
-                              <div className="file-info">
-                                <FiPaperclip />
-                                <span>{ligne.justificatif.nom}</span>
-                              </div>
-                              <button 
-                                className="remove-file"
-                                onClick={() => modifierLigne(ligne.id, 'justificatif', null)}
-                              >
-                                <FiTrash2 size={14} />
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="upload-zone">
-                              <input
-                                type="file"
-                                id={`file-${ligne.id}`}
-                                accept="image/*,.pdf"
-                                onChange={(e) => {
-                                  if (e.target.files[0]) {
-                                    handleFileUpload(ligne.id, e.target.files[0]);
-                                  }
-                                }}
-                                style={{ display: 'none' }}
-                              />
-                              <label htmlFor={`file-${ligne.id}`} className="upload-label">
-                                <FiUpload />
-                                <span>Cliquer ou glisser</span>
-                                <small>Image ou PDF</small>
-                              </label>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
 
-        {/* Résumé */}
-        {lignesfrais.length > 0 && (
-          <div className="resume-section">
-            <h3>Résumé de la note</h3>
-            <div className="resume-cards">
-              <div className="resume-card">
-                <div className="resume-icon">
-                  <FiFileText />
-                </div>
-                <div className="resume-content">
-                  <div className="resume-value">{lignesfrais.length}</div>
-                  <div className="resume-label">Ligne(s) de frais</div>
+        {/* Right Panel - Form */}
+        <div className="form-panel">
+          <div className="form-content">
+            <div className="form-grid">
+              <div className="form-group">
+                <label>Vendeur *</label>
+                <input
+                  type="text"
+                  value={justificatifData.vendeur}
+                  onChange={(e) => updateJustificatifData('vendeur', e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Date *</label>
+                <input
+                  type="text"
+                  value={justificatifData.date}
+                  onChange={(e) => updateJustificatifData('date', e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Pays *</label>
+                <select 
+                  value={justificatifData.pays}
+                  onChange={(e) => updateJustificatifData('pays', e.target.value)}
+                  className="form-select"
+                >
+                  <option value="France">France</option>
+                  <option value="Espagne">Espagne</option>
+                  <option value="Italie">Italie</option>
+                  <option value="Allemagne">Allemagne</option>
+                  <option value="Belgique">Belgique</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Devise *</label>
+                <select 
+                  value={justificatifData.devise}
+                  onChange={(e) => updateJustificatifData('devise', e.target.value)}
+                  className="form-select"
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                </select>
+              </div>
+
+              <div className="form-group amount-group">
+                <label>Total TTC *</label>
+                <div className="amount-input">
+                  <input
+                    type="text"
+                    value={justificatifData.totalTTC}
+                    onChange={(e) => updateJustificatifData('totalTTC', e.target.value)}
+                    className="form-input amount-field"
+                  />
+                  <span className="currency-label">EUR</span>
                 </div>
               </div>
 
-              <div className="resume-card">
-                <div className="resume-icon total">
-                  <FiDollarSign />
-                </div>
-                <div className="resume-content">
-                  <div className="resume-value">{calculerTotal().toFixed(2)} €</div>
-                  <div className="resume-label">Montant total</div>
-                </div>
-              </div>
-
-              <div className="resume-card">
-                <div className="resume-icon">
-                  <FiPaperclip />
-                </div>
-                <div className="resume-content">
-                  <div className="resume-value">
-                    {lignesfrais.filter(l => l.justificatif).length}
+              <div className="form-group-row">
+                <div className="form-group">
+                  <label>Total HT</label>
+                  <div className="amount-input">
+                    <input
+                      type="text"
+                      value={justificatifData.totalHT}
+                      onChange={(e) => updateJustificatifData('totalHT', e.target.value)}
+                      className="form-input amount-field"
+                    />
+                    <span className="currency-label">EUR</span>
                   </div>
-                  <div className="resume-label">Justificatif(s)</div>
                 </div>
+
+                <div className="form-group">
+                  <label>TVA</label>
+                  <div className="amount-input">
+                    <input
+                      type="text"
+                      value={justificatifData.tva}
+                      onChange={(e) => updateJustificatifData('tva', e.target.value)}
+                      className="form-input amount-field"
+                    />
+                    <span className="currency-label">EUR</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group full-width">
+                <label>Moyen de paiement *</label>
+                <select 
+                  value={justificatifData.moyenPaiement}
+                  onChange={(e) => updateJustificatifData('moyenPaiement', e.target.value)}
+                  className="form-select"
+                >
+                  <option value="Carte de Crédit Société">Carte de Crédit Société</option>
+                  <option value="Carte de Crédit Personnelle">Carte de Crédit Personnelle</option>
+                  <option value="Espèces">Espèces</option>
+                  <option value="Chèque">Chèque</option>
+                  <option value="Virement">Virement</option>
+                </select>
+              </div>
+
+              <div className="form-group full-width">
+                <label>Motif du déplacement/frais</label>
+                <input
+                  type="text"
+                  placeholder="Ex: Déjeuner d'affaires client, Repas équipe..."
+                  value={noteData.motif}
+                  onChange={(e) => setNoteData({...noteData, motif: e.target.value})}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group full-width">
+                <label>Projet/Centre de coût</label>
+                <select 
+                  value={noteData.projet_id}
+                  onChange={(e) => setNoteData({...noteData, projet_id: e.target.value})}
+                  className="form-select"
+                >
+                  <option value="">Sélectionner un projet</option>
+                  {projets.map(projet => (
+                    <option key={projet.id} value={projet.id}>
+                      {projet.nom}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group full-width">
+                <label>Commentaire</label>
+                <textarea
+                  placeholder="Commentaires additionnels..."
+                  value={noteData.commentaire}
+                  onChange={(e) => setNoteData({...noteData, commentaire: e.target.value})}
+                  className="form-textarea"
+                  rows={3}
+                />
               </div>
             </div>
+
+            <div className="form-actions">
+              <button 
+                className="btn-secondary"
+                onClick={() => window.location.href = '/#/notes-frais'}
+              >
+                Annuler
+              </button>
+              <button 
+                className="btn-save"
+                onClick={() => sauvegarder('brouillon')}
+                disabled={saving}
+              >
+                <FiSave />
+                Sauvegarder
+              </button>
+              <button 
+                className="btn-primary"
+                onClick={() => sauvegarder('soumise')}
+                disabled={saving}
+              >
+                <FiSend />
+                Soumettre
+              </button>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
