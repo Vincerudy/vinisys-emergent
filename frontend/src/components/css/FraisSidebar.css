@@ -14,12 +14,16 @@
 
 .frais-sidebar {
   background: white;
-  width: calc(100vw - 280px); /* Laisse la place pour le menu de gauche */
+  width: min(600px, calc(100vw - 40px)); /* Largeur responsive avec maximum */
   height: 100vh;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
   animation: slideIn 0.3s ease-out;
+  position: relative;
+  z-index: 10000; /* Z-index encore plus élevé */
+  overflow: hidden; /* Évite le débordement */
 }
 
 @keyframes slideIn {
