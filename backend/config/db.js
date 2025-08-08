@@ -16,7 +16,7 @@ const pool = {
             nom: 'Admin',
             prenom: 'User',
             email: 'idnovation2014@gmail.com',
-            mot_de_passe: '$2b$10$XCMHjHWYwYQBjktOYCJmYePzf8DwBhJG5QVhT.1jWQiJBGBxWYgqO', // hash de "123456"
+            mot_de_passe: '$2b$10$lzwNIeCMVVu.W0tXB7p2bOwoopadWKKsG5bCo9diXStnj.LzIbyXG', // hash de "123456"
             societe_id: 2,
             statut: 'actif',
             date_creation: new Date()
