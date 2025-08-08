@@ -48,10 +48,10 @@ router.get('/:societeId', async (req, res) => {
                     u.lastName,
                     u.id as utilisateur_id,
                     COUNT(nf.id) as nb_notes,
-                    ROUND(SUM(nf.montant_total), 2) as montant_total,
+                    ROUND(SUM(nf.total_ttc), 2) as montant_total,
                     COUNT(CASE WHEN nf.statut = 'soumise' THEN 1 END) as nb_en_attente
                 FROM users u
-                LEFT JOIN notes_frais nf ON u.id = nf.utilisateur_id 
+                LEFT JOIN notes_frais nf ON u.id = nf.user_id 
                     AND nf.societe_id = ? 
                     AND MONTH(nf.periode_debut) <= ? 
                     AND MONTH(nf.periode_fin) >= ?
