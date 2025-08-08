@@ -146,7 +146,7 @@ app.get('/api/token', (req, res) => {
 // ROUTES EXISTANTES (Facturation, etc.)
 // =====================================
 
-// Routes facturation originales
+// Routes facturation originales - Routes directes (pas de double préfixe)
 app.use('/api/listeFacture', require('./routes/facture/listeFacture'));
 app.use('/api/dashbordData', require('./routes/facture/dashbordData'));
 app.use('/api/insertFacture', require('./routes/facture/insertFacture'));
