@@ -108,64 +108,69 @@ const NotesfraisPage = () => {
             Gestion des notes de frais employés avec validation et remboursements
           </p>
         </div>
-        <div className="flex gap-3">
-          <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-            <FiPlus size={16} />
+        <div className="filter-actions">
+          <button className="action-btn">
+            <FiPlus className="action-icon" />
             Nouvelle note
           </button>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-            <FiDownload size={16} />
+          <button className="action-btn info">
+            <FiDownload className="action-icon" />
             Export
           </button>
         </div>
       </div>
 
       {/* Contrôles */}
-      <div className="bg-white p-4 rounded-lg shadow">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <span className="font-medium">Période :</span>
-            <select 
-              value={selectedPeriod.mois}
-              onChange={(e) => setSelectedPeriod({...selectedPeriod, mois: parseInt(e.target.value)})}
-              className="border rounded px-3 py-1"
-            >
-              {Array.from({length: 12}, (_, i) => (
-                <option key={i+1} value={i+1}>
-                  {new Date(0, i).toLocaleString('fr-FR', {month: 'long'})}
-                </option>
-              ))}
-            </select>
-            <select 
-              value={selectedPeriod.annee}
-              onChange={(e) => setSelectedPeriod({...selectedPeriod, annee: parseInt(e.target.value)})}
-              className="border rounded px-3 py-1"
-            >
-              {[2023, 2024, 2025].map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
+      <div className="view-modes">
+        <div className="view-modes-title">
+          <FiCalendar />
+          Période & Mode d'affichage
+        </div>
+        <div className="filters-grid">
+          <div className="filter-group">
+            <label>Période</label>
+            <div style={{display: 'flex', gap: '10px'}}>
+              <select 
+                value={selectedPeriod.mois}
+                onChange={(e) => setSelectedPeriod({...selectedPeriod, mois: parseInt(e.target.value)})}
+              >
+                {Array.from({length: 12}, (_, i) => (
+                  <option key={i+1} value={i+1}>
+                    {new Date(0, i).toLocaleString('fr-FR', {month: 'long'})}
+                  </option>
+                ))}
+              </select>
+              <select 
+                value={selectedPeriod.annee}
+                onChange={(e) => setSelectedPeriod({...selectedPeriod, annee: parseInt(e.target.value)})}
+              >
+                {[2023, 2024, 2025].map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Vue :</span>
-            <button 
-              onClick={() => setViewMode('all')}
-              className={`px-3 py-1 rounded text-sm ${
-                viewMode === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200'
-              }`}
-            >
-              Tous
-            </button>
-            <button 
-              onClick={() => setViewMode('personal')}
-              className={`px-3 py-1 rounded text-sm ${
-                viewMode === 'personal' ? 'bg-blue-600 text-white' : 'bg-gray-200'
-              }`}
-            >
-              Mes notes
-            </button>
-          </div>
+        </div>
+        
+        <div className="mode-tabs">
+          <button 
+            className={`mode-tab ${viewMode === 'dashboard' ? 'active' : ''}`}
+            onClick={() => setViewMode('dashboard')}
+          >
+            Tableau de bord
+          </button>
+          <button 
+            className={`mode-tab ${viewMode === 'validation' ? 'active' : ''}`}
+            onClick={() => setViewMode('validation')}
+          >
+            Validation
+          </button>
+          <button 
+            className={`mode-tab ${viewMode === 'historique' ? 'active' : ''}`}
+            onClick={() => setViewMode('historique')}
+          >
+            Historique
+          </button>
         </div>
       </div>
 
