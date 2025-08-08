@@ -1,0 +1,438 @@
+/* Page détail d'une note de frais */
+
+.note-detail-page {
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: #64748b;
+}
+
+.loading-container p, .error-container p {
+  margin-top: 16px;
+  font-size: 1.1rem;
+}
+
+/* Header */
+.note-header {
+  background: white;
+  padding: 24px 30px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-back {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.note-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.note-title {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.note-title:hover {
+  color: #0ea5e9;
+}
+
+.edit-icon {
+  opacity: 0;
+  font-size: 1rem;
+  transition: opacity 0.2s ease;
+}
+
+.note-title:hover .edit-icon {
+  opacity: 1;
+}
+
+.title-edit .title-input {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  border: 2px solid #0ea5e9;
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: transparent;
+  outline: none;
+}
+
+.note-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.note-number {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.note-date, .note-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.total-amount {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f0f9ff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 2px solid #0ea5e9;
+}
+
+.amount-icon {
+  color: #0ea5e9;
+  font-size: 1.5rem;
+}
+
+.amount-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.amount-currency {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-upload, .btn-new-frais, .btn-submit {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-upload {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-upload:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+.btn-new-frais {
+  background: #10b981;
+  color: white;
+}
+
+.btn-new-frais:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-submit {
+  background: #0ea5e9;
+  color: white;
+}
+
+.btn-submit:hover {
+  background: #0284c7;
+  transform: translateY(-1px);
+}
+
+/* Content */
+.note-content {
+  padding: 30px;
+}
+
+.frais-section {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.section-header {
+  padding: 20px 30px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Empty state */
+.empty-frais {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 30px;
+  text-align: center;
+  color: #64748b;
+}
+
+.empty-frais svg {
+  color: #cbd5e1;
+  margin-bottom: 20px;
+}
+
+.empty-frais h3 {
+  margin: 0 0 12px 0;
+  color: #374151;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.empty-frais p {
+  margin: 0 0 24px 0;
+  font-size: 1rem;
+}
+
+.empty-frais .btn-primary {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.empty-frais .btn-primary:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+/* Table des frais */
+.frais-table-container {
+  overflow-x: auto;
+}
+
+.frais-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.frais-table thead {
+  background: #f8fafc;
+}
+
+.frais-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.frais-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.frais-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.frais-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.frais-row:last-child td {
+  border-bottom: none;
+}
+
+.frais-date {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.frais-vendeur strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.frais-description {
+  color: #6b7280;
+  font-size: 0.9rem;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.montant-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.montant-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.montant-currency {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.frais-pays, .frais-paiement {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.frais-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.frais-actions .btn-action {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frais-actions .btn-edit {
+  color: #f59e0b;
+}
+
+.frais-actions .btn-edit:hover {
+  background: #fffbeb;
+  border-color: #f59e0b;
+}
+
+.frais-actions .btn-delete {
+  color: #ef4444;
+}
+
+.frais-actions .btn-delete:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .note-header {
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .header-left, .header-right {
+    justify-content: center;
+  }
+
+  .note-meta {
+    justify-content: center;
+  }
+
+  .header-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .note-content {
+    padding: 20px;
+  }
+
+  .frais-table th,
+  .frais-table td {
+    padding: 12px 16px;
+  }
+
+  .frais-table th:nth-child(5),
+  .frais-table td:nth-child(5),
+  .frais-table th:nth-child(6),
+  .frais-table td:nth-child(6) {
+    display: none;
+  }
+}
