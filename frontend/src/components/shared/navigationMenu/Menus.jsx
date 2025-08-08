@@ -84,6 +84,20 @@ const Menus = () => {
     return null;
   }
 
+  // Menu direct sans sous-menu (dropdownMenu vide)
+  if (!dropdownMenu || (Array.isArray(dropdownMenu) && dropdownMenu.length === 0)) {
+    return (
+      <li key={id} className={`nxl-item ${pathName === path ? "active" : ""}`}>
+        <Link to={path} className="nxl-link text-capitalize">
+          <span className="nxl-micon"> {getIcon(icon)} </span>
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
+            {name}
+          </span>
+        </Link>
+      </li>
+    );
+  }
+
   return (
     <li
       key={id}
