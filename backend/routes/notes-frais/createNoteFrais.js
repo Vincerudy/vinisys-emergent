@@ -76,12 +76,12 @@ router.post('/', async (req, res) => {
         // Insertion de la note
         const [result] = await connection.execute(`
             INSERT INTO notes_frais (
-                numero, utilisateur_id, periode_debut, periode_fin, titre, 
-                description, montant_total, societe_id, statut
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'brouillon')
+                numero, user_id, periode_debut, periode_fin, 
+                total_ttc, societe_id, statut, commentaire
+            ) VALUES (?, ?, ?, ?, ?, ?, 'brouillon', ?)
         `, [
-            numeroNote, utilisateur_id, periode_debut, periode_fin, 
-            titre, description, montantTotal, societe_id
+            numeroNote, user_id, periode_debut, periode_fin, 
+            montantTotal, societe_id, description
         ]);
 
         const noteId = result.insertId;
