@@ -137,7 +137,7 @@ const SiteOverviewStatistics = ({parametrage}) => {
                                 <div className="d-flex align-items-start justify-content-between mb-4">
                                     <div className="d-flex gap-4 align-items-center">
                                     <div>
-                                        <h3 className="fs-13 fw-semibold text-truncate-1-line">{parametrage.vatLabel}  Due</h3>
+                                        <h3 className="fs-13 fw-semibold text-truncate-1-line">{parametrage?.vatLabel || 'TVA'} Due</h3>
                                             <div className="fs-4 fw-bold text-dark">
                                              
                                                 <span className="counter">{tvaDue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
