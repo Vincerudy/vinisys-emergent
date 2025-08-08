@@ -92,7 +92,6 @@ const ValidationNotesPage = () => {
 
     setProcessing(true);
     try {
-      const { id: validateur_id } = useAuth();
       
       // Valider chaque note individuellement
       for (const noteId of selectedNotes) {
