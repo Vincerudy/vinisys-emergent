@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Phase 2
-Tests the refactored separated modules: Achats (Purchases) and Notes de frais (Expense Reports)
+Backend API Testing Script for Vinisys Application - Dashboard and Invoice Data Recovery
+Tests the restored invoice and dashboard routes after route restoration
 """
 
 import requests
@@ -9,14 +9,23 @@ import json
 import sys
 from datetime import datetime, date
 
-# Backend URL configuration - Using internal URL for testing
-BASE_URL = "http://localhost:8001"  # Internal URL for testing
-API_BASE = f"{BASE_URL}/api"
+# Backend URL configuration - Using frontend environment URL
+with open('/app/frontend/.env', 'r') as f:
+    env_content = f.read()
+    for line in env_content.split('\n'):
+        if line.startswith('VITE_API_URL='):
+            api_path = line.split('=')[1]
+            break
+    else:
+        api_path = '/api'
 
-# Test credentials
+BASE_URL = "http://localhost:8001"  # Internal URL for testing
+API_BASE = f"{BASE_URL}{api_path}"
+
+# Test credentials and user ID from review request
 TEST_EMAIL = "demo@demo.com"
 TEST_PASSWORD = "123456"
-TEST_SOCIETE_ID = 2  # Company ID for testing
+TEST_USER_ID = 67  # User ID specified in review request
 
 def print_test_header(test_name):
     """Print formatted test header"""
