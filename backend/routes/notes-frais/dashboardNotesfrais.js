@@ -104,7 +104,7 @@ router.get('/:societeId', async (req, res) => {
             SELECT 
                 statut,
                 COUNT(*) as nb_notes,
-                ROUND(SUM(montant_total), 2) as montant_total
+                ROUND(SUM(total_ttc), 2) as montant_total
             FROM notes_frais nf
             WHERE nf.societe_id = ? 
                 AND MONTH(periode_debut) <= ? 
@@ -118,7 +118,7 @@ router.get('/:societeId', async (req, res) => {
                     WHEN 'brouillon' THEN 1
                     WHEN 'soumise' THEN 2
                     WHEN 'validee' THEN 3
-                    WHEN 'remboursee' THEN 4
+                    WHEN 'payee' THEN 4
                     WHEN 'refusee' THEN 5
                 END
         `, [societeId, currentMonth, currentMonth, currentYear, currentYear, ...(utilisateur_id ? [utilisateur_id] : [])]);
