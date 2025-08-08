@@ -141,6 +141,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
 
       const fraisPayload = {
         note_frais_id: noteId,
+        type_frais_id: formData.type_frais_id || 1, // Par défaut repas
         vendeur: formData.vendeur.trim(),
         date_frais: formData.date_frais,
         pays: formData.pays,
