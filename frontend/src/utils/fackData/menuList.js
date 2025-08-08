@@ -173,7 +173,17 @@ export const menuList = [
             }
         ]
     },
-     
+    
+    // Page Rapport - Directement accessible
+    {
+        id: 95,
+        name: "Rapport",
+        path: "/rapport",
+        icon: 'feather-bar-chart-2',
+        dropdownMenu: false,
+        permission: 'access_reports',
+    },
+    
     {
         id: 9,
         name: "Paramétrage",
