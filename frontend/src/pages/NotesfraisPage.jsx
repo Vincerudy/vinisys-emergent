@@ -21,7 +21,7 @@ const NotesfraisPage = () => {
   const { societe_id, id: user_id } = useAuth();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
-  const [viewMode, setViewMode] = useState('all'); // 'all' ou 'personal'
+  const [viewMode, setViewMode] = useState('dashboard'); // 'dashboard', 'validation', 'historique'
   const [selectedPeriod, setSelectedPeriod] = useState({
     mois: new Date().getMonth() + 1,
     annee: new Date().getFullYear()
