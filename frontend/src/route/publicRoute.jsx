@@ -95,6 +95,8 @@ import ValidationDepenses from "../pages/ValidationDepenses";
 import AchatsPage from "../pages/AchatsPage";
 import NotesfraisPage from "../pages/NotesfraisPage";
 import NouvelAchatPage from "../pages/NouvelAchatPage";
+import ListeAchatsPage from "../pages/ListeAchatsPage";
+import NouvelleNoteFraisPage from "../pages/NouvelleNoteFraisPage";
 
 import axios from "axios";
 import ImportProduitsPage from "../pages/ImportProduitsPage";
