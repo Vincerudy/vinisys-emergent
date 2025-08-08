@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 // import FullCalendar from '@fullcalendar/react';
 // import dayGridPlugin from '@fullcalendar/daygrid';
 // import timeGridPlugin from '@fullcalendar/timegrid';
-import listPlugin from '@fullcalendar/list';
+// import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import CalenderModal from './CalenderModal';
 import CalenderSidebar from './CalenderSidebar';
