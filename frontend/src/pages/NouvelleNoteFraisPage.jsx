@@ -348,7 +348,7 @@ const NouvelleNoteFraisPage = () => {
         <div className="lignes-frais-section">
           <div className="section-header">
             <h2>
-              <FiCalculator />
+              <FiPercent />
               Détail des frais ({lignesfrais.length})
             </h2>
             {calculerTotal() > 0 && (
