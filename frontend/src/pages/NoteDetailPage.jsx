@@ -231,31 +231,42 @@ const NoteDetailPage = () => {
           </div>
           
           <div className="header-actions">
-            <input
-              type="file"
-              id="file-upload-auto"
-              accept="image/*,.pdf"
-              onChange={(e) => {
-                if (e.target.files[0]) {
-                  handleFileUpload(e.target.files[0]);
-                }
-              }}
-              style={{ display: 'none' }}
-            />
-            <label htmlFor="file-upload-auto" className="btn-upload">
-              <FiUpload />
-              Charger image
-            </label>
-            
-            <button className="btn-new-frais" onClick={handleNewFrais}>
-              <FiPlus />
-              Nouveau frais
-            </button>
-            
-            <button className="btn-submit" onClick={handleSubmitNote}>
-              <FiSend />
-              Soumettre note
-            </button>
+            {note.statut === 'soumise' ? (
+              <div className="statut-soumise">
+                <span className="badge-soumise">
+                  <FiCheck />
+                  Note soumise
+                </span>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="file"
+                  id="file-upload-auto"
+                  accept="image/*,.pdf"
+                  onChange={(e) => {
+                    if (e.target.files[0]) {
+                      handleFileUpload(e.target.files[0]);
+                    }
+                  }}
+                  style={{ display: 'none' }}
+                />
+                <label htmlFor="file-upload-auto" className="btn-upload">
+                  <FiUpload />
+                  Charger image
+                </label>
+                
+                <button className="btn-new-frais" onClick={handleNewFrais}>
+                  <FiPlus />
+                  Nouveau frais
+                </button>
+                
+                <button className="btn-submit" onClick={handleSubmitNote}>
+                  <FiSend />
+                  Soumettre note
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
