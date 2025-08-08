@@ -117,7 +117,7 @@ const RapportPage = () => {
     <div className="rapport-page">
       <div className="rapport-header">
         <h1>
-          <FiBarChart3 />
+          <FiBarChart />
           Rapport Financier
         </h1>
         
