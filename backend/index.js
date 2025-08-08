@@ -197,6 +197,7 @@ app.use('/api/notes-frais', require('./routes/notes-frais/listNotesfrais'));
 app.use('/api/note-frais', require('./routes/notes-frais/createNoteFrais'));
 app.use('/api/notes-frais/dashboard', require('./routes/notes-frais/dashboardNotesfrais'));
 app.use('/api/notes-frais/validation', require('./routes/notes-frais/validationNotes'));
+app.use('/api/notes-frais', require('./routes/notes-frais/validationNotes')); // Routes de validation directes
 app.use('/api/notes-frais/baremes', require('./routes/notes-frais/baremes'));
 
 // Catégories achats
