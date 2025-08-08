@@ -255,7 +255,7 @@ const ValidationNotesPage = () => {
                     <td className="note-date">
                       <div className="date-info">
                         <FiCalendar size={16} />
-                        <span>{formatDate(note.updated_at)}</span>
+                        <span>{formatDate(note.date_soumission)}</span>
                       </div>
                     </td>
                     <td className="note-montant">
