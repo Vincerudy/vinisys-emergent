@@ -165,9 +165,24 @@
 
 .receipt-placeholder {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
+  color: #64748b;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.receipt-placeholder p {
+  margin: 15px 0 5px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.receipt-placeholder small {
+  font-size: 0.9rem;
+  color: #94a3b8;
 }
 
 /* Panel formulaire (droite) */
