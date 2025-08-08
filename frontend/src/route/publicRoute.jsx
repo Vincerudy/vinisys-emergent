@@ -512,6 +512,10 @@ export const publicRoute = createHashRouter([
                 element: <ProtectedRoute element={<HistoriqueNotesPage />} />,
             },
             {
+                path: "/rapport",
+                element: <ProtectedRoute element={<RapportPage />} />,
+            },
+            {
                 path: "/reset-password/:token",
                 element: <ResetPassword />,
             },
