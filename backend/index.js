@@ -143,6 +143,46 @@ app.get('/api/token', (req, res) => {
 });
 
 // =====================================
+// ROUTES EXISTANTES (Facturation, etc.)
+// =====================================
+
+// Routes facturation originales
+app.use('/api/listeFacture', require('./routes/facture/listeFacture'));
+app.use('/api/dashbordData', require('./routes/facture/dashbordData'));
+app.use('/api/insertFacture', require('./routes/facture/insertFacture'));
+app.use('/api/updateFacture', require('./routes/facture/updateFacture'));
+app.use('/api/deleteFacture', require('./routes/facture/deleteFacture'));
+app.use('/api/transformFacture', require('./routes/facture/transformFacture'));
+app.use('/api/dataGraphiqueFacture', require('./routes/facture/dataGraphiqueFacture'));
+app.use('/api/dataGraphCircle', require('./routes/facture/dataGraphCircle'));
+app.use('/api/numeroFacture', require('./routes/facture/numeroFacture'));
+app.use('/api/modeReglementFacture', require('./routes/facture/modeReglementFacture'));
+app.use('/api/updateStatut', require('./routes/facture/updateStatut'));
+app.use('/api/alertes', require('./routes/facture/alertes'));
+app.use('/api/ParametreFacturationRead', require('./routes/facture/ParametreFacturationRead'));
+app.use('/api/insertParametrageFacturation', require('./routes/facture/insertParametrageFacturation'));
+app.use('/api/cahierRecette', require('./routes/facture/cahierRecette'));
+
+// Routes clients
+app.use('/api/client', require('./routes/client'));
+
+// Routes utilisateurs
+app.use('/api/users', require('./routes/users'));
+app.use('/api/utilisateurs', require('./routes/utilisateurs'));
+
+// Routes produits
+app.use('/api/produits', require('./routes/produits'));
+
+// Routes société
+app.use('/api/societe', require('./routes/societe'));
+
+// Routes TVA
+app.use('/api/tva', require('./routes/tva'));
+
+// Autres routes globales
+app.use('/api/global', require('./routes/globalRoute'));
+
+// =====================================
 // ROUTES MODULES SÉPARES
 // =====================================
 
