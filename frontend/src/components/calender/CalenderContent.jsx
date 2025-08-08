@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import FullCalendar from '@fullcalendar/react';
+// Temporairement commenté pour corriger les erreurs d'affichage
+// import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
