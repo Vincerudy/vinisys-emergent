@@ -242,6 +242,104 @@ app.get('/api/projets/:societeId', async (req, res) => {
     }
 });
 
+// GET /api/types-frais/:societeId - Récupérer les types de frais actifs
+app.get('/api/types-frais/:societeId', async (req, res) => {
+    try {
+        const { societeId } = req.params;
+        const [typesFrais] = await db.execute(
+            'SELECT * FROM types_frais WHERE societe_id = ? AND actif = 1 ORDER BY libelle ASC',
+            [societeId]
+        );
+        res.json({ 
+            success: true,
+            types_frais: typesFrais 
+        });
+    } catch (error) {
+        console.error('Erreur types de frais:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la récupération des types de frais' 
+        });
+    }
+});
+
+// ENDPOINTS POUR LA GESTION DES TYPES DE FRAIS
+// GET /api/types-frais/manage/:societeId - Tous les types (pour paramétrage)
+app.get('/api/types-frais/manage/:societeId', async (req, res) => {
+    try {
+        const { societeId } = req.params;
+        const [typesFrais] = await db.execute(
+            'SELECT * FROM types_frais WHERE societe_id = ? ORDER BY libelle ASC',
+            [societeId]
+        );
+        res.json({ 
+            success: true,
+            types_frais: typesFrais 
+        });
+    } catch (error) {
+        console.error('Erreur gestion types de frais:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la récupération des types de frais' 
+        });
+    }
+});
+
+// PUT /api/types-frais/:typeId - Modifier un type de frais
+app.put('/api/types-frais/:typeId', async (req, res) => {
+    try {
+        const { typeId } = req.params;
+        const { libelle, actif } = req.body;
+
+        await db.execute(
+            'UPDATE types_frais SET libelle = ?, actif = ? WHERE id = ?',
+            [libelle, actif ? 1 : 0, typeId]
+        );
+
+        res.json({
+            success: true,
+            message: 'Type de frais modifié avec succès'
+        });
+    } catch (error) {
+        console.error('Erreur modification type de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la modification du type de frais'
+        });
+    }
+});
+
+// POST /api/types-frais - Créer un nouveau type de frais
+app.post('/api/types-frais', async (req, res) => {
+    try {
+        const { nom, libelle, societe_id } = req.body;
+
+        if (!nom || !libelle || !societe_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nom, libellé et société ID sont requis'
+            });
+        }
+
+        const [result] = await db.execute(
+            'INSERT INTO types_frais (nom, libelle, societe_id, actif) VALUES (?, ?, ?, 1)',
+            [nom, libelle, societe_id]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'Type de frais créé avec succès',
+            data: { typeId: result.insertId }
+        });
+    } catch (error) {
+        console.error('Erreur création type de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la création du type de frais'
+        });
+    }
+});
+
 // Notes de frais - Routes simplifiées
 app.post('/api/note-frais/simple', async (req, res) => {
     try {
