@@ -301,8 +301,11 @@ app.use((error, req, res, next) => {
 app.use('*', (req, res) => {
     res.status(404).json({ 
         error: 'Route non trouvée',
+        requested_route: req.originalUrl,
         available_endpoints: {
             auth: ['/api/login', '/api/token'],
+            facturation: ['/api/listeFacture', '/api/dashbordData', '/api/insertFacture', '/api/updateFacture'],
+            clients: ['/api/insertClient', '/api/listeClient', '/api/updateClient'],
             achats: ['/api/achats', '/api/achat', '/api/achats/dashboard', '/api/achats/fournisseurs'],
             notes_frais: ['/api/notes-frais', '/api/note-frais', '/api/notes-frais/dashboard', '/api/notes-frais/validation'],
             common: ['/api/types-frais', '/api/categories-achats', '/api/projets']
