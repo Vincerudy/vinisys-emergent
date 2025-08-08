@@ -258,7 +258,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
                     <option value="">Sélectionner un type</option>
                     {typesFrais.map(type => (
                       <option key={type.id} value={type.id}>
-                        {type.libelle}
+                        {type.nom}
                       </option>
                     ))}
                   </select>
