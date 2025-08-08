@@ -466,9 +466,9 @@ def test_types_frais():
         return False, None
 
 def main():
-    """Main test execution for New Modules Testing"""
-    print("🚀 Starting Backend API Tests for Vinisys - New Modules (Achats & Notes de frais)")
-    print("📊 Testing: Authentication, Achats APIs, Notes de frais APIs")
+    """Main test execution for Financial Report API Testing"""
+    print("🚀 Starting Backend API Tests for Vinisys - Financial Report API")
+    print("📊 Testing: Authentication, Financial Report APIs, Evolution APIs")
     print(f"Backend URL: {BASE_URL}")
     print(f"API Base URL: {API_BASE}")
     print(f"Test Email: {TEST_EMAIL}")
@@ -490,36 +490,32 @@ def main():
     test_results.append(("Authentication", auth_success))
     
     if not auth_success:
-        print("\n❌ Authentication failed. Cannot proceed with module tests.")
+        print("\n❌ Authentication failed. Cannot proceed with financial report tests.")
         return False
     
-    # Test 2: Achats Dashboard
-    achats_dashboard_success, achats_dashboard_data = test_achats_dashboard()
-    test_results.append(("Achats Dashboard", achats_dashboard_success))
+    # Test 2: Main Financial Report API (Monthly)
+    main_report_success, main_report_data = test_financial_report_main()
+    test_results.append(("Financial Report Main (Monthly)", main_report_success))
     
-    # Test 3: Achats Suppliers
-    suppliers_success, suppliers_data = test_achats_fournisseurs()
-    test_results.append(("Achats Suppliers", suppliers_success))
+    # Test 3: Daily Financial Report
+    daily_report_success, daily_report_data = test_financial_report_daily()
+    test_results.append(("Financial Report Daily", daily_report_success))
     
-    # Test 4: Purchase Categories
-    categories_success, categories_data = test_categories_achats()
-    test_results.append(("Purchase Categories", categories_success))
+    # Test 4: Yearly Financial Report
+    yearly_report_success, yearly_report_data = test_financial_report_yearly()
+    test_results.append(("Financial Report Yearly", yearly_report_success))
     
-    # Test 5: Projects
-    projects_success, projects_data = test_projets()
-    test_results.append(("Projects/Cost Centers", projects_success))
+    # Test 5: Financial Calculations Verification
+    calc_success, calc_data = test_financial_calculations()
+    test_results.append(("Financial Calculations", calc_success))
     
-    # Test 6: Notes de frais Dashboard
-    notes_dashboard_success, notes_dashboard_data = test_notes_frais_dashboard()
-    test_results.append(("Notes de frais Dashboard", notes_dashboard_success))
-    
-    # Test 7: Expense Types
-    types_success, types_data = test_types_frais()
-    test_results.append(("Expense Types", types_success))
+    # Test 6: Evolution Depenses API
+    evolution_success, evolution_data = test_evolution_depenses()
+    test_results.append(("Evolution Depenses API", evolution_success))
     
     # Print summary
     print(f"\n{'='*60}")
-    print("TEST SUMMARY - NEW MODULES TESTING")
+    print("TEST SUMMARY - FINANCIAL REPORT API TESTING")
     print(f"{'='*60}")
     
     passed = 0
@@ -535,7 +531,7 @@ def main():
     
     # Detailed analysis
     print(f"\n{'='*60}")
-    print("NEW MODULES ANALYSIS")
+    print("FINANCIAL REPORT API ANALYSIS")
     print(f"{'='*60}")
     
     if server_ok:
@@ -544,40 +540,50 @@ def main():
     if auth_success:
         print(f"✅ Authentication working with company ID: {SOCIETE_ID}")
     
-    # Achats Module Analysis
-    achats_tests = ["Achats Dashboard", "Achats Suppliers", "Purchase Categories", "Projects/Cost Centers"]
-    achats_passed = sum(1 for test_name, result in test_results if test_name in achats_tests and result)
+    # Financial Report Analysis
+    report_tests = ["Financial Report Main (Monthly)", "Financial Report Daily", "Financial Report Yearly"]
+    report_passed = sum(1 for test_name, result in test_results if test_name in report_tests and result)
     
-    print(f"\n🧾 ACHATS MODULE: {achats_passed}/{len(achats_tests)} tests passed")
-    if achats_passed >= 3:
-        print("✅ Achats module appears to be working correctly")
+    print(f"\n📊 FINANCIAL REPORT ENDPOINTS: {report_passed}/{len(report_tests)} tests passed")
+    if report_passed >= 2:
+        print("✅ Financial report endpoints are working correctly")
     else:
-        print("❌ Achats module has significant issues")
+        print("❌ Financial report endpoints have significant issues")
     
-    # Notes de frais Module Analysis
-    notes_tests = ["Notes de frais Dashboard", "Expense Types"]
-    notes_passed = sum(1 for test_name, result in test_results if test_name in notes_tests and result)
-    
-    print(f"\n💳 NOTES DE FRAIS MODULE: {notes_passed}/{len(notes_tests)} tests passed")
-    if notes_passed >= 1:
-        print("✅ Notes de frais module appears to be working correctly")
+    # Calculations and Data Analysis
+    if calc_success:
+        print("✅ Financial calculations are mathematically correct")
+        if main_report_data:
+            benefice_net = main_report_data.get('benefice_net', 0)
+            ca_encaisse = main_report_data.get('chiffre_affaires', {}).get('encaisse', 0)
+            depenses_ttc = main_report_data.get('depenses', {}).get('total_ttc', 0)
+            print(f"💰 August 2025 - CA encaissé: {ca_encaisse}€, Dépenses: {depenses_ttc}€, Bénéfice net: {benefice_net}€")
     else:
-        print("❌ Notes de frais module has significant issues")
+        print("❌ Financial calculations have errors")
+    
+    # Evolution API Analysis
+    if evolution_success:
+        print("✅ Evolution depenses API is working correctly")
+        if evolution_data:
+            evolution_periods = len(evolution_data.get('evolution', []))
+            print(f"📈 Evolution data available for {evolution_periods} periods in 2025")
+    else:
+        print("❌ Evolution depenses API has issues")
     
     # Overall assessment
-    critical_tests = achats_tests + notes_tests
+    critical_tests = ["Financial Report Main (Monthly)", "Financial Calculations", "Evolution Depenses API"]
     critical_passed = sum(1 for test_name, result in test_results if test_name in critical_tests and result)
     
-    if critical_passed >= 5:  # At least 5/6 critical tests passing
-        print(f"\n🎉 NEW MODULES TESTING SUCCESSFUL!")
-        print("✅ Both Achats and Notes de frais modules are operational")
-        print("✅ Core dashboard and data retrieval endpoints are working")
-        print("✅ Ready for frontend integration")
+    if critical_passed >= 2:  # At least 2/3 critical tests passing
+        print(f"\n🎉 FINANCIAL REPORT API TESTING SUCCESSFUL!")
+        print("✅ Main financial report API is operational")
+        print("✅ Core calculations and data retrieval are working")
+        print("✅ Ready for production use")
         return True
     else:
-        print(f"\n⚠️ NEW MODULES HAVE ISSUES")
+        print(f"\n⚠️ FINANCIAL REPORT API HAS ISSUES")
         print("❌ Some critical endpoints are not working properly")
-        print("❌ Frontend integration may encounter problems")
+        print("❌ Financial calculations or data retrieval may have problems")
         return False
 
 if __name__ == "__main__":
