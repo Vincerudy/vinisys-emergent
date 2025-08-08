@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 // import dayGridPlugin from '@fullcalendar/daygrid';
 // import timeGridPlugin from '@fullcalendar/timegrid';
 // import listPlugin from '@fullcalendar/list';
-import interactionPlugin from '@fullcalendar/interaction';
+// import interactionPlugin from '@fullcalendar/interaction';
 import CalenderModal from './CalenderModal';
 import CalenderSidebar from './CalenderSidebar';
 import AddEventForm from './AddEventForm';
