@@ -242,6 +242,121 @@ app.get('/api/projets/:societeId', async (req, res) => {
     }
 });
 
+// Route de création de note de frais
+app.post('/api/note-frais', async (req, res) => {
+    try {
+        const {
+            user_id,
+            societe_id,
+            vendeur,
+            date_frais,
+            pays,
+            devise,
+            montant_ttc,
+            montant_ht,
+            montant_tva,
+            moyen_paiement,
+            motif,
+            projet_id,
+            commentaire,
+            statut = 'brouillon'
+        } = req.body;
+
+        console.log('Création note de frais:', req.body);
+
+        // Validation des champs requis
+        if (!user_id || !societe_id) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'User ID et Société ID sont requis' 
+            });
+        }
+
+        if (!vendeur || !montant_ttc) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Vendeur et montant TTC sont requis' 
+            });
+        }
+
+        // Générer un numéro de note de frais
+        const [lastNote] = await db.execute(
+            'SELECT COUNT(*) as count FROM notes_frais WHERE societe_id = ?',
+            [societe_id]
+        );
+        const numeroNote = `NF${societe_id}-${(lastNote[0].count + 1).toString().padStart(4, '0')}`;
+
+        // Insérer la note de frais
+        const [result] = await db.execute(`
+            INSERT INTO notes_frais (
+                user_id, societe_id, numero, titre, description, 
+                montant_total, statut, periode_debut, periode_fin,
+                created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        `, [
+            user_id,
+            societe_id,
+            numeroNote,
+            `Note de frais - ${vendeur}`,
+            motif || `Frais ${vendeur}`,
+            montant_ttc,
+            statut,
+            date_frais || new Date().toISOString().split('T')[0],
+            date_frais || new Date().toISOString().split('T')[0]
+        ]);
+
+        const noteId = result.insertId;
+
+        // Insérer le détail de la ligne de frais
+        await db.execute(`
+            INSERT INTO lignes_frais (
+                note_frais_id, type_frais_id, date_frais, description,
+                montant, montant_ht, montant_tva, 
+                vendeur, pays, devise, moyen_paiement,
+                projet_id, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [
+            noteId,
+            1, // Type frais par défaut (repas)
+            date_frais || new Date().toISOString().split('T')[0],
+            `${motif} - ${vendeur}`,
+            montant_ttc,
+            montant_ht || 0,
+            montant_tva || 0,
+            vendeur,
+            pays || 'France',
+            devise || 'EUR',
+            moyen_paiement || 'Carte de Crédit Société',
+            projet_id
+        ]);
+
+        console.log('Note de frais créée avec succès:', {
+            noteId,
+            numeroNote,
+            montant_ttc
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Note de frais créée avec succès',
+            data: {
+                noteId,
+                numero: numeroNote,
+                montant_total: montant_ttc,
+                statut
+            }
+        });
+
+    } catch (error) {
+        console.error('Erreur création note de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la création de la note de frais',
+            error: error.message
+        });
+    }
+});
+
 // =====================================
 // ROUTES LEGACY (Ancien module dépenses)
 // Pour compatibilité descendante
