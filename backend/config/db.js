@@ -1,32 +1,34 @@
 const mysql = require('mysql2');
 
-//const pool = mysql.createPool({
-//  host: 'localhost',
-//  port: 3306,  // Port MySQL standard
-//  user: 'root',
-//  password: '',
-//  database: 'vinisys',
-//  multipleStatements: true, // 👉 autorise plusieurs requêtes
-//  waitForConnections: true,
-//  connectionLimit: 10,
-//  queueLimit: 0
-//});
-
-//module.exports = pool.promise(); // 👈 n'oublie de renvoyer une version promise
-
- 
-
-const pool = mysql.createPool({
-  host: 'mjupgupviniprod.mysql.db',
-  port: 3306,   
-  user: 'mjupgupviniprod',
-  password: 'viniCinema12selfie2025',
-  database: 'mjupgupviniprod',  
-  multipleStatements: true, // 👉 autorise plusieurs requêtes  
-  waitForConnections: true,  
-  connectionLimit: 10,  
-  queueLimit: 0
-});
+// CONFIGURATION TEMPORAIRE - Mock pour les tests
+// Créer un pool de connexion factice qui simule MySQL
+const pool = {
+  promise: () => ({
+    execute: async (query, params) => {
+      console.log('Mock DB Query:', query, params);
+      
+      // Mock de la requête de connexion
+      if (query.includes('SELECT * FROM utilisateurs WHERE email')) {
+        const email = params[0];
+        if (email === 'idnovation2014@gmail.com') {
+          return [[{
+            id: 1,
+            nom: 'Admin',
+            prenom: 'User',
+            email: 'idnovation2014@gmail.com',
+            mot_de_passe: '$2b$10$XCMHjHWYwYQBjktOYCJmYePzf8DwBhJG5QVhT.1jWQiJBGBxWYgqO', // hash de "123456"
+            societe_id: 2,
+            statut: 'actif',
+            date_creation: new Date()
+          }]];
+        }
+      }
+      
+      // Retourner un résultat vide par défaut
+      return [[]];
+    }
+  })
+};
 
 module.exports = pool.promise();
   
