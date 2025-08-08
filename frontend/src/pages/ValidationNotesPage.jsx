@@ -85,24 +85,37 @@ const ValidationNotesPage = () => {
   };
 
   const confirmValidation = async () => {
-    try {
-      setProcessing(true);
-      
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/notes-frais/validate`, {
-        noteIds: selectedNotes,
-        action: validationAction
-      });
+    if (selectedNotes.length === 0) {
+      alert('Veuillez sélectionner au moins une note');
+      return;
+    }
 
-      if (response.data.success) {
-        alert(response.data.message);
-        setSelectedNotes([]);
-        await fetchNotesEnAttente(); // Recharger la liste
+    setProcessing(true);
+    try {
+      const { id: validateur_id } = useAuth();
+      
+      // Valider chaque note individuellement
+      for (const noteId of selectedNotes) {
+        const endpoint = validationAction === 'valider' 
+          ? `/notes-frais/${noteId}/valider`
+          : `/notes-frais/${noteId}/refuser`;
+          
+        const data = validationAction === 'valider' 
+          ? { validateur_id }
+          : { validateur_id, motif_refus: 'Refusée en lot' };
+
+        await axios.post(`${import.meta.env.VITE_API_URL}${endpoint}`, data);
       }
+
+      alert(`${selectedNotes.length} note(s) ${validationAction === 'valider' ? 'validée(s)' : 'refusée(s)'} avec succès`);
+      setSelectedNotes([]);
+      await fetchNotesEnAttente(); // Recharger la liste
     } catch (error) {
       console.error('Erreur validation:', error);
-      alert('Erreur lors de la validation');
+      alert('Erreur lors de la validation: ' + (error.response?.data?.error || error.message));
     } finally {
       setProcessing(false);
+      setShowValidationModal(false);
     }
   };
 
