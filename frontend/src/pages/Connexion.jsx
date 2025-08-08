@@ -188,7 +188,7 @@ const Connexion = () => {
             </div>
           )}
 
-          <form onSubmit={handleAuthSubmit} className='auth-form'>
+          <form onSubmit={handleAuthSubmit} noValidate className='auth-form'>
             {!isLogin && !isForgetPass && (
               <>
                 {step === 1 && (
