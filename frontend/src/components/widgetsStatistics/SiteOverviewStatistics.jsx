@@ -140,7 +140,7 @@ const SiteOverviewStatistics = ({parametrage}) => {
                                         <h3 className="fs-13 fw-semibold text-truncate-1-line">{parametrage?.vatLabel || 'TVA'} Due</h3>
                                             <div className="fs-4 fw-bold text-dark">
                                              
-                                                <span className="counter">{tvaDue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                                <span className="counter">{(tvaDue || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                             </div>
  
                                         </div>
