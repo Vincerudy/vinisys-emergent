@@ -283,8 +283,8 @@ const RapportPage = () => {
             <h3>Répartition par Catégorie</h3>
             <div className="categories-grid">
               {rapportData.depenses.categories?.map(cat => (
-                <div key={cat.nom} className="category-item">
-                  <div className="category-name">{cat.nom}</div>
+                <div key={cat.nom_categorie} className="category-item">
+                  <div className="category-name">{cat.nom_categorie}</div>
                   <div className="category-montant">{formatMontant(cat.montant)}</div>
                   <div className="category-bar">
                     <div 
