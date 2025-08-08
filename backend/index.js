@@ -75,7 +75,7 @@ app.post('/api/login', async (req, res) => {
         }
 
         const [users] = await db.execute(
-            'SELECT u.*, s.companyName as societe_nom FROM users u LEFT JOIN societes s ON u.societe_id = s.id WHERE u.email = ? AND u.statut = "actif"',
+            'SELECT u.*, s.companyName as societe_nom FROM users u LEFT JOIN societes s ON u.societe_id = s.id WHERE u.email = ?',
             [email]
         );
 
