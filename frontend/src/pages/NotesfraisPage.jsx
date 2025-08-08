@@ -217,34 +217,58 @@ const NotesfraisPage = () => {
         </div>
       </div>
 
-      {/* Alertes */}
+      {/* Alertes et statut avancé */}
       {indicateurs.nb_notes_en_attente > 0 && (
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <div className="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-lg">
           <div className="flex items-center gap-3">
             <FiClock className="text-orange-600" size={20} />
-            <div>
+            <div className="flex-1">
               <p className="font-medium text-orange-800">
-                {indicateurs.nb_notes_en_attente} note(s) en attente de validation
+                🔍 {indicateurs.nb_notes_en_attente} note(s) en attente de validation managériale
               </p>
-              <p className="text-orange-600 text-sm">Action requise par les managers</p>
+              <p className="text-orange-600 text-sm">Action requise par les managers pour déblocage remboursement</p>
             </div>
+            <button className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700">
+              Voir les notes
+            </button>
           </div>
         </div>
       )}
 
-      {/* Taux de refus élevé */}
-      {indicateurs.taux_refus > 10 && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      {/* Taux de refus élevé - Alerte critique */}
+      {indicateurs.taux_refus > 15 && (
+        <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
           <div className="flex items-center gap-3">
             <FiXCircle className="text-red-600" size={20} />
-            <div>
+            <div className="flex-1">
               <p className="font-medium text-red-800">
-                Taux de refus élevé : {indicateurs.taux_refus}%
+                ⚠️ Taux de refus critique : {indicateurs.taux_refus}% 
               </p>
               <p className="text-red-600 text-sm">
-                Montant refusé : {formatCurrency(indicateurs.montant_refuse)}
+                Montant refusé : {formatCurrency(indicateurs.montant_refuse)} - Vérifier la conformité des justificatifs
               </p>
             </div>
+            <button className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700">
+              Analyser
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Rappel remboursements en attente */}
+      {indicateurs.montant_valide > indicateurs.montant_rembourse && (
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
+          <div className="flex items-center gap-3">
+            <FiTrendingUp className="text-blue-600" size={20} />
+            <div className="flex-1">
+              <p className="font-medium text-blue-800">
+                💰 Remboursements en attente : {formatCurrency(indicateurs.montant_valide - indicateurs.montant_rembourse)}
+              </p>
+              <p className="text-blue-600 text-sm">Notes validées en attente de virement aux employés</p>
+            </div>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
+              Traitement RH
+            </button>
           </div>
         </div>
       )}
