@@ -12,7 +12,8 @@ import {
   FiClock,
   FiUsers,
   FiMap,
-  FiFileText
+  FiFileText,
+  FiCalendar
 } from 'react-icons/fi';
 import './css/NotesfraisPage.css';
 
