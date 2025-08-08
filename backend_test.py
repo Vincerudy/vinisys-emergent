@@ -113,10 +113,10 @@ def test_invoice_list():
         return False, None
 
 def test_chart_data():
-    """Test 3: Test chart data endpoint - GET /api/dataGraphiqueFacture/dataGraphiqueFacture?id=67"""
+    """Test 3: Test chart data endpoint - GET /api/dataGraphiqueFacture/dataGraphiqueFacture/67"""
     print_test_header("Chart Data Recovery Test")
     try:
-        response = requests.get(f"{API_BASE}/dataGraphiqueFacture/dataGraphiqueFacture?id={TEST_USER_ID}", timeout=10)
+        response = requests.get(f"{API_BASE}/dataGraphiqueFacture/dataGraphiqueFacture/{TEST_USER_ID}", timeout=10)
         if response.status_code == 200:
             data = response.json()
             # Check if we have chart data
@@ -134,10 +134,10 @@ def test_chart_data():
         return False, None
 
 def test_client_list():
-    """Test 4: Test client list endpoint - GET /api/listeClient/67"""
+    """Test 4: Test client list endpoint - GET /api/listeClient/listeClient/67"""
     print_test_header("Client List Recovery Test")
     try:
-        response = requests.get(f"{API_BASE}/listeClient/{TEST_USER_ID}", timeout=10)
+        response = requests.get(f"{API_BASE}/listeClient/listeClient/{TEST_USER_ID}", timeout=10)
         if response.status_code == 200:
             data = response.json()
             # Check if we have client data
