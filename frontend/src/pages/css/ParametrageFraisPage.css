@@ -1,0 +1,403 @@
+/* Page de paramétrage des types de frais */
+
+.parametrage-frais-page {
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  color: #64748b;
+}
+
+/* Header */
+.page-header {
+  background: white;
+  padding: 24px 30px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left h1 {
+  margin: 0 0 8px 0;
+  color: #1e293b;
+  font-size: 1.875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-left p {
+  margin: 0;
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.header-actions .btn-primary {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.header-actions .btn-primary:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+/* Add Form */
+.add-form-container {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 30px 24px 30px;
+}
+
+.add-form {
+  max-width: 800px;
+}
+
+.add-form h3 {
+  margin: 0 0 20px 0;
+  color: #1e293b;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 20px;
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cancel, .btn-save {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel {
+  background: #f8fafc;
+  color: #475569;
+  border: 2px solid #e2e8f0;
+}
+
+.btn-cancel:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.btn-save {
+  background: #10b981;
+  color: white;
+  border: none;
+}
+
+.btn-save:hover {
+  background: #059669;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Types Container */
+.types-container {
+  padding: 30px;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 30px;
+}
+
+.types-table-container {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.types-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.types-table thead {
+  background: #f8fafc;
+}
+
+.types-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.types-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.types-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.types-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.type-row.disabled {
+  opacity: 0.6;
+}
+
+.type-row.disabled .libelle-text {
+  text-decoration: line-through;
+}
+
+.type-libelle .libelle-text {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.edit-input {
+  padding: 6px 10px;
+  border: 2px solid #10b981;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #1e293b;
+  background: white;
+  outline: none;
+}
+
+.type-nom code {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: 2px solid;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  border-color: #10b981;
+  color: #10b981;
+  background: #f0fdf4;
+}
+
+.toggle-btn.inactive {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+.toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+.toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.actions-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-action {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit {
+  color: #f59e0b;
+}
+
+.btn-edit:hover {
+  background: #fffbeb;
+  border-color: #f59e0b;
+}
+
+.btn-delete {
+  color: #ef4444;
+}
+
+.btn-delete:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.btn-validate {
+  color: #10b981;
+}
+
+.btn-validate:hover {
+  background: #f0fdf4;
+  border-color: #10b981;
+}
+
+.btn-cancel-edit {
+  color: #6b7280;
+}
+
+.btn-cancel-edit:hover {
+  background: #f9fafb;
+  border-color: #6b7280;
+}
+
+/* Info Panel */
+.info-panel {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 24px;
+  height: fit-content;
+}
+
+.info-panel h3 {
+  margin: 0 0 16px 0;
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.info-panel ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.info-panel li {
+  margin-bottom: 8px;
+}
+
+.info-panel strong {
+  color: #374151;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .types-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .info-panel {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-actions {
+    justify-content: center;
+  }
+
+  .types-container {
+    padding: 20px;
+  }
+
+  .types-table th,
+  .types-table td {
+    padding: 12px 16px;
+  }
+
+  .types-table th:nth-child(2),
+  .types-table td:nth-child(2) {
+    display: none;
+  }
+}
