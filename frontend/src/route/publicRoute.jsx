@@ -175,7 +175,7 @@ export const publicRoute = createHashRouter([
         children: [
             {
                 path: "/",
-                element: <TestPage />,
+                element: <PublicRoute element={<Connexion />} />,
             },
             {
                 path: "/home",
