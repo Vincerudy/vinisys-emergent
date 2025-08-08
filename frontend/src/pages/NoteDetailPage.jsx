@@ -12,7 +12,8 @@ import {
   FiCalendar,
   FiUser,
   FiFolder,
-  FiArrowLeft
+  FiArrowLeft,
+  FiCheck
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
