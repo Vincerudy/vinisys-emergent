@@ -95,15 +95,16 @@ const NotesfraisPage = () => {
   const indicateurs = dashboardData?.indicateurs || {};
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="notes-frais-page">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="notes-frais-header">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            💳 Notes de Frais
+          <h1>
+            <FiFileText />
+            Notes de frais Employés
           </h1>
-          <p className="text-gray-600 mt-1">
-            Gestion des frais professionnels des employés
+          <p>
+            Gestion des notes de frais employés avec validation et remboursements
           </p>
         </div>
         <div className="flex gap-3">
