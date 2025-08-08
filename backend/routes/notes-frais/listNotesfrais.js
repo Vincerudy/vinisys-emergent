@@ -52,7 +52,7 @@ router.get('/:userId', async (req, res) => {
                 COUNT(jf.id) as nb_justificatifs
             FROM notes_frais nf
             LEFT JOIN users u ON nf.user_id = u.id
-            LEFT JOIN users v ON nf.validee_par = v.id
+            LEFT JOIN users v ON nf.validateur_id = v.id
             LEFT JOIN lignes_frais lf ON nf.id = lf.note_frais_id
             LEFT JOIN justificatifs_frais jf ON lf.id = jf.ligne_frais_id
             ${whereClause}
