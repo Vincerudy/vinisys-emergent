@@ -242,8 +242,8 @@ app.get('/api/projets/:societeId', async (req, res) => {
     }
 });
 
-// Route de création de note de frais
-app.post('/api/note-frais', async (req, res) => {
+// Notes de frais - Routes simplifiées
+app.post('/api/note-frais/simple', async (req, res) => {
     try {
         const {
             user_id,
@@ -262,7 +262,7 @@ app.post('/api/note-frais', async (req, res) => {
             statut = 'brouillon'
         } = req.body;
 
-        console.log('Création note de frais:', req.body);
+        console.log('Création note de frais simple:', req.body);
 
         // Validation des champs requis
         if (!user_id || !societe_id) {
