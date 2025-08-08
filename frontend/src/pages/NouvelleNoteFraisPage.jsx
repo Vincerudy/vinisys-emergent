@@ -98,19 +98,37 @@ const NouvelleNoteFraisPage = () => {
     try {
       setSaving(true);
       
+      // Validation basique
+      if (!justificatifData.vendeur || !justificatifData.totalTTC) {
+        alert('Veuillez remplir au minimum le vendeur et le montant TTC');
+        setSaving(false);
+        return;
+      }
+      
       const noteComplete = {
-        ...noteData,
-        ...justificatifData,
+        user_id: user_id,
+        societe_id: societe_id,
+        vendeur: justificatifData.vendeur,
+        date_frais: justificatifData.date || new Date().toISOString().split('T')[0],
+        pays: justificatifData.pays,
+        devise: justificatifData.devise,
+        montant_ttc: parseFloat(justificatifData.totalTTC.replace(',', '.')) || 0,
+        montant_ht: parseFloat(justificatifData.totalHT.replace(',', '.')) || 0,
+        montant_tva: parseFloat(justificatifData.tva.replace(',', '.')) || 0,
+        moyen_paiement: justificatifData.moyenPaiement,
+        motif: noteData.motif,
+        projet_id: noteData.projet_id || null,
+        commentaire: noteData.commentaire,
         statut,
         montant_total: parseFloat(justificatifData.totalTTC.replace(',', '.')) || 0
       };
 
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/notes-frais/create/${societe_id}`,
+        `${import.meta.env.VITE_API_URL}/note-frais`,
         noteComplete
       );
 
-      if (response.data.success) {
+      if (response.status === 201 || response.status === 200) {
         if (statut === 'brouillon') {
           alert('Note de frais sauvegardée en brouillon');
         } else {
@@ -120,7 +138,7 @@ const NouvelleNoteFraisPage = () => {
       }
     } catch (error) {
       console.error('Erreur sauvegarde:', error);
-      alert('Erreur lors de la sauvegarde');
+      alert('Erreur lors de la sauvegarde: ' + (error.response?.data?.message || error.message));
     } finally {
       setSaving(false);
     }
