@@ -47,11 +47,55 @@ const NouvelleNoteFraisPage = () => {
   const [loading, setLoading] = useState(isEditMode);
 
   useEffect(() => {
-    fetchInitialData();
-    if (isEditMode && noteId) {
-      fetchNoteData(noteId);
+    if (!isEditMode) {
+      // Mode création : créer une nouvelle note et rediriger
+      createNewNoteAndRedirect();
+    } else {
+      // Mode édition : charger les données existantes
+      fetchInitialData();
+      if (noteId) {
+        fetchNoteData(noteId);
+      }
     }
-  }, [societe_id, noteId]);
+  }, [societe_id, noteId, isEditMode]);
+
+  const createNewNoteAndRedirect = async () => {
+    try {
+      setLoading(true);
+      
+      // Créer une nouvelle note de frais
+      const currentDate = new Date();
+      const startOfWeek = new Date(currentDate);
+      startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Lundi
+      
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Dimanche
+      
+      const noteData = {
+        user_id,
+        societe_id,
+        periode_debut: startOfWeek.toISOString().split('T')[0],
+        periode_fin: endOfWeek.toISOString().split('T')[0],
+        titre: `Note de frais - ${startOfWeek.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}`,
+        description: 'Nouvelle note de frais'
+      };
+
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/note-frais`, noteData);
+      
+      if (response.data.success && response.data.note_id) {
+        // Rediriger vers la page de détail de la nouvelle note
+        window.location.hash = `#/notes-frais/note/${response.data.note_id}`;
+      } else {
+        throw new Error('Erreur lors de la création de la note');
+      }
+    } catch (error) {
+      console.error('Erreur création nouvelle note:', error);
+      alert('Erreur lors de la création de la nouvelle note');
+      window.location.hash = '#/notes-frais/liste';
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchInitialData = async () => {
     try {
