@@ -355,7 +355,7 @@ def test_create_note_frais(user_data):
         return False
     
     note_data = {
-        "utilisateur_id": user_data['id'],
+        "user_id": user_data['id'],
         "periode_debut": "2024-01-01",
         "periode_fin": "2024-01-31",
         "titre": "Note de frais test - Janvier 2024",
