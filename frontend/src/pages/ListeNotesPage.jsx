@@ -68,11 +68,11 @@ const ListeNotesPage = () => {
   };
 
   const handleEditNote = (noteId) => {
-    window.location.href = `/#/notes-frais/edit/${noteId}`;
+    window.location.href = `/#/notes-frais/note/${noteId}`;
   };
 
   const handleViewNote = (noteId) => {
-    window.location.href = `/#/notes-frais/view/${noteId}`;
+    window.location.href = `/#/notes-frais/note/${noteId}`;
   };
 
   const filteredNotes = notes.filter(note => {
