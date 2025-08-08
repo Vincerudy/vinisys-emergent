@@ -91,6 +91,10 @@ import DetailsDepense from "../pages/DetailsDepense";
 import ParametresDepenses from "../pages/ParametresDepenses";
 import ValidationDepenses from "../pages/ValidationDepenses";
 
+// Nouveaux modules refondus
+import AchatsPage from "../pages/AchatsPage";
+import NotesfraisPage from "../pages/NotesfraisPage";
+
 import axios from "axios";
 import ImportProduitsPage from "../pages/ImportProduitsPage";
 import InventaireManuel from "../pages/InventaireManuel";
