@@ -10,8 +10,14 @@ import {
   FiFile,
   FiCheck,
   FiX,
-  FiPlus
+  FiPlus,
+  FiDollarSign,
+  FiCalendar,
+  FiFileText,
+  FiUser,
+  FiEye
 } from 'react-icons/fi';
+import './css/NouvelAchatPage.css';
 
 const NouvelAchatPage = () => {
   const { societe_id, id: user_id } = useAuth();
