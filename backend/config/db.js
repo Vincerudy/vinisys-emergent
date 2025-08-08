@@ -7,11 +7,23 @@ const pool = mysql.createPool({
   user: 'root',
   password: '',
   database: 'mjupgupviniprod',
-  multipleStatements: true, // 👉 autorise plusieurs requêtes
+  multipleStatements: true, // autorise plusieurs requêtes
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  acquireTimeout: 60000,
+  timeout: 60000,
+  reconnect: true
 });
+
+// Test de connexion au démarrage
+pool.execute('SELECT 1')
+  .then(() => {
+    console.log('✅ Connexion MySQL réussie à mjupgupviniprod');
+  })
+  .catch((error) => {
+    console.error('❌ Erreur connexion MySQL:', error);
+  });
 
 module.exports = pool.promise();
   
