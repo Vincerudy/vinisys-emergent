@@ -465,12 +465,36 @@ export const publicRoute = createHashRouter([
                 element: <ProtectedRoute element={<AchatsPage />} />,
             },
             {
+                path: "/achats/liste",
+                element: <ProtectedRoute element={<ListeAchatsPage />} />,
+            },
+            {
                 path: "/achats/nouveau",
                 element: <ProtectedRoute element={<NouvelAchatPage />} />,
             },
             {
+                path: "/achats/fournisseurs",
+                element: <ProtectedRoute element={<FournisseursPage />} />,
+            },
+            {
                 path: "/notes-frais",
                 element: <ProtectedRoute element={<NotesfraisPage />} />,
+            },
+            {
+                path: "/notes-frais/liste",
+                element: <ProtectedRoute element={<ListeNotesfraisPage />} />,
+            },
+            {
+                path: "/notes-frais/nouvelle",
+                element: <ProtectedRoute element={<NouvelleNoteFraisPage />} />,
+            },
+            {
+                path: "/notes-frais/validation",
+                element: <ProtectedRoute element={<ValidationNotesPage />} />,
+            },
+            {
+                path: "/notes-frais/historique",
+                element: <ProtectedRoute element={<HistoriqueNotesPage />} />,
             },
             {
                 path: "/reset-password/:token",
