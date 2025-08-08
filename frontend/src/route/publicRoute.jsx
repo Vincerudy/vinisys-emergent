@@ -99,6 +99,7 @@ import ListeAchatsPage from "../pages/ListeAchatsPage";
 import ListeNotesPage from "../pages/ListeNotesPage";
 import NouvelleNoteFraisPage from "../pages/NouvelleNoteFraisPage";
 import NoteDetailPage from "../pages/NoteDetailPage";
+import ParametrageFraisPage from "../pages/ParametrageFraisPage";
 import TestNoteFraisPage from "../pages/TestNoteFraisPage";
 import ValidationNotesPage from "../pages/ValidationNotesPage";
 import HistoriqueNotesPage from "../pages/HistoriqueNotesPage";
