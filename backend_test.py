@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Notes de frais Testing
-Tests the specific endpoints requested for notes de frais creation
+Backend API Testing Script for Vinisys Application - Financial Report Testing
+Tests the financial report API endpoints as requested
 """
 
 import requests
