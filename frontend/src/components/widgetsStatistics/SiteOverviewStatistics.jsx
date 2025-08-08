@@ -95,7 +95,7 @@ const SiteOverviewStatistics = ({parametrage}) => {
                                         <div>
                                             <div className="fs-4 fw-bold text-dark">
                                              
-                                                <span className="counter">{total_attente.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                                <span className="counter">{(total_attente || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                             </div>
                                             <h3 className="fs-13 fw-semibold text-truncate-1-line">En attente</h3>
                                         </div>
