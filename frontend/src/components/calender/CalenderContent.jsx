@@ -294,6 +294,21 @@ const CalenderContent = () => {
                             </div>
                         </div>
 
+                        {/* Temporairement remplacé pour corriger les erreurs d'affichage */}
+                        <div className="calendar-placeholder" style={{
+                            height: '600px',
+                            border: '1px solid #ddd',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: '#f9f9f9',
+                            color: '#666',
+                            fontSize: '16px'
+                        }}>
+                            📅 Calendrier temporairement indisponible - En cours de réparation
+                        </div>
+                        {/* 
                         <FullCalendar
                             plugins={[
                                 dayGridPlugin,
@@ -327,6 +342,7 @@ const CalenderContent = () => {
                             firstDay={isWeekMonday}
                             eventContent={renderEventContent}
                         />
+                        */
 
                         {isAddModalOpen && (
                             <CalenderModal
