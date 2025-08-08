@@ -17,7 +17,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import './css/ValidationNotesPage.css';
 
 const ValidationNotesPage = () => {
-  const { societe_id } = useAuth();
+  const { societe_id, id: validateur_id } = useAuth();
   
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
