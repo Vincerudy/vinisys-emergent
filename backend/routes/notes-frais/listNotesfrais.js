@@ -73,11 +73,11 @@ router.get('/:userId', async (req, res) => {
         const statsQuery = `
             SELECT 
                 COUNT(*) as total_notes,
-                SUM(nf.montant_total) as montant_total,
-                SUM(CASE WHEN nf.statut = 'brouillon' THEN nf.montant_total ELSE 0 END) as montant_brouillon,
-                SUM(CASE WHEN nf.statut = 'soumise' THEN nf.montant_total ELSE 0 END) as montant_soumis,
-                SUM(CASE WHEN nf.statut = 'validee' THEN nf.montant_total ELSE 0 END) as montant_valide,
-                SUM(CASE WHEN nf.statut = 'remboursee' THEN nf.montant_total ELSE 0 END) as montant_rembourse
+                SUM(nf.total_ttc) as montant_total,
+                SUM(CASE WHEN nf.statut = 'brouillon' THEN nf.total_ttc ELSE 0 END) as montant_brouillon,
+                SUM(CASE WHEN nf.statut = 'soumise' THEN nf.total_ttc ELSE 0 END) as montant_soumis,
+                SUM(CASE WHEN nf.statut = 'validee' THEN nf.total_ttc ELSE 0 END) as montant_valide,
+                SUM(CASE WHEN nf.statut = 'payee' THEN nf.total_ttc ELSE 0 END) as montant_rembourse
             FROM notes_frais nf
             ${whereClause}
         `;
