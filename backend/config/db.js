@@ -8,7 +8,7 @@ const pool = {
       console.log('Mock DB Query:', query, params);
       
       // Mock de la requête de connexion
-      if (query.includes('SELECT * FROM utilisateurs WHERE email')) {
+      if (query.includes('SELECT u.*, s.companyName as societe_nom FROM users u LEFT JOIN societes s')) {
         const email = params[0];
         if (email === 'idnovation2014@gmail.com') {
           return [[{
@@ -16,9 +16,10 @@ const pool = {
             nom: 'Admin',
             prenom: 'User',
             email: 'idnovation2014@gmail.com',
-            mot_de_passe: '$2b$10$lzwNIeCMVVu.W0tXB7p2bOwoopadWKKsG5bCo9diXStnj.LzIbyXG', // hash de "123456"
+            password: '$2b$10$lzwNIeCMVVu.W0tXB7p2bOwoopadWKKsG5bCo9diXStnj.LzIbyXG', // hash de "123456"
             societe_id: 2,
             statut: 'actif',
+            societe_nom: 'Vinisys Test',
             date_creation: new Date()
           }]];
         }
