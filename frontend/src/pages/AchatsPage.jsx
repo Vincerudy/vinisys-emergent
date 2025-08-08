@@ -11,7 +11,7 @@ import {
   FiFileText,
   FiPercent,
   FiCheckCircle,
-  FiBarChart3,
+  FiBarChart2,
   FiPieChart,
   FiCalendar,
   FiUser,
