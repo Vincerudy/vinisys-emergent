@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
-import NavigationManu from '@/components/shared/navigationMenu/NavigationMenu'
+import NavigationManu from '../components/shared/navigationMenu/NavigationMenu'
 import Header from '@/components/shared/header/Header'
 import useBootstrapUtils from '@/hooks/useBootstrapUtils'
 import SupportDetails from '@/components/supportDetails'
