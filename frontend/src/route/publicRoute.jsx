@@ -111,6 +111,8 @@ import ListeTicketsMaintenance from "../pages/pilotage/ListeTicketsMaintenance";
 import TicketDetailMaintenance from "../pages/pilotage/TicketDetailMaintenance";
 import Ticketchat from "../pages/Ticketchat";
 
+import TestPage from "../pages/TestPage";
+
 const testToken = async (value, logout) =>{
     console.log('MOI MOUKO', value)
     try {
