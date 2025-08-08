@@ -21,7 +21,7 @@ import { useAuth } from '../contexte/AuthContext';
 import './css/ListeNotesfraisPage.css';
 
 const ListeNotesfraisPage = () => {
-  const { societe_id, user_id } = useAuth();
+  const { societe_id, id: user_id } = useAuth();
   const [notesfrais, setNotesfrais] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
