@@ -118,46 +118,45 @@ const AchatsPage = () => {
   const indicateurs = dashboardData?.indicateurs || {};
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="achats-page">
       {/* Header avec actions */}
-      <div className="flex justify-between items-center">
+      <div className="achats-header">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            🧾 Dépenses & Achats Entreprise
+          <h1>
+            <FiDollarSign />
+            Achats & Dépenses Entreprise
           </h1>
-          <p className="text-gray-600 mt-1">
-            Gestion des achats, fournisseurs et dépenses professionnelles
+          <p>
+            Gestion des achats, fournisseurs et dépenses professionnelles avec suivi TVA
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="filter-actions">
           <button 
             onClick={() => window.open('/#/achats/nouveau', '_blank')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            className="action-btn"
           >
-            <FiPlus size={16} />
+            <FiPlus className="action-icon" />
             Nouvel achat
           </button>
-          <div className="relative group">
-            <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-              <FiDownload size={16} />
+          <div className="export-dropdown">
+            <button className="action-btn success">
+              <FiDownload className="action-icon" />
               Export
             </button>
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden group-hover:block">
-              <button 
-                onClick={() => exportComptable('sage')}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-              >
+            <div className="export-menu">
+              <button onClick={() => exportComptable('sage')}>
                 Export Sage (.txt)
               </button>
-              <button 
-                onClick={() => exportComptable('ciel')}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-              >
+              <button onClick={() => exportComptable('ciel')}>
                 Export Ciel (.csv)
               </button>
-              <button 
-                onClick={() => exportComptable('cegid')}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+              <button onClick={() => exportComptable('cegid')}>
+                Export Cégid (.csv)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
               >
                 Export Cegid (.csv)
               </button>
