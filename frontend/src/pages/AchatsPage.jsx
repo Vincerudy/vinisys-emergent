@@ -259,57 +259,65 @@ const AchatsPage = () => {
         </div>
       </div>
 
-      {/* Indicateurs clés */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
+      {/* Indicateurs financiers */}
+      <div className="financial-indicators">
+        <div className="indicator-card primary">
+          <div className="indicator-header">
             <div>
-              <p className="text-gray-600 text-sm">Dépenses du mois</p>
-              <p className="text-2xl font-bold text-blue-600">
+              <div className="indicator-value">
                 {formatCurrency(indicateurs.montant_ttc_total)}
-              </p>
-              <p className="text-xs text-gray-500">{indicateurs.nb_achats} achat(s)</p>
+              </div>
+              <div className="indicator-label">Dépenses du mois</div>
+              <div className="indicator-change positive">{indicateurs.nb_achats} achat(s)</div>
             </div>
-            <FiShoppingCart className="text-blue-600" size={24} />
+            <div className="indicator-icon">
+              <FiDollarSign />
+            </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
+        <div className="indicator-card success">
+          <div className="indicator-header">
             <div>
-              <p className="text-gray-600 text-sm">TVA récupérable</p>
-              <p className="text-2xl font-bold text-green-600">
+              <div className="indicator-value">
                 {formatCurrency(indicateurs.tva_deductible)}
-              </p>
-              <p className="text-xs text-gray-500">Déductible</p>
+              </div>
+              <div className="indicator-label">TVA récupérable</div>
+              <div className="indicator-change positive">Déductible</div>
             </div>
-            <FiPercent className="text-green-600" size={24} />
+            <div className="indicator-icon">
+              <FiTrendingUp />
+            </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
+        <div className="indicator-card warning">
+          <div className="indicator-header">
             <div>
-              <p className="text-gray-600 text-sm">TVA non récupérable</p>
-              <p className="text-2xl font-bold text-red-600">
+              <div className="indicator-value">
                 {formatCurrency(indicateurs.tva_non_deductible)}
-              </p>
-              <p className="text-xs text-gray-500">Non déductible</p>
+              </div>
+              <div className="indicator-label">TVA non déductible</div>
+              <div className="indicator-change negative">Non récupérable</div>
             </div>
-            <FiDollarSign className="text-red-600" size={24} />
+            <div className="indicator-icon">
+              <FiPieChart />
+            </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
+        <div className="indicator-card info">
+          <div className="indicator-header">
             <div>
-              <p className="text-gray-600 text-sm">Dépenses via OCR</p>
-              <p className="text-2xl font-bold text-purple-600">
-                {indicateurs.pourcentage_ocr || 0}%
-              </p>
-              <p className="text-xs text-gray-500">{formatCurrency(indicateurs.montant_ocr)}</p>
+              <div className="indicator-value">
+                {Math.round(indicateurs.pourcentage_ocr || 0)}%
+              </div>
+              <div className="indicator-label">Utilisation OCR</div>
+              <div className="indicator-change positive">Automatisation</div>
             </div>
-            <FiFileText className="text-purple-600" size={24} />
+            <div className="indicator-icon">
+              <FiFileText />
+            </div>
           </div>
         </div>
       </div>
