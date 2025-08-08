@@ -177,54 +177,89 @@ const NotesfraisPage = () => {
         </div>
       </div>
 
-      {/* Indicateurs clés */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
+      {/* Indicateurs KPI */}
+      <div className="notes-kpis">
+        <div className="kpi-card submitted">
+          <div className="kpi-header">
+            <div className="kpi-icon">
+              <FiDollarSign />
+            </div>
             <div>
-              <p className="text-gray-600 text-sm">Notes soumises</p>
-              <p className="text-2xl font-bold text-blue-600">
+              <div className="kpi-value">
                 {formatCurrency(indicateurs.montant_total_soumis)}
-              </p>
-              <p className="text-xs text-gray-500">{indicateurs.nb_notes} note(s)</p>
+              </div>
+              <div className="kpi-label">Notes soumises</div>
             </div>
-            <FiCreditCard className="text-blue-600" size={24} />
+          </div>
+          <div className="kpi-trend">
+            <div className="trend-indicator positive">
+              <FiTrendingUp size={12} />
+              {indicateurs.nb_notes} note(s)
+            </div>
+            <div className="trend-period">Ce mois</div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
+        <div className="kpi-card validated">
+          <div className="kpi-header">
+            <div className="kpi-icon">
+              <FiCheck />
+            </div>
             <div>
-              <p className="text-gray-600 text-sm">Validées</p>
-              <p className="text-2xl font-bold text-green-600">
+              <div className="kpi-value">
                 {formatCurrency(indicateurs.montant_valide)}
-              </p>
+              </div>
+              <div className="kpi-label">Validées</div>
             </div>
-            <FiCheckCircle className="text-green-600" size={24} />
+          </div>
+          <div className="kpi-trend">
+            <div className="trend-indicator positive">
+              <FiCheck size={12} />
+              Approuvées
+            </div>
+            <div className="trend-period">Ce mois</div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
+        <div className="kpi-card rejected">
+          <div className="kpi-header">
+            <div className="kpi-icon">
+              <FiX />
+            </div>
             <div>
-              <p className="text-gray-600 text-sm">Remboursées</p>
-              <p className="text-2xl font-bold text-purple-600">
+              <div className="kpi-value">
                 {formatCurrency(indicateurs.montant_rembourse)}
-              </p>
+              </div>
+              <div className="kpi-label">Remboursées</div>
             </div>
-            <FiTrendingUp className="text-purple-600" size={24} />
+          </div>
+          <div className="kpi-trend">
+            <div className="trend-indicator positive">
+              <FiDollarSign size={12} />
+              Payées
+            </div>
+            <div className="trend-period">Ce mois</div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm">En attente</p>
-              <p className="text-2xl font-bold text-orange-600">
-                {indicateurs.nb_notes_en_attente || 0}
-              </p>
+        <div className="kpi-card pending">
+          <div className="kpi-header">
+            <div className="kpi-icon">
+              <FiClock />
             </div>
-            <FiClock className="text-orange-600" size={24} />
+            <div>
+              <div className="kpi-value">
+                {indicateurs.nb_notes_en_attente || 0}
+              </div>
+              <div className="kpi-label">En attente</div>
+            </div>
+          </div>
+          <div className="kpi-trend">
+            <div className="trend-indicator negative">
+              <FiClock size={12} />
+              Pending
+            </div>
+            <div className="trend-period">À traiter</div>
           </div>
         </div>
       </div>
