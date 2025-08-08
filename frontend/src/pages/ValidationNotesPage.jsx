@@ -35,9 +35,7 @@ const ValidationNotesPage = () => {
       setLoading(true);
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/notes-frais/validation/${societe_id}`);
       
-      if (response.data.success) {
-        setNotes(response.data.notes);
-      }
+      setNotes(response.data.notes || []);
     } catch (error) {
       console.error('Erreur chargement notes validation:', error);
       alert('Erreur lors du chargement des notes en attente');
