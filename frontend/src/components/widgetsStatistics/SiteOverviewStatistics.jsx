@@ -73,7 +73,7 @@ const SiteOverviewStatistics = ({parametrage}) => {
                                         <div>
                                             <div className="fs-4 fw-bold text-dark">
                                              
-                                                <span className="counter">{chiffreAffaire.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                                <span className="counter">{(chiffreAffaire || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                             </div>
                                             <h3 className="fs-13 fw-semibold text-truncate-1-line">Chiffre d'affaire</h3>
                                         </div>
