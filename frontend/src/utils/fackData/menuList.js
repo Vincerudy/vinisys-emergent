@@ -181,7 +181,7 @@ export const menuList = [
         path: "/rapport",
         icon: 'feather-bar-chart-2',
         dropdownMenu: false,
-        permission: 'access_reports',
+        // permission: 'access_reports', // Commenté pour rendre accessible à tous
     },
     
     {
