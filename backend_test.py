@@ -72,9 +72,9 @@ def test_server_connectivity():
         return False
 
 def test_authentication():
-    """Test 1: Authentication with provided credentials"""
-    global SOCIETE_ID, AUTH_TOKEN
-    print_test_header("Authentication Test")
+    """Test 1: Authentication with admin@admin.com / admin credentials"""
+    global AUTH_TOKEN
+    print_test_header("Authentication Test - Admin Login")
     try:
         payload = {
             "email": TEST_EMAIL,
@@ -85,20 +85,92 @@ def test_authentication():
         if response.status_code == 200:
             data = response.json()
             AUTH_TOKEN = data.get('token')
-            SOCIETE_ID = data.get('societe_id')
             user_id = data.get('id')
+            societe_id = data.get('societe_id')
             
-            if AUTH_TOKEN and SOCIETE_ID:
-                print_test_result(True, f"Authentication successful - User ID: {user_id}, Company ID: {SOCIETE_ID}", response)
+            if AUTH_TOKEN and societe_id == SOCIETE_ID:
+                print_test_result(True, f"Authentication successful - User ID: {user_id}, Company ID: {societe_id}", response)
                 return True, data
             else:
-                print_test_result(False, "Authentication response missing token or societe_id", response)
+                print_test_result(False, f"Authentication response issue - Expected societe_id: {SOCIETE_ID}, Got: {societe_id}", response)
                 return False, None
         else:
             print_test_result(False, f"Authentication failed - HTTP {response.status_code}", response)
             return False, None
     except Exception as e:
         print_test_result(False, f"Authentication test failed - {str(e)}")
+        return False, None
+
+def test_projets():
+    """Test 2: Projects API for societe_id = 2"""
+    print_test_header("Projects API Test")
+    try:
+        headers = get_auth_headers()
+        response = requests.get(f"{API_BASE}/projets/{SOCIETE_ID}", headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            projets = data.get('projets', [])
+            print_test_result(True, f"Projects retrieved successfully - {len(projets)} projects found", response)
+            return True, data
+        else:
+            print_test_result(False, f"Projects failed - HTTP {response.status_code}", response)
+            return False, None
+    except Exception as e:
+        print_test_result(False, f"Projects test failed - {str(e)}")
+        return False, None
+
+def test_create_note_frais():
+    """Test 3: Create Note de frais with specific data"""
+    print_test_header("Create Note de frais Test")
+    try:
+        headers = get_auth_headers()
+        headers['Content-Type'] = 'application/json'
+        
+        # Get user_id from auth token (we'll use a default if not available)
+        user_id = 1  # Default user_id, should be updated based on login response
+        
+        # Prepare the note de frais data as specified by user
+        payload = {
+            "user_id": user_id,
+            "periode_debut": "2024-10-24",
+            "periode_fin": "2024-10-24", 
+            "titre": "Note de frais - LA ROMANA",
+            "description": "Déjeuner d'affaires client",
+            "societe_id": SOCIETE_ID,
+            "lignes_frais": [
+                {
+                    "type_frais_id": 1,  # Assuming 1 is for restaurant/meals
+                    "date_frais": "2024-10-24",
+                    "description": "Déjeuner d'affaires client - LA ROMANA",
+                    "montant": 364.00,
+                    "montant_tva": 35.78,
+                    "taux_tva": 20.0,
+                    "lieu_repas": "LA ROMANA, France",
+                    "nombre_personnes": 2,
+                    "type_repas": "déjeuner",
+                    "projet_id": None,
+                    "saisie_ocr": False
+                }
+            ]
+        }
+        
+        # Test the actual endpoint (POST /api/note-frais)
+        response = requests.post(f"{API_BASE}/note-frais", json=payload, headers=headers, timeout=10)
+        
+        if response.status_code == 201:
+            data = response.json()
+            note_id = data.get('noteId')
+            numero = data.get('numero')
+            montant_total = data.get('montant_total')
+            
+            print_test_result(True, f"Note de frais created successfully - ID: {note_id}, Number: {numero}, Total: {montant_total}€", response)
+            return True, data
+        else:
+            print_test_result(False, f"Note de frais creation failed - HTTP {response.status_code}", response)
+            return False, None
+    except Exception as e:
+        print_test_result(False, f"Note de frais creation test failed - {str(e)}")
         return False, None
 
 def test_achats_dashboard():
