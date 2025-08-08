@@ -180,7 +180,7 @@ export const menuList = [
         name: "Rapport",
         path: "/rapport",
         icon: 'feather-bar-chart-2',
-        dropdownMenu: false,
+        dropdownMenu: [], // Tableau vide au lieu de false
         // permission: 'access_reports', // Commenté pour rendre accessible à tous
     },
     
