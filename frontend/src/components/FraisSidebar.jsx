@@ -16,6 +16,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
   const { societe_id } = useAuth();
 
   const [formData, setFormData] = useState({
+    type_frais_id: '',
     vendeur: '',
     date_frais: '',
     pays: 'France',
@@ -29,6 +30,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
   });
 
   const [projets, setProjets] = useState([]);
+  const [typesFrais, setTypesFrais] = useState([]);
   const [saving, setSaving] = useState(false);
   const [justificatif, setJustificatif] = useState(null);
 
