@@ -6,8 +6,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999; /* Z-index très élevé pour passer au-dessus de tout */
   display: flex;
   justify-content: flex-end;
 }
