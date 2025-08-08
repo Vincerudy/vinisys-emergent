@@ -10,7 +10,7 @@ import {
   FiShoppingCart,
   FiUsers,
   FiPieChart,
-  FiBarChart3,
+  FiBarChart,
   FiCalendar,
   FiRefreshCcw
 } from 'react-icons/fi';
