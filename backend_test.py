@@ -269,7 +269,7 @@ def test_financial_calculations():
         return False, None
 
 def test_evolution_depenses():
-    """Test 5: Evolution Depenses API - GET /api/rapport/evolution-depenses/2"""
+    """Test 5: Evolution Depenses API - GET /api/rapport/financier/evolution-depenses/2"""
     print_test_header("Evolution Depenses API Test")
     try:
         headers = get_auth_headers()
@@ -280,7 +280,7 @@ def test_evolution_depenses():
             'type_periode': 'mois'
         }
         
-        response = requests.get(f"{API_BASE}/rapport/evolution-depenses/{SOCIETE_ID}", 
+        response = requests.get(f"{API_BASE}/rapport/financier/evolution-depenses/{SOCIETE_ID}", 
                               headers=headers, params=params, timeout=10)
         
         if response.status_code == 200:
