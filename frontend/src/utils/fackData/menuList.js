@@ -143,6 +143,12 @@ export const menuList = [
             },
             {
                 id: 2,
+                name: "Liste des notes",
+                path: "/notes-frais/liste",
+                subdropdownMenu: false,
+            },
+            {
+                id: 3,
                 name: "Créer une note",
                 path: "/notes-frais/nouvelle",
                 subdropdownMenu: false,
