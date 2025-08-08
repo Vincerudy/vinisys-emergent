@@ -36,6 +36,7 @@ const NoteDetailPage = () => {
   const [editingFrais, setEditingFrais] = useState(null);
   const [noteTitle, setNoteTitle] = useState('');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   useEffect(() => {
     if (noteId) {
