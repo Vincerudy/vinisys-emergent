@@ -90,7 +90,7 @@ router.get('/:societeId', async (req, res) => {
                 YEAR(periode_debut) as annee,
                 MONTH(periode_debut) as mois,
                 COUNT(*) as nb_notes,
-                ROUND(SUM(montant_total), 2) as montant_total
+                ROUND(SUM(total_ttc), 2) as montant_total
             FROM notes_frais nf
             WHERE nf.societe_id = ? 
                 AND periode_debut >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
