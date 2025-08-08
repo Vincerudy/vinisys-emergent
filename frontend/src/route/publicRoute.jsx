@@ -96,7 +96,7 @@ import AchatsPage from "../pages/AchatsPage";
 import NotesfraisPage from "../pages/NotesfraisPage";
 import NouvelAchatPage from "../pages/NouvelAchatPage";
 import ListeAchatsPage from "../pages/ListeAchatsPage";
-import NouvelleNoteFraisPage from "../pages/NouvelleNoteFraisPage";
+import TestNoteFraisPage from "../pages/TestNoteFraisPage";
 import ValidationNotesPage from "../pages/ValidationNotesPage";
 import HistoriqueNotesPage from "../pages/HistoriqueNotesPage";
 import FournisseursPage from "../pages/FournisseursPage";
