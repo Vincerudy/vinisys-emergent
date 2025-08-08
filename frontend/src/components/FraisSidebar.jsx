@@ -256,14 +256,11 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
                     className="form-select"
                   >
                     <option value="">Sélectionner un type</option>
-                    {typesFrais.map(type => {
-                      console.log('🏷️ Type de frais affiché:', type);
-                      return (
-                        <option key={type.id} value={type.id}>
-                          {type.nom}
-                        </option>
-                      );
-                    })}
+                    {typesFrais.map(type => (
+                      <option key={type.id} value={type.id}>
+                        {type.nom}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
