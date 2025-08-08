@@ -199,21 +199,7 @@ app.use('/api/notes-frais/dashboard', require('./routes/notes-frais/dashboardNot
 app.use('/api/notes-frais/validation', require('./routes/notes-frais/validationNotes'));
 app.use('/api/notes-frais/baremes', require('./routes/notes-frais/baremes'));
 
-// Types de frais et catégories
-app.get('/api/types-frais/:societeId', async (req, res) => {
-    try {
-        const { societeId } = req.params;
-        const [types] = await db.execute(
-            'SELECT * FROM types_frais WHERE societe_id = ? ORDER BY nom ASC',
-            [societeId]
-        );
-        res.json({ types });
-    } catch (error) {
-        console.error('Erreur types de frais:', error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des types de frais' });
-    }
-});
-
+// Catégories achats
 app.get('/api/categories-achats/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
