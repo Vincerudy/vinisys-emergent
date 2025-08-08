@@ -24,10 +24,10 @@ router.get('/:societeId', async (req, res) => {
         const [indicateurs] = await db.execute(`
             SELECT 
                 COUNT(*) as nb_notes,
-                ROUND(SUM(montant_total), 2) as montant_total_soumis,
-                ROUND(SUM(CASE WHEN statut = 'validee' THEN montant_total ELSE 0 END), 2) as montant_valide,
-                ROUND(SUM(CASE WHEN statut = 'remboursee' THEN montant_total ELSE 0 END), 2) as montant_rembourse,
-                ROUND(SUM(CASE WHEN statut = 'refusee' THEN montant_total ELSE 0 END), 2) as montant_refuse,
+                ROUND(SUM(total_ttc), 2) as montant_total_soumis,
+                ROUND(SUM(CASE WHEN statut = 'validee' THEN total_ttc ELSE 0 END), 2) as montant_valide,
+                ROUND(SUM(CASE WHEN statut = 'payee' THEN total_ttc ELSE 0 END), 2) as montant_rembourse,
+                ROUND(SUM(CASE WHEN statut = 'refusee' THEN total_ttc ELSE 0 END), 2) as montant_refuse,
                 COUNT(CASE WHEN statut = 'soumise' THEN 1 END) as nb_notes_en_attente,
                 ROUND((COUNT(CASE WHEN statut = 'refusee' THEN 1 END) * 100.0) / NULLIF(COUNT(*), 0), 1) as taux_refus
             FROM notes_frais nf
