@@ -308,41 +308,6 @@ const CalenderContent = () => {
                         }}>
                             📅 Calendrier temporairement indisponible - En cours de réparation
                         </div>
-                        {/* 
-                        <FullCalendar
-                            plugins={[
-                                dayGridPlugin,
-                                interactionPlugin,
-                                timeGridPlugin,
-                                listPlugin,
-                            ]}
-                            initialView="dayGridMonth"
-                            views={{
-                                twoWeek: {
-                                    type: 'dayGrid',
-                                    duration: { weeks: 2 },
-                                    buttonText: '2 weeks'
-                                },
-                                threeWeek: {
-                                    type: 'dayGrid',
-                                    duration: { weeks: 3 },
-                                    buttonText: '3 weeks'
-                                }
-                            }}
-                            headerToolbar={false}
-                            events={filteredEvents}
-                            dateClick={handleDateClick}
-                            // eventAdd={handleEventClick}
-                            eventClick={handleEventClick}
-                            ref={calendarRef}
-                            selectable={true} // Enable slot selection in timeGrid views
-                            select={handleSelect}
-                            datesSet={handleDatesSet}
-                            weekends={showWeekends}
-                            firstDay={isWeekMonday}
-                            eventContent={renderEventContent}
-                        />
-                        */
 
                         {isAddModalOpen && (
                             <CalenderModal
