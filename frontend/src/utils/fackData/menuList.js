@@ -45,32 +45,32 @@ export const menuList = [
     },
     {
         id: 2,
-        name: "Dépenses",
+        name: "Achats & Dépenses",
         path: "#",
-        icon: 'feather-credit-card',
+        icon: 'feather-shopping-cart',
         dropdownMenu: [
             {
                 id: 1,
                 name: "Tableau de bord",
-                path: "/depenses",
+                path: "/achats",
                 subdropdownMenu: false,
             },
             {
                 id: 2,
-                name: "Nouvelle dépense",
-                path: "/depenses/nouveau",
+                name: "Nouvel achat",
+                path: "/achats/nouveau",
                 subdropdownMenu: false,
             },
             {
                 id: 3,
-                name: "Validation",
-                path: "/depenses/validation",
+                name: "Liste des achats",
+                path: "/achats/liste",
                 subdropdownMenu: false,
             },
             {
                 id: 4,
-                name: "Paramètres",
-                path: "/depenses/parametres",
+                name: "Fournisseurs",
+                path: "/achats/fournisseurs",
                 subdropdownMenu: false,
             }
         ]
