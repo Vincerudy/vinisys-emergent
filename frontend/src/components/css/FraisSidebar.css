@@ -326,46 +326,43 @@
 }
 
 @media (max-width: 768px) {
+  .frais-sidebar-overlay {
+    z-index: 9999; /* Assure la priorité au-dessus de tout */
+  }
+  
   .frais-sidebar {
     width: 100vw;
+    max-width: none;
   }
   
   .sidebar-content {
     grid-template-columns: 1fr;
-    grid-template-rows: 300px 1fr;
+    height: calc(100vh - 80px);
   }
   
   .justificatif-panel {
     border-right: none;
     border-bottom: 2px solid #e5e7eb;
+    max-height: 40vh;
   }
   
-  .form-grid {
-    grid-template-columns: 1fr;
+  .form-panel {
+    min-height: 60vh;
   }
-  
-  .form-group.full-width {
-    grid-column: span 1;
-  }
-  
-  .form-group-row {
-    grid-column: span 1;
-    grid-template-columns: 1fr;
-  }
-  
-  .sidebar-footer {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
-  }
-  
-  .footer-actions {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .btn-cancel, .btn-save-frais {
-    width: 100%;
-    justify-content: center;
-  }
+}
+
+/* S'assurer que la sidebar passe au-dessus de tous les éléments Bootstrap/Tailwind */
+.frais-sidebar-overlay * {
+  box-sizing: border-box;
+}
+
+/* Override pour être sûr de passer au-dessus de la navbar */
+.frais-sidebar-overlay {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+.frais-sidebar {
+  position: relative !important;
+  z-index: 10000 !important;
 }
