@@ -249,6 +249,22 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
             <div className="form-content">
               <div className="form-grid">
                 <div className="form-group">
+                  <label>Type de frais *</label>
+                  <select 
+                    value={formData.type_frais_id}
+                    onChange={(e) => handleInputChange('type_frais_id', e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="">Sélectionner un type</option>
+                    {typesFrais.map(type => (
+                      <option key={type.id} value={type.id}>
+                        {type.libelle}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
                   <label>Vendeur *</label>
                   <input
                     type="text"
