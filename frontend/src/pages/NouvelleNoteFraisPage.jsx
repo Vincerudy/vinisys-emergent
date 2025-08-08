@@ -21,6 +21,12 @@ import './css/NouvelleNoteFraisPage.css';
 const NouvelleNoteFraisPage = () => {
   const { societe_id, id: user_id } = useAuth();
   
+  // Récupérer l'ID de la note depuis l'URL si on est en mode édition
+  const noteId = window.location.hash.includes('/edit/') 
+    ? window.location.hash.split('/edit/')[1] 
+    : null;
+  const isEditMode = !!noteId;
+  
   const [justificatif, setJustificatif] = useState(null);
   const [formData, setFormData] = useState({
     vendeur: '',
@@ -38,10 +44,14 @@ const NouvelleNoteFraisPage = () => {
 
   const [projets, setProjets] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(isEditMode);
 
   useEffect(() => {
     fetchInitialData();
-  }, [societe_id]);
+    if (isEditMode && noteId) {
+      fetchNoteData(noteId);
+    }
+  }, [societe_id, noteId]);
 
   const fetchInitialData = async () => {
     try {
@@ -49,6 +59,37 @@ const NouvelleNoteFraisPage = () => {
       setProjets(projetsRes.data.projets || []);
     } catch (error) {
       console.error('Erreur chargement données:', error);
+    }
+  };
+
+  const fetchNoteData = async (noteId) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/note-frais/${noteId}`);
+      
+      if (response.data.success && response.data.note) {
+        const note = response.data.note;
+        const ligneFrais = note.lignes_frais[0]; // Prendre la première ligne
+        
+        setFormData({
+          vendeur: ligneFrais?.vendeur || '',
+          date_frais: ligneFrais?.date_frais || '',
+          pays: ligneFrais?.pays || 'France',
+          devise: ligneFrais?.devise || 'EUR',
+          montant_ttc: ligneFrais?.montant?.toString().replace('.', ',') || '',
+          montant_ht: ligneFrais?.montant_ht?.toString().replace('.', ',') || '',
+          montant_tva: ligneFrais?.montant_tva?.toString().replace('.', ',') || '',
+          moyen_paiement: ligneFrais?.moyen_paiement || 'Carte de Crédit Société',
+          motif: note.description?.replace(`Note de frais - ${ligneFrais?.vendeur}`, '').replace(` - ${ligneFrais?.vendeur}`, '') || '',
+          projet_id: ligneFrais?.projet_id?.toString() || '',
+          commentaire: ''
+        });
+      }
+    } catch (error) {
+      console.error('Erreur chargement note:', error);
+      alert('Erreur lors du chargement de la note de frais');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,22 +162,34 @@ const NouvelleNoteFraisPage = () => {
 
       console.log('Envoi des données:', noteData);
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/note-frais/simple`,
-        noteData
-      );
+      let response;
+      if (isEditMode) {
+        // Mode édition - PUT
+        response = await axios.put(
+          `${import.meta.env.VITE_API_URL}/note-frais/${noteId}`,
+          noteData
+        );
+      } else {
+        // Mode création - POST
+        response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/note-frais/simple`,
+          noteData
+        );
+      }
 
-      if (response.status === 201 && response.data.success) {
-        const message = statut === 'brouillon' 
-          ? `Note de frais sauvegardée en brouillon (${response.data.data.numero})`
-          : `Note de frais soumise pour validation (${response.data.data.numero})`;
+      if ((response.status === 201 || response.status === 200) && response.data.success) {
+        const message = isEditMode 
+          ? `Note de frais modifiée avec succès`
+          : statut === 'brouillon' 
+            ? `Note de frais sauvegardée en brouillon (${response.data.data.numero || ''})`
+            : `Note de frais soumise pour validation (${response.data.data.numero || ''})`;
         
         alert(message);
         
-        if (statut === 'soumise') {
-          window.location.href = '/#/notes-frais';
+        if (statut === 'soumise' || isEditMode) {
+          window.location.href = '/#/notes-frais/liste';
         } else {
-          // Réinitialiser le formulaire après sauvegarde en brouillon
+          // Réinitialiser le formulaire après sauvegarde en brouillon (création seulement)
           setFormData({
             vendeur: '',
             date_frais: '',
@@ -161,6 +214,16 @@ const NouvelleNoteFraisPage = () => {
       setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="nouvelle-note-frais-page">
+        <div className="loading-container">
+          <p>Chargement de la note de frais...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="nouvelle-note-frais-page">
