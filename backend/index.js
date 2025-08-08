@@ -319,7 +319,7 @@ app.post('/api/note-frais/simple', async (req, res) => {
             noteId,
             1, // Type frais par défaut (repas)
             date_frais || new Date().toISOString().split('T')[0],
-            `${motif} - ${vendeur}`,
+            `${motif || 'Frais'} - ${vendeur}`,
             montant_ttc,
             montant_ht || 0,
             montant_tva || 0,
@@ -327,7 +327,7 @@ app.post('/api/note-frais/simple', async (req, res) => {
             pays || 'France',
             devise || 'EUR',
             moyen_paiement || 'Carte de Crédit Société',
-            projet_id
+            projet_id || null
         ]);
 
         console.log('Note de frais créée avec succès:', {
