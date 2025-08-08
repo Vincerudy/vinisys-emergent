@@ -16,7 +16,8 @@ import {
   FiCalendar,
   FiDollarSign,
   FiCheck,
-  FiX
+  FiX,
+  FiPieChart
 } from 'react-icons/fi';
 // import './css/NotesfraisPage.css';
 
