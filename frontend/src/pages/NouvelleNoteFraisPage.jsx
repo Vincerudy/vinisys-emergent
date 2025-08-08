@@ -155,10 +155,10 @@ const NouvelleNoteFraisPage = () => {
           <div className="montant-info">
             <FiDollarSign className="montant-icon" />
             <div className="montant-text">
-              <span className="montant-value">{justificatifData.totalTTC}</span>
+              <span className="montant-value">{justificatifData.totalTTC || '0,00'}</span>
               <span className="montant-currency">EUR</span>
             </div>
-            <div className="date-info">{justificatifData.date}</div>
+            <div className="date-info">{justificatifData.date || 'Aucune date'}</div>
           </div>
           <div className="statut-badge">
             <FiCheck />
