@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
         await connection.beginTransaction();
 
         const {
-            utilisateur_id,
+            user_id,
             periode_debut,
             periode_fin,
             titre,
