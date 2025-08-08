@@ -169,6 +169,19 @@ app.use('/api/listeClient', require('./routes/client/listeClient'));
 app.use('/api/suppressionClient', require('./routes/client/suppressionClient'));
 app.use('/api/updateClient', require('./routes/client/updateClient'));
 
+// Routes manquantes appelées par le frontend
+app.get('/api/parametrage-facturation/:id', (req, res) => {
+    res.json({
+        vatLabel: 'TVA',
+        devise: '€',
+        company_name: 'Votre entreprise'
+    });
+});
+
+app.get('/api/alertesprogrammee/:userId/:societeId', (req, res) => {
+    res.json([]);
+});
+
 // =====================================
 // ROUTES MODULES SÉPARES
 // =====================================
