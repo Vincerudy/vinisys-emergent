@@ -123,10 +123,28 @@
   box-shadow: 0 15px 40px rgba(0,0,0,0.15);
 }
 
+/* Cartes cliquables */
+.kpi-card.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.kpi-card.clickable:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+
+.kpi-card.clickable:active {
+  transform: translateY(-4px);
+  transition: transform 0.1s ease;
+}
+
 .kpi-card.submitted { --kpi-color: #007bff; }
 .kpi-card.validated { --kpi-color: #28a745; }
 .kpi-card.rejected { --kpi-color: #dc3545; }
 .kpi-card.pending { --kpi-color: #ffc107; }
+.kpi-card.paid { --kpi-color: #17a2b8; }
+.kpi-card.total { --kpi-color: #6f42c1; }
 
 .kpi-header {
   display: flex;
