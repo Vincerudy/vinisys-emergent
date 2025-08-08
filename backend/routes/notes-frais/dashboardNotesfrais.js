@@ -16,7 +16,7 @@ router.get('/:societeId', async (req, res) => {
         const params = [societeId, currentMonth, currentYear];
         
         if (utilisateur_id) {
-            userFilter = ' AND nf.utilisateur_id = ?';
+            userFilter = ' AND nf.user_id = ?';
             params.push(utilisateur_id);
         }
 
