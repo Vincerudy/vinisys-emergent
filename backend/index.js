@@ -357,6 +357,191 @@ app.post('/api/note-frais/simple', async (req, res) => {
     }
 });
 
+// GET /api/notes-frais/list/:societeId - Liste des notes de frais
+app.get('/api/notes-frais/list/:societeId', async (req, res) => {
+    try {
+        const { societeId } = req.params;
+        
+        const [notes] = await db.execute(`
+            SELECT 
+                nf.id,
+                nf.numero,
+                nf.titre,
+                nf.description,
+                nf.montant_total,
+                nf.statut,
+                nf.periode_debut,
+                nf.periode_fin,
+                nf.created_at,
+                u.firstName,
+                u.lastName,
+                (SELECT COUNT(*) FROM lignes_frais lf WHERE lf.note_frais_id = nf.id) as nb_lignes
+            FROM notes_frais nf
+            LEFT JOIN users u ON nf.user_id = u.id
+            WHERE nf.societe_id = ?
+            ORDER BY nf.created_at DESC
+        `, [societeId]);
+
+        res.json({
+            success: true,
+            notes: notes
+        });
+
+    } catch (error) {
+        console.error('Erreur récupération notes de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des notes de frais',
+            error: error.message
+        });
+    }
+});
+
+// GET /api/note-frais/:noteId - Récupérer une note de frais spécifique
+app.get('/api/note-frais/:noteId', async (req, res) => {
+    try {
+        const { noteId } = req.params;
+        
+        // Récupérer la note principale
+        const [notes] = await db.execute(`
+            SELECT 
+                nf.*,
+                u.firstName,
+                u.lastName
+            FROM notes_frais nf
+            LEFT JOIN users u ON nf.user_id = u.id
+            WHERE nf.id = ?
+        `, [noteId]);
+
+        if (notes.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Note de frais non trouvée'
+            });
+        }
+
+        // Récupérer les lignes de frais associées
+        const [lignes] = await db.execute(`
+            SELECT 
+                lf.*,
+                tf.nom as type_frais_nom,
+                p.nom as projet_nom
+            FROM lignes_frais lf
+            LEFT JOIN types_frais tf ON lf.type_frais_id = tf.id
+            LEFT JOIN projets p ON lf.projet_id = p.id
+            WHERE lf.note_frais_id = ?
+            ORDER BY lf.created_at DESC
+        `, [noteId]);
+
+        const noteComplete = {
+            ...notes[0],
+            lignes_frais: lignes
+        };
+
+        res.json({
+            success: true,
+            note: noteComplete
+        });
+
+    } catch (error) {
+        console.error('Erreur récupération note de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération de la note de frais',
+            error: error.message
+        });
+    }
+});
+
+// PUT /api/note-frais/:noteId - Modifier une note de frais
+app.put('/api/note-frais/:noteId', async (req, res) => {
+    try {
+        const { noteId } = req.params;
+        const {
+            vendeur,
+            date_frais,
+            pays,
+            devise,
+            montant_ttc,
+            montant_ht,
+            montant_tva,
+            moyen_paiement,
+            motif,
+            projet_id,
+            commentaire,
+            statut
+        } = req.body;
+
+        console.log('Modification note de frais:', noteId, req.body);
+
+        // Validation des champs requis
+        if (!vendeur || !montant_ttc) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Vendeur et montant TTC sont requis' 
+            });
+        }
+
+        // Mettre à jour la note principale
+        await db.execute(`
+            UPDATE notes_frais 
+            SET titre = ?, description = ?, montant_total = ?, statut = ?, 
+                periode_debut = ?, periode_fin = ?, updated_at = NOW()
+            WHERE id = ?
+        `, [
+            `Note de frais - ${vendeur}`,
+            motif || `Frais ${vendeur}`,
+            montant_ttc,
+            statut || 'brouillon',
+            date_frais || new Date().toISOString().split('T')[0],
+            date_frais || new Date().toISOString().split('T')[0],
+            noteId
+        ]);
+
+        // Mettre à jour la ligne de frais (on prend la première)
+        await db.execute(`
+            UPDATE lignes_frais 
+            SET date_frais = ?, description = ?, montant = ?, montant_ht = ?, 
+                montant_tva = ?, vendeur = ?, pays = ?, devise = ?, 
+                moyen_paiement = ?, projet_id = ?
+            WHERE note_frais_id = ?
+            LIMIT 1
+        `, [
+            date_frais || new Date().toISOString().split('T')[0],
+            `${motif || 'Frais'} - ${vendeur}`,
+            montant_ttc,
+            montant_ht || 0,
+            montant_tva || 0,
+            vendeur,
+            pays || 'France',
+            devise || 'EUR',
+            moyen_paiement || 'Carte de Crédit Société',
+            projet_id || null,
+            noteId
+        ]);
+
+        console.log('Note de frais modifiée avec succès:', noteId);
+
+        res.json({
+            success: true,
+            message: 'Note de frais modifiée avec succès',
+            data: {
+                noteId: parseInt(noteId),
+                montant_total: montant_ttc,
+                statut: statut || 'brouillon'
+            }
+        });
+
+    } catch (error) {
+        console.error('Erreur modification note de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la modification de la note de frais',
+            error: error.message
+        });
+    }
+});
+
 // =====================================
 // ROUTES LEGACY (Ancien module dépenses)
 // Pour compatibilité descendante
