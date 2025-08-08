@@ -30,6 +30,8 @@ const NotesfraisPage = () => {
     mois: new Date().getMonth() + 1,
     annee: new Date().getFullYear()
   });
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedExportType, setSelectedExportType] = useState('sage');
 
   // Chargement des données du dashboard
   useEffect(() => {
