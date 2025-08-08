@@ -420,7 +420,7 @@ export const publicRoute = createHashRouter([
                 path: "/settings-support",
                 element: <ProtectedRoute element={<SettingsSupport />} />,
             },
-            // Routes Dépenses
+            // Routes Dépenses (anciennes - compatibilité)
             {
                 path: "/depenses",
                 element: <ProtectedRoute element={<TableauBordDepenses />} />,
@@ -448,6 +448,16 @@ export const publicRoute = createHashRouter([
             {
                 path: "/depenses/parametres",
                 element: <ProtectedRoute element={<ParametresDepenses />} />,
+            },
+            
+            // Nouveaux modules refondus
+            {
+                path: "/achats",
+                element: <ProtectedRoute element={<AchatsPage />} />,
+            },
+            {
+                path: "/notes-frais",
+                element: <ProtectedRoute element={<NotesfraisPage />} />,
             },
             {
                 path: "/reset-password/:token",
