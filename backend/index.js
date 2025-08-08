@@ -453,63 +453,142 @@ app.get('/api/note-frais/:noteId', async (req, res) => {
     }
 });
 
-// PUT /api/note-frais/:noteId - Modifier une note de frais
-app.put('/api/note-frais/:noteId', async (req, res) => {
+// ENDPOINTS POUR LES FRAIS INDIVIDUELS
+// POST /api/frais - Créer un nouveau frais dans une note
+app.post('/api/frais', async (req, res) => {
     try {
-        const { noteId } = req.params;
+        const {
+            note_frais_id,
+            vendeur,
+            date_frais,
+            pays,
+            devise,
+            montant,
+            montant_ht,
+            montant_tva,
+            moyen_paiement,
+            description,
+            projet_id
+        } = req.body;
+
+        console.log('Création frais individuel:', req.body);
+
+        // Validation des champs requis
+        if (!note_frais_id || !vendeur || !montant) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Note ID, vendeur et montant sont requis' 
+            });
+        }
+
+        // Insérer le frais
+        const [result] = await db.execute(`
+            INSERT INTO lignes_frais (
+                note_frais_id, type_frais_id, date_frais, description,
+                montant, montant_ht, montant_tva, 
+                vendeur, pays, devise, moyen_paiement,
+                projet_id, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [
+            note_frais_id,
+            1, // Type frais par défaut (repas)
+            date_frais || new Date().toISOString().split('T')[0],
+            description || `Frais ${vendeur}`,
+            montant,
+            montant_ht || 0,
+            montant_tva || 0,
+            vendeur,
+            pays || 'France',
+            devise || 'EUR',
+            moyen_paiement || 'Carte de Crédit Société',
+            projet_id || null
+        ]);
+
+        // Mettre à jour le montant total de la note
+        await db.execute(`
+            UPDATE notes_frais 
+            SET montant_total = (
+                SELECT COALESCE(SUM(montant), 0) 
+                FROM lignes_frais 
+                WHERE note_frais_id = ?
+            ),
+            updated_at = NOW()
+            WHERE id = ?
+        `, [note_frais_id, note_frais_id]);
+
+        console.log('Frais créé avec succès:', result.insertId);
+
+        res.status(201).json({
+            success: true,
+            message: 'Frais créé avec succès',
+            data: {
+                fraisId: result.insertId
+            }
+        });
+
+    } catch (error) {
+        console.error('Erreur création frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la création du frais',
+            error: error.message
+        });
+    }
+});
+
+// PUT /api/frais/:fraisId - Modifier un frais
+app.put('/api/frais/:fraisId', async (req, res) => {
+    try {
+        const { fraisId } = req.params;
         const {
             vendeur,
             date_frais,
             pays,
             devise,
-            montant_ttc,
+            montant,
             montant_ht,
             montant_tva,
             moyen_paiement,
-            motif,
-            projet_id,
-            commentaire,
-            statut
+            description,
+            projet_id
         } = req.body;
 
-        console.log('Modification note de frais:', noteId, req.body);
+        console.log('Modification frais:', fraisId, req.body);
 
         // Validation des champs requis
-        if (!vendeur || !montant_ttc) {
+        if (!vendeur || !montant) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Vendeur et montant TTC sont requis' 
+                message: 'Vendeur et montant sont requis' 
             });
         }
 
-        // Mettre à jour la note principale
-        await db.execute(`
-            UPDATE notes_frais 
-            SET titre = ?, description = ?, montant_total = ?, statut = ?, 
-                periode_debut = ?, periode_fin = ?, updated_at = NOW()
-            WHERE id = ?
-        `, [
-            `Note de frais - ${vendeur}`,
-            motif || `Frais ${vendeur}`,
-            montant_ttc,
-            statut || 'brouillon',
-            date_frais || new Date().toISOString().split('T')[0],
-            date_frais || new Date().toISOString().split('T')[0],
-            noteId
-        ]);
+        // Récupérer note_frais_id pour mise à jour du total
+        const [fraisInfo] = await db.execute(
+            'SELECT note_frais_id FROM lignes_frais WHERE id = ?',
+            [fraisId]
+        );
 
-        // Mettre à jour la ligne de frais (on prend la première)
+        if (fraisInfo.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Frais non trouvé'
+            });
+        }
+
+        const noteId = fraisInfo[0].note_frais_id;
+
+        // Mettre à jour le frais
         await db.execute(`
             UPDATE lignes_frais 
             SET date_frais = ?, description = ?, montant = ?, montant_ht = ?, 
                 montant_tva = ?, vendeur = ?, pays = ?, devise = ?, 
                 moyen_paiement = ?, projet_id = ?
-            WHERE note_frais_id = ?
-            LIMIT 1
+            WHERE id = ?
         `, [
             date_frais || new Date().toISOString().split('T')[0],
-            `${motif || 'Frais'} - ${vendeur}`,
-            montant_ttc,
+            description || `Frais ${vendeur}`,
+            montant,
             montant_ht || 0,
             montant_tva || 0,
             vendeur,
@@ -517,26 +596,113 @@ app.put('/api/note-frais/:noteId', async (req, res) => {
             devise || 'EUR',
             moyen_paiement || 'Carte de Crédit Société',
             projet_id || null,
-            noteId
+            fraisId
         ]);
 
-        console.log('Note de frais modifiée avec succès:', noteId);
+        // Mettre à jour le montant total de la note
+        await db.execute(`
+            UPDATE notes_frais 
+            SET montant_total = (
+                SELECT COALESCE(SUM(montant), 0) 
+                FROM lignes_frais 
+                WHERE note_frais_id = ?
+            ),
+            updated_at = NOW()
+            WHERE id = ?
+        `, [noteId, noteId]);
+
+        console.log('Frais modifié avec succès:', fraisId);
 
         res.json({
             success: true,
-            message: 'Note de frais modifiée avec succès',
+            message: 'Frais modifié avec succès'
+        });
+
+    } catch (error) {
+        console.error('Erreur modification frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la modification du frais',
+            error: error.message
+        });
+    }
+});
+
+// POST /api/frais/upload-auto - Upload automatique avec création de frais
+app.post('/api/frais/upload-auto', async (req, res) => {
+    try {
+        // Pour cette démo, on simule l'extraction OCR et création automatique
+        const { note_frais_id } = req.body;
+
+        if (!note_frais_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID de la note requis'
+            });
+        }
+
+        // Simulation : créer un frais avec des données d'exemple
+        const fraisData = {
+            note_frais_id: note_frais_id,
+            vendeur: 'Restaurant (Auto-détecté)',
+            date_frais: new Date().toISOString().split('T')[0],
+            pays: 'France',
+            devise: 'EUR',
+            montant: 25.50,
+            montant_ht: 21.25,
+            montant_tva: 4.25,
+            moyen_paiement: 'Carte de Crédit Société',
+            description: 'Frais créé automatiquement via OCR'
+        };
+
+        // Créer le frais
+        const [result] = await db.execute(`
+            INSERT INTO lignes_frais (
+                note_frais_id, type_frais_id, date_frais, description,
+                montant, montant_ht, montant_tva, 
+                vendeur, pays, devise, moyen_paiement,
+                created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [
+            fraisData.note_frais_id,
+            1,
+            fraisData.date_frais,
+            fraisData.description,
+            fraisData.montant,
+            fraisData.montant_ht,
+            fraisData.montant_tva,
+            fraisData.vendeur,
+            fraisData.pays,
+            fraisData.devise,
+            fraisData.moyen_paiement
+        ]);
+
+        // Mettre à jour le montant total de la note
+        await db.execute(`
+            UPDATE notes_frais 
+            SET montant_total = (
+                SELECT COALESCE(SUM(montant), 0) 
+                FROM lignes_frais 
+                WHERE note_frais_id = ?
+            ),
+            updated_at = NOW()
+            WHERE id = ?
+        `, [note_frais_id, note_frais_id]);
+
+        res.json({
+            success: true,
+            message: 'Frais créé automatiquement via upload',
             data: {
-                noteId: parseInt(noteId),
-                montant_total: montant_ttc,
-                statut: statut || 'brouillon'
+                fraisId: result.insertId,
+                fraisData
             }
         });
 
     } catch (error) {
-        console.error('Erreur modification note de frais:', error);
+        console.error('Erreur upload auto:', error);
         res.status(500).json({
             success: false,
-            message: 'Erreur lors de la modification de la note de frais',
+            message: 'Erreur lors de la création automatique du frais',
             error: error.message
         });
     }
