@@ -122,7 +122,7 @@ const NouvelleNoteFraisPage = () => {
       console.log('Envoi des données:', noteData);
 
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/note-frais`,
+        `${import.meta.env.VITE_API_URL}/note-frais/simple`,
         noteData
       );
 
