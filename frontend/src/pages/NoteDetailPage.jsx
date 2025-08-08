@@ -139,19 +139,21 @@ const NoteDetailPage = () => {
       return;
     }
 
-    if (window.confirm('Êtes-vous sûr de vouloir soumettre cette note de frais ? Elle ne pourra plus être modifiée.')) {
-      try {
-        await axios.put(`${import.meta.env.VITE_API_URL}/note-frais/${noteId}`, {
-          statut: 'soumise'
-        });
-        
-        // Recharger les détails pour mettre à jour l'affichage
-        await fetchNoteDetails();
-        alert('Note de frais soumise avec succès');
-      } catch (error) {
-        console.error('Erreur soumission:', error);
-        alert('Erreur lors de la soumission');
-      }
+    setShowSubmitModal(true);
+  };
+
+  const confirmSubmitNote = async () => {
+    try {
+      await axios.put(`${import.meta.env.VITE_API_URL}/note-frais/${noteId}`, {
+        statut: 'soumise'
+      });
+      
+      // Recharger les détails pour mettre à jour l'affichage
+      await fetchNoteDetails();
+      alert('Note de frais soumise avec succès');
+    } catch (error) {
+      console.error('Erreur soumission:', error);
+      alert('Erreur lors de la soumission');
     }
   };
 
