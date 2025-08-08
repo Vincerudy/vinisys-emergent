@@ -18,6 +18,7 @@ import {
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
 import FraisSidebar from '../components/FraisSidebar';
+import ConfirmationModal from '../components/ConfirmationModal';
 import './css/NoteDetailPage.css';
 
 const NoteDetailPage = () => {
