@@ -47,8 +47,13 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
 
   const fetchInitialData = async () => {
     try {
-      const projetsRes = await axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`);
+      const [projetsRes, typesFraisRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`),
+        axios.get(`${import.meta.env.VITE_API_URL}/types-frais/${societe_id}`)
+      ]);
+      
       setProjets(projetsRes.data.projets || []);
+      setTypesFrais(typesFraisRes.data.types_frais || []);
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
