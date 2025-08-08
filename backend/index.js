@@ -169,47 +169,6 @@ app.use('/api/listeClient', require('./routes/client/listeClient'));
 app.use('/api/suppressionClient', require('./routes/client/suppressionClient'));
 app.use('/api/updateClient', require('./routes/client/updateClient'));
 
-// Routes utilisateurs (à vérifier si les fichiers existent)
-try {
-  app.use('/api/users', require('./routes/users'));
-} catch (e) {
-  console.log('Routes users non disponibles:', e.message);
-}
-
-try {
-  app.use('/api/utilisateurs', require('./routes/utilisateurs'));
-} catch (e) {
-  console.log('Routes utilisateurs non disponibles:', e.message);
-}
-
-// Routes produits (à vérifier si les fichiers existent)
-try {
-  app.use('/api/produits', require('./routes/produits'));
-} catch (e) {
-  console.log('Routes produits non disponibles:', e.message);
-}
-
-// Routes société (à vérifier si les fichiers existent)
-try {
-  app.use('/api/societe', require('./routes/societe'));
-} catch (e) {
-  console.log('Routes societe non disponibles:', e.message);
-}
-
-// Routes TVA (à vérifier si les fichiers existent)
-try {
-  app.use('/api/tva', require('./routes/tva'));
-} catch (e) {
-  console.log('Routes tva non disponibles:', e.message);
-}
-
-// Autres routes globales (à vérifier si les fichiers existent)
-try {
-  app.use('/api/global', require('./routes/globalRoute'));
-} catch (e) {
-  console.log('Routes global non disponibles:', e.message);
-}
-
 // =====================================
 // ROUTES MODULES SÉPARES
 // =====================================
