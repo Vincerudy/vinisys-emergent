@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - New Modules Testing
-Tests the new Achats and Notes de frais modules APIs
+Backend API Testing Script for Vinisys Application - Notes de frais Testing
+Tests the specific endpoints requested for notes de frais creation
 """
 
 import requests
@@ -22,10 +22,10 @@ with open('/app/frontend/.env', 'r') as f:
 BASE_URL = "http://localhost:8001"  # Internal URL for testing
 API_BASE = f"{BASE_URL}{api_path}"
 
-# Test credentials from review request
-TEST_EMAIL = "idnovation2014@gmail.com"
-TEST_PASSWORD = "123456"
-SOCIETE_ID = None  # Will be set after login
+# Test credentials from user request
+TEST_EMAIL = "admin@admin.com"
+TEST_PASSWORD = "admin"
+SOCIETE_ID = 2  # User specified societe_id = 2
 AUTH_TOKEN = None  # Will be set after login
 
 def print_test_header(test_name):
