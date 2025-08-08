@@ -341,7 +341,7 @@ const AchatsPage = () => {
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
-              <FiBarChart3 size={20} />
+              <FiBarChart2 size={20} />
               Dépenses par fournisseur
             </h3>
             <span className="text-sm text-gray-500">Top 5</span>
