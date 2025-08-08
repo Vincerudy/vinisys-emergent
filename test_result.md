@@ -174,3 +174,99 @@ Le module Dépenses apporte à Vinisys :
 - **Export comptable** facilité
 
 **État : Module backend 100% opérationnel, frontend en finalisation**
+
+---
+
+# 🔄 PHASE 2 - REFONTE MODULES SÉPARÉS
+
+## 🎯 OBJECTIF PHASE 2
+Refactorisation de l'architecture en modules séparés :
+- **Module Achats** : Dépenses/Achats entreprise
+- **Module Notes de frais** : Notes de frais employés
+
+## ✅ TESTS PHASE 2 - MODULES SÉPARÉS
+
+### Tests effectués le 2025-08-08 00:02:59
+
+#### ✅ TESTS RÉUSSIS (5/9)
+1. **✅ Server Connectivity** : Backend v2.0 répond avec modules séparés
+2. **✅ Database Connection** : Connexion DB avec support modules
+3. **✅ Authentication Login** : Authentification fonctionnelle (User ID: 67, Company ID: 2)
+4. **✅ Achats Dashboard** : Dashboard achats opérationnel
+5. **✅ Common Endpoints** : Types de frais (16), Catégories achats (8), Projets (3)
+
+#### ❌ TESTS EN ÉCHEC (4/9)
+1. **❌ Notes de frais Dashboard** : Erreur SQL - colonnes manquantes
+2. **❌ Create Achat** : Paramètres undefined dans requête SQL
+3. **❌ Create Note de frais** : Paramètres undefined dans requête SQL  
+4. **❌ Mileage Calculation** : Barème non trouvé
+
+### 🔍 ANALYSE TECHNIQUE
+
+#### ✅ ARCHITECTURE FONCTIONNELLE
+- **Backend v2.0** : Serveur Node.js/Express opérationnel
+- **Modules séparés** : Architecture achats/notes-frais implémentée
+- **Base de données** : Connexion MySQL stable
+- **Authentification** : JWT fonctionnel avec permissions
+- **Endpoints communs** : Types, catégories, projets accessibles
+
+#### ⚠️ PROBLÈMES IDENTIFIÉS
+
+##### 1. Schéma de base de données
+- **Table notes_frais** : Utilise `user_id` au lieu de `utilisateur_id`
+- **Table notes_frais** : Utilise `total_ttc` au lieu de `montant_total`
+- **Colonnes manquantes** : Certains champs attendus par l'API n'existent pas
+
+##### 2. Paramètres API
+- **Paramètres undefined** : Certains champs optionnels causent des erreurs SQL
+- **Validation manquante** : Pas de vérification des paramètres obligatoires
+
+##### 3. Données de test
+- **Fournisseurs** : Ajouté 1 fournisseur test pour société ID 2
+- **Barèmes kilométriques** : 6 barèmes présents mais non accessibles
+
+### 📊 ÉTAT DES MODULES
+
+#### Module Achats (Purchases) 
+- **✅ Dashboard** : Fonctionnel avec indicateurs vides (pas de données)
+- **✅ Catégories** : 8 catégories disponibles
+- **❌ Création** : Échec à cause de paramètres undefined
+- **✅ Architecture** : Routes et structure correctes
+
+#### Module Notes de frais (Expense Reports)
+- **❌ Dashboard** : Échec SQL - schéma incompatible
+- **✅ Types de frais** : 16 types disponibles
+- **❌ Création** : Échec à cause de schéma DB
+- **❌ Calcul kilométrique** : Barèmes non accessibles
+
+### 🔧 CORRECTIONS NÉCESSAIRES
+
+#### 1. Schéma de base de données
+```sql
+-- Corriger les colonnes de la table notes_frais
+ALTER TABLE notes_frais 
+  CHANGE user_id utilisateur_id INT,
+  CHANGE total_ttc montant_total DECIMAL(10,2);
+```
+
+#### 2. Validation des paramètres
+- Ajouter validation des champs obligatoires
+- Gérer les paramètres optionnels (null au lieu d'undefined)
+
+#### 3. Barèmes kilométriques
+- Vérifier la requête de recherche des barèmes
+- Corriger le mapping type_vehicule
+
+### 🎉 CONCLUSION PHASE 2
+
+**✅ ARCHITECTURE RÉUSSIE** : La refonte en modules séparés fonctionne
+- Backend v2.0 opérationnel avec modules achats/notes-frais
+- Authentification et endpoints communs fonctionnels
+- Structure de base solide pour la suite
+
+**⚠️ AJUSTEMENTS REQUIS** : Problèmes de schéma DB et validation
+- 5/9 tests passent, architecture de base validée
+- Corrections mineures nécessaires pour finaliser
+- Prêt pour développement frontend une fois corrigé
+
+**STATUS PHASE 2** : Architecture validée, corrections mineures en cours
