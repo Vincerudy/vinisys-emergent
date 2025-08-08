@@ -19,33 +19,24 @@ import { useAuth } from '../contexte/AuthContext';
 import './css/NouvelleNoteFraisPage.css';
 
 const NouvelleNoteFraisPage = () => {
-  const { societe_id, user_id } = useAuth();
+  const { societe_id, id: user_id } = useAuth();
   
   const [justificatif, setJustificatif] = useState(null);
-  const [justificatifData, setJustificatifData] = useState({
+  const [formData, setFormData] = useState({
     vendeur: '',
-    date: '',
+    date_frais: '',
     pays: 'France',
     devise: 'EUR',
-    totalTTC: '',
-    totalHT: '',
-    tva: '',
-    moyenPaiement: 'Carte de Crédit Société',
-    statut: 'Brouillon'
-  });
-
-  const [noteData, setNoteData] = useState({
+    montant_ttc: '',
+    montant_ht: '',
+    montant_tva: '',
+    moyen_paiement: 'Carte de Crédit Société',
     motif: '',
-    destination: '',
-    date_debut: '',
-    date_fin: '',
     projet_id: '',
-    commentaire: '',
-    statut: 'brouillon'
+    commentaire: ''
   });
 
   const [projets, setProjets] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -61,37 +52,36 @@ const NouvelleNoteFraisPage = () => {
     }
   };
 
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // Calcul automatique de la TVA et HT si TTC est modifié
+    if (field === 'montant_ttc' && value) {
+      const ttc = parseFloat(value.replace(',', '.')) || 0;
+      const tva = ttc * 0.2; // TVA à 20%
+      const ht = ttc - tva;
+      
+      setFormData(prev => ({
+        ...prev,
+        montant_ht: ht.toFixed(2).replace('.', ','),
+        montant_tva: tva.toFixed(2).replace('.', ',')
+      }));
+    }
+  };
+
   const handleFileUpload = (file) => {
     if (file) {
       const url = URL.createObjectURL(file);
       setJustificatif({
         url: url,
         nom: file.name,
-        type: file.type
+        type: file.type,
+        file: file
       });
-      
-      // Simulation d'extraction OCR avec des données réalistes
-      setTimeout(() => {
-        setJustificatifData({
-          vendeur: 'LA ROMANA',
-          date: '24/10/2024',
-          pays: 'France',
-          devise: 'EUR',
-          totalTTC: '364,00',
-          totalHT: '328,22',
-          tva: '35,78',
-          moyenPaiement: 'Carte de Crédit Société',
-          statut: 'Traité'
-        });
-      }, 1000);
     }
-  };
-
-  const updateJustificatifData = (field, value) => {
-    setJustificatifData(prev => ({
-      ...prev,
-      [field]: value
-    }));
   };
 
   const sauvegarder = async (statut = 'brouillon') => {
@@ -99,53 +89,78 @@ const NouvelleNoteFraisPage = () => {
       setSaving(true);
       
       // Validation basique
-      if (!justificatifData.vendeur || !justificatifData.totalTTC) {
-        alert('Veuillez remplir au minimum le vendeur et le montant TTC');
+      if (!formData.vendeur.trim()) {
+        alert('Veuillez remplir le champ vendeur');
         setSaving(false);
         return;
       }
-      
-      const noteComplete = {
+
+      if (!formData.montant_ttc) {
+        alert('Veuillez remplir le montant TTC');
+        setSaving(false);
+        return;
+      }
+
+      // Préparer les données pour l'envoi
+      const noteData = {
         user_id: user_id,
         societe_id: societe_id,
-        vendeur: justificatifData.vendeur,
-        date_frais: justificatifData.date || new Date().toISOString().split('T')[0],
-        pays: justificatifData.pays,
-        devise: justificatifData.devise,
-        montant_ttc: parseFloat(justificatifData.totalTTC.replace(',', '.')) || 0,
-        montant_ht: parseFloat(justificatifData.totalHT.replace(',', '.')) || 0,
-        montant_tva: parseFloat(justificatifData.tva.replace(',', '.')) || 0,
-        moyen_paiement: justificatifData.moyenPaiement,
-        motif: noteData.motif,
-        projet_id: noteData.projet_id || null,
-        commentaire: noteData.commentaire,
-        statut,
-        montant_total: parseFloat(justificatifData.totalTTC.replace(',', '.')) || 0
+        vendeur: formData.vendeur.trim(),
+        date_frais: formData.date_frais || new Date().toISOString().split('T')[0],
+        pays: formData.pays,
+        devise: formData.devise,
+        montant_ttc: parseFloat(formData.montant_ttc.replace(',', '.')) || 0,
+        montant_ht: parseFloat(formData.montant_ht.replace(',', '.')) || 0,
+        montant_tva: parseFloat(formData.montant_tva.replace(',', '.')) || 0,
+        moyen_paiement: formData.moyen_paiement,
+        motif: formData.motif.trim(),
+        projet_id: formData.projet_id || null,
+        commentaire: formData.commentaire.trim(),
+        statut
       };
+
+      console.log('Envoi des données:', noteData);
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/note-frais`,
-        noteComplete
+        noteData
       );
 
-      if (response.status === 201 || response.status === 200) {
-        if (statut === 'brouillon') {
-          alert('Note de frais sauvegardée en brouillon');
-        } else {
-          alert('Note de frais soumise pour validation');
+      if (response.status === 201 && response.data.success) {
+        const message = statut === 'brouillon' 
+          ? `Note de frais sauvegardée en brouillon (${response.data.data.numero})`
+          : `Note de frais soumise pour validation (${response.data.data.numero})`;
+        
+        alert(message);
+        
+        if (statut === 'soumise') {
           window.location.href = '/#/notes-frais';
+        } else {
+          // Réinitialiser le formulaire après sauvegarde en brouillon
+          setFormData({
+            vendeur: '',
+            date_frais: '',
+            pays: 'France',
+            devise: 'EUR',
+            montant_ttc: '',
+            montant_ht: '',
+            montant_tva: '',
+            moyen_paiement: 'Carte de Crédit Société',
+            motif: '',
+            projet_id: '',
+            commentaire: ''
+          });
+          setJustificatif(null);
         }
       }
     } catch (error) {
       console.error('Erreur sauvegarde:', error);
-      alert('Erreur lors de la sauvegarde: ' + (error.response?.data?.message || error.message));
+      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de la sauvegarde';
+      alert('Erreur: ' + errorMessage);
     } finally {
       setSaving(false);
     }
   };
-
-  // Image par défaut du ticket de restaurant
-  const defaultReceiptImage = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDMwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNlNWU3ZWIiLz4KPHN2ZyB4PSI1MCIgeT0iNTAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMzAwIj4KPHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiPgo8cGF0aCBkPSJNMjAgMjBIMTgwVjI4MEgyMFYyMFoiIGZpbGw9IndoaXRlIiBzdHJva2U9IiNkMWQ1ZGIiLz4KPHN2ZyB4PSIyMCIgeT0iMzAiPgo8dGV4dCB4PSI4MCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMxZjJkM2YiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkxBIFJPTUFOQTwvdGV4dD4KPHN2ZyB5PSIxNSI+Cjx0ZXh0IHg9IjgwIiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjM3MzgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4yMCBSVUUgR0FCUklFTCBQRVJJPC90ZXh0Pgo8L3N2Zz4KPHN2ZyB5PSIzNSI+Cjx0ZXh0IHg9IjgwIiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjM3MzgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj45MjMwMCBMRSBNVUxMT1MgRlJBTkNFPC90ZXh0Pgo8L3N2Zz4KPHN2ZyB5PSI1MCI+Cjx0ZXh0IHg9IjgwIiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjM3MzgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5URUwgMDEgNDcgNTggNDIgNzg8L3RleHQ+CjwvdGV4dD4KPC9zdmc+CjxzdmcgeT0iOTAiPgo8dGV4dCB4PSIyMCIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMxZjJkM2YiPjI0LTEwLTI0PC90ZXh0Pgo8dGV4dCB4PSIxNDAiIHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMWYyZDNmIj4xMyA0MyA1NzwvdGV4dD4KPC9zdmc+CjxzdmcgeT0iMTIwIj4KPHR5ZXh0IHg9IjIwIiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMWYyZDNmIj5UQUJMRSAyPC90ZXh0Pgo8dGV4dCB4PSIxMDAiIHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMxZjJkM2YiPigxKSBWZXJkZXVyICMwMDE8L3RleHQ+CjwvdGV4dD4KPHN2ZyB5PSIxNDAiPgo8dGV4dCB4PSIyMCIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzYzNzM4MCI+MTcgQ291dmVydHM8L3RleHQ+Cjx0ZXh0IHg9IjE0MCIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzYzNzM4MCI+UG9zdCAjMTwvdGV4dD4KPC9zdmc+CjxzdmcgeT0iMTgwIj4KPHR5ZXh0IHg9IjgwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2RjMjYyNiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UkVQQVMgQ09NUExFVDwvdGV4dD4KPC9zdmc+CjxzdmcgeT0iMjEwIj4KPHR5ZXh0IHg9IjE0MCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMxZjJkM2YiIHRleHQtYW5jaG9yPSJlbmQiPjM2NCwwMDwvdGV4dD4KPC9zdmc+CjwvdGV4dD4KPC9zdmc+CjwvdGV4dD4KPC9zdmc+";
 
   return (
     <div className="nouvelle-note-frais-page">
@@ -155,20 +170,20 @@ const NouvelleNoteFraisPage = () => {
           <div className="montant-info">
             <FiDollarSign className="montant-icon" />
             <div className="montant-text">
-              <span className="montant-value">{justificatifData.totalTTC || '0,00'}</span>
+              <span className="montant-value">{formData.montant_ttc || '0,00'}</span>
               <span className="montant-currency">EUR</span>
             </div>
-            <div className="date-info">{justificatifData.date || 'Aucune date'}</div>
+            <div className="date-info">{formData.date_frais || 'Aucune date'}</div>
           </div>
           <div className="statut-badge">
             <FiCheck />
-            {justificatifData.statut}
+            Brouillon
           </div>
         </div>
         <div className="header-actions">
-          <button className="btn-modifier">
+          <button className="btn-modifier" disabled>
             <FiEdit />
-            Modifier
+            Mode saisie
           </button>
         </div>
       </div>
@@ -177,7 +192,7 @@ const NouvelleNoteFraisPage = () => {
         {/* Left Panel - Justificatif Preview */}
         <div className="justificatif-panel">
           <div className="justificatif-header">
-            <h3>Aperçu du justificatif</h3>
+            <h3>Justificatif</h3>
             <div className="upload-actions">
               <input
                 type="file"
@@ -192,11 +207,11 @@ const NouvelleNoteFraisPage = () => {
               />
               <label htmlFor="file-upload" className="upload-btn">
                 <FiUpload />
-                Nouveau scan
+                Charger fichier
               </label>
-              <button className="camera-btn">
+              <button className="camera-btn" disabled>
                 <FiCamera />
-                Capture d'écran
+                Scanner
               </button>
             </div>
           </div>
@@ -210,11 +225,9 @@ const NouvelleNoteFraisPage = () => {
               />
             ) : (
               <div className="receipt-placeholder">
-                <img 
-                  src={defaultReceiptImage} 
-                  alt="Aperçu ticket" 
-                  className="receipt-default"
-                />
+                <FiFileText size={64} color="#cbd5e1" />
+                <p>Aucun justificatif</p>
+                <small>Chargez une image ou un PDF</small>
               </div>
             )}
           </div>
@@ -228,18 +241,19 @@ const NouvelleNoteFraisPage = () => {
                 <label>Vendeur *</label>
                 <input
                   type="text"
-                  value={justificatifData.vendeur}
-                  onChange={(e) => updateJustificatifData('vendeur', e.target.value)}
+                  value={formData.vendeur}
+                  onChange={(e) => handleInputChange('vendeur', e.target.value)}
                   className="form-input"
+                  placeholder="Nom du vendeur/commerce"
                 />
               </div>
 
               <div className="form-group">
                 <label>Date *</label>
                 <input
-                  type="text"
-                  value={justificatifData.date}
-                  onChange={(e) => updateJustificatifData('date', e.target.value)}
+                  type="date"
+                  value={formData.date_frais}
+                  onChange={(e) => handleInputChange('date_frais', e.target.value)}
                   className="form-input"
                 />
               </div>
@@ -247,8 +261,8 @@ const NouvelleNoteFraisPage = () => {
               <div className="form-group">
                 <label>Pays *</label>
                 <select 
-                  value={justificatifData.pays}
-                  onChange={(e) => updateJustificatifData('pays', e.target.value)}
+                  value={formData.pays}
+                  onChange={(e) => handleInputChange('pays', e.target.value)}
                   className="form-select"
                 >
                   <option value="France">France</option>
@@ -262,8 +276,8 @@ const NouvelleNoteFraisPage = () => {
               <div className="form-group">
                 <label>Devise *</label>
                 <select 
-                  value={justificatifData.devise}
-                  onChange={(e) => updateJustificatifData('devise', e.target.value)}
+                  value={formData.devise}
+                  onChange={(e) => handleInputChange('devise', e.target.value)}
                   className="form-select"
                 >
                   <option value="EUR">EUR</option>
@@ -277,9 +291,10 @@ const NouvelleNoteFraisPage = () => {
                 <div className="amount-input">
                   <input
                     type="text"
-                    value={justificatifData.totalTTC}
-                    onChange={(e) => updateJustificatifData('totalTTC', e.target.value)}
+                    value={formData.montant_ttc}
+                    onChange={(e) => handleInputChange('montant_ttc', e.target.value)}
                     className="form-input amount-field"
+                    placeholder="0,00"
                   />
                   <span className="currency-label">EUR</span>
                 </div>
@@ -291,9 +306,10 @@ const NouvelleNoteFraisPage = () => {
                   <div className="amount-input">
                     <input
                       type="text"
-                      value={justificatifData.totalHT}
-                      onChange={(e) => updateJustificatifData('totalHT', e.target.value)}
+                      value={formData.montant_ht}
+                      onChange={(e) => handleInputChange('montant_ht', e.target.value)}
                       className="form-input amount-field"
+                      placeholder="0,00"
                     />
                     <span className="currency-label">EUR</span>
                   </div>
@@ -304,9 +320,10 @@ const NouvelleNoteFraisPage = () => {
                   <div className="amount-input">
                     <input
                       type="text"
-                      value={justificatifData.tva}
-                      onChange={(e) => updateJustificatifData('tva', e.target.value)}
+                      value={formData.montant_tva}
+                      onChange={(e) => handleInputChange('montant_tva', e.target.value)}
                       className="form-input amount-field"
+                      placeholder="0,00"
                     />
                     <span className="currency-label">EUR</span>
                   </div>
@@ -316,8 +333,8 @@ const NouvelleNoteFraisPage = () => {
               <div className="form-group full-width">
                 <label>Moyen de paiement *</label>
                 <select 
-                  value={justificatifData.moyenPaiement}
-                  onChange={(e) => updateJustificatifData('moyenPaiement', e.target.value)}
+                  value={formData.moyen_paiement}
+                  onChange={(e) => handleInputChange('moyen_paiement', e.target.value)}
                   className="form-select"
                 >
                   <option value="Carte de Crédit Société">Carte de Crédit Société</option>
@@ -333,8 +350,8 @@ const NouvelleNoteFraisPage = () => {
                 <input
                   type="text"
                   placeholder="Ex: Déjeuner d'affaires client, Repas équipe..."
-                  value={noteData.motif}
-                  onChange={(e) => setNoteData({...noteData, motif: e.target.value})}
+                  value={formData.motif}
+                  onChange={(e) => handleInputChange('motif', e.target.value)}
                   className="form-input"
                 />
               </div>
@@ -342,8 +359,8 @@ const NouvelleNoteFraisPage = () => {
               <div className="form-group full-width">
                 <label>Projet/Centre de coût</label>
                 <select 
-                  value={noteData.projet_id}
-                  onChange={(e) => setNoteData({...noteData, projet_id: e.target.value})}
+                  value={formData.projet_id}
+                  onChange={(e) => handleInputChange('projet_id', e.target.value)}
                   className="form-select"
                 >
                   <option value="">Sélectionner un projet</option>
@@ -359,8 +376,8 @@ const NouvelleNoteFraisPage = () => {
                 <label>Commentaire</label>
                 <textarea
                   placeholder="Commentaires additionnels..."
-                  value={noteData.commentaire}
-                  onChange={(e) => setNoteData({...noteData, commentaire: e.target.value})}
+                  value={formData.commentaire}
+                  onChange={(e) => handleInputChange('commentaire', e.target.value)}
                   className="form-textarea"
                   rows={3}
                 />
@@ -380,7 +397,7 @@ const NouvelleNoteFraisPage = () => {
                 disabled={saving}
               >
                 <FiSave />
-                Sauvegarder
+                {saving ? 'Sauvegarde...' : 'Sauvegarder'}
               </button>
               <button 
                 className="btn-primary"
