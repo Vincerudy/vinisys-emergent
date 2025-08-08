@@ -18,7 +18,7 @@ import {
   FiCheck,
   FiX
 } from 'react-icons/fi';
-import './css/NotesfraisPage.css';
+// import './css/NotesfraisPage.css';
 
 const NotesfraisPage = () => {
   const { societe_id, id: user_id } = useAuth();
