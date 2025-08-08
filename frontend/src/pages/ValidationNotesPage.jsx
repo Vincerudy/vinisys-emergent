@@ -249,7 +249,7 @@ const ValidationNotesPage = () => {
                     <td className="note-employe">
                       <div className="employe-info">
                         <FiUser size={16} />
-                        <span>{note.firstName} {note.lastName}</span>
+                        <span>{note.utilisateur_prenom} {note.utilisateur_nom}</span>
                       </div>
                     </td>
                     <td className="note-date">
