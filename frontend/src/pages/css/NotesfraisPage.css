@@ -560,6 +560,12 @@
     grid-template-columns: 1fr;
   }
   
+  /* Sur mobile, afficher les KPI en 2 colonnes */
+  .notes-kpis {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
   .specialized-filters {
     grid-template-columns: 1fr;
   }
