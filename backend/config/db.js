@@ -10,20 +10,20 @@ const pool = mysql.createPool({
   multipleStatements: true, // autorise plusieurs requêtes
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0,
-  acquireTimeout: 60000,
-  timeout: 60000,
-  reconnect: true
+  queueLimit: 0
 });
 
 // Test de connexion au démarrage
-pool.execute('SELECT 1')
-  .then(() => {
+const testConnection = async () => {
+  try {
+    await pool.promise().execute('SELECT 1');
     console.log('✅ Connexion MySQL réussie à mjupgupviniprod');
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('❌ Erreur connexion MySQL:', error);
-  });
+  }
+};
+
+testConnection();
 
 module.exports = pool.promise();
   
