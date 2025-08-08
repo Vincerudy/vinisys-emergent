@@ -70,7 +70,7 @@ const NouvelleNoteFraisPage = () => {
         type: file.type
       });
       
-      // Simulation d'extraction OCR
+      // Simulation d'extraction OCR avec des données réalistes
       setTimeout(() => {
         setJustificatifData({
           vendeur: 'LA ROMANA',
