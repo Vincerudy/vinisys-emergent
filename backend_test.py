@@ -23,8 +23,8 @@ BASE_URL = "http://localhost:8001"  # Internal URL for testing
 API_BASE = f"{BASE_URL}{api_path}"
 
 # Test credentials from user request
-TEST_EMAIL = "admin@admin.com"
-TEST_PASSWORD = "admin"
+TEST_EMAIL = "idnovation2014@gmail.com"
+TEST_PASSWORD = "123456"
 SOCIETE_ID = 2  # User specified societe_id = 2
 AUTH_TOKEN = None  # Will be set after login
 
