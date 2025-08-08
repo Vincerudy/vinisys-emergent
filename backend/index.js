@@ -537,6 +537,67 @@ app.get('/api/note-frais/:noteId', async (req, res) => {
     }
 });
 
+// PUT /api/note-frais/:noteId - Modifier une note de frais (titre, statut)
+app.put('/api/note-frais/:noteId', async (req, res) => {
+    try {
+        const { noteId } = req.params;
+        const { titre, statut } = req.body;
+
+        console.log('Modification note de frais:', noteId, req.body);
+
+        // Construire la requête de mise à jour
+        let updateFields = [];
+        let updateValues = [];
+
+        if (titre) {
+            updateFields.push('titre = ?');
+            updateValues.push(titre);
+        }
+
+        if (statut) {
+            updateFields.push('statut = ?');
+            updateValues.push(statut);
+        }
+
+        if (updateFields.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Aucun champ à mettre à jour'
+            });
+        }
+
+        // Ajouter updated_at et noteId à la fin
+        updateFields.push('updated_at = NOW()');
+        updateValues.push(noteId);
+
+        // Mettre à jour la note
+        await db.execute(`
+            UPDATE notes_frais 
+            SET ${updateFields.join(', ')}
+            WHERE id = ?
+        `, updateValues);
+
+        console.log('Note de frais modifiée avec succès:', noteId);
+
+        res.json({
+            success: true,
+            message: 'Note de frais modifiée avec succès',
+            data: {
+                noteId: parseInt(noteId),
+                statut: statut || 'brouillon'
+            }
+        });
+
+    } catch (error) {
+        console.error('Erreur modification note de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la modification de la note de frais',
+            error: error.message
+        });
+    }
+});
+
 // ENDPOINTS POUR LES FRAIS INDIVIDUELS
 // POST /api/frais - Créer un nouveau frais dans une note
 app.post('/api/frais', async (req, res) => {
