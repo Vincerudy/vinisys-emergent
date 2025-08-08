@@ -37,7 +37,7 @@ const NotesfraisPage = () => {
           annee: selectedPeriod.annee
         };
         
-        if (viewMode === 'personal') {
+        if (viewMode === 'validation') {
           params.utilisateur_id = user_id;
         }
 
