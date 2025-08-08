@@ -324,29 +324,184 @@ const NotesfraisPage = () => {
       {/* Graphiques et données */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Frais kilométriques */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <FiMap size={20} />
-            Frais kilométriques
-          </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Distance totale</span>
-              <span className="font-medium">{dashboardData?.kilometriques?.total_km || 0} km</span>
+      {/* Graphiques suggérés */}
+      <div className="notes-charts">
+        {/* Histogramme des notes par utilisateur */}
+        <div className="chart-container">
+          <div className="chart-header">
+            <div>
+              <h3 className="chart-title">
+                <FiUsers />
+                Notes par utilisateur
+              </h3>
+              <p className="chart-subtitle">Histogramme des soumissions mensuelles</p>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Montant</span>
-              <span className="font-medium text-green-600">
-                {formatCurrency(dashboardData?.kilometriques?.montant_km)}
-              </span>
+          </div>
+          <div className="chart-visualization">
+            📊 Histogramme - Nombre de notes par employé
+            <br />
+            <small>Classement des utilisateurs les plus actifs</small>
+          </div>
+        </div>
+
+        {/* Camembert des types de frais */}
+        <div className="chart-container">
+          <div className="chart-header">
+            <div>
+              <h3 className="chart-title">
+                <FiPieChart />
+                Types de frais courants
+              </h3>
+              <p className="chart-subtitle">Répartition : repas, km, hébergement, etc.</p>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Trajets</span>
-              <span className="font-medium">{dashboardData?.kilometriques?.nb_trajets || 0}</span>
+          </div>
+          <div className="chart-visualization">
+            🥧 Camembert - Types de frais
+            <br />
+            <small>Repas, Kilométrage, Hébergement, Péages</small>
+          </div>
+        </div>
+
+        {/* Courbe des frais mensuels */}
+        <div className="chart-container">
+          <div className="chart-header">
+            <div>
+              <h3 className="chart-title">
+                <FiTrendingUp />
+                Évolution mensuelle
+              </h3>
+              <p className="chart-subtitle">Courbe des frais sur 12 mois</p>
+            </div>
+          </div>
+          <div className="chart-visualization">
+            📈 Courbe temporelle - Frais mensuels
+            <br />
+            <small>Tendance et saisonnalité des dépenses</small>
+          </div>
+        </div>
+
+        {/* Barres des statuts des notes */}
+        <div className="chart-container">
+          <div className="chart-header">
+            <div>
+              <h3 className="chart-title">
+                <FiCheck />
+                Statuts des notes
+              </h3>
+              <p className="chart-subtitle">Brouillon, soumise, validée, refusée</p>
+            </div>
+          </div>
+          <div className="chart-visualization">
+            📊 Barres de statut
+            <br />
+            <small>Workflow de validation des notes</small>
+          </div>
+        </div>
+      </div>
+
+      {/* Barres de statut avec progression */}
+      <div className="status-bars">
+        <div className="status-bar">
+          <div className="status-info">
+            <span className="status-label">Brouillon</span>
+            <span className="status-count">{indicateurs.nb_brouillon || 0}</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill draft" style={{width: `${(indicateurs.nb_brouillon / indicateurs.nb_notes * 100) || 0}%`}}></div>
+          </div>
+        </div>
+
+        <div className="status-bar">
+          <div className="status-info">
+            <span className="status-label">Soumise</span>
+            <span className="status-count">{indicateurs.nb_soumise || 0}</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill submitted" style={{width: `${(indicateurs.nb_soumise / indicateurs.nb_notes * 100) || 0}%`}}></div>
+          </div>
+        </div>
+
+        <div className="status-bar">
+          <div className="status-info">
+            <span className="status-label">Validée</span>
+            <span className="status-count">{indicateurs.nb_validee || 0}</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill validated" style={{width: `${(indicateurs.nb_validee / indicateurs.nb_notes * 100) || 0}%`}}></div>
+          </div>
+        </div>
+
+        <div className="status-bar">
+          <div className="status-info">
+            <span className="status-label">Refusée</span>
+            <span className="status-count">{indicateurs.nb_refusee || 0}</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill rejected" style={{width: `${(indicateurs.nb_refusee / indicateurs.nb_notes * 100) || 0}%`}}></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Actions de validation */}
+      <div className="validation-actions">
+        <h3 className="validation-title">
+          <FiCheck />
+          Actions de validation
+        </h3>
+        <div className="validation-buttons">
+          <button className="validation-btn approve">
+            <FiCheck size={16} />
+            Valider en lot ({indicateurs.nb_soumise || 0})
+          </button>
+          <button className="validation-btn reject">
+            <FiX size={16} />
+            Refuser avec commentaire
+          </button>
+          <button className="validation-btn pending">
+            <FiClock size={16} />
+            Mettre en attente
+          </button>
+        </div>
+      </div>
+
+      {/* Historique des actions */}
+      <div className="action-history">
+        <h3 className="history-title">
+          <FiFileText />
+          Historique des actions
+        </h3>
+        <div className="timeline">
+          <div className="timeline-item created">
+            <div className="timeline-header">
+              <span className="timeline-action">Note créée</span>
+              <span className="timeline-date">Il y a 2h</span>
+            </div>
+            <div className="timeline-details">
+              Note de frais #NF2025-001 créée par Jean Dupont (Repas client - 45.50€)
+            </div>
+          </div>
+
+          <div className="timeline-item submitted">
+            <div className="timeline-header">
+              <span className="timeline-action">Note soumise</span>
+              <span className="timeline-date">Il y a 1h</span>
+            </div>
+            <div className="timeline-details">
+              Soumission pour validation avec justificatifs (2 fichiers)
+            </div>
+          </div>
+
+          <div className="timeline-item validated">
+            <div className="timeline-header">
+              <span className="timeline-action">Note validée</span>
+              <span className="timeline-date">Il y a 30min</span>
+            </div>
+            <div className="timeline-details">
+              Validée par Marie Martin - Remboursement autorisé
             </div>
           </div>
         </div>
+      </div>
 
         {/* Types de frais */}
         <div className="bg-white p-6 rounded-lg shadow">
