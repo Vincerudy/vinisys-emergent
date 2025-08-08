@@ -774,81 +774,95 @@ app.put('/api/frais/:fraisId', async (req, res) => {
     }
 });
 
-// POST /api/frais/upload-auto - Upload automatique avec création de frais
-app.post('/api/frais/upload-auto', async (req, res) => {
+// ENDPOINTS POUR LA VALIDATION DES NOTES DE FRAIS
+
+// GET /api/notes-frais/validation/:societeId - Notes en attente de validation
+app.get('/api/notes-frais/validation/:societeId', async (req, res) => {
     try {
-        // Pour cette démo, on simule l'extraction OCR et création automatique
-        const { note_frais_id } = req.body;
-
-        if (!note_frais_id) {
-            return res.status(400).json({
-                success: false,
-                message: 'ID de la note requis'
-            });
-        }
-
-        // Simulation : créer un frais avec des données d'exemple
-        const fraisData = {
-            note_frais_id: note_frais_id,
-            vendeur: 'Restaurant (Auto-détecté)',
-            date_frais: new Date().toISOString().split('T')[0],
-            pays: 'France',
-            devise: 'EUR',
-            montant: 25.50,
-            montant_ht: 21.25,
-            montant_tva: 4.25,
-            moyen_paiement: 'Carte de Crédit Société',
-            description: 'Frais créé automatiquement via OCR'
-        };
-
-        // Créer le frais
-        const [result] = await db.execute(`
-            INSERT INTO lignes_frais (
-                note_frais_id, type_frais_id, date_frais, description,
-                montant, montant_ht, montant_tva, 
-                vendeur, pays, devise, moyen_paiement,
-                created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        `, [
-            fraisData.note_frais_id,
-            1,
-            fraisData.date_frais,
-            fraisData.description,
-            fraisData.montant,
-            fraisData.montant_ht,
-            fraisData.montant_tva,
-            fraisData.vendeur,
-            fraisData.pays,
-            fraisData.devise,
-            fraisData.moyen_paiement
-        ]);
-
-        // Mettre à jour le montant total de la note
-        await db.execute(`
-            UPDATE notes_frais 
-            SET montant_total = (
-                SELECT COALESCE(SUM(montant), 0) 
-                FROM lignes_frais 
-                WHERE note_frais_id = ?
-            ),
-            updated_at = NOW()
-            WHERE id = ?
-        `, [note_frais_id, note_frais_id]);
+        const { societeId } = req.params;
+        
+        const [notes] = await db.execute(`
+            SELECT 
+                nf.id,
+                nf.numero,
+                nf.titre,
+                nf.description,
+                nf.montant_total,
+                nf.statut,
+                nf.periode_debut,
+                nf.periode_fin,
+                nf.created_at,
+                nf.updated_at,
+                u.firstName,
+                u.lastName,
+                (SELECT COUNT(*) FROM lignes_frais lf WHERE lf.note_frais_id = nf.id) as nb_lignes
+            FROM notes_frais nf
+            LEFT JOIN users u ON nf.user_id = u.id
+            WHERE nf.societe_id = ? AND nf.statut = 'soumise'
+            ORDER BY nf.updated_at ASC
+        `, [societeId]);
 
         res.json({
             success: true,
-            message: 'Frais créé automatiquement via upload',
+            notes: notes
+        });
+
+    } catch (error) {
+        console.error('Erreur récupération notes validation:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des notes à valider',
+            error: error.message
+        });
+    }
+});
+
+// PUT /api/notes-frais/validate - Valider une ou plusieurs notes
+app.put('/api/notes-frais/validate', async (req, res) => {
+    try {
+        const { noteIds, action } = req.body; // action: 'valider' ou 'refuser'
+
+        if (!noteIds || !Array.isArray(noteIds) || noteIds.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Liste des IDs de notes requise'
+            });
+        }
+
+        if (!action || !['valider', 'refuser'].includes(action)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Action doit être "valider" ou "refuser"'
+            });
+        }
+
+        const statut = action === 'valider' ? 'validee' : 'refusee';
+        const placeholders = noteIds.map(() => '?').join(',');
+
+        // Mettre à jour toutes les notes sélectionnées
+        const [result] = await db.execute(`
+            UPDATE notes_frais 
+            SET statut = ?, updated_at = NOW()
+            WHERE id IN (${placeholders}) AND statut = 'soumise'
+        `, [statut, ...noteIds]);
+
+        console.log(`${result.affectedRows} notes ${action === 'valider' ? 'validées' : 'refusées'}`);
+
+        res.json({
+            success: true,
+            message: `${result.affectedRows} note(s) ${action === 'valider' ? 'validée(s)' : 'refusée(s)'} avec succès`,
             data: {
-                fraisId: result.insertId,
-                fraisData
+                count: result.affectedRows,
+                action: action,
+                statut: statut
             }
         });
 
     } catch (error) {
-        console.error('Erreur upload auto:', error);
+        console.error('Erreur validation notes:', error);
         res.status(500).json({
             success: false,
-            message: 'Erreur lors de la création automatique du frais',
+            message: 'Erreur lors de la validation des notes',
             error: error.message
         });
     }
