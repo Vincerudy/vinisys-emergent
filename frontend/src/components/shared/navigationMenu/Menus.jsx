@@ -75,7 +75,7 @@ const Menus = () => {
   const filteredDropdown = Array.isArray(dropdownMenu) ? dropdownMenu.filter(item => {
     if (!item.permission) return true; // pas de permission => afficher
     return hasPermission(item.permission); // sinon filtrer avec la fonction
-  });
+  }) : [];
 
   // Si aucun sous-menu visible, ne pas afficher ce menu
   if (filteredDropdown.length === 0) return null;
