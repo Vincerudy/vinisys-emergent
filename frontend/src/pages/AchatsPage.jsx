@@ -34,6 +34,7 @@ const AchatsPage = () => {
     statut: '',
     type_depense: ''
   });
+  const [selectedExportType, setSelectedExportType] = useState('sage');
 
   // Chargement des données du dashboard
   useEffect(() => {
