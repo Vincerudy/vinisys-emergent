@@ -209,12 +209,11 @@ const AchatsPage = () => {
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Catégorie</label>
+          <div className="filter-group">
+            <label>Catégorie</label>
             <select 
               value={filters.categorie}
               onChange={(e) => setFilters({...filters, categorie: e.target.value})}
-              className="border rounded px-3 py-2 w-full"
             >
               <option value="">Toutes</option>
               {dashboardData?.categories?.map(c => (
@@ -223,12 +222,11 @@ const AchatsPage = () => {
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Statut</label>
+          <div className="filter-group">
+            <label>Statut</label>
             <select 
               value={filters.statut}
               onChange={(e) => setFilters({...filters, statut: e.target.value})}
-              className="border rounded px-3 py-2 w-full"
             >
               <option value="">Tous</option>
               <option value="brouillon">Brouillon</option>
@@ -237,12 +235,11 @@ const AchatsPage = () => {
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Type</label>
+          <div className="filter-group">
+            <label>Type</label>
             <select 
               value={filters.type_depense}
               onChange={(e) => setFilters({...filters, type_depense: e.target.value})}
-              className="border rounded px-3 py-2 w-full"
             >
               <option value="">Tous</option>
               <option value="manuel">Manuel</option>
@@ -252,7 +249,7 @@ const AchatsPage = () => {
 
           <button 
             onClick={() => setFilters({ fournisseur: '', categorie: '', statut: '', type_depense: '' })}
-            className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg flex items-center gap-2"
+            className="reset-btn"
           >
             <FiFilter size={16} />
             Reset
