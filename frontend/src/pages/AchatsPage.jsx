@@ -15,7 +15,9 @@ import {
   FiPieChart,
   FiCalendar,
   FiUser,
-  FiSettings
+  FiSettings,
+  FiX,
+  FiScan
 } from 'react-icons/fi';
 import './css/AchatsPage.css';
 
