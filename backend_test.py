@@ -9,8 +9,8 @@ import json
 import sys
 from datetime import datetime, date
 
-# Backend URL configuration - Using external URL from backend .env
-BASE_URL = "https://api.vinisys.com"  # External URL from backend .env
+# Backend URL configuration - Using internal URL for testing
+BASE_URL = "http://localhost:8001"  # Internal URL for testing
 API_BASE = f"{BASE_URL}/api"
 
 # Test credentials
