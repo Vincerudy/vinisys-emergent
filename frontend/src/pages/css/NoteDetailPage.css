@@ -202,6 +202,38 @@
   transform: translateY(-1px);
 }
 
+.statut-soumise {
+  display: flex;
+  align-items: center;
+}
+
+.badge-soumise {
+  background: #dcfce7;
+  color: #166534;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+}
+
+.type-badge {
+  background: #eff6ff;
+  color: #1e40af;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.actions-disabled {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
 /* Content */
 .note-content {
   padding: 30px;
