@@ -131,13 +131,13 @@ export const menuList = [
     },
     {
         id: 10,
-        name: "Note de frais",
+        name: "Notes de frais",
         path: "#",
         icon: 'feather-file-text',
         dropdownMenu: [
             {
                 id: 1,
-                name: "Mes notes de frais",
+                name: "Tableau de bord",
                 path: "/notes-frais",
                 subdropdownMenu: false,
             },
