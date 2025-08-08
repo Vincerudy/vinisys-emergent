@@ -200,6 +200,9 @@ app.use('/api/notes-frais/validation', require('./routes/notes-frais/validationN
 app.use('/api/notes-frais', require('./routes/notes-frais/validationNotes')); // Routes de validation directes
 app.use('/api/notes-frais/baremes', require('./routes/notes-frais/baremes'));
 
+// Module Rapport Financier
+app.use('/api/rapport/financier', require('./routes/rapport/rapportFinancier'));
+
 // Catégories achats
 app.get('/api/categories-achats/:societeId', async (req, res) => {
     try {
