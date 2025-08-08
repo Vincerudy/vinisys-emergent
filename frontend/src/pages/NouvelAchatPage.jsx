@@ -5,7 +5,7 @@ import {
   FiArrowLeft, 
   FiUpload, 
   FiSave, 
-  FiCalculator,
+  FiPercent,
   FiCamera,
   FiFile,
   FiCheck,
