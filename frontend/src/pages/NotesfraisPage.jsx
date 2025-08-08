@@ -332,7 +332,7 @@ const NotesfraisPage = () => {
         </div>
 
         {/* Répartition par utilisateur (si vue globale) */}
-        {viewMode === 'all' && (
+        {viewMode === 'dashboard' && (
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <FiUsers size={20} />
