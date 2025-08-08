@@ -281,6 +281,7 @@ const NoteDetailPage = () => {
                 <thead>
                   <tr>
                     <th>Date</th>
+                    <th>Type de frais</th>
                     <th>Vendeur</th>
                     <th>Description</th>
                     <th>Montant TTC</th>
@@ -294,6 +295,11 @@ const NoteDetailPage = () => {
                     <tr key={fraisItem.id} className="frais-row">
                       <td className="frais-date">
                         {formatDate(fraisItem.date_frais)}
+                      </td>
+                      <td className="frais-type">
+                        <span className="type-badge">
+                          {fraisItem.type_frais_nom || 'Non défini'}
+                        </span>
                       </td>
                       <td className="frais-vendeur">
                         <strong>{fraisItem.vendeur}</strong>
@@ -314,20 +320,26 @@ const NoteDetailPage = () => {
                         {fraisItem.moyen_paiement}
                       </td>
                       <td className="frais-actions">
-                        <button
-                          className="btn-action btn-edit"
-                          onClick={() => handleEditFrais(fraisItem)}
-                          title="Modifier"
-                        >
-                          <FiEdit />
-                        </button>
-                        <button
-                          className="btn-action btn-delete"
-                          onClick={() => alert('Fonction suppression à implémenter')}
-                          title="Supprimer"
-                        >
-                          <FiTrash2 />
-                        </button>
+                        {note.statut === 'soumise' ? (
+                          <span className="actions-disabled">Soumise</span>
+                        ) : (
+                          <>
+                            <button
+                              className="btn-action btn-edit"
+                              onClick={() => handleEditFrais(fraisItem)}
+                              title="Modifier"
+                            >
+                              <FiEdit />
+                            </button>
+                            <button
+                              className="btn-action btn-delete"
+                              onClick={() => alert('Fonction suppression à implémenter')}
+                              title="Supprimer"
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   ))}
