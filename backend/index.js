@@ -164,23 +164,51 @@ app.use('/api/insertParametrageFacturation', require('./routes/facture/insertPar
 app.use('/api/cahierRecette', require('./routes/facture/cahierRecette'));
 
 // Routes clients
-app.use('/api/client', require('./routes/client'));
+app.use('/api/insertClient', require('./routes/client/insertClient'));
+app.use('/api/listeClient', require('./routes/client/listeClient'));
+app.use('/api/suppressionClient', require('./routes/client/suppressionClient'));
+app.use('/api/updateClient', require('./routes/client/updateClient'));
 
-// Routes utilisateurs
-app.use('/api/users', require('./routes/users'));
-app.use('/api/utilisateurs', require('./routes/utilisateurs'));
+// Routes utilisateurs (à vérifier si les fichiers existent)
+try {
+  app.use('/api/users', require('./routes/users'));
+} catch (e) {
+  console.log('Routes users non disponibles:', e.message);
+}
 
-// Routes produits
-app.use('/api/produits', require('./routes/produits'));
+try {
+  app.use('/api/utilisateurs', require('./routes/utilisateurs'));
+} catch (e) {
+  console.log('Routes utilisateurs non disponibles:', e.message);
+}
 
-// Routes société
-app.use('/api/societe', require('./routes/societe'));
+// Routes produits (à vérifier si les fichiers existent)
+try {
+  app.use('/api/produits', require('./routes/produits'));
+} catch (e) {
+  console.log('Routes produits non disponibles:', e.message);
+}
 
-// Routes TVA
-app.use('/api/tva', require('./routes/tva'));
+// Routes société (à vérifier si les fichiers existent)
+try {
+  app.use('/api/societe', require('./routes/societe'));
+} catch (e) {
+  console.log('Routes societe non disponibles:', e.message);
+}
 
-// Autres routes globales
-app.use('/api/global', require('./routes/globalRoute'));
+// Routes TVA (à vérifier si les fichiers existent)
+try {
+  app.use('/api/tva', require('./routes/tva'));
+} catch (e) {
+  console.log('Routes tva non disponibles:', e.message);
+}
+
+// Autres routes globales (à vérifier si les fichiers existent)
+try {
+  app.use('/api/global', require('./routes/globalRoute'));
+} catch (e) {
+  console.log('Routes global non disponibles:', e.message);
+}
 
 // =====================================
 // ROUTES MODULES SÉPARES
