@@ -45,18 +45,15 @@ const ListeNotesfraisPage = () => {
 
   const fetchNotesfrais = async () => {
     if (!user_id) {
-      console.log('user_id manquant:', user_id);
       return;
     }
     
     try {
       setLoading(true);
-      console.log('Fetching notes for user_id:', user_id, 'API URL:', `${import.meta.env.VITE_API_URL}/notes-frais/${user_id}`);
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/notes-frais/${user_id}`,
         { params: filters }
       );
-      console.log('API Response:', response.data);
       setNotesfrais(response.data.notes || []);
     } catch (error) {
       console.error('Erreur chargement notes:', error);
