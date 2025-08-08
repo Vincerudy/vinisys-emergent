@@ -240,13 +240,13 @@ const NouvelleNoteFraisPage = () => {
           </div>
           <div className="statut-badge">
             <FiCheck />
-            Brouillon
+            {isEditMode ? 'Modification' : 'Brouillon'}
           </div>
         </div>
         <div className="header-actions">
           <button className="btn-modifier" disabled>
             <FiEdit />
-            Mode saisie
+            {isEditMode ? 'Mode modification' : 'Mode saisie'}
           </button>
         </div>
       </div>
