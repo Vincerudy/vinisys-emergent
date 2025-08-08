@@ -128,8 +128,9 @@ router.post('/', async (req, res) => {
         await connection.commit();
 
         res.status(201).json({
+            success: true,
             message: 'Note de frais créée avec succès',
-            noteId: noteId,
+            note_id: noteId,
             numero: numeroNote,
             montant_total: montantTotal
         });
