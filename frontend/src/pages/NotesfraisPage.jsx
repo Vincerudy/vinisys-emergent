@@ -626,18 +626,96 @@ const NotesfraisPage = () => {
             <p className="font-medium">Nouvelle note</p>
             <p className="text-sm text-gray-600">Créer une note de frais</p>
           </button>
-          
+
           <button className="border border-gray-300 hover:border-blue-500 rounded-lg p-4 text-center transition-colors">
-            <FiCheckCircle className="mx-auto mb-2 text-blue-600" size={24} />
-            <p className="font-medium">Validation</p>
-            <p className="text-sm text-gray-600">Valider les notes en attente</p>
+            <FiCheck className="mx-auto mb-2 text-blue-600" size={24} />
+            <p className="font-medium">Validation en lot</p>
+            <p className="text-sm text-gray-600">Valider plusieurs notes</p>
           </button>
-          
-          <button className="border border-gray-300 hover:border-purple-500 rounded-lg p-4 text-center transition-colors">
-            <FiFilter className="mx-auto mb-2 text-purple-600" size={24} />
-            <p className="font-medium">Historique</p>
-            <p className="text-sm text-gray-600">Voir toutes les notes</p>
+
+          <button 
+            onClick={() => setShowExportModal(true)}
+            className="border border-gray-300 hover:border-purple-500 rounded-lg p-4 text-center transition-colors"
+          >
+            <FiDownload className="mx-auto mb-2 text-purple-600" size={24} />
+            <p className="font-medium">Export comptable</p>
+            <p className="text-sm text-gray-600">Sage/Ciel/Cegid</p>
           </button>
+        </div>
+      </div>
+
+      {/* Export comptable - Section dédiée */}
+      <div className="export-section">
+        <h3 className="export-title">
+          <FiDownload />
+          Export comptable - Notes de frais
+        </h3>
+        <div className="export-options">
+          <div 
+            className={`export-option ${selectedExportType === 'sage' ? 'active' : ''}`}
+            onClick={() => setSelectedExportType('sage')}
+          >
+            <div className="export-option-icon">📊</div>
+            <div className="export-option-label">Sage</div>
+            <div className="export-option-desc">Format .txt compatible</div>
+          </div>
+
+          <div 
+            className={`export-option ${selectedExportType === 'ciel' ? 'active' : ''}`}
+            onClick={() => setSelectedExportType('ciel')}
+          >
+            <div className="export-option-icon">📈</div>
+            <div className="export-option-label">Ciel</div>
+            <div className="export-option-desc">Format .csv standard</div>
+          </div>
+
+          <div 
+            className={`export-option ${selectedExportType === 'cegid' ? 'active' : ''}`}
+            onClick={() => setSelectedExportType('cegid')}
+          >
+            <div className="export-option-icon">💼</div>
+            <div className="export-option-label">Cégid</div>
+            <div className="export-option-desc">Format .csv avancé</div>
+          </div>
+        </div>
+
+        <div style={{marginTop: '25px', display: 'flex', gap: '15px', flexWrap: 'wrap'}}>
+          <div className="filter-group" style={{flex: 1, minWidth: '200px'}}>
+            <label>Période d'export</label>
+            <select defaultValue="current-month">
+              <option value="current-month">Mois en cours</option>
+              <option value="last-month">Mois dernier</option>
+              <option value="current-quarter">Trimestre en cours</option>
+              <option value="custom">Période personnalisée</option>
+            </select>
+          </div>
+
+          <div className="filter-group" style={{flex: 1, minWidth: '200px'}}>
+            <label>Statut des notes</label>
+            <select defaultValue="validated">
+              <option value="all">Toutes les notes</option>
+              <option value="validated">Validées uniquement</option>
+              <option value="paid">Remboursées uniquement</option>
+            </select>
+          </div>
+
+          <div className="filter-group" style={{flex: 1, minWidth: '200px'}}>
+            <label>Utilisateur</label>
+            <select defaultValue="all">
+              <option value="all">Tous les utilisateurs</option>
+              <option value="current">Utilisateur actuel</option>
+            </select>
+          </div>
+
+          <div className="filter-actions" style={{alignSelf: 'end'}}>
+            <button 
+              className="btn-filter btn-primary"
+              onClick={() => exportNotesComptable(selectedExportType)}
+            >
+              <FiDownload size={16} />
+              Exporter ({selectedExportType?.toUpperCase()})
+            </button>
+          </div>
         </div>
       </div>
     </div>
