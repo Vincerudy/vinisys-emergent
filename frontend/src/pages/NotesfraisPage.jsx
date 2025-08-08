@@ -208,37 +208,45 @@ const NotesfraisPage = () => {
 
       {/* Indicateurs KPI */}
       <div className="notes-kpis">
-        <div className="kpi-card submitted">
+        {/* Carte Notes soumises - Cliquable vers validation */}
+        <div 
+          className="kpi-card submitted clickable" 
+          onClick={() => window.location.hash = '#/notes-frais/validation'}
+        >
           <div className="kpi-header">
             <div className="kpi-icon">
-              <FiDollarSign />
+              <FiClock />
             </div>
             <div>
               <div className="kpi-value">
-                {formatCurrency(indicateurs.montant_total_soumis)}
+                {indicateurs.nb_notes_en_attente || 0}
               </div>
               <div className="kpi-label">Notes soumises</div>
             </div>
           </div>
           <div className="kpi-trend">
-            <div className="trend-indicator positive">
+            <div className="trend-indicator warning">
               <FiTrendingUp size={12} />
-              {indicateurs.nb_notes} note(s)
+              En attente validation
             </div>
             <div className="trend-period">Ce mois</div>
           </div>
         </div>
 
-        <div className="kpi-card validated">
+        {/* Carte Notes validées - Cliquable vers historique avec filtre validé */}
+        <div 
+          className="kpi-card validated clickable"
+          onClick={() => window.location.hash = '#/notes-frais/historique?statut=validee'}
+        >
           <div className="kpi-header">
             <div className="kpi-icon">
               <FiCheck />
             </div>
             <div>
               <div className="kpi-value">
-                {formatCurrency(indicateurs.montant_valide)}
+                {indicateurs.nb_notes_validees || 0}
               </div>
-              <div className="kpi-label">Validées</div>
+              <div className="kpi-label">Notes validées</div>
             </div>
           </div>
           <div className="kpi-trend">
@@ -250,16 +258,20 @@ const NotesfraisPage = () => {
           </div>
         </div>
 
-        <div className="kpi-card rejected">
+        {/* Carte Notes remboursées/payées */}
+        <div 
+          className="kpi-card paid clickable"
+          onClick={() => window.location.hash = '#/notes-frais/historique?statut=payee'}
+        >
           <div className="kpi-header">
             <div className="kpi-icon">
-              <FiX />
+              <FiDollarSign />
             </div>
             <div>
               <div className="kpi-value">
-                {formatCurrency(indicateurs.montant_rembourse)}
+                {indicateurs.nb_notes_payees || 0}
               </div>
-              <div className="kpi-label">Remboursées</div>
+              <div className="kpi-label">Notes remboursées</div>
             </div>
           </div>
           <div className="kpi-trend">
@@ -271,24 +283,28 @@ const NotesfraisPage = () => {
           </div>
         </div>
 
-        <div className="kpi-card pending">
+        {/* Carte Total notes ce mois - Cliquable vers liste */}
+        <div 
+          className="kpi-card total clickable"
+          onClick={() => window.location.hash = '#/notes-frais/liste'}
+        >
           <div className="kpi-header">
             <div className="kpi-icon">
-              <FiClock />
+              <FiFileText />
             </div>
             <div>
               <div className="kpi-value">
-                {indicateurs.nb_notes_en_attente || 0}
+                {indicateurs.nb_notes || 0}
               </div>
-              <div className="kpi-label">En attente</div>
+              <div className="kpi-label">Total notes</div>
             </div>
           </div>
           <div className="kpi-trend">
-            <div className="trend-indicator negative">
-              <FiClock size={12} />
-              Pending
+            <div className="trend-indicator neutral">
+              <FiFileText size={12} />
+              Toutes statuts
             </div>
-            <div className="trend-period">À traiter</div>
+            <div className="trend-period">Ce mois</div>
           </div>
         </div>
       </div>
