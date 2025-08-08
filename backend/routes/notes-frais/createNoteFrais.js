@@ -78,7 +78,7 @@ router.post('/', async (req, res) => {
             INSERT INTO notes_frais (
                 numero, user_id, periode_debut, periode_fin, 
                 total_ttc, societe_id, statut, commentaire
-            ) VALUES (?, ?, ?, ?, ?, ?, 'brouillon', ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, 'En attente', ?)
         `, [
             numeroNote, user_id, periode_debut, periode_fin, 
             montantTotal, societe_id, description
