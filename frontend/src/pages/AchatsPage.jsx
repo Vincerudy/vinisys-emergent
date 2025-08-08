@@ -159,13 +159,6 @@ const AchatsPage = () => {
           </div>
         </div>
       </div>
-              >
-                Export Cegid (.csv)
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Filtres */}
       <div className="filters-container">
