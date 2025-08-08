@@ -261,7 +261,7 @@ const ValidationNotesPage = () => {
                     <td className="note-montant">
                       <div className="montant-container">
                         <FiDollarSign size={16} />
-                        <span className="montant-value">{formatMontant(note.montant_total)}</span>
+                        <span className="montant-value">{formatMontant(note.total_ttc)}</span>
                         <span className="montant-currency">EUR</span>
                       </div>
                     </td>
