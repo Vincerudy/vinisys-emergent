@@ -47,15 +47,21 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
 
   const fetchInitialData = async () => {
     try {
+      console.log('🔄 Chargement des données initiales...');
       const [projetsRes, typesFraisRes] = await Promise.all([
         axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`),
         axios.get(`${import.meta.env.VITE_API_URL}/types-frais`)
       ]);
       
+      console.log('📊 Projets reçus:', projetsRes.data);
+      console.log('📋 Types de frais reçus:', typesFraisRes.data);
+      
       setProjets(projetsRes.data.projets || []);
       setTypesFrais(typesFraisRes.data.types_frais || []);
+      
+      console.log('✅ Données chargées avec succès');
     } catch (error) {
-      console.error('Erreur chargement données:', error);
+      console.error('❌ Erreur chargement données:', error);
     }
   };
 
