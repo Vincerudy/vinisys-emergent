@@ -194,71 +194,91 @@ const ListeNotesPage = () => {
             </button>
           </div>
         ) : (
-          <div className="notes-grid">
-            {filteredNotes.map((note) => (
-              <div key={note.id} className="note-card">
-                <div className="note-header">
-                  <div className="note-info">
-                    <h3 className="note-numero">{note.numero}</h3>
-                    <span className="note-date">
-                      <FiCalendar size={14} />
-                      {formatDate(note.created_at)}
-                    </span>
-                  </div>
-                  {getStatusBadge(note.statut)}
-                </div>
-
-                <div className="note-content">
-                  <h4 className="note-titre">{note.titre}</h4>
-                  {note.description && (
-                    <p className="note-description">{note.description}</p>
-                  )}
-                  
-                  <div className="note-details">
-                    <div className="note-detail">
-                      <FiUser size={16} />
-                      <span>{note.firstName} {note.lastName}</span>
-                    </div>
-                    <div className="note-detail">
-                      <FiFileText size={16} />
-                      <span>{note.nb_lignes} ligne{note.nb_lignes > 1 ? 's' : ''}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="note-footer">
-                  <div className="note-montant">
-                    <FiDollarSign size={18} />
-                    <span className="montant-value">{formatMontant(note.montant_total)}</span>
-                    <span className="montant-currency">EUR</span>
-                  </div>
-                  
-                  <div className="note-actions">
-                    <button
-                      className="btn-action btn-view"
-                      onClick={() => handleViewNote(note.id)}
-                      title="Voir"
-                    >
-                      <FiEye />
-                    </button>
-                    <button
-                      className="btn-action btn-edit"
-                      onClick={() => handleEditNote(note.id)}
-                      title="Modifier"
-                    >
-                      <FiEdit />
-                    </button>
-                    <button
-                      className="btn-action btn-delete"
-                      onClick={() => alert('Fonction suppression à implémenter')}
-                      title="Supprimer"
-                    >
-                      <FiTrash2 />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="notes-table-container">
+            <table className="notes-table">
+              <thead>
+                <tr>
+                  <th>Numéro</th>
+                  <th>Titre</th>
+                  <th>Utilisateur</th>
+                  <th>Date</th>
+                  <th>Montant</th>
+                  <th>Statut</th>
+                  <th>Lignes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredNotes.map((note) => (
+                  <tr key={note.id} className="note-row">
+                    <td className="note-numero">
+                      <span className="numero-badge">{note.numero}</span>
+                    </td>
+                    <td className="note-titre-cell">
+                      <div className="titre-container">
+                        <h4 className="note-titre">{note.titre}</h4>
+                        {note.description && (
+                          <p className="note-description">{note.description}</p>
+                        )}
+                      </div>
+                    </td>
+                    <td className="note-user">
+                      <div className="user-info">
+                        <FiUser size={16} />
+                        <span>{note.firstName} {note.lastName}</span>
+                      </div>
+                    </td>
+                    <td className="note-date">
+                      <div className="date-info">
+                        <FiCalendar size={16} />
+                        <span>{formatDate(note.created_at)}</span>
+                      </div>
+                    </td>
+                    <td className="note-montant">
+                      <div className="montant-container">
+                        <FiDollarSign size={16} />
+                        <span className="montant-value">{formatMontant(note.montant_total)}</span>
+                        <span className="montant-currency">EUR</span>
+                      </div>
+                    </td>
+                    <td className="note-statut">
+                      {getStatusBadge(note.statut)}
+                    </td>
+                    <td className="note-lignes">
+                      <div className="lignes-info">
+                        <FiFileText size={16} />
+                        <span>{note.nb_lignes} ligne{note.nb_lignes > 1 ? 's' : ''}</span>
+                      </div>
+                    </td>
+                    <td className="note-actions">
+                      <div className="actions-buttons">
+                        <button
+                          className="btn-action btn-view"
+                          onClick={() => handleViewNote(note.id)}
+                          title="Voir"
+                        >
+                          <FiEye />
+                        </button>
+                        <button
+                          className="btn-action btn-edit"
+                          onClick={() => handleEditNote(note.id)}
+                          title="Modifier"
+                        >
+                          <FiEdit />
+                        </button>
+                        <button
+                          className="btn-action btn-delete"
+                          onClick={() => alert('Fonction suppression à implémenter')}
+                          title="Supprimer"
+                        >
+                          <FiTrash2 />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
