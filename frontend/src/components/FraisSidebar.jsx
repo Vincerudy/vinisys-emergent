@@ -61,6 +61,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
 
   const loadFraisData = (data) => {
     setFormData({
+      type_frais_id: data.type_frais_id?.toString() || '',
       vendeur: data.vendeur || '',
       date_frais: data.date_frais ? data.date_frais.split('T')[0] : '',
       pays: data.pays || 'France',
@@ -76,6 +77,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
 
   const resetForm = () => {
     setFormData({
+      type_frais_id: '',
       vendeur: '',
       date_frais: new Date().toISOString().split('T')[0],
       pays: 'France',
