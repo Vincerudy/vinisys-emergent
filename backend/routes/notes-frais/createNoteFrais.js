@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
         } = req.body;
 
         // Validation
-        if (!utilisateur_id || !periode_debut || !periode_fin || !societe_id) {
+        if (!user_id || !periode_debut || !periode_fin || !societe_id) {
             throw new Error('Champs obligatoires manquants');
         }
 
