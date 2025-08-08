@@ -154,6 +154,12 @@ export const menuList = [
                 subdropdownMenu: false,
             },
             {
+                id: 6,
+                name: "Paramétrage",
+                path: "/notes-frais/parametrage",
+                subdropdownMenu: false,
+            },
+            {
                 id: 4,
                 name: "Validation notes",
                 path: "/notes-frais/validation",
