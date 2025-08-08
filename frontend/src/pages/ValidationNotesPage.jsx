@@ -268,7 +268,7 @@ const ValidationNotesPage = () => {
                     <td className="note-lignes">
                       <div className="lignes-info">
                         <FiFileText size={16} />
-                        <span>{note.nb_lignes} ligne{note.nb_lignes > 1 ? 's' : ''}</span>
+                        <span>{note.nb_lignes_frais} ligne{note.nb_lignes_frais > 1 ? 's' : ''}</span>
                       </div>
                     </td>
                     <td className="note-actions">
