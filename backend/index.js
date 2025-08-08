@@ -228,13 +228,11 @@ app.get('/api/projets/:societeId', async (req, res) => {
     }
 });
 
-// GET /api/types-frais/:societeId - Récupérer les types de frais actifs
-app.get('/api/types-frais/:societeId', async (req, res) => {
+// GET /api/types-frais - Récupérer les types de frais actifs
+app.get('/api/types-frais', async (req, res) => {
     try {
-        const { societeId } = req.params;
         const [typesFrais] = await db.execute(
-            'SELECT * FROM types_frais WHERE societe_id = ? AND actif = 1 ORDER BY libelle ASC',
-            [societeId]
+            'SELECT * FROM types_frais WHERE actif = 1 ORDER BY nom ASC'
         );
         res.json({ 
             success: true,
