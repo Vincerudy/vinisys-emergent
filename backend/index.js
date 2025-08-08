@@ -557,6 +557,7 @@ app.post('/api/frais', async (req, res) => {
     try {
         const {
             note_frais_id,
+            type_frais_id,
             vendeur,
             date_frais,
             pays,
@@ -572,10 +573,10 @@ app.post('/api/frais', async (req, res) => {
         console.log('Création frais individuel:', req.body);
 
         // Validation des champs requis
-        if (!note_frais_id || !vendeur || !montant) {
+        if (!note_frais_id || !vendeur || !montant || !type_frais_id) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Note ID, vendeur et montant sont requis' 
+                message: 'Note ID, type de frais, vendeur et montant sont requis' 
             });
         }
 
@@ -589,7 +590,7 @@ app.post('/api/frais', async (req, res) => {
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         `, [
             note_frais_id,
-            1, // Type frais par défaut (repas)
+            type_frais_id,
             date_frais || new Date().toISOString().split('T')[0],
             description || `Frais ${vendeur}`,
             montant,
