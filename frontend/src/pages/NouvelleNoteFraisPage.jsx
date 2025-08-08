@@ -5,7 +5,7 @@ import {
   FiUpload,
   FiSave,
   FiSend,
-  FiCalculator,
+  FiPercent,
   FiMapPin,
   FiClock,
   FiFileText,
