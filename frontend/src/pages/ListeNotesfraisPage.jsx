@@ -47,7 +47,7 @@ const ListeNotesfraisPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/notes-frais/list/${societe_id}`,
+        `${import.meta.env.VITE_API_URL}/notes-frais/${user_id}`,
         { params: filters }
       );
       setNotesfrais(response.data.notes || []);
