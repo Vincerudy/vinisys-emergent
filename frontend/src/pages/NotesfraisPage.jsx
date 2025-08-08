@@ -13,7 +13,10 @@ import {
   FiUsers,
   FiMap,
   FiFileText,
-  FiCalendar
+  FiCalendar,
+  FiDollarSign,
+  FiCheck,
+  FiX
 } from 'react-icons/fi';
 import './css/NotesfraisPage.css';
 
