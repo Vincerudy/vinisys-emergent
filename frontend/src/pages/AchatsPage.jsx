@@ -165,16 +165,19 @@ const AchatsPage = () => {
         </div>
       </div>
 
-      {/* Filtres et période */}
-      <div className="bg-white p-4 rounded-lg shadow">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Période</label>
-            <div className="flex gap-2">
+      {/* Filtres */}
+      <div className="filters-container">
+        <h3 className="filters-title">
+          <FiFilter />
+          Filtres & Options
+        </h3>
+        <div className="filters-grid">
+          <div className="filter-group">
+            <label>Période</label>
+            <div style={{display: 'flex', gap: '10px'}}>
               <select 
                 value={selectedPeriod.mois}
                 onChange={(e) => setSelectedPeriod({...selectedPeriod, mois: parseInt(e.target.value)})}
-                className="border rounded px-3 py-2"
               >
                 {Array.from({length: 12}, (_, i) => (
                   <option key={i+1} value={i+1}>
@@ -185,7 +188,6 @@ const AchatsPage = () => {
               <select 
                 value={selectedPeriod.annee}
                 onChange={(e) => setSelectedPeriod({...selectedPeriod, annee: parseInt(e.target.value)})}
-                className="border rounded px-3 py-2"
               >
                 {[2023, 2024, 2025].map(year => (
                   <option key={year} value={year}>{year}</option>
@@ -194,12 +196,11 @@ const AchatsPage = () => {
             </div>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Fournisseur</label>
+          <div className="filter-group">
+            <label>Fournisseur</label>
             <select 
               value={filters.fournisseur}
               onChange={(e) => setFilters({...filters, fournisseur: e.target.value})}
-              className="border rounded px-3 py-2 w-full"
             >
               <option value="">Tous</option>
               {dashboardData?.fournisseurs?.map(f => (
