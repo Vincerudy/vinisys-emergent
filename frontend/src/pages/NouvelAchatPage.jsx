@@ -189,49 +189,69 @@ const NouvelAchatPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="nouvel-achat-page">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+      <div className="page-header">
+        <div className="header-content">
+          <h1 className="page-title">
+            <FiFileText />
+            Nouvelle Dépense/Achat
+          </h1>
+          <p className="page-subtitle">
+            Saisie {mode === 'ocr' ? 'automatique avec OCR' : 'manuelle'} d'une dépense d'entreprise
+          </p>
+        </div>
+        <div className="header-actions">
           <button 
             onClick={() => window.history.back()}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+            className="btn-back"
           >
-            <FiArrowLeft size={20} />
+            <FiArrowLeft size={18} />
             Retour
           </button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              🧾 Nouvelle Dépense/Achat
-            </h1>
-            <p className="text-gray-600">
-              Saisie {mode === 'ocr' ? 'automatique (OCR)' : 'manuelle'} d'une dépense d'entreprise
-            </p>
-          </div>
+          <button 
+            onClick={handleSubmit}
+            disabled={loading}
+            className={`btn-primary ${loading ? 'btn-loading' : ''}`}
+          >
+            <FiSave size={18} />
+            Enregistrer
+          </button>
         </div>
+      </div>
 
-        {/* Switch mode */}
-        <div className="flex bg-gray-100 rounded-lg p-1">
-          <button
+      {/* Mode Selector */}
+      <div className="mode-selector">
+        <h3>
+          <FiCamera />
+          Mode de saisie
+        </h3>
+        <div className="mode-buttons">
+          <div 
+            className={`mode-button ${mode === 'manuel' ? 'active' : ''}`}
             onClick={() => setMode('manuel')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              mode === 'manuel' 
-                ? 'bg-white text-blue-600 shadow-sm' 
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
           >
-            Manuel
-          </button>
-          <button
+            <div className="mode-icon">
+              <FiFileText />
+            </div>
+            <div className="mode-title">Saisie manuelle</div>
+            <div className="mode-description">
+              Saisie traditionnelle avec formulaire complet
+            </div>
+          </div>
+          
+          <div 
+            className={`mode-button ${mode === 'ocr' ? 'active' : ''}`}
             onClick={() => setMode('ocr')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              mode === 'ocr' 
-                ? 'bg-white text-purple-600 shadow-sm' 
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
           >
-            OCR
-          </button>
+            <div className="mode-icon">
+              <FiCamera />
+            </div>
+            <div className="mode-title">Saisie OCR</div>
+            <div className="mode-description">
+              Extraction automatique depuis photo/PDF
+            </div>
+          </div>
         </div>
       </div>
 
