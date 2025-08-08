@@ -49,7 +49,7 @@ const NoteDetailPage = () => {
       if (response.data.success) {
         setNote(response.data.note);
         setFrais(response.data.note.lignes_frais || []);
-        setNoteTitle(response.data.note.titre || `Note de frais ${response.data.note.numero}`);
+        setNoteTitle(`Note de frais ${response.data.note.numero}`);
       }
     } catch (error) {
       console.error('Erreur chargement note:', error);
