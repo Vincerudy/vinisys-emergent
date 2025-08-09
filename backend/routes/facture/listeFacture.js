@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/db');
 
-// Route directe pour correspondre aux appels frontend
-router.get('/:id', async (req, res) => {
+// GET /listeFacture/:id - Liste des factures d'une société
+router.get('/listeFacture/:id', async (req, res) => {
     const userId = req.params.id;
 
     try {

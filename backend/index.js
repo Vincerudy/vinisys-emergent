@@ -10,6 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 8001;
 const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret_jwt_ici';
 
+
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -146,28 +148,68 @@ app.get('/api/token', (req, res) => {
 // ROUTES EXISTANTES (Facturation, etc.)
 // =====================================
 
-// Routes facturation originales - Routes directes (pas de double préfixe)
-app.use('/api/listeFacture', require('./routes/facture/listeFacture'));
-app.use('/api/dashbordData', require('./routes/facture/dashbordData'));
-app.use('/api/insertFacture', require('./routes/facture/insertFacture'));
-app.use('/api/updateFacture', require('./routes/facture/updateFacture'));
-app.use('/api/deleteFacture', require('./routes/facture/deleteFacture'));
-app.use('/api/transformFacture', require('./routes/facture/transformFacture'));
-app.use('/api/dataGraphiqueFacture', require('./routes/facture/dataGraphiqueFacture'));
-app.use('/api/dataGraphCircle', require('./routes/facture/dataGraphCircle'));
-app.use('/api/numeroFacture', require('./routes/facture/numeroFacture'));
-app.use('/api/modeReglementFacture', require('./routes/facture/modeReglementFacture'));
-app.use('/api/updateStatut', require('./routes/facture/updateStatut'));
-app.use('/api/alertes', require('./routes/facture/alertes'));
-app.use('/api/ParametreFacturationRead', require('./routes/facture/ParametreFacturationRead'));
-app.use('/api/insertParametrageFacturation', require('./routes/facture/insertParametrageFacturation'));
-app.use('/api/cahierRecette', require('./routes/facture/cahierRecette'));
-
-// Routes clients
-app.use('/api/insertClient', require('./routes/client/insertClient'));
-app.use('/api/listeClient', require('./routes/client/listeClient'));
-app.use('/api/suppressionClient', require('./routes/client/suppressionClient'));
-app.use('/api/updateClient', require('./routes/client/updateClient'));
+const routes = [
+    require('./routes/auth'),
+    require('./routes/login'),
+    require('./routes/loginPilote'),
+    require('./routes/globalRoute'),
+    require('./routes/resetPass'),
+    require('./routes/senderMail'),
+    require('./routes/token/verifyToken'),
+    require('./routes/images/imageRoutes'),
+    require('./routes/client/insertClient'),
+    require('./routes/client/listeClient'),
+    require('./routes/client/updateClient'),
+    require('./routes/client/suppressionClient'),
+    require('./routes/facture/insertFacture'),
+    require('./routes/facture/listeFacture'),
+    require('./routes/facture/updateFacture'),
+    require('./routes/facture/deleteFacture'),
+    require('./routes/facture/dataGraphiqueFacture'),
+    require('./routes/facture/dataGraphCircle'),
+    require('./routes/facture/updateStatut'),
+    require('./routes/facture/jobAlertes'),
+    require('./routes/facture/modeReglementFacture'),
+    require('./routes/facture/transformFacture'),
+    require('./routes/facture/numeroFacture'),
+    require('./routes/facture/alertes'),
+    require('./routes/facture/insertParametrageFacturation'),
+    require('./routes/facture/ParametreFacturationRead'),
+    require('./routes/facture/dashbordData'),
+    require('./routes/facture/cahierRecette'),
+    require('./routes/societe/updateSociete'),
+    require('./routes/societe/readSociete'),
+    require('./routes/parametrage_societe/mail_settings'),
+    require('./routes/societe/updateParametrageSocieteClient'),
+    require('./routes/societe/listeSocieteClient'),
+    require('./routes/societe/listeSocieteInscrite'),
+    require('./routes/employees/insertUpdateEmployees'),
+    require('./routes/produits/insertPorduit'),
+    require('./routes/produits/ListeProduits'),
+    require('./routes/produits/AffichagePorduit'),
+    require('./routes/produits/deleteProduit'),
+    require('./routes/produits/mouvementsStock'),
+    require('./routes/produits/ListeMouvements'),
+    require('./routes/produits/ImportProduit'),
+    require('./routes/produits/inventaire'),
+    require('./routes/tva/tvaInit'),
+    require('./routes/tva/listetva'),
+    require('./routes/tva/updatetva'),
+    require('./routes/tva/listeTvaActiv'),
+    require('./routes/users/createUser'),
+    require('./routes/utilisateurs/utilisateur'),
+    require('./routes/ticket/insertTicket'),
+    require('./routes/ticket/ticketDetail'),
+    require('./routes/ticket/inserMessage'),
+    require('./routes/ticket/messageRead'),
+    require('./routes/ticket/listeTicketClient'),
+    require('./routes/ticket/listeTicketMaintenance'),
+    require('./routes/ticket/TicketDetailMaintenance'),
+    require('./routes/ticket/MaintenanceMessageRead'),
+  //  require('./routes/ticket/testSentTicket'),
+  ];
+  
+  routes.forEach((route) => app.use('/api', route));
 
 // Routes manquantes appelées par le frontend
 app.get('/api/parametrage-facturation/:id', (req, res) => {

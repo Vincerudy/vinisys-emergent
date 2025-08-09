@@ -33,7 +33,7 @@ const GestionUtilisateurs = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}//utilisateurs/liste`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/utilisateurs/liste`, {
           headers: {
 
             'Authorization': `Bearer ${token}`,  // << inclure le token ici
