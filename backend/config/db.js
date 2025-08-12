@@ -5,7 +5,7 @@ const pool = mysql.createPool({
   port: 8889,  // Port MySQL de MAMP
   user: 'root',
   password: 'root',
-  database: 'vinisys-emergent',
+  database: 'vinisys',
   multipleStatements: true, // 👉 autorise plusieurs requêtes
   waitForConnections: true,
   connectionLimit: 10,
@@ -16,7 +16,7 @@ const pool = mysql.createPool({
 const testConnection = async () => {
   try {
     await pool.promise().execute('SELECT 1');
-    console.log('✅ Connexion MySQL réussie à mjupgupviniprod');
+    console.log('✅ Connexion MySQL réussie à vinisys');
   } catch (error) {
     console.error('❌ Erreur connexion MySQL:', error);
   }
