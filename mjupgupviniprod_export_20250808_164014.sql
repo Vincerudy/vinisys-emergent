@@ -403,7 +403,7 @@ CREATE TABLE `factures` (
   `ht` varchar(255) DEFAULT NULL,
   `type_saisie` varchar(255) DEFAULT NULL,
   `total_tva` varchar(255) DEFAULT NULL,
-  `type_facture` enum('facture','avoir','devis') DEFAULT 'facture',
+  `type_fact` enum('facture','avoir','devis') DEFAULT 'facture',
   PRIMARY KEY (`id`),
   KEY `client_id` (`client_id`),
   KEY `societe_id` (`societe_id`),

@@ -46,7 +46,7 @@ router.get('/:societeId', async (req, res) => {
             FROM factures 
             WHERE societe_id = ? 
                 AND date_facture BETWEEN ? AND ?
-                AND type_facture = 'avoir'
+                AND type_fact = 'avoir'
         `, [societeId, date_debut, date_fin]);
 
         // Répartition par TVA sur les factures
@@ -60,7 +60,7 @@ router.get('/:societeId', async (req, res) => {
             WHERE f.societe_id = ? 
                 AND f.date_facture BETWEEN ? AND ?
                 AND f.statut != 'annulee'
-                AND f.type_facture != 'avoir'
+                AND f.type_fact != 'avoir'
             GROUP BY lf.taux_tva
             ORDER BY lf.taux_tva
         `, [societeId, date_debut, date_fin]);
