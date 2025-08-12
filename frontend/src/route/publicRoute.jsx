@@ -96,7 +96,7 @@ import AchatsPage from "../pages/AchatsPage";
 import NotesfraisPage from "../pages/NotesfraisPage";
 import NouvelAchatPage from "../pages/NouvelAchatPage";
 import ListeAchatsPage from "../pages/ListeAchatsPage";
-import ListeNotesPage from "../pages/ListeNotesPage";
+import ListeNotesfraisPage from "../pages/ListeNotesfraisPage";
 import NouvelleNoteFraisPage from "../pages/NouvelleNoteFraisPage";
 import NoteDetailPage from "../pages/NoteDetailPage";
 import ParametrageFraisPage from "../pages/ParametrageFraisPage";
@@ -104,6 +104,7 @@ import TestNoteFraisPage from "../pages/TestNoteFraisPage";
 import ValidationNotesPage from "../pages/ValidationNotesPage";
 import HistoriqueNotesPage from "../pages/HistoriqueNotesPage";
 import FournisseursPage from "../pages/FournisseursPage";
+import RapportPage from "../pages/RapportPage";
 
 import axios from "axios";
 import ImportProduitsPage from "../pages/ImportProduitsPage";
@@ -489,7 +490,7 @@ export const publicRoute = createHashRouter([
             },
             {
                 path: "/notes-frais/liste",
-                element: <ProtectedRoute element={<ListeNotesPage />} />,
+                element: <ProtectedRoute element={<ListeNotesfraisPage />} />,
             },
             {
                 path: "/notes-frais/note/:id",
@@ -510,6 +511,10 @@ export const publicRoute = createHashRouter([
             {
                 path: "/notes-frais/historique",
                 element: <ProtectedRoute element={<HistoriqueNotesPage />} />,
+            },
+            {
+                path: "/rapport",
+                element: <ProtectedRoute element={<RapportPage />} />,
             },
             {
                 path: "/reset-password/:token",

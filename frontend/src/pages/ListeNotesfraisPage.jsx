@@ -21,7 +21,7 @@ import { useAuth } from '../contexte/AuthContext';
 import './css/ListeNotesfraisPage.css';
 
 const ListeNotesfraisPage = () => {
-  const { societe_id, user_id } = useAuth();
+  const { societe_id, id: user_id } = useAuth();
   const [notesfrais, setNotesfrais] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,10 +44,14 @@ const ListeNotesfraisPage = () => {
   }, [societe_id, filters]);
 
   const fetchNotesfrais = async () => {
+    if (!user_id) {
+      return;
+    }
+    
     try {
       setLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/notes-frais/list/${societe_id}`,
+        `${import.meta.env.VITE_API_URL}/notes-frais/${user_id}`,
         { params: filters }
       );
       setNotesfrais(response.data.notes || []);

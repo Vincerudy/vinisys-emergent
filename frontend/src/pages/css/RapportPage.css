@@ -1,0 +1,434 @@
+/* Page Rapport - Styles principaux */
+.rapport-page {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.rapport-header {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 24px;
+}
+
+.rapport-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 24px 0;
+  color: #1e293b;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.rapport-header h1 svg {
+  color: #3b82f6;
+}
+
+/* Filtres de période */
+.periode-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.periode-presets {
+  display: flex;
+  gap: 8px;
+}
+
+.periode-presets button {
+  padding: 8px 16px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 8px;
+  color: #64748b;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.periode-presets button:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.periode-presets button.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.date-range input[type="date"] {
+  padding: 8px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.date-range span {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.btn-refresh {
+  padding: 8px 12px;
+  background: #059669;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.btn-refresh:hover {
+  background: #047857;
+}
+
+/* Loading */
+.rapport-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+  color: #64748b;
+}
+
+.rapport-loading .spinning {
+  animation: spin 1s linear infinite;
+  font-size: 32px;
+  color: #3b82f6;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Contenu principal */
+.rapport-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Sections */
+.rapport-section {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.rapport-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 24px 0;
+  color: #1e293b;
+  font-size: 22px;
+  font-weight: 600;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+.rapport-section h2 svg {
+  color: #3b82f6;
+}
+
+/* Grille de métriques */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+/* Cartes métriques */
+.metric-card {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.metric-card:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.metric-card.primary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border-color: #3b82f6;
+}
+
+.metric-card.success {
+  background: linear-gradient(135deg, #059669, #047857);
+  color: white;
+  border-color: #059669;
+}
+
+.metric-card.warning {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: white;
+  border-color: #d97706;
+}
+
+.metric-card.danger {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  border-color: #dc2626;
+}
+
+.metric-card.info {
+  background: linear-gradient(135deg, #0891b2, #0e7490);
+  color: white;
+  border-color: #0891b2;
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Répartition TVA */
+.tva-repartition {
+  margin-bottom: 32px;
+}
+
+.tva-repartition h3 {
+  color: #1e293b;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.tva-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.tva-item {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.tva-item:hover {
+  background: #e2e8f0;
+}
+
+.tva-taux {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: #3b82f6;
+  margin-bottom: 8px;
+}
+
+.tva-montant {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Avoirs */
+.avoirs-section {
+  margin-top: 16px;
+}
+
+/* Répartition par catégories */
+.categories-repartition {
+  margin-bottom: 32px;
+}
+
+.categories-repartition h3 {
+  color: #1e293b;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.categories-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.category-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.category-item:hover {
+  border-color: #cbd5e1;
+}
+
+.category-name {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.category-montant {
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.category-bar {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.category-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  transition: width 0.3s ease;
+}
+
+/* Détail montants */
+.detail-montants {
+  border-top: 2px solid #f1f5f9;
+  padding-top: 20px;
+}
+
+.montant-detail {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 16px;
+}
+
+.montant-detail.total {
+  border-top: 2px solid #e2e8f0;
+  margin-top: 12px;
+  padding-top: 12px;
+  font-weight: 700;
+  font-size: 18px;
+  color: #1e293b;
+}
+
+/* Section Bénéfice Net */
+.benefice-section {
+  border: 3px solid #3b82f6;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+.benefice-calcul {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.calcul-etape {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.calcul-etape:last-of-type {
+  border-bottom: none;
+}
+
+.calcul-resultat {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 0;
+  font-size: 20px;
+  font-weight: 700;
+  border-top: 3px solid #3b82f6;
+  margin-top: 16px;
+  color: #1e293b;
+}
+
+.positive {
+  color: #059669;
+  font-weight: 600;
+}
+
+.negative {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .rapport-page {
+    padding: 16px;
+  }
+  
+  .periode-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .date-range {
+    justify-content: center;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tva-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .rapport-header h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .periode-presets {
+    flex-direction: column;
+  }
+  
+  .date-range {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .tva-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -183,62 +183,50 @@ const NotesfraisPage = () => {
             </div>
           </div>
         </div>
-        
-        <div className="mode-tabs">
-          <button 
-            className={`mode-tab ${viewMode === 'dashboard' ? 'active' : ''}`}
-            onClick={() => setViewMode('dashboard')}
-          >
-            Tableau de bord
-          </button>
-          <button 
-            className={`mode-tab ${viewMode === 'validation' ? 'active' : ''}`}
-            onClick={() => setViewMode('validation')}
-          >
-            Validation
-          </button>
-          <button 
-            className={`mode-tab ${viewMode === 'historique' ? 'active' : ''}`}
-            onClick={() => setViewMode('historique')}
-          >
-            Historique
-          </button>
-        </div>
+ 
       </div>
 
       {/* Indicateurs KPI */}
       <div className="notes-kpis">
-        <div className="kpi-card submitted">
+        {/* Carte Notes soumises - Cliquable vers validation */}
+        <div 
+          className="kpi-card submitted clickable" 
+          onClick={() => window.location.hash = '#/notes-frais/validation'}
+        >
           <div className="kpi-header">
             <div className="kpi-icon">
-              <FiDollarSign />
+              <FiClock />
             </div>
             <div>
               <div className="kpi-value">
-                {formatCurrency(indicateurs.montant_total_soumis)}
+                {indicateurs.nb_notes_en_attente || 0}
               </div>
               <div className="kpi-label">Notes soumises</div>
             </div>
           </div>
           <div className="kpi-trend">
-            <div className="trend-indicator positive">
+            <div className="trend-indicator warning">
               <FiTrendingUp size={12} />
-              {indicateurs.nb_notes} note(s)
+              En attente validation
             </div>
             <div className="trend-period">Ce mois</div>
           </div>
         </div>
 
-        <div className="kpi-card validated">
+        {/* Carte Notes validées - Cliquable vers historique avec filtre validé */}
+        <div 
+          className="kpi-card validated clickable"
+          onClick={() => window.location.hash = '#/notes-frais/historique?statut=validee'}
+        >
           <div className="kpi-header">
             <div className="kpi-icon">
               <FiCheck />
             </div>
             <div>
               <div className="kpi-value">
-                {formatCurrency(indicateurs.montant_valide)}
+                {indicateurs.nb_notes_validees || 0}
               </div>
-              <div className="kpi-label">Validées</div>
+              <div className="kpi-label">Notes validées</div>
             </div>
           </div>
           <div className="kpi-trend">
@@ -250,16 +238,20 @@ const NotesfraisPage = () => {
           </div>
         </div>
 
-        <div className="kpi-card rejected">
+        {/* Carte Notes remboursées/payées */}
+        <div 
+          className="kpi-card paid clickable"
+          onClick={() => window.location.hash = '#/notes-frais/historique?statut=payee'}
+        >
           <div className="kpi-header">
             <div className="kpi-icon">
-              <FiX />
+              <FiDollarSign />
             </div>
             <div>
               <div className="kpi-value">
-                {formatCurrency(indicateurs.montant_rembourse)}
+                {indicateurs.nb_notes_payees || 0}
               </div>
-              <div className="kpi-label">Remboursées</div>
+              <div className="kpi-label">Notes remboursées</div>
             </div>
           </div>
           <div className="kpi-trend">
@@ -271,24 +263,28 @@ const NotesfraisPage = () => {
           </div>
         </div>
 
-        <div className="kpi-card pending">
+        {/* Carte Total notes ce mois - Cliquable vers liste */}
+        <div 
+          className="kpi-card total clickable"
+          onClick={() => window.location.hash = '#/notes-frais/liste'}
+        >
           <div className="kpi-header">
             <div className="kpi-icon">
-              <FiClock />
+              <FiFileText />
             </div>
             <div>
               <div className="kpi-value">
-                {indicateurs.nb_notes_en_attente || 0}
+                {indicateurs.nb_notes || 0}
               </div>
-              <div className="kpi-label">En attente</div>
+              <div className="kpi-label">Total notes</div>
             </div>
           </div>
           <div className="kpi-trend">
-            <div className="trend-indicator negative">
-              <FiClock size={12} />
-              Pending
+            <div className="trend-indicator neutral">
+              <FiFileText size={12} />
+              Toutes statuts
             </div>
-            <div className="trend-period">À traiter</div>
+            <div className="trend-period">Ce mois</div>
           </div>
         </div>
       </div>
@@ -351,146 +347,7 @@ const NotesfraisPage = () => {
 
       {/* Graphiques et données */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-      {/* Graphiques suggérés */}
-      <div className="notes-charts">
-        {/* Histogramme des notes par utilisateur */}
-        <div className="chart-container">
-          <div className="chart-header">
-            <div>
-              <h3 className="chart-title">
-                <FiUsers />
-                Notes par utilisateur
-              </h3>
-              <p className="chart-subtitle">Histogramme des soumissions mensuelles</p>
-            </div>
-          </div>
-          <div className="chart-visualization">
-            📊 Histogramme - Nombre de notes par employé
-            <br />
-            <small>Classement des utilisateurs les plus actifs</small>
-          </div>
-        </div>
-
-        {/* Camembert des types de frais */}
-        <div className="chart-container">
-          <div className="chart-header">
-            <div>
-              <h3 className="chart-title">
-                <FiPieChart />
-                Types de frais courants
-              </h3>
-              <p className="chart-subtitle">Répartition : repas, km, hébergement, etc.</p>
-            </div>
-          </div>
-          <div className="chart-visualization">
-            🥧 Camembert - Types de frais
-            <br />
-            <small>Repas, Kilométrage, Hébergement, Péages</small>
-          </div>
-        </div>
-
-        {/* Courbe des frais mensuels */}
-        <div className="chart-container">
-          <div className="chart-header">
-            <div>
-              <h3 className="chart-title">
-                <FiTrendingUp />
-                Évolution mensuelle
-              </h3>
-              <p className="chart-subtitle">Courbe des frais sur 12 mois</p>
-            </div>
-          </div>
-          <div className="chart-visualization">
-            📈 Courbe temporelle - Frais mensuels
-            <br />
-            <small>Tendance et saisonnalité des dépenses</small>
-          </div>
-        </div>
-
-        {/* Barres des statuts des notes */}
-        <div className="chart-container">
-          <div className="chart-header">
-            <div>
-              <h3 className="chart-title">
-                <FiCheck />
-                Statuts des notes
-              </h3>
-              <p className="chart-subtitle">Brouillon, soumise, validée, refusée</p>
-            </div>
-          </div>
-          <div className="chart-visualization">
-            📊 Barres de statut
-            <br />
-            <small>Workflow de validation des notes</small>
-          </div>
-        </div>
-      </div>
-
-      {/* Barres de statut avec progression */}
-      <div className="status-bars">
-        <div className="status-bar">
-          <div className="status-info">
-            <span className="status-label">Brouillon</span>
-            <span className="status-count">{indicateurs.nb_brouillon || 0}</span>
-          </div>
-          <div className="progress-bar">
-            <div className="progress-fill draft" style={{width: `${(indicateurs.nb_brouillon / indicateurs.nb_notes * 100) || 0}%`}}></div>
-          </div>
-        </div>
-
-        <div className="status-bar">
-          <div className="status-info">
-            <span className="status-label">Soumise</span>
-            <span className="status-count">{indicateurs.nb_soumise || 0}</span>
-          </div>
-          <div className="progress-bar">
-            <div className="progress-fill submitted" style={{width: `${(indicateurs.nb_soumise / indicateurs.nb_notes * 100) || 0}%`}}></div>
-          </div>
-        </div>
-
-        <div className="status-bar">
-          <div className="status-info">
-            <span className="status-label">Validée</span>
-            <span className="status-count">{indicateurs.nb_validee || 0}</span>
-          </div>
-          <div className="progress-bar">
-            <div className="progress-fill validated" style={{width: `${(indicateurs.nb_validee / indicateurs.nb_notes * 100) || 0}%`}}></div>
-          </div>
-        </div>
-
-        <div className="status-bar">
-          <div className="status-info">
-            <span className="status-label">Refusée</span>
-            <span className="status-count">{indicateurs.nb_refusee || 0}</span>
-          </div>
-          <div className="progress-bar">
-            <div className="progress-fill rejected" style={{width: `${(indicateurs.nb_refusee / indicateurs.nb_notes * 100) || 0}%`}}></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Actions de validation */}
-      <div className="validation-actions">
-        <h3 className="validation-title">
-          <FiCheck />
-          Actions de validation
-        </h3>
-        <div className="validation-buttons">
-          <button className="validation-btn approve">
-            <FiCheck size={16} />
-            Valider en lot ({indicateurs.nb_soumise || 0})
-          </button>
-          <button className="validation-btn reject">
-            <FiX size={16} />
-            Refuser avec commentaire
-          </button>
-          <button className="validation-btn pending">
-            <FiClock size={16} />
-            Mettre en attente
-          </button>
-        </div>
-      </div>
+ 
 
       {/* Historique des actions */}
       <div className="action-history">
@@ -531,193 +388,13 @@ const NotesfraisPage = () => {
         </div>
       </div>
 
-        {/* Types de frais */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Types de frais</h3>
-          {dashboardData?.types_frais?.length > 0 ? (
-            <div className="space-y-3">
-              {dashboardData.types_frais.slice(0, 5).map((type, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <span className="text-gray-700">{type.type_frais}</span>
-                  <div className="text-right">
-                    <span className="font-medium text-blue-600">
-                      {formatCurrency(type.montant_total)}
-                    </span>
-                    <p className="text-xs text-gray-500">{type.nb_lignes} ligne(s)</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 text-center py-8">Aucun frais ce mois</p>
-          )}
-        </div>
+ 
 
-        {/* Répartition par utilisateur (si vue globale) */}
-        {viewMode === 'dashboard' && (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <FiUsers size={20} />
-              Top utilisateurs
-            </h3>
-            {dashboardData?.utilisateurs?.length > 0 ? (
-              <div className="space-y-3">
-                {dashboardData.utilisateurs.slice(0, 5).map((user, index) => (
-                  <div key={index} className="flex justify-between items-center">
-                    <div>
-                      <span className="text-gray-700">
-                        {user.firstName} {user.lastName}
-                      </span>
-                      {user.nb_en_attente > 0 && (
-                        <span className="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded">
-                          {user.nb_en_attente} en attente
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <span className="font-medium text-green-600">
-                        {formatCurrency(user.montant_total)}
-                      </span>
-                      <p className="text-xs text-gray-500">{user.nb_notes} note(s)</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 text-center py-8">Aucun utilisateur</p>
-            )}
-          </div>
-        )}
+ 
 
-        {/* Répartition par statut */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Statuts des notes</h3>
-          {dashboardData?.statuts?.length > 0 ? (
-            <div className="space-y-3">
-              {dashboardData.statuts.map((statut, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      statut.statut === 'brouillon' ? 'bg-gray-400' :
-                      statut.statut === 'soumise' ? 'bg-orange-400' :
-                      statut.statut === 'validee' ? 'bg-blue-400' :
-                      statut.statut === 'remboursee' ? 'bg-green-400' : 'bg-red-400'
-                    }`}></div>
-                    <span className="text-gray-700 capitalize">{statut.statut}</span>
-                  </div>
-                  <span className="font-medium">
-                    {statut.nb_notes} ({formatCurrency(statut.montant_total)})
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 text-center py-8">Aucun statut</p>
-          )}
-        </div>
       </div>
 
-      {/* Actions rapides */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Actions rapides</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="border border-gray-300 hover:border-green-500 rounded-lg p-4 text-center transition-colors">
-            <FiPlus className="mx-auto mb-2 text-green-600" size={24} />
-            <p className="font-medium">Nouvelle note</p>
-            <p className="text-sm text-gray-600">Créer une note de frais</p>
-          </button>
-
-          <button className="border border-gray-300 hover:border-blue-500 rounded-lg p-4 text-center transition-colors">
-            <FiCheck className="mx-auto mb-2 text-blue-600" size={24} />
-            <p className="font-medium">Validation en lot</p>
-            <p className="text-sm text-gray-600">Valider plusieurs notes</p>
-          </button>
-
-          <button 
-            onClick={() => setShowExportModal(true)}
-            className="border border-gray-300 hover:border-purple-500 rounded-lg p-4 text-center transition-colors"
-          >
-            <FiDownload className="mx-auto mb-2 text-purple-600" size={24} />
-            <p className="font-medium">Export comptable</p>
-            <p className="text-sm text-gray-600">Sage/Ciel/Cegid</p>
-          </button>
-        </div>
-      </div>
-
-      {/* Export comptable - Section dédiée */}
-      <div className="export-section">
-        <h3 className="export-title">
-          <FiDownload />
-          Export comptable - Notes de frais
-        </h3>
-        <div className="export-options">
-          <div 
-            className={`export-option ${selectedExportType === 'sage' ? 'active' : ''}`}
-            onClick={() => setSelectedExportType('sage')}
-          >
-            <div className="export-option-icon">📊</div>
-            <div className="export-option-label">Sage</div>
-            <div className="export-option-desc">Format .txt compatible</div>
-          </div>
-
-          <div 
-            className={`export-option ${selectedExportType === 'ciel' ? 'active' : ''}`}
-            onClick={() => setSelectedExportType('ciel')}
-          >
-            <div className="export-option-icon">📈</div>
-            <div className="export-option-label">Ciel</div>
-            <div className="export-option-desc">Format .csv standard</div>
-          </div>
-
-          <div 
-            className={`export-option ${selectedExportType === 'cegid' ? 'active' : ''}`}
-            onClick={() => setSelectedExportType('cegid')}
-          >
-            <div className="export-option-icon">💼</div>
-            <div className="export-option-label">Cégid</div>
-            <div className="export-option-desc">Format .csv avancé</div>
-          </div>
-        </div>
-
-        <div style={{marginTop: '25px', display: 'flex', gap: '15px', flexWrap: 'wrap'}}>
-          <div className="filter-group" style={{flex: 1, minWidth: '200px'}}>
-            <label>Période d'export</label>
-            <select defaultValue="current-month">
-              <option value="current-month">Mois en cours</option>
-              <option value="last-month">Mois dernier</option>
-              <option value="current-quarter">Trimestre en cours</option>
-              <option value="custom">Période personnalisée</option>
-            </select>
-          </div>
-
-          <div className="filter-group" style={{flex: 1, minWidth: '200px'}}>
-            <label>Statut des notes</label>
-            <select defaultValue="validated">
-              <option value="all">Toutes les notes</option>
-              <option value="validated">Validées uniquement</option>
-              <option value="paid">Remboursées uniquement</option>
-            </select>
-          </div>
-
-          <div className="filter-group" style={{flex: 1, minWidth: '200px'}}>
-            <label>Utilisateur</label>
-            <select defaultValue="all">
-              <option value="all">Tous les utilisateurs</option>
-              <option value="current">Utilisateur actuel</option>
-            </select>
-          </div>
-
-          <div className="filter-actions" style={{alignSelf: 'end'}}>
-            <button 
-              className="btn-filter btn-primary"
-              onClick={() => exportNotesComptable(selectedExportType)}
-            >
-              <FiDownload size={16} />
-              Exporter ({selectedExportType?.toUpperCase()})
-            </button>
-          </div>
-        </div>
-      </div>
+ 
     </div>
   );
 };

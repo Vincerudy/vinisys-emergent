@@ -29,6 +29,9 @@ router.get('/:societeId', async (req, res) => {
                 ROUND(SUM(CASE WHEN statut = 'payee' THEN total_ttc ELSE 0 END), 2) as montant_rembourse,
                 ROUND(SUM(CASE WHEN statut = 'refusee' THEN total_ttc ELSE 0 END), 2) as montant_refuse,
                 COUNT(CASE WHEN statut = 'soumise' THEN 1 END) as nb_notes_en_attente,
+                COUNT(CASE WHEN statut = 'validee' THEN 1 END) as nb_notes_validees,
+                COUNT(CASE WHEN statut = 'payee' THEN 1 END) as nb_notes_payees,
+                COUNT(CASE WHEN statut = 'refusee' THEN 1 END) as nb_notes_refusees,
                 ROUND((COUNT(CASE WHEN statut = 'refusee' THEN 1 END) * 100.0) / NULLIF(COUNT(*), 0), 1) as taux_refus
             FROM notes_frais nf
             WHERE nf.societe_id = ? 

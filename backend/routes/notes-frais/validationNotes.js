@@ -26,7 +26,7 @@ router.get('/:societeId', async (req, res) => {
                 COUNT(lf.id) as nb_lignes_frais,
                 SUM(CASE WHEN tf.code = 'KM' THEN lf.distance_km ELSE 0 END) as total_km
             FROM notes_frais nf
-            INNER JOIN users u ON nf.utilisateur_id = u.id
+            INNER JOIN users u ON nf.user_id = u.id
             LEFT JOIN lignes_frais lf ON nf.id = lf.note_frais_id
             LEFT JOIN types_frais tf ON lf.type_frais_id = tf.id
             WHERE nf.societe_id = ? 

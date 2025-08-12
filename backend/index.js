@@ -239,7 +239,11 @@ app.use('/api/notes-frais', require('./routes/notes-frais/listNotesfrais'));
 app.use('/api/note-frais', require('./routes/notes-frais/createNoteFrais'));
 app.use('/api/notes-frais/dashboard', require('./routes/notes-frais/dashboardNotesfrais'));
 app.use('/api/notes-frais/validation', require('./routes/notes-frais/validationNotes'));
+app.use('/api/notes-frais', require('./routes/notes-frais/validationNotes')); // Routes de validation directes
 app.use('/api/notes-frais/baremes', require('./routes/notes-frais/baremes'));
+
+// Module Rapport Financier
+app.use('/api/rapport/financier', require('./routes/rapport/rapportFinancier'));
 
 // Catégories achats
 app.get('/api/categories-achats/:societeId', async (req, res) => {
@@ -260,7 +264,7 @@ app.get('/api/projets/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
         const [projets] = await db.execute(
-            'SELECT * FROM projets WHERE societe_id = ? AND statut = "actif" ORDER BY nom ASC',
+            'SELECT * FROM projets WHERE societe_id = ? AND actif = 1 ORDER BY nom ASC',
             [societeId]
         );
         res.json({ projets });
@@ -270,13 +274,11 @@ app.get('/api/projets/:societeId', async (req, res) => {
     }
 });
 
-// GET /api/types-frais/:societeId - Récupérer les types de frais actifs
-app.get('/api/types-frais/:societeId', async (req, res) => {
+// GET /api/types-frais - Récupérer les types de frais actifs
+app.get('/api/types-frais', async (req, res) => {
     try {
-        const { societeId } = req.params;
         const [typesFrais] = await db.execute(
-            'SELECT * FROM types_frais WHERE societe_id = ? AND actif = 1 ORDER BY libelle ASC',
-            [societeId]
+            'SELECT * FROM types_frais WHERE actif = 1 ORDER BY nom ASC'
         );
         res.json({ 
             success: true,

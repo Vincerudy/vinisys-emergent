@@ -72,13 +72,31 @@ const Menus = () => {
                 </li>
                 {menuList.map(({ dropdownMenu, id, name, path, icon }) => {
   // Filtrer dropdownMenu selon permission si elle existe
-  const filteredDropdown = dropdownMenu.filter(item => {
+  const filteredDropdown = Array.isArray(dropdownMenu) ? dropdownMenu.filter(item => {
     if (!item.permission) return true; // pas de permission => afficher
     return hasPermission(item.permission); // sinon filtrer avec la fonction
-  });
+  }) : [];
 
-  // Si aucun sous-menu visible, ne pas afficher ce menu
-  if (filteredDropdown.length === 0) return null;
+
+  // Si c'est un menu avec des sous-menus mais que tous sont filtrés, ne pas afficher
+  // Si c'est un menu direct (dropdownMenu vide initialement), l'afficher
+  if (Array.isArray(dropdownMenu) && dropdownMenu.length > 0 && filteredDropdown.length === 0) {
+    return null;
+  }
+
+  // Menu direct sans sous-menu (dropdownMenu vide)
+  if (!dropdownMenu || (Array.isArray(dropdownMenu) && dropdownMenu.length === 0)) {
+    return (
+      <li key={id} className={`nxl-item ${pathName === path ? "active" : ""}`}>
+        <Link to={path} className="nxl-link text-capitalize">
+          <span className="nxl-micon"> {getIcon(icon)} </span>
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
+            {name}
+          </span>
+        </Link>
+      </li>
+    );
+  }
 
   return (
     <li

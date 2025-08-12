@@ -49,7 +49,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
     try {
       const [projetsRes, typesFraisRes] = await Promise.all([
         axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`),
-        axios.get(`${import.meta.env.VITE_API_URL}/types-frais/${societe_id}`)
+        axios.get(`${import.meta.env.VITE_API_URL}/types-frais`)
       ]);
       
       setProjets(projetsRes.data.projets || []);
@@ -258,7 +258,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
                     <option value="">Sélectionner un type</option>
                     {typesFrais.map(type => (
                       <option key={type.id} value={type.id}>
-                        {type.libelle}
+                        {type.nom}
                       </option>
                     ))}
                   </select>

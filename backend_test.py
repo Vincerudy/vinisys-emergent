@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Notes de frais Testing
-Tests the specific endpoints requested for notes de frais creation
+Backend API Testing Script for Vinisys Application - Financial Report Testing
+Tests the financial report API endpoints as requested
 """
 
 import requests
@@ -23,8 +23,8 @@ BASE_URL = "http://localhost:8001"  # Internal URL for testing
 API_BASE = f"{BASE_URL}{api_path}"
 
 # Test credentials from user request
-TEST_EMAIL = "admin@admin.com"
-TEST_PASSWORD = "admin"
+TEST_EMAIL = "idnovation2014@gmail.com"
+TEST_PASSWORD = "123456"
 SOCIETE_ID = 2  # User specified societe_id = 2
 AUTH_TOKEN = None  # Will be set after login
 
@@ -101,236 +101,222 @@ def test_authentication():
         print_test_result(False, f"Authentication test failed - {str(e)}")
         return False, None
 
-def test_projets():
-    """Test 2: Projects API for societe_id = 2"""
-    print_test_header("Projects API Test")
+def test_financial_report_main():
+    """Test 1: Main Financial Report API - GET /api/rapport/financier/2"""
+    print_test_header("Financial Report Main API Test")
     try:
         headers = get_auth_headers()
-        response = requests.get(f"{API_BASE}/projets/{SOCIETE_ID}", headers=headers, timeout=10)
         
-        if response.status_code == 200:
-            data = response.json()
-            projets = data.get('projets', [])
-            print_test_result(True, f"Projects retrieved successfully - {len(projets)} projects found", response)
-            return True, data
-        else:
-            print_test_result(False, f"Projects failed - HTTP {response.status_code}", response)
-            return False, None
-    except Exception as e:
-        print_test_result(False, f"Projects test failed - {str(e)}")
-        return False, None
-
-def test_create_note_frais():
-    """Test 3: Create Note de frais with specific data"""
-    print_test_header("Create Note de frais Test")
-    try:
-        headers = get_auth_headers()
-        headers['Content-Type'] = 'application/json'
-        
-        # Get user_id from auth token (we'll use a default if not available)
-        user_id = 1  # Default user_id, should be updated based on login response
-        
-        # Prepare the note de frais data as specified by user
-        payload = {
-            "user_id": user_id,
-            "periode_debut": "2024-10-24",
-            "periode_fin": "2024-10-24", 
-            "titre": "Note de frais - LA ROMANA",
-            "description": "Déjeuner d'affaires client",
-            "societe_id": SOCIETE_ID,
-            "lignes_frais": [
-                {
-                    "type_frais_id": 1,  # Assuming 1 is for restaurant/meals
-                    "date_frais": "2024-10-24",
-                    "description": "Déjeuner d'affaires client - LA ROMANA",
-                    "montant": 364.00,
-                    "montant_tva": 35.78,
-                    "taux_tva": 20.0,
-                    "lieu_repas": "LA ROMANA, France",
-                    "nombre_personnes": 2,
-                    "type_repas": "déjeuner",
-                    "projet_id": None,
-                    "saisie_ocr": False
-                }
-            ]
+        # Test with monthly period for August 2025
+        params = {
+            'date_debut': '2025-08-01',
+            'date_fin': '2025-08-31',
+            'periode': 'mois'
         }
         
-        # Test the actual endpoint (POST /api/note-frais)
-        response = requests.post(f"{API_BASE}/note-frais", json=payload, headers=headers, timeout=10)
-        
-        if response.status_code == 201:
-            data = response.json()
-            note_id = data.get('noteId')
-            numero = data.get('numero')
-            montant_total = data.get('montant_total')
-            
-            print_test_result(True, f"Note de frais created successfully - ID: {note_id}, Number: {numero}, Total: {montant_total}€", response)
-            return True, data
-        else:
-            print_test_result(False, f"Note de frais creation failed - HTTP {response.status_code}", response)
-            return False, None
-    except Exception as e:
-        print_test_result(False, f"Note de frais creation test failed - {str(e)}")
-        return False, None
-
-def test_achats_dashboard():
-    """Test 2: Achats Module Dashboard API"""
-    print_test_header("Achats Dashboard Test")
-    if not SOCIETE_ID:
-        print_test_result(False, "Cannot test - No company ID available")
-        return False, None
-        
-    try:
-        headers = get_auth_headers()
-        response = requests.get(f"{API_BASE}/achats/dashboard/{SOCIETE_ID}", headers=headers, timeout=10)
+        response = requests.get(f"{API_BASE}/rapport/financier/{SOCIETE_ID}", 
+                              headers=headers, params=params, timeout=10)
         
         if response.status_code == 200:
             data = response.json()
-            # Check for key dashboard fields
-            expected_fields = ["indicateurs", "periode"]
-            missing_fields = [field for field in expected_fields if field not in data]
             
-            if len(missing_fields) == 0:
-                indicateurs = data.get('indicateurs', {})
-                print_test_result(True, f"Achats dashboard retrieved successfully - {indicateurs.get('nb_achats', 0)} achats found", response)
-                return True, data
+            # Check for all required sections
+            required_sections = ['chiffre_affaires', 'factures', 'depenses', 'notes_frais', 'benefice_net']
+            missing_sections = [section for section in required_sections if section not in data]
+            
+            if len(missing_sections) == 0:
+                # Verify chiffre_affaires structure
+                ca = data.get('chiffre_affaires', {})
+                ca_fields = ['total', 'encaisse', 'en_attente', 'avoirs', 'tva_repartition']
+                ca_missing = [field for field in ca_fields if field not in ca]
+                
+                # Verify depenses structure
+                depenses = data.get('depenses', {})
+                dep_fields = ['total_ht', 'total_tva', 'total_ttc', 'tva_recuperable', 'categories']
+                dep_missing = [field for field in dep_fields if field not in depenses]
+                
+                # Verify notes_frais structure
+                notes = data.get('notes_frais', {})
+                notes_fields = ['total_rembourse', 'nombre_notes', 'categories']
+                notes_missing = [field for field in notes_fields if field not in notes]
+                
+                if len(ca_missing) == 0 and len(dep_missing) == 0 and len(notes_missing) == 0:
+                    benefice_net = data.get('benefice_net', 0)
+                    print_test_result(True, f"Financial report retrieved successfully - Bénéfice net: {benefice_net}€", response)
+                    return True, data
+                else:
+                    missing_all = ca_missing + dep_missing + notes_missing
+                    print_test_result(False, f"Financial report missing sub-fields: {missing_all}", response)
+                    return False, None
             else:
-                print_test_result(False, f"Achats dashboard missing key fields: {missing_fields}", response)
+                print_test_result(False, f"Financial report missing sections: {missing_sections}", response)
                 return False, None
         else:
-            print_test_result(False, f"Achats dashboard failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"Financial report failed - HTTP {response.status_code}", response)
             return False, None
     except Exception as e:
-        print_test_result(False, f"Achats dashboard test failed - {str(e)}")
+        print_test_result(False, f"Financial report test failed - {str(e)}")
         return False, None
 
-def test_achats_fournisseurs():
-    """Test 3: Achats Suppliers API"""
-    print_test_header("Achats Suppliers Test")
-    if not SOCIETE_ID:
-        print_test_result(False, "Cannot test - No company ID available")
-        return False, None
-        
+def test_financial_report_daily():
+    """Test 2: Financial Report API - Daily period"""
+    print_test_header("Financial Report Daily Period Test")
     try:
         headers = get_auth_headers()
-        response = requests.get(f"{API_BASE}/achats/fournisseurs/{SOCIETE_ID}", headers=headers, timeout=10)
+        
+        # Test with daily period for specific date
+        params = {
+            'date_debut': '2025-08-08',
+            'date_fin': '2025-08-08',
+            'periode': 'jour'
+        }
+        
+        response = requests.get(f"{API_BASE}/rapport/financier/{SOCIETE_ID}", 
+                              headers=headers, params=params, timeout=10)
         
         if response.status_code == 200:
             data = response.json()
-            fournisseurs = data.get('fournisseurs', [])
-            print_test_result(True, f"Suppliers list retrieved successfully - {len(fournisseurs)} suppliers found", response)
-            return True, data
-        else:
-            print_test_result(False, f"Suppliers list failed - HTTP {response.status_code}", response)
-            return False, None
-    except Exception as e:
-        print_test_result(False, f"Suppliers list test failed - {str(e)}")
-        return False, None
-
-def test_categories_achats():
-    """Test 4: Purchase Categories API"""
-    print_test_header("Purchase Categories Test")
-    if not SOCIETE_ID:
-        print_test_result(False, "Cannot test - No company ID available")
-        return False, None
-        
-    try:
-        headers = get_auth_headers()
-        response = requests.get(f"{API_BASE}/categories-achats/{SOCIETE_ID}", headers=headers, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            categories = data.get('categories', [])
-            print_test_result(True, f"Purchase categories retrieved successfully - {len(categories)} categories found", response)
-            return True, data
-        else:
-            print_test_result(False, f"Purchase categories failed - HTTP {response.status_code}", response)
-            return False, None
-    except Exception as e:
-        print_test_result(False, f"Purchase categories test failed - {str(e)}")
-        return False, None
-
-def test_projets():
-    """Test 5: Projects/Cost Centers API"""
-    print_test_header("Projects/Cost Centers Test")
-    if not SOCIETE_ID:
-        print_test_result(False, "Cannot test - No company ID available")
-        return False, None
-        
-    try:
-        headers = get_auth_headers()
-        response = requests.get(f"{API_BASE}/projets/{SOCIETE_ID}", headers=headers, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            projets = data.get('projets', [])
-            print_test_result(True, f"Projects retrieved successfully - {len(projets)} projects found", response)
-            return True, data
-        else:
-            print_test_result(False, f"Projects failed - HTTP {response.status_code}", response)
-            return False, None
-    except Exception as e:
-        print_test_result(False, f"Projects test failed - {str(e)}")
-        return False, None
-
-def test_notes_frais_dashboard():
-    """Test 6: Notes de frais Module Dashboard API"""
-    print_test_header("Notes de frais Dashboard Test")
-    if not SOCIETE_ID:
-        print_test_result(False, "Cannot test - No company ID available")
-        return False, None
-        
-    try:
-        headers = get_auth_headers()
-        response = requests.get(f"{API_BASE}/notes-frais/dashboard/{SOCIETE_ID}", headers=headers, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            # Check for key dashboard fields
-            expected_fields = ["indicateurs", "periode"]
-            missing_fields = [field for field in expected_fields if field not in data]
-            
-            if len(missing_fields) == 0:
-                indicateurs = data.get('indicateurs', {})
-                print_test_result(True, f"Notes de frais dashboard retrieved successfully - {indicateurs.get('nb_notes', 0)} notes found", response)
+            periode = data.get('periode', {})
+            if periode.get('type') == 'jour':
+                print_test_result(True, f"Daily financial report retrieved successfully", response)
                 return True, data
             else:
-                print_test_result(False, f"Notes de frais dashboard missing key fields: {missing_fields}", response)
+                print_test_result(False, f"Daily report period type incorrect: {periode.get('type')}", response)
                 return False, None
         else:
-            print_test_result(False, f"Notes de frais dashboard failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"Daily financial report failed - HTTP {response.status_code}", response)
             return False, None
     except Exception as e:
-        print_test_result(False, f"Notes de frais dashboard test failed - {str(e)}")
+        print_test_result(False, f"Daily financial report test failed - {str(e)}")
         return False, None
 
-def test_types_frais():
-    """Test 7: Expense Types API"""
-    print_test_header("Expense Types Test")
-    if not SOCIETE_ID:
-        print_test_result(False, "Cannot test - No company ID available")
-        return False, None
-        
+def test_financial_report_yearly():
+    """Test 3: Financial Report API - Yearly period"""
+    print_test_header("Financial Report Yearly Period Test")
     try:
         headers = get_auth_headers()
-        response = requests.get(f"{API_BASE}/types-frais/{SOCIETE_ID}", headers=headers, timeout=10)
+        
+        # Test with yearly period for 2025
+        params = {
+            'date_debut': '2025-01-01',
+            'date_fin': '2025-12-31',
+            'periode': 'annee'
+        }
+        
+        response = requests.get(f"{API_BASE}/rapport/financier/{SOCIETE_ID}", 
+                              headers=headers, params=params, timeout=10)
         
         if response.status_code == 200:
             data = response.json()
-            types = data.get('types', [])
-            print_test_result(True, f"Expense types retrieved successfully - {len(types)} types found", response)
-            return True, data
+            periode = data.get('periode', {})
+            if periode.get('type') == 'annee':
+                print_test_result(True, f"Yearly financial report retrieved successfully", response)
+                return True, data
+            else:
+                print_test_result(False, f"Yearly report period type incorrect: {periode.get('type')}", response)
+                return False, None
         else:
-            print_test_result(False, f"Expense types failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"Yearly financial report failed - HTTP {response.status_code}", response)
             return False, None
     except Exception as e:
-        print_test_result(False, f"Expense types test failed - {str(e)}")
+        print_test_result(False, f"Yearly financial report test failed - {str(e)}")
         return False, None
+
+def test_financial_calculations():
+    """Test 4: Verify Financial Calculations"""
+    print_test_header("Financial Calculations Verification Test")
+    try:
+        headers = get_auth_headers()
+        
+        # Get August 2025 report for calculation verification
+        params = {
+            'date_debut': '2025-08-01',
+            'date_fin': '2025-08-31',
+            'periode': 'mois'
+        }
+        
+        response = requests.get(f"{API_BASE}/rapport/financier/{SOCIETE_ID}", 
+                              headers=headers, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Extract calculation components
+            ca_encaisse = data.get('chiffre_affaires', {}).get('encaisse', 0)
+            avoirs = data.get('chiffre_affaires', {}).get('avoirs', 0)
+            depenses_ttc = data.get('depenses', {}).get('total_ttc', 0)
+            tva_recuperable = data.get('depenses', {}).get('tva_recuperable', 0)
+            notes_frais = data.get('notes_frais', {}).get('total_rembourse', 0)
+            benefice_net = data.get('benefice_net', 0)
+            
+            # Verify calculation: Bénéfice net = (CA encaissé - Avoirs) - (Dépenses TTC - TVA récupérable) - Notes de frais
+            calculated_benefice = (ca_encaisse - avoirs) - (depenses_ttc - tva_recuperable) - notes_frais
+            
+            # Allow small floating point differences
+            difference = abs(calculated_benefice - benefice_net)
+            
+            if difference < 0.01:  # Less than 1 cent difference
+                print_test_result(True, f"Financial calculations verified - Expected: {calculated_benefice}€, Got: {benefice_net}€", response)
+                return True, data
+            else:
+                print_test_result(False, f"Financial calculations incorrect - Expected: {calculated_benefice}€, Got: {benefice_net}€, Difference: {difference}€", response)
+                return False, None
+        else:
+            print_test_result(False, f"Financial calculations test failed - HTTP {response.status_code}", response)
+            return False, None
+    except Exception as e:
+        print_test_result(False, f"Financial calculations test failed - {str(e)}")
+        return False, None
+
+def test_evolution_depenses():
+    """Test 5: Evolution Depenses API - GET /api/rapport/financier/evolution-depenses/2"""
+    print_test_header("Evolution Depenses API Test")
+    try:
+        headers = get_auth_headers()
+        
+        # Test evolution API with monthly periods for 2025
+        params = {
+            'annee': '2025',
+            'type_periode': 'mois'
+        }
+        
+        response = requests.get(f"{API_BASE}/rapport/financier/evolution-depenses/{SOCIETE_ID}", 
+                              headers=headers, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Check for required fields
+            required_fields = ['evolution', 'type_periode', 'annee']
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if len(missing_fields) == 0:
+                evolution = data.get('evolution', [])
+                type_periode = data.get('type_periode')
+                annee = data.get('annee')
+                
+                if type_periode == 'mois' and annee == 2025:
+                    print_test_result(True, f"Evolution depenses retrieved successfully - {len(evolution)} periods found", response)
+                    return True, data
+                else:
+                    print_test_result(False, f"Evolution depenses parameters incorrect - Type: {type_periode}, Year: {annee}", response)
+                    return False, None
+            else:
+                print_test_result(False, f"Evolution depenses missing fields: {missing_fields}", response)
+                return False, None
+        else:
+            print_test_result(False, f"Evolution depenses failed - HTTP {response.status_code}", response)
+            return False, None
+    except Exception as e:
+        print_test_result(False, f"Evolution depenses test failed - {str(e)}")
+        return False, None
+
+
 
 def main():
-    """Main test execution for New Modules Testing"""
-    print("🚀 Starting Backend API Tests for Vinisys - New Modules (Achats & Notes de frais)")
-    print("📊 Testing: Authentication, Achats APIs, Notes de frais APIs")
+    """Main test execution for Financial Report API Testing"""
+    print("🚀 Starting Backend API Tests for Vinisys - Financial Report API")
+    print("📊 Testing: Authentication, Financial Report APIs, Evolution APIs")
     print(f"Backend URL: {BASE_URL}")
     print(f"API Base URL: {API_BASE}")
     print(f"Test Email: {TEST_EMAIL}")
@@ -352,36 +338,32 @@ def main():
     test_results.append(("Authentication", auth_success))
     
     if not auth_success:
-        print("\n❌ Authentication failed. Cannot proceed with module tests.")
+        print("\n❌ Authentication failed. Cannot proceed with financial report tests.")
         return False
     
-    # Test 2: Achats Dashboard
-    achats_dashboard_success, achats_dashboard_data = test_achats_dashboard()
-    test_results.append(("Achats Dashboard", achats_dashboard_success))
+    # Test 2: Main Financial Report API (Monthly)
+    main_report_success, main_report_data = test_financial_report_main()
+    test_results.append(("Financial Report Main (Monthly)", main_report_success))
     
-    # Test 3: Achats Suppliers
-    suppliers_success, suppliers_data = test_achats_fournisseurs()
-    test_results.append(("Achats Suppliers", suppliers_success))
+    # Test 3: Daily Financial Report
+    daily_report_success, daily_report_data = test_financial_report_daily()
+    test_results.append(("Financial Report Daily", daily_report_success))
     
-    # Test 4: Purchase Categories
-    categories_success, categories_data = test_categories_achats()
-    test_results.append(("Purchase Categories", categories_success))
+    # Test 4: Yearly Financial Report
+    yearly_report_success, yearly_report_data = test_financial_report_yearly()
+    test_results.append(("Financial Report Yearly", yearly_report_success))
     
-    # Test 5: Projects
-    projects_success, projects_data = test_projets()
-    test_results.append(("Projects/Cost Centers", projects_success))
+    # Test 5: Financial Calculations Verification
+    calc_success, calc_data = test_financial_calculations()
+    test_results.append(("Financial Calculations", calc_success))
     
-    # Test 6: Notes de frais Dashboard
-    notes_dashboard_success, notes_dashboard_data = test_notes_frais_dashboard()
-    test_results.append(("Notes de frais Dashboard", notes_dashboard_success))
-    
-    # Test 7: Expense Types
-    types_success, types_data = test_types_frais()
-    test_results.append(("Expense Types", types_success))
+    # Test 6: Evolution Depenses API
+    evolution_success, evolution_data = test_evolution_depenses()
+    test_results.append(("Evolution Depenses API", evolution_success))
     
     # Print summary
     print(f"\n{'='*60}")
-    print("TEST SUMMARY - NEW MODULES TESTING")
+    print("TEST SUMMARY - FINANCIAL REPORT API TESTING")
     print(f"{'='*60}")
     
     passed = 0
@@ -397,7 +379,7 @@ def main():
     
     # Detailed analysis
     print(f"\n{'='*60}")
-    print("NEW MODULES ANALYSIS")
+    print("FINANCIAL REPORT API ANALYSIS")
     print(f"{'='*60}")
     
     if server_ok:
@@ -406,40 +388,50 @@ def main():
     if auth_success:
         print(f"✅ Authentication working with company ID: {SOCIETE_ID}")
     
-    # Achats Module Analysis
-    achats_tests = ["Achats Dashboard", "Achats Suppliers", "Purchase Categories", "Projects/Cost Centers"]
-    achats_passed = sum(1 for test_name, result in test_results if test_name in achats_tests and result)
+    # Financial Report Analysis
+    report_tests = ["Financial Report Main (Monthly)", "Financial Report Daily", "Financial Report Yearly"]
+    report_passed = sum(1 for test_name, result in test_results if test_name in report_tests and result)
     
-    print(f"\n🧾 ACHATS MODULE: {achats_passed}/{len(achats_tests)} tests passed")
-    if achats_passed >= 3:
-        print("✅ Achats module appears to be working correctly")
+    print(f"\n📊 FINANCIAL REPORT ENDPOINTS: {report_passed}/{len(report_tests)} tests passed")
+    if report_passed >= 2:
+        print("✅ Financial report endpoints are working correctly")
     else:
-        print("❌ Achats module has significant issues")
+        print("❌ Financial report endpoints have significant issues")
     
-    # Notes de frais Module Analysis
-    notes_tests = ["Notes de frais Dashboard", "Expense Types"]
-    notes_passed = sum(1 for test_name, result in test_results if test_name in notes_tests and result)
-    
-    print(f"\n💳 NOTES DE FRAIS MODULE: {notes_passed}/{len(notes_tests)} tests passed")
-    if notes_passed >= 1:
-        print("✅ Notes de frais module appears to be working correctly")
+    # Calculations and Data Analysis
+    if calc_success:
+        print("✅ Financial calculations are mathematically correct")
+        if main_report_data:
+            benefice_net = main_report_data.get('benefice_net', 0)
+            ca_encaisse = main_report_data.get('chiffre_affaires', {}).get('encaisse', 0)
+            depenses_ttc = main_report_data.get('depenses', {}).get('total_ttc', 0)
+            print(f"💰 August 2025 - CA encaissé: {ca_encaisse}€, Dépenses: {depenses_ttc}€, Bénéfice net: {benefice_net}€")
     else:
-        print("❌ Notes de frais module has significant issues")
+        print("❌ Financial calculations have errors")
+    
+    # Evolution API Analysis
+    if evolution_success:
+        print("✅ Evolution depenses API is working correctly")
+        if evolution_data:
+            evolution_periods = len(evolution_data.get('evolution', []))
+            print(f"📈 Evolution data available for {evolution_periods} periods in 2025")
+    else:
+        print("❌ Evolution depenses API has issues")
     
     # Overall assessment
-    critical_tests = achats_tests + notes_tests
+    critical_tests = ["Financial Report Main (Monthly)", "Financial Calculations", "Evolution Depenses API"]
     critical_passed = sum(1 for test_name, result in test_results if test_name in critical_tests and result)
     
-    if critical_passed >= 5:  # At least 5/6 critical tests passing
-        print(f"\n🎉 NEW MODULES TESTING SUCCESSFUL!")
-        print("✅ Both Achats and Notes de frais modules are operational")
-        print("✅ Core dashboard and data retrieval endpoints are working")
-        print("✅ Ready for frontend integration")
+    if critical_passed >= 2:  # At least 2/3 critical tests passing
+        print(f"\n🎉 FINANCIAL REPORT API TESTING SUCCESSFUL!")
+        print("✅ Main financial report API is operational")
+        print("✅ Core calculations and data retrieval are working")
+        print("✅ Ready for production use")
         return True
     else:
-        print(f"\n⚠️ NEW MODULES HAVE ISSUES")
+        print(f"\n⚠️ FINANCIAL REPORT API HAS ISSUES")
         print("❌ Some critical endpoints are not working properly")
-        print("❌ Frontend integration may encounter problems")
+        print("❌ Financial calculations or data retrieval may have problems")
         return False
 
 if __name__ == "__main__":

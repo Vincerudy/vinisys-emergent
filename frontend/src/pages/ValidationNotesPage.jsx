@@ -17,7 +17,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import './css/ValidationNotesPage.css';
 
 const ValidationNotesPage = () => {
-  const { societe_id } = useAuth();
+  const { societe_id, id: validateur_id } = useAuth();
   
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,9 +35,7 @@ const ValidationNotesPage = () => {
       setLoading(true);
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/notes-frais/validation/${societe_id}`);
       
-      if (response.data.success) {
-        setNotes(response.data.notes);
-      }
+      setNotes(response.data.notes || []);
     } catch (error) {
       console.error('Erreur chargement notes validation:', error);
       alert('Erreur lors du chargement des notes en attente');
@@ -87,24 +85,36 @@ const ValidationNotesPage = () => {
   };
 
   const confirmValidation = async () => {
-    try {
-      setProcessing(true);
-      
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/notes-frais/validate`, {
-        noteIds: selectedNotes,
-        action: validationAction
-      });
+    if (selectedNotes.length === 0) {
+      alert('Veuillez sélectionner au moins une note');
+      return;
+    }
 
-      if (response.data.success) {
-        alert(response.data.message);
-        setSelectedNotes([]);
-        await fetchNotesEnAttente(); // Recharger la liste
+    setProcessing(true);
+    try {
+      
+      // Valider chaque note individuellement
+      for (const noteId of selectedNotes) {
+        const endpoint = validationAction === 'valider' 
+          ? `/notes-frais/${noteId}/valider`
+          : `/notes-frais/${noteId}/refuser`;
+          
+        const data = validationAction === 'valider' 
+          ? { validateur_id }
+          : { validateur_id, motif_refus: 'Refusée en lot' };
+
+        await axios.post(`${import.meta.env.VITE_API_URL}${endpoint}`, data);
       }
+
+      alert(`${selectedNotes.length} note(s) ${validationAction === 'valider' ? 'validée(s)' : 'refusée(s)'} avec succès`);
+      setSelectedNotes([]);
+      await fetchNotesEnAttente(); // Recharger la liste
     } catch (error) {
       console.error('Erreur validation:', error);
-      alert('Erreur lors de la validation');
+      alert('Erreur lors de la validation: ' + (error.response?.data?.error || error.message));
     } finally {
       setProcessing(false);
+      setShowValidationModal(false);
     }
   };
 
@@ -239,26 +249,26 @@ const ValidationNotesPage = () => {
                     <td className="note-employe">
                       <div className="employe-info">
                         <FiUser size={16} />
-                        <span>{note.firstName} {note.lastName}</span>
+                        <span>{note.utilisateur_prenom} {note.utilisateur_nom}</span>
                       </div>
                     </td>
                     <td className="note-date">
                       <div className="date-info">
                         <FiCalendar size={16} />
-                        <span>{formatDate(note.updated_at)}</span>
+                        <span>{formatDate(note.date_soumission)}</span>
                       </div>
                     </td>
                     <td className="note-montant">
                       <div className="montant-container">
                         <FiDollarSign size={16} />
-                        <span className="montant-value">{formatMontant(note.montant_total)}</span>
+                        <span className="montant-value">{formatMontant(note.total_ttc)}</span>
                         <span className="montant-currency">EUR</span>
                       </div>
                     </td>
                     <td className="note-lignes">
                       <div className="lignes-info">
                         <FiFileText size={16} />
-                        <span>{note.nb_lignes} ligne{note.nb_lignes > 1 ? 's' : ''}</span>
+                        <span>{note.nb_lignes_frais} ligne{note.nb_lignes_frais > 1 ? 's' : ''}</span>
                       </div>
                     </td>
                     <td className="note-actions">
