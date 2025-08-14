@@ -66,6 +66,12 @@ export const menuList = [
                 name: "Fournisseurs",
                 path: "/achats/fournisseurs",
                 subdropdownMenu: false,
+            },
+            {
+                id: 4,
+                name: "Paramétrage",
+                path: "/achats/parametrage",
+                subdropdownMenu: false,
             }
         ]
     },
