@@ -141,7 +141,10 @@ const NotesfraisPage = () => {
           </p>
         </div>
         <div className="filter-actions">
-          <button className="action-btn">
+          <button 
+            className="action-btn"
+            onClick={() => window.location.hash = '#/notes-frais/note'}
+          >
             <FiPlus className="action-icon" />
             Nouvelle note
           </button>
