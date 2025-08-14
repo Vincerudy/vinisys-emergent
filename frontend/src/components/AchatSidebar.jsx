@@ -74,7 +74,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     fetchData();
   }, [isOpen, societe_id]);
 
-  // Reset form when closing
+  // Reset form when closing or apply prefilled data when opening
   useEffect(() => {
     if (!isOpen) {
       setAchat({
@@ -94,10 +94,21 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
         compte_comptable_achat: '',
         compte_comptable_tva: '44566'
       });
-      setJustificatifs([]);
+      setAttachedFiles([]);
       setShowNewFournisseur(false);
+    } else if (prefilledData) {
+      // Appliquer les données pré-remplies de l'OCR
+      setAchat(prevAchat => ({
+        ...prevAchat,
+        ...prefilledData
+      }));
+      
+      // Ajouter le fichier attaché s'il y en a un
+      if (attachedFile) {
+        setAttachedFiles([attachedFile]);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, prefilledData, attachedFile]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
