@@ -432,6 +432,37 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
                 />
               </div>
 
+              {/* Fichiers attachés / Justificatifs */}
+              {attachedFiles.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <FiFileText className="inline mr-1" />
+                    Justificatifs attachés
+                  </label>
+                  <div className="space-y-2">
+                    {attachedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <FiFileText className="text-blue-600 mr-2" size={20} />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-blue-900">{file.name}</div>
+                          <div className="text-xs text-blue-600">
+                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                            {mode === 'ocr' && <span className="ml-2 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Analysé par OCR</span>}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setAttachedFiles(files => files.filter((_, i) => i !== index))}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <FiX size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
             </form>
           </div>
 
