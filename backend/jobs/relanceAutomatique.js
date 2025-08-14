@@ -144,7 +144,7 @@ class RelanceAutomatique {
   async envoyerEmailRelance(facture, societe) {
     try {
       const { numero, date_facture, total, client_nom, client_email } = facture;
-      const { companyName, societe_email } = societe;
+      const { companyName } = societe;
 
       // Calculer le nombre de jours de retard
       const dateFacture = new Date(date_facture);
@@ -152,18 +152,6 @@ class RelanceAutomatique {
       const joursRetard = Math.floor((aujourd.getTime() - dateFacture.getTime()) / (1000 * 60 * 60 * 24));
 
       console.log(`📧 Préparation email pour facture ${numero} - Client: ${client_nom} (${client_email}) - ${joursRetard} jours de retard`);
-
-      // Vérifier si les paramètres SMTP sont configurés
-      if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        console.log(`⚠️  SMTP non configuré - simulation d'envoi d'email pour la facture ${numero}`);
-        console.log(`   📧 À: ${client_email}`);
-        console.log(`   💰 Montant: ${total}€`);
-        console.log(`   📅 ${joursRetard} jours de retard`);
-        
-        // Mettre à jour le statut de la facture même en simulation
-        await this.updateFactureStatut(facture.id, 'en retard');
-        return;
-      }
 
       if (!this.transporter) {
         console.error('❌ Transporteur email non configuré');
@@ -199,7 +187,7 @@ class RelanceAutomatique {
       `;
 
       const mailOptions = {
-        from: societe_email || process.env.SMTP_USER,
+        from: 'support-vinisys@vinisys.com',
         to: client_email,
         subject: sujet,
         html: contenuHtml
