@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
 
 const HistoriqueNotesPage = () => {
-  const { societe_id } = useAuth();
+  const { societe_id, id: user_id } = useAuth();
   const [historique, setHistorique] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtres, setFiltres] = useState({
@@ -30,35 +30,25 @@ const HistoriqueNotesPage = () => {
   const fetchHistorique = async () => {
     try {
       setLoading(true);
-      console.log('DEBUG - Fetching historique...');
-      console.log('DEBUG - societe_id:', societe_id);
       
-      // Récupérer toutes les notes d'abord
+      // Récupérer toutes les notes pour voir s'il y en a
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/notes-frais/0`, {
         params: { 
-          societe_id: societe_id
+          societe_id: societe_id || 2 // Fallback au cas où societe_id n'est pas défini
         }
       });
-      
-      console.log('DEBUG - API response:', response.data);
       
       const allNotes = response.data.notes || [];
-      console.log('DEBUG - All notes count:', allNotes.length);
       
-      // Filtrer les notes avec historique (validées ou refusées)
-      const notesAvecHistorique = allNotes.filter(note => {
-        const hasHistory = note.statut === 'validee' || note.statut === 'refusee' || note.date_validation;
-        if (hasHistory) {
-          console.log('DEBUG - Note with history:', note.numero, note.statut);
-        }
-        return hasHistory;
-      });
+      // Filtrer les notes validées ou refusées
+      const notesAvecHistorique = allNotes.filter(note => 
+        note.statut === 'validee' || note.statut === 'refusee'
+      );
       
-      console.log('DEBUG - Notes with history count:', notesAvecHistorique.length);
       setHistorique(notesAvecHistorique);
       
     } catch (error) {
-      console.error('DEBUG - Error fetching historique:', error);
+      console.error('Erreur chargement historique:', error);
       setHistorique([]);
     } finally {
       setLoading(false);
