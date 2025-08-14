@@ -369,7 +369,7 @@ const ListeAchatsPage = () => {
             </div>
             <div className="summary-content">
               <div className="summary-value">
-                {formatCurrency(filteredAchats.reduce((sum, a) => sum + (a.montant_ttc || 0), 0))}
+                {formatCurrency(filteredAchats.reduce((sum, a) => sum + (parseFloat(a.montant_ttc) || 0), 0))}
               </div>
               <div className="summary-label">Total TTC</div>
             </div>
