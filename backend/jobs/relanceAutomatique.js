@@ -11,7 +11,7 @@ class RelanceAutomatique {
   // Initialiser le transporteur email
   async initTransporter() {
     try {
-      this.transporter = nodemailer.createTransporter({
+      this.transporter = nodemailer.createTransport({
         host: 'ssl0.ovh.net',
         port: 465,
         secure: true,
