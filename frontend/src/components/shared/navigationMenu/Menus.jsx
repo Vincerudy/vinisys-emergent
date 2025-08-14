@@ -45,6 +45,23 @@ const Menus = () => {
         }
     }, [pathName]);
 
+    // Si les données d'abonnement sont en cours de chargement, afficher le menu de base
+    if (loading) {
+        return (
+            <li>
+                <Link to="/" className="nxl-link text-capitalize">
+                    <span className="nxl-micon"> {getIcon('feather-cast')} </span>
+                    <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
+                        Chargement...
+                    </span>
+                </Link>
+            </li>
+        );
+    }
+
+    // Filtrer le menu selon l'abonnement
+    const filteredMenuList = filterMenuBySubscription(menuList, hasFeature);
+
     return (
         <>   
                 <li
