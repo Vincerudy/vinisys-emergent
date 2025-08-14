@@ -79,9 +79,9 @@ const ListeAchatsPage = () => {
   };
 
   const filteredAchats = achats.filter(achat =>
-    achat.designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    achat.fournisseur?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    achat.numero_facture?.toLowerCase().includes(searchTerm.toLowerCase())
+    achat.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    achat.fournisseur_nom_table?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    achat.numero?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const paginatedAchats = filteredAchats.slice(
