@@ -17,6 +17,7 @@ import {
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
 import AchatSidebar from '../components/AchatSidebar';
+import ModeSelectionModal from '../components/ModeSelectionModal';
 import './css/ListeAchatsPage.css';
 
 const ListeAchatsPage = () => {
