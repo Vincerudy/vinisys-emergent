@@ -21,6 +21,7 @@ import './css/ListeAchatsPage.css';
 
 const ListeAchatsPage = () => {
   const { societe_id } = useAuth();
+  const location = useLocation();
   const [achats, setAchats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,6 +37,16 @@ const ListeAchatsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const itemsPerPage = 10;
+
+  // Détection du paramètre sidebar=open pour ouvrir automatiquement le sidebar
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.get('sidebar') === 'open') {
+      setSidebarOpen(true);
+      // Nettoyer l'URL après ouverture
+      window.history.replaceState({}, '', location.pathname);
+    }
+  }, [location]);
 
   useEffect(() => {
     fetchAchats();
