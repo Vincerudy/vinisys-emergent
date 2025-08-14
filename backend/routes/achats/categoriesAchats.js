@@ -75,7 +75,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/categories-achats/:id - Modifier une catégorie
-router.put('/:id', async (req, res) => {
+router.post('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const {

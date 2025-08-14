@@ -22,7 +22,7 @@ const io = new Server(server, {
       'http://localhost:5174',
     ],
     methods: ['GET', 'POST'],
-    credentials: true,
+    credentials: true, 
   },
   transports: ['websocket', 'polling'], // Ajout explicite pour forcer WebSocket
 });

@@ -57,7 +57,7 @@ const ParametrageCategoriesPage = () => {
   const handleToggleActive = async (category) => {
     try {
       const newStatus = category.actif === 1 ? 0 : 1;
-      await axios.put(
+      await axios.post(
         `${import.meta.env.VITE_API_URL}/categories-achats/${category.id}`,
         { ...category, actif: newStatus }
       );

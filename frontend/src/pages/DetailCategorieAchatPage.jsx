@@ -100,7 +100,7 @@ const DetailCategorieAchatPage = () => {
         alert('Catégorie créée avec succès');
       } else {
         // Modification
-        await axios.put(
+        await axios.post(
           `${import.meta.env.VITE_API_URL}/categories-achats/${id}`,
           payload
         );
