@@ -48,8 +48,8 @@ const NouvelleNoteFraisPage = () => {
 
   useEffect(() => {
     if (!isEditMode) {
-      // Mode création : créer une nouvelle note et rediriger
-      createNewNoteAndRedirect();
+      // Mode création : juste charger les données initiales
+      fetchInitialData();
     } else {
       // Mode édition : charger les données existantes
       fetchInitialData();
