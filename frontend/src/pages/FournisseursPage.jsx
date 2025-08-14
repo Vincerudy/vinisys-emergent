@@ -169,7 +169,7 @@ const fetchFournisseurs = async () => {
               Commencez par ajouter votre premier fournisseur
             </p>
             <button
-              onClick={() => setShowModal(true)}
+              onClick={openCreateSidebar}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
             >
               Ajouter un fournisseur
