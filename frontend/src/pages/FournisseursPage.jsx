@@ -21,21 +21,8 @@ const FournisseursPage = () => {
   const [fournisseurs, setFournisseurs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showModal, setShowModal] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [editingFournisseur, setEditingFournisseur] = useState(null);
-  const [formData, setFormData] = useState({
-    nom: '',
-    email: '',
-    telephone: '',
-    adresse: '',
-    ville: '',
-    code_postal: '',
-    pays: 'France',
-    siret: '',
-    tva_intracom: '',
-    conditions_paiement: '30',
-    compte_comptable: ''
-  });
 
   useEffect(() => {
     fetchFournisseurs();
