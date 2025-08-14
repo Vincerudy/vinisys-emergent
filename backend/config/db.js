@@ -1,11 +1,11 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  port: 8889,  // Port MySQL de MAMP
-  user: 'root',
-  password: 'root',
-  database: 'vinisys',
+  host: process.env.MYSQL_HOST || 'localhost',
+  port: process.env.MYSQL_PORT || 3306,
+  user: process.env.MYSQL_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || '',
+  database: process.env.MYSQL_DATABASE || 'mjupgupviniprod',
   multipleStatements: true, // 👉 autorise plusieurs requêtes
   waitForConnections: true,
   connectionLimit: 10,
@@ -16,7 +16,7 @@ const pool = mysql.createPool({
 const testConnection = async () => {
   try {
     await pool.promise().execute('SELECT 1');
-    console.log('✅ Connexion MySQL réussie à vinisys');
+    console.log(`✅ Connexion MySQL réussie à ${process.env.MYSQL_DATABASE || 'mjupgupviniprod'}`);
   } catch (error) {
     console.error('❌ Erreur connexion MySQL:', error);
   }
@@ -25,7 +25,3 @@ const testConnection = async () => {
 testConnection();
 
 module.exports = pool.promise();
-  
-
- 
-  
