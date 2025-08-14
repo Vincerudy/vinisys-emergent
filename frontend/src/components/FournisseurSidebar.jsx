@@ -96,18 +96,26 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
-      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
+    <div className="fixed inset-0 z-[9999] overflow-hidden">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300" 
+        onClick={onClose}
+      ></div>
+      
+      {/* Sidebar */}
+      <div className={`fixed right-0 top-0 h-full w-full max-w-lg bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${
+        isOpen ? 'translate-x-0' : 'translate-x-full'
+      }`}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
             <h2 className="text-xl font-semibold text-gray-900">
               {isEditMode ? 'Modifier le fournisseur' : 'Nouveau fournisseur'}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 p-2"
+              className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-200 rounded-full transition-colors"
             >
               <FiX size={20} />
             </button>
