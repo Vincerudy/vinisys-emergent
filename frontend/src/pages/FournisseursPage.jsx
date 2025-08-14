@@ -44,10 +44,6 @@ const fetchFournisseurs = async () => {
 };
 
 
-  const handleSaved = () => {
-    fetchFournisseurs(); // Refresh the list
-  };
-
   const handleDelete = async (fournisseurId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?')) {
       try {
@@ -64,6 +60,25 @@ const fetchFournisseurs = async () => {
         alert('Erreur lors de la suppression du fournisseur');
       }
     }
+  };
+
+  const openCreateSidebar = () => {
+    setEditingFournisseur(null);
+    setShowSidebar(true);
+  };
+
+  const openEditSidebar = (fournisseur) => {
+    setEditingFournisseur(fournisseur);
+    setShowSidebar(true);
+  };
+
+  const closeSidebar = () => {
+    setShowSidebar(false);
+    setEditingFournisseur(null);
+  };
+
+  const handleSaved = () => {
+    fetchFournisseurs(); // Refresh the list
   };
 
   const handleDelete = async (fournisseurId) => {
