@@ -42,8 +42,22 @@ const NoteDetailPage = () => {
   useEffect(() => {
     if (noteId) {
       fetchNoteDetails();
+    } else {
+      // Mode création - initialiser avec une note vide
+      setNote({
+        id: null,
+        titre: 'Nouvelle note de frais',
+        statut: 'creation',
+        total_amount: 0,
+        created_at: new Date().toISOString(),
+        user_id: user_id,
+        societe_id: societe_id
+      });
+      setFrais([]);
+      setNoteTitle('Nouvelle note de frais');
+      setLoading(false);
     }
-  }, [noteId]);
+  }, [noteId, user_id, societe_id]);
 
   const fetchNoteDetails = async () => {
     try {
