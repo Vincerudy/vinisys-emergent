@@ -60,15 +60,12 @@ router.get('/:societeId', async (req, res) => {
                 a.*,
                 f.nom as fournisseur_nom,
                 ca.nom as categorie_nom,
-                p.nom as projet_nom,
-                COUNT(ja.id) as nb_justificatifs
+                p.nom as projet_nom
             FROM achats a
             LEFT JOIN fournisseurs f ON a.fournisseur_id = f.id
             LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id
             LEFT JOIN projets p ON a.projet_id = p.id
-            LEFT JOIN justificatifs_achats ja ON a.id = ja.achat_id
             ${whereClause}
-            GROUP BY a.id
             ORDER BY a.date_achat DESC, a.created_at DESC
             LIMIT ? OFFSET ?
         `;
