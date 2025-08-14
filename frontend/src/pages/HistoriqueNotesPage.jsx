@@ -30,23 +30,35 @@ const HistoriqueNotesPage = () => {
   const fetchHistorique = async () => {
     try {
       setLoading(true);
-      // Utiliser l'endpoint existant avec un filtre pour les notes validées/refusées
+      console.log('DEBUG - Fetching historique...');
+      console.log('DEBUG - societe_id:', societe_id);
+      
+      // Récupérer toutes les notes d'abord
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/notes-frais/0`, {
         params: { 
-          societe_id: societe_id,
-          statut_historique: 'true', // Filtre pour notes validées/refusées
-          ...filtres 
+          societe_id: societe_id
         }
       });
       
-      // Filtrer seulement les notes avec un historique de validation
-      const notesAvecHistorique = (response.data.notes || []).filter(note => 
-        note.statut === 'validee' || note.statut === 'refusee' || note.date_validation
-      );
+      console.log('DEBUG - API response:', response.data);
       
+      const allNotes = response.data.notes || [];
+      console.log('DEBUG - All notes count:', allNotes.length);
+      
+      // Filtrer les notes avec historique (validées ou refusées)
+      const notesAvecHistorique = allNotes.filter(note => {
+        const hasHistory = note.statut === 'validee' || note.statut === 'refusee' || note.date_validation;
+        if (hasHistory) {
+          console.log('DEBUG - Note with history:', note.numero, note.statut);
+        }
+        return hasHistory;
+      });
+      
+      console.log('DEBUG - Notes with history count:', notesAvecHistorique.length);
       setHistorique(notesAvecHistorique);
+      
     } catch (error) {
-      console.error('Erreur chargement historique:', error);
+      console.error('DEBUG - Error fetching historique:', error);
       setHistorique([]);
     } finally {
       setLoading(false);
