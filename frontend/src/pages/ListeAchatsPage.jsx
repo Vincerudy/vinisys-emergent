@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
+import AchatSidebar from '../components/AchatSidebar';
 import './css/ListeAchatsPage.css';
 
 const ListeAchatsPage = () => {
