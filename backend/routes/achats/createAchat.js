@@ -72,32 +72,26 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
         // Insertion de l'achat
         const [result] = await connection.execute(`
             INSERT INTO achats (
-                numero_facture, fournisseur_id, date_achat, date_facture, date_echeance,
+                numero, fournisseur_id, fournisseur_nom, date_achat,
                 montant_ht, montant_tva, montant_ttc, taux_tva, tva_deductible,
-                categorie_achat_id, projet_id, description, mode_paiement,
-                utilisateur_id, societe_id, compte_comptable_achat, compte_comptable_tva,
-                saisie_ocr, statut
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'brouillon')
+                categorie_achat_id, description, mode_paiement,
+                societe_id, saisie_ocr, statut
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'brouillon')
         `, [
-            numero_facture || null, 
-            fournisseur_id, 
+            numero_facture || `ACH-${Date.now()}`, 
+            fournisseur_id || null,
+            '', // fournisseur_nom sera mis à jour via une jointure si nécessaire
             date_achat, 
-            date_facture || null, 
-            date_echeance || null,
             montantHT, 
             montantTVA, 
             montantTTC, 
             tauxTVA, 
-            tva_deductible ? 1 : 0,
+            tva_deductible ? 'Oui' : 'Non',
             categorie_achat_id || null, 
-            projet_id || null, 
             description || null, 
             mode_paiement || 'virement',
-            utilisateur_id, 
             societe_id, 
-            compte_comptable_achat || null, 
-            compte_comptable_tva || '44566',
-            saisie_ocr ? 1 : 0
+            saisie_ocr ? 'Oui' : 'Non'
         ]);
 
         const achatId = result.insertId;
