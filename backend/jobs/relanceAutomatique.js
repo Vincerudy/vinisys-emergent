@@ -141,11 +141,6 @@ class RelanceAutomatique {
   // Envoyer un email de relance
   async envoyerEmailRelance(facture, societe) {
     try {
-      if (!this.transporter) {
-        console.error('❌ Transporteur email non configuré');
-        return;
-      }
-
       const { numero, date_facture, total, client_nom, client_email } = facture;
       const { companyName, societe_email } = societe;
 
@@ -153,6 +148,25 @@ class RelanceAutomatique {
       const dateFacture = new Date(date_facture);
       const aujourd = new Date();
       const joursRetard = Math.floor((aujourd.getTime() - dateFacture.getTime()) / (1000 * 60 * 60 * 24));
+
+      console.log(`📧 Préparation email pour facture ${numero} - Client: ${client_nom} (${client_email}) - ${joursRetard} jours de retard`);
+
+      // Vérifier si les paramètres SMTP sont configurés
+      if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+        console.log(`⚠️  SMTP non configuré - simulation d'envoi d'email pour la facture ${numero}`);
+        console.log(`   📧 À: ${client_email}`);
+        console.log(`   💰 Montant: ${total}€`);
+        console.log(`   📅 ${joursRetard} jours de retard`);
+        
+        // Mettre à jour le statut de la facture même en simulation
+        await this.updateFactureStatut(facture.id, 'en retard');
+        return;
+      }
+
+      if (!this.transporter) {
+        console.error('❌ Transporteur email non configuré');
+        return;
+      }
 
       const sujet = `Rappel de paiement - Facture ${numero}`;
       
@@ -193,7 +207,7 @@ class RelanceAutomatique {
       
       console.log(`✅ Email de relance envoyé pour la facture ${numero} à ${client_email}`);
       
-      // Mettre à jour le statut de la facture si nécessaire
+      // Mettre à jour le statut de la facture
       await this.updateFactureStatut(facture.id, 'en retard');
 
     } catch (error) {
