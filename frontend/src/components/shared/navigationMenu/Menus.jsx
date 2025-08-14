@@ -4,6 +4,8 @@ import { Link, useLocation } from "react-router-dom";
 import { menuList } from "@/utils/fackData/menuList";
 import getIcon from "@/utils/getIcon";
 import { hasPermission } from '../../../contexte/permissions';
+import { useSubscription } from '../../../hooks/useSubscription';
+import { filterMenuBySubscription } from '../../../utils/subscriptionFilter';
 
 const Menus = () => {
     const [openDropdown, setOpenDropdown] = useState(null);
