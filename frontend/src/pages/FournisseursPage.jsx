@@ -14,6 +14,7 @@ import {
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
+import FournisseurSidebar from '../components/FournisseurSidebar';
 
 const FournisseursPage = () => {
   const { societe_id } = useAuth();
