@@ -139,8 +139,41 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
         return;
       }
 
+      let finalNoteId = noteId;
+
+      // Si noteId est null, créer d'abord la note
+      if (!noteId) {
+        const { id: user_id } = useAuth();
+        const currentDate = new Date();
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Lundi
+        
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6); // Dimanche
+        
+        const noteData = {
+          user_id: user_id,
+          societe_id: societe_id,
+          periode_debut: startOfWeek.toISOString().split('T')[0],
+          periode_fin: endOfWeek.toISOString().split('T')[0],
+          titre: `Note de frais - ${startOfWeek.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}`,
+          description: 'Nouvelle note de frais',
+          statut: 'brouillon'
+        };
+
+        const noteResponse = await axios.post(`${import.meta.env.VITE_API_URL}/note-frais`, noteData);
+        
+        if (noteResponse.data.success && noteResponse.data.note_id) {
+          finalNoteId = noteResponse.data.note_id;
+          // Rediriger vers la page avec l'ID de la nouvelle note
+          window.location.hash = `#/notes-frais/note/${finalNoteId}`;
+        } else {
+          throw new Error('Erreur lors de la création de la note');
+        }
+      }
+
       const fraisPayload = {
-        note_frais_id: noteId,
+        note_frais_id: finalNoteId,
         type_frais_id: formData.type_frais_id || 1, // Par défaut repas
         vendeur: formData.vendeur.trim(),
         date_frais: formData.date_frais,
