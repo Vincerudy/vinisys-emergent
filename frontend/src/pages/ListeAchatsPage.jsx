@@ -37,6 +37,10 @@ const ListeAchatsPage = () => {
   const [selectedAchats, setSelectedAchats] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [modeModalOpen, setModeModalOpen] = useState(false);
+  const [sidebarPrefilledData, setSidebarPrefilledData] = useState(null);
+  const [sidebarAttachedFile, setSidebarAttachedFile] = useState(null);
+  const [sidebarMode, setSidebarMode] = useState('manuel');
   const itemsPerPage = 10;
 
   // Détection du paramètre sidebar=open pour ouvrir automatiquement le sidebar
