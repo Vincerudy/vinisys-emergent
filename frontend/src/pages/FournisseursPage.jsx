@@ -186,7 +186,7 @@ const fetchFournisseurs = async () => {
                   </h3>
                   <div className="flex space-x-1">
                     <button
-                      onClick={() => openEditModal(fournisseur)}
+                      onClick={() => openEditSidebar(fournisseur)}
                       className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
                     >
                       <FiEdit size={16} />
