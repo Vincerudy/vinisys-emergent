@@ -52,6 +52,7 @@ const ParametrageCategoriesPage = () => {
   };
 
   const handleCreate = () => {
+    console.log('🔄 Creating new category...');
     setEditingCategory(null);
     setFormData({
       nom: '',
@@ -61,9 +62,11 @@ const ParametrageCategoriesPage = () => {
       tva_deductible: 'Oui'
     });
     setShowModal(true);
+    console.log('✅ Modal should be open, showModal:', true);
   };
 
   const handleEdit = (category) => {
+    console.log('🔄 Editing category:', category.nom);
     setEditingCategory(category);
     setFormData({
       nom: category.nom || '',
@@ -73,6 +76,7 @@ const ParametrageCategoriesPage = () => {
       tva_deductible: category.tva_deductible || 'Oui'
     });
     setShowModal(true);
+    console.log('✅ Edit modal should be open, showModal:', true);
   };
 
   const handleSave = async () => {
