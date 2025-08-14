@@ -1,0 +1,141 @@
+/* Conteneur principal de la liste des alertes */
+.alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    max-width: 100%;
+    height: 100%;
+    margin: 0 auto;
+  }
+  
+  /* Style général pour une alerte */
+  .alert {
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Style pour le badge */
+  .badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  /* Couleurs selon le type d'alerte */
+  .badge.urgent {
+    background-color: #ff4d4d;
+  }
+  .close-btn.urgent{
+    background-color: #ff4d4d;
+    height: 40px;
+    width: 150px;
+    color:#ffffff
+  }
+  
+  .badge.important {
+    background-color: #ffa500;
+  }
+  .close-btn.important{
+    background-color: #ffa500;
+    height: 40px;
+    width: 150px;
+    color:#ffffff
+  }
+  
+  .badge.info {
+    background-color: #3454d1;
+  }
+  .close-btn.info{
+    background-color: #3454d1;
+    height: 40px;
+    width: 150px;
+    color:#ffffff
+  }
+  
+  /* Couleurs du fond des alertes selon le type */
+  .alert.urgent {
+    background-color: #ffe6e6;
+    border-left: 5px solid #ff4d4d;
+  }
+  
+  .alert.important {
+    background-color: #fff5e6;
+    border-left: 5px solid #ffa500;
+  }
+  
+  .alert.info {
+    background-color: #e6f2ff;
+    border-left: 5px solid #3454d1;
+  }
+  
+  /* Style pour le texte des alertes */
+  .alert p {
+    margin: 0;
+    flex-grow: 1;
+    padding-left: 15px;
+  }
+  .sidebar {
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 35%;
+    background-color: white;
+    border-left: 2px solid #ddd;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+  }
+.BlocMessageInformation {
+    display:flex; 
+    align-items: center;
+    width: 90%;
+    background-color: #3454d122;
+    border-radius: 10px;
+    margin: 2%;
+    height: 70%;
+    padding: 20px; /* Ajoute un peu d'espace autour du texte */
+    color: rgb(0, 0, 0); /* Couleur du texte pour le contraste */
+    overflow-y: auto; /* Permet le défilement si le texte dépasse la hauteur */
+    text-align: left; /* Aligne le texte à gauche */
+    line-height: 1.5; /* Améliore la lisibilité du texte */
+}
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .sidebar.closed {
+    transform: translateX(100%);
+  }
+  
+  /* Bouton de fermeture de la sidebar */
+  .close-btn {
+    position: absolute; /* Garder la position absolue */
+    bottom: 10%; /* Positionné à 20px du bas */
+    right: 20px; /* Positionné à 20px de la droite */
+    background: none;
+    border: none;
+    border-radius: 20px;
+    font-size: 20px;
+    cursor: pointer;
+    color: rgb(66, 45, 45);
+
+}
+
+  
+  .close-btn:hover {
+    color: darkred;
+  }
+  

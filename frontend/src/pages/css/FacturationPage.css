@@ -1,0 +1,467 @@
+.facturation-container {
+    padding: 20px;
+    height: 100%;
+ 
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+ 
+  }
+  
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #3454d1;
+  }
+ 
+ 
+  .colorModepaiement{
+    background-color: #dffadf;
+  }
+  
+  .card-dashboarSmal{
+    height: 10%;
+  }
+  .alerte {
+  padding: 8px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  overflow: auto;
+}
+
+.alerte-danger {
+  background-color: #ffffffc5; /* Rouge */
+  color: #a1721a;
+  border-left: 3px solid #ff4d4f;
+}
+
+.alerte-warning {
+  background-color: #ffffffc5; /* Rouge */
+  color: #a1721a;
+  border-left: 3px solid #faad14;
+}
+
+.alerte-info {
+  background-color: #ffffffc5; /* Rouge */
+  color: #a1721a;
+  border-left: 3px solid #1890ff;
+}
+.facture-en-attente {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #ffffffc5; /* Rouge */
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #a1721a;
+}
+.tab-bold {
+  font-weight: bold;
+  color: #1c5fa3 
+}
+
+.retard {
+  color: #ff4d4f; /* Rouge pour le retard */
+  font-weight: bold;
+}
+
+
+ 
+ 
+ 
+
+ 
+ 
+.noAlert{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  
+}
+ 
+
+  .containerModalMail{
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+ 
+    overflow: auto;
+  }
+  .iconListe{
+    height: 25px;
+  }
+  .blocenteteEmail{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom-width: 1px;
+    border-bottom: #3454d1;
+  }
+  .tabs {
+    margin-bottom: 20px;
+  }
+  .hr{
+    border: 1px solid #b3d2f4;
+    margin-bottom: 30px;
+  }
+  .iconMail{
+    margin-right: 10px;
+  }
+  .fomulaireMail{
+    width: 100%;
+   
+    display: flex;
+    flex-direction:column;
+ 
+  }
+  /* Conteneur principal */
+.form-container {
+  max-width: 100%;
+ 
+  margin: 0 auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Marges uniformes entre les champs */
+.form-container .ant-form-item {
+  margin-bottom: 16px;
+}
+
+/* Styles pour les labels */
+.form-container .ant-form-item-label label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3454d1;
+}
+
+/* Hauteur fixe pour les champs d'entrée */
+.fixed-height-input {
+  height: 40px; /* Hauteur fixe */
+  line-height: 40px; /* Centrage vertical du texte */
+}
+
+/* Hauteur dynamique pour la zone de texte */
+.dynamic-height-textarea textarea {
+  height: 30vh !important; /* Utilisation de 30% de la hauteur de la fenêtre */
+  resize: none; /* Empêche le redimensionnement manuel */
+  overflow-y: auto; /* Ajout d'un ascenseur uniquement si nécessaire */
+  border: 1px solid #ccc; /* Bordure pour un effet net */
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* Styles pour le lien de téléchargement */
+.download-link {
+  color: #1890ff;
+  text-decoration: underline;
+}
+
+  .filters {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+ 
+  .search-bar {
+    flex: 1;
+  }
+  
+  .date-picker {
+    flex: 1;
+  }
+  /* En-tête du tableau en rouge */
+  .invoice-table thead th {
+    background-color: #3454d1 !important; /* Forcer la couleur rouge */
+    color: white !important; /* Texte en blanc */
+  }
+
+  .table-row-even {
+    background-color: #e7f0fb; /* Couleur bleue pour la ligne paire */
+    color: black; /* Texte en blanc */
+  }
+
+  .table-row-odd {
+    background-color: transparent; /* Pas de couleur pour la ligne impaire */
+    color: black; /* Texte en noir */
+  }
+ 
+
+  .status-filter {
+    flex: 1;
+  }
+
+  .table-responsive > table th, .table-responsive > table td {
+    border: 0px;
+    
+  }
+
+  .table-responsive .table thead th  {
+    padding: 8px 15px;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+
+  .table-responsive > table tfoot th {
+    color: white;
+  }
+ 
+  .create-button {
+    margin-left: auto;
+    background-color: #3454d1;
+  }
+  
+  .invoice-table, .client-table, .quote-table {
+    margin-top: 20px;
+  }
+  .custom-button {
+    background-color: #ffffff; /* Couleur de fond */
+    border: 1px solid #3454d1;
+    color: #3454d1 ;/* Couleur du texte */
+ 
+    border-radius: 5px; /* Arrondi des coins */
+}
+.cardFacturation{
+  margin-top: 2%;
+}
+
+.custom-button:hover {
+    background-color: #3454d1; /* Couleur de fond au survol */
+}
+.divModalModeleFacture{
+  background-color: #dedede;
+  height: 100%;
+}
+.inputRechercheClient{
+  height: 40px;
+}
+  
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .ant-form-item {
+    margin-bottom: 12px;
+  }
+  
+  .ant-form-item-label {
+    font-weight: 600;
+  }
+  
+  .ant-form-item-control {
+    width: 100%;
+  }
+  
+  .add-product-btn {
+    margin-top: 16px;
+  }
+    /* Applique l'animation lors de l'affichage */
+    .modal-slide-in {
+     
+      position: fixed;
+      right: 0; /* La modale est collée à droite */
+      top: 5%; /* Ajustez cette valeur si besoin */
+      width: 50vw; /* Largeur à 50% de l'écran */
+    }
+    
+  /* Style époustouflant pour l'ascenseur */
+  .modal-slide-in::-webkit-scrollbar {
+    width: 10px; /* Largeur de la barre de défilement */
+  }
+  
+  .modal-slide-in::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Couleur de fond du track */
+    border-radius: 10px;
+  }
+  
+  .modal-slide-in::-webkit-scrollbar-thumb {
+    background: #3454d1; /* Couleur du curseur */
+    border-radius: 10px;
+    border: 2px solid #f1f1f1; /* Bord autour du curseur pour un effet de contraste */
+  }
+  
+  .modal-slide-in::-webkit-scrollbar-thumb:hover {
+    background: #1281c3; /* Couleur lors du survol */
+  }
+  
+  /* Pour Firefox */
+  .modal-slide-in {
+    scrollbar-width: thin;
+    scrollbar-color: #3454d1 #f1f1f1;
+  }
+  .TotalMdaleDevisFacture{
+    width: 30%;
+ 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+ .blocTotaleModaleElement{
+  display: flex;
+  flex-direction: row;
+ }
+ .blocTotaleModale{
+  border: 2px solid #3454d1; 
+  border-radius: 6px;
+  padding: 20px;
+ }
+ .blocTotaleModaleElementCellule{
+  width: 50%;
+ }
+ .blocTotaleModaleElementCelluleTotal{
+  color: #3454d1;
+  font-weight: bold;
+ }
+ 
+  @media (max-width: 768px) {
+    .dateNumFactureModale{
+      display: flex;
+      flex-direction: column;
+    }
+    .TotalMdaleDevisFacture{
+      width: 100%;
+   
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .blocTotaleModale{
+      border: 2px solid #3454d1; 
+      border-radius: 6px;
+      padding: 10px;
+      width: 80%;
+     }
+ 
+    .TextTitleModale{
+      font-size: 18px;
+    }
+    .colTotal{
+      display: flex;
+    }
+    .invoice-table  {
+ 
+      width: 100%;
+      overflow-x: auto; 
+      white-space: nowrap;
+      border-radius: 6px;
+    }
+    .filters {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+ 
+    }
+    .filters  .ant-picker-range {
+      width: 100%;
+    }
+
+    .filters .ant-select-selection-item {
+  
+      width: 100%;
+    }
+
+ 
+    .facturation-container {
+      padding: 10px;
+      height: 80%;
+ 
+      margin-top: 20%;
+   
+    }
+    #rc-tabs-1-panel-clientList{
+
+      width: 100%;
+      height: 100%;
+    }
+ 
+    
+  
+    .mobilelayout {
+      display: flex;
+      flex-direction: column;
+      gap: 10px; /* Espacement entre les blocs */
+    }
+  
+    .mobilelayout .ant-col {
+      width: 100% !important;
+      max-width: 100%;
+      
+    }
+    .colorCA, .caRetardMobil, .colorNbrClient{
+      display: flex;
+      justify-content: center;
+    }
+    .ant-card {
+      width: 100%;
+      
+    }
+  
+    .facture-en-attente, .alerte {
+      font-size: 14px; /* Ajuste la lisibilité */
+ 
+    }
+    .nbrFactureMobile, .nbrClientMobile, .caAttenteMobile{
+      display: none;
+    }
+    .facture-en-attente {
+      padding: 10px;
+      margin: 5px 0;
+      background-color: #ffffffc5; /* Rouge */
+      border-radius: 5px;
+      display: flex;
+      
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: bold;
+ 
+    }
+    .filters{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+    }
+    .facturation-container .ant-tabs {
+      height: 100%;
+  
+    }
+    .facturation-container .ant-tabs-content-holder {
+      overflow-y: auto;
+    }
+    .col-adresse, .col-postal, .col-pays, .col-ville,
+    .col-email {
+      display: none;
+    }
+
+  }
+  
+  
+    
+    /* Effets d'animation */
+    @keyframes pulse {
+      0% {
+       
+      }
+      50% {
+        
+      }
+      100% {
+   
+      }
+    }
+    

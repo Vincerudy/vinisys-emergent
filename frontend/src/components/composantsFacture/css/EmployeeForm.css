@@ -1,0 +1,145 @@
+.employee-form {
+    background-color: #f9f9f9;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    max-height: 600px; /* Ajustez la hauteur selon vos besoins */
+    overflow-y: auto; /* Active le défilement vertical */
+    padding-right: 10px; /* Ajoute un peu d'espace entre le contenu et la scrollbar */
+  }
+  
+  .employee-form .ant-form-item-label {
+    font-weight: bold;
+  }
+  .inputSearch{
+    margin-bottom: 20px;
+    width: 26%;
+  }
+  .topEmployeePage{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .btnNewEmploye{
+    background-color: #3454d100; 
+    border: 2px solid #3454d1; 
+    color: #3454d1; 
+    font-weight: bold;
+  }
+ 
+  .fieldSetForm{
+    background-color: white;
+    padding-right: 20px;
+    height: 100%;
+    border-radius: 5px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  .photo-profil {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px; 
+    overflow: hidden; 
+    border: 5px solid transparent; /* Bordure pour l'effet de couleur */
+    border-radius: 50%; /* Contour circulaire */
+    background-color: #f0f0f0; /* Couleur de fond neutre */
+    position: relative; /* Pour le pseudo-élément */
+    transition: transform 0.3s ease, border-color 0.3s ease; /* Transition douce pour le zoom et la couleur */
+}
+
+/* Pseudo-élément pour l'effet de contour */
+.photo-profil::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%; /* Contour circulaire */
+    border: 5px solid #3454d1; /* Bordure colorée */
+    transform: scale(0); /* Masqué par défaut */
+    transition: transform 0.3s ease; /* Transition pour l'échelle */
+    pointer-events: none; /* Ignorer les événements de clic */
+}
+
+/* Effet de survol */
+.photo-profil:hover {
+    transform: scale(1.05); /* Zoom léger au survol */
+}
+
+.photo-profil:hover::before {
+    transform: scale(1); /* Montre l'effet de contour au survol */
+}
+.TitleNewEmployee{
+    font-size: 30px;
+    color: #ffffffbd;
+    background-color: #7fb2e9;
+    padding-left: 5px;
+    border-radius: 5px;
+}
+
+/* Animation de glissement de droite à gauche */
+@keyframes slideInRight {
+    0% {
+      transform: translateX(100%); /* La modale commence en dehors de l'écran à droite */
+    }
+    100% {
+      transform: translateX(0); /* La modale termine à sa position normale */
+    }
+  }
+  
+  /* Applique l'animation lors de l'affichage */
+  .modal-slide-in {
+     
+    position: fixed;
+    right: 0; /* La modale est collée à droite */
+    top: 5%; /* Ajustez cette valeur si besoin */
+    width: 50vw; /* Largeur à 50% de l'écran */
+  }
+  
+/* Style époustouflant pour l'ascenseur */
+.modal-slide-in::-webkit-scrollbar {
+  width: 10px; /* Largeur de la barre de défilement */
+}
+
+.modal-slide-in::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Couleur de fond du track */
+  border-radius: 10px;
+}
+
+.modal-slide-in::-webkit-scrollbar-thumb {
+  background: #3454d1; /* Couleur du curseur */
+  border-radius: 10px;
+  border: 2px solid #f1f1f1; /* Bord autour du curseur pour un effet de contraste */
+}
+
+.modal-slide-in::-webkit-scrollbar-thumb:hover {
+  background: #1281c3; /* Couleur lors du survol */
+}
+
+/* Pour Firefox */
+.modal-slide-in {
+  scrollbar-width: thin;
+  scrollbar-color: #3454d1 #f1f1f1;
+}
+  
+
+
+  
+  .employee-form .ant-input,
+  .employee-form .ant-select-selector,
+  .employee-form .ant-picker {
+    border-radius: 4px;
+  }
+  
+  .employee-form .ant-input-textarea {
+    border-radius: 4px;
+  }
+  
+  .employee-form .ant-form-item {
+    margin-bottom: 16px;
+  }
+  

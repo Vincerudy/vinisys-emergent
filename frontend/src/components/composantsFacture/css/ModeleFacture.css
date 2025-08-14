@@ -1,0 +1,219 @@
+.invoice-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 210mm; /* Largeur A4 */
+  margin: 0 auto;
+  margin-bottom: 10px;
+  padding: 10mm; /* Marges internes pour éviter que le contenu touche les bords */
+  background-color: white;
+  box-sizing: border-box;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  /* Aucune hauteur fixe ici */
+  border: 1px solid #77a7da55;
+}
+
+ 
+
+.invoice-table-container {
+  flex-grow: 1; /* Prend tout l'espace restant en hauteur */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Ajoute un défilement vertical si le contenu dépasse */
+}
+.invoice-table tbody tr {
+  page-break-inside: avoid; /* Évite la coupure des lignes dans le tableau */
+  border: 1px solid #77a7da55;
+}
+ 
+.tfoot{
+  background-color: #092644;
+}
+.td {
+  word-wrap: break-word; /* Permet aux mots longs de se couper */
+  border: 1px solid #77a7da55;
+}
+.tamponPayé{
+  background-color: #b4f8c4;
+  margin-left: 60px;
+  border-radius: 5px;
+  color: #155724;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.textPiedDePage{
+  font-size: 12px;
+  font-style: italic;
+}
+.bonAccord{
+  text-align: right;
+}
+ /* Mise en page du header de la facture */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+ 
+  padding-bottom: 20px;
+}
+
+/* Détails du vendeur */
+.invoice-details {
+  width: 45%;
+}
+
+.InvoiceLogo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+/* Bloc avec le titre de la facture et informations principales */
+.NameInvoiceBloc {
+  margin-bottom: 20px;
+  border: 2px solid #3454d1;
+  border-radius: 10px;
+}
+
+.NameInvoiceBloc p {
+  margin: 5px 0;
+}
+
+.titleIvoice {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #3454d1;
+}
+.datefacture{
+  text-align: center;
+}
+
+/* Informations du vendeur */
+.invoice-details p {
+  margin: 8px 0;
+}
+.infoClient {
+  font-size: 14px; /* Ajuste la taille de la police si nécessaire */
+}
+.invoice-details {
+  font-size: 14px; /* Ajuste la taille de la police si nécessaire */
+}
+
+/* Réduire l'interligne des paragraphes dans le bloc des détails du vendeur */
+.invoice-details p {
+  margin: 4px 0; /* Réduit l'espace entre chaque paragraphe */
+  line-height: 1.2; /* Ajuste l'interligne pour le rendre plus compact */
+}
+
+/* Réduire la taille de l'image du logo si nécessaire */
+.InvoiceLogo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 0; /* Réduit l'espace sous le logo */
+}
+
+/* Réduire l'interligne des paragraphes */
+.infoClient p {
+  margin: 4px 0; /* Réduit l'espace entre chaque paragraphe */
+  line-height: 1.2; /* Ajuste l'interligne pour le rendre plus compact */
+  display: flex;
+ 
+}
+.textInfoClient{
+  text-align: left;
+}
+
+/* Responsivité pour les petits écrans */
+@media (max-width: 768px) {
+  .ayeOnMobile{
+    display: none;
+  }
+  .invoice-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .invoice-details {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .NameInvoiceBloc {
+    margin-bottom: 15px;
+  }
+
+  .titleIvoice {
+    font-size: 18px;
+  }
+
+  .invoice-details p {
+    font-size: 14px;
+  }
+
+  /* Réduire la taille de l'image pour les petits écrans */
+  .InvoiceLogo {
+    width: 80px;
+  }
+}
+
+ 
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse; /* Supprime l'espace entre les bordures */
+  height: auto; /* Permet au tableau de s'ajuster à la hauteur du contenu */
+  border: 1px solid #77a7da55;
+}
+
+.invoice-table thead th,
+.invoice-table tbody td,
+.invoice-table tfoot td {
+  padding: 10px;
+  text-align: left;
+  vertical-align: top; /* Les cellules s'adaptent à la hauteur du contenu */
+}
+
+
+.invoice-table th {
+  background-color: #77a7da;/* Couleur de fond pour les en-têtes */
+}
+.blocEnteteTableau{
+  background-color: #77a7da;/* Couleur de fond pour les en-têtes */
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+
+}
+
+.fixed-height-row {
+  height: 50px; /* Chaque ligne sous thead a une hauteur de 50px */
+}
+
+.last-row {
+  height: auto; /* La dernière ligne occupe l'espace restant */
+  flex-grow: 1; /* S'étend pour remplir l'espace restant */
+}
+
+.invoice-table tfoot td {
+  font-weight: bold;
+  background-color: #f5f5f5;
+}
+
+
+
+/* Styles d'impression */
+@media print {
+  .invoice-table-container {
+    overflow: visible; /* Ne pas avoir de défilement à l'impression */
+  }
+
+  .fixed-height-row {
+    height: auto; /* Ne pas forcer la hauteur des lignes à 50px lors de l'impression */
+  }
+}

@@ -1,0 +1,54 @@
+.rainbow-company-card {
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg,
+      #1a1f33,
+      #1f273d,
+      #253047,
+      #2a3952,
+      #2f425d,
+      #344b68,
+      #395473,
+      #3e5d7e);
+    background-size: 400% 400%;
+    animation: rainbowBackground 15s ease infinite;
+    color: white;
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 24px;
+    cursor: pointer;
+  }
+  
+  .rainbow-company-card:hover {
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+  
+  .company-info {
+    text-align: center;
+  }
+  
+  .company-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .company-id,
+  .company-status {
+    display: block;
+    margin-bottom: 6px;
+  }
+  
+  @keyframes rainbowBackground {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  

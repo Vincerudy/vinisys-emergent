@@ -1,0 +1,116 @@
+.ticket-container {
+    max-width: 100%;
+    padding: 24px;
+    display: flex;
+    gap: 24px;
+    box-sizing: border-box;
+  }
+  
+  .ticket-left-column {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .ticket-description .ql-container {
+    height: 300px; /* ancienne valeur : 200px */
+    background-color: white;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  
+  .ticket-description .ql-editor {
+    height: 360px; /* ancienne valeur : 160px (toujours un peu moins que .ql-container) */
+    overflow-y: auto;
+  }
+  
+  .ticket-description-button {
+    margin-top: 8px;
+  }
+  
+  .ticket-status-tag {
+    margin-top: 4px;
+  }
+  
+  .ticket-right-column {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+  }
+  
+  .ticket-conversation {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    padding-right: 8px;
+  }
+  
+  .ticket-message-input {
+    flex-shrink: 0;
+    position: relative;
+  }
+  
+  .ticket-message-input .ant-input {
+    background-color: white;
+    border-radius: 6px;
+  }
+  
+  .ticket-message-input .ant-btn {
+    margin-top: 8px;
+    float: right;
+  }
+  
+  .ticket-message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px 16px;
+    width: 100%; /* Ajouté */
+    box-sizing: border-box; /* Important pour inclure le padding dans les 100% */
+  }
+  
+  .ticket-message.support {
+    align-items: flex-end;
+  }
+  
+  .ticket-bubble {
+    padding: 12px;
+    border-radius: 8px;
+    width: 50%; /* Prend toute la largeur du .ticket-message */
+    white-space: pre-wrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+  }
+  
+  
+  .ticket-bubble.client {
+    background-color: #e6f7ff;
+  }
+  
+  .ticket-bubble.support {
+    background-color: #f6ffed;
+  }
+  
+  @media (max-width: 768px) {
+    .ticket-container {
+        max-width: 100%;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        box-sizing: border-box;
+    }
+    .ticket-description .ql-container {
+        height: 200px; /* ancienne valeur : 200px */
+        background-color: white;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+  }

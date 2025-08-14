@@ -1,0 +1,135 @@
+.navbar-Container {
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+  margin-top: 8px;
+  margin-right: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+/* Liste des liens - Suppression des puces */
+.sidebar-links {
+  list-style-type: none; /* Supprime les puces */
+  padding: 0; /* Supprime les marges internes */
+  margin: 0; /* Supprime les marges externes */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Ajoute un espacement entre les éléments */
+}
+
+/* Style des liens */
+.sidebar-links li a {
+  display: flex;
+  flex-direction: column; /* Icône au-dessus du texte */
+  align-items: center; /* Centre l'icône et le texte */
+  text-decoration: none; /* Supprime le soulignement */
+  color: #6994c2; /* Couleur par défaut du texte */
+  padding: 15px;
+  font-size: 16px; /* Taille du texte légèrement plus grande */
+  font-weight: 500; /* Texte légèrement plus gras */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Style de l'icône dans le lien */
+.sidebar-links li a .icon {
+  font-size: 38px; /* Taille des icônes légèrement augmentée */
+  margin-bottom: 8px; /* Ajoute de l'espace entre l'icône et le texte */
+  color: #a6bfda; /* Couleur par défaut des icônes */
+  transition: color 0.3s ease; /* Animation de changement de couleur */
+}
+
+/* Lien actif (cliqué) */
+.sidebar-links li a.active-link {
+  color: #3454d1; /* Couleur du texte actif */
+  font-weight: bold; /* Le texte devient plus gras */
+}
+
+.sidebar-links li a.active-link .icon {
+  color: #3454d1;/* Couleur de l'icône active */
+ 
+}
+
+/* Hover effect pour les liens */
+.sidebar-links li a:hover {
+  background-color: #e0e0e0; /* Change la couleur de fond lors du survol */
+  border-radius: 10px; /* Ajoute un peu de courbure aux bords */
+}
+
+.sidebar-links li a:hover .icon {
+  color: #476a8e; /* Couleur légèrement plus sombre pour les icônes au survol */
+}
+
+/* Style du bouton de déconnexion */
+.logout-button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  margin-top: 20px;
+  border-radius: 5px;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect pour le bouton de déconnexion */
+.logout-button:hover {
+  background-color: #d43f3f;
+}
+/* Conteneur pour la déconnexion */
+.logout-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centre l'icône et le texte */
+  cursor: pointer; /* Change le curseur pour indiquer une action cliquable */
+  color: #6994c2; /* Couleur par défaut */
+  transition: color 0.3s ease, transform 0.2s ease; /* Transition pour hover */
+  margin-top: 20px;
+}
+
+.logout-container .icon {
+   
+  margin-bottom: 5px; /* Espace entre l'icône et le texte */
+}
+
+.logout-container span {
+  font-size: 16px; /* Taille légèrement plus grande pour le texte */
+  font-weight: 500; /* Texte légèrement plus gras */
+}
+
+.logout-container:hover {
+  color: #476a8e; /* Couleur légèrement plus sombre au survol */
+  transform: scale(1.05); /* Légère augmentation de la taille au survol */
+}
+
+@media (max-width: 768px) {
+  .sidebar-links {
+    list-style-type: none; /* Supprime les puces */
+    padding: 0; /* Supprime les marges internes */
+    margin: 0; /* Supprime les marges externes */
+    display: flex;
+    flex-direction: row;
+    gap: 15px; /* Ajoute un espacement entre les éléments */
+  }
+  .navbar-Container {
+  height:50px;
+  width: 95%;
+  background-color: rgb(255, 255, 255);
+  margin-top: 8px;
+  margin-right: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 10px;
+  display: flex;
+ 
+
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+ 
+}
+}

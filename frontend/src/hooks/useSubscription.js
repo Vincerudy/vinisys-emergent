@@ -1,0 +1,96 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from '../contexte/AuthContext';
+
+export const useSubscription = () => {
+  const { societe_id, isAuthenticated } = useAuth();
+  const [subscriptionData, setSubscriptionData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Récupérer les données d'abonnement
+  useEffect(() => {
+    const fetchSubscriptionData = async () => {
+      if (!societe_id || !isAuthenticated) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/subscription-status/${societe_id}`
+        );
+        
+        if (response.data.success) {
+          setSubscriptionData(response.data);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération du statut d\'abonnement:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubscriptionData();
+  }, [societe_id, isAuthenticated]);
+
+  // Vérifier si une fonctionnalité est accessible
+  const hasFeature = (featureName) => {
+    if (!subscriptionData || !subscriptionData.subscription) {
+      return false; // Si pas de données, bloquer par défaut
+    }
+
+    const { subscription } = subscriptionData;
+
+    switch (featureName) {
+      case 'facturation':
+        return subscription.enable_facturation === 1;
+      case 'recette':
+        return subscription.enable_recette === 1;
+      case 'mailing':
+        return subscription.enable_mailing === 1;
+      case 'relances_auto':
+        return subscription.enable_relances_auto === 1;
+      case 'stock':
+        return subscription.enable_stock === 1;
+      case 'import_produits':
+        return subscription.enable_import_produits_services === 1;
+      case 'mouvements_stock':
+        return subscription.enable_mouvements_stock === 1;
+      case 'inventaire_manuel':
+        return subscription.enable_inventaire_manuel === 1;
+      case 'inventaire_auto':
+        return subscription.enable_inventaire_auto === 1;
+      case 'user_input':
+        return subscription.enable_user_input === 1;
+      case 'notes_frais':
+        return subscription.enable_facturation === 1; // Notes de frais liées à facturation
+      default:
+        return true; // Fonctionnalités de base toujours disponibles
+    }
+  };
+
+  // Vérifier si la période d'essai a expiré
+  const isTrialExpired = () => {
+    if (!subscriptionData) return false;
+    return subscriptionData.trial_expired === true;
+  };
+
+  // Obtenir les informations de l'essai
+  const getTrialInfo = () => {
+    if (!subscriptionData) return null;
+    return {
+      daysRemaining: subscriptionData.days_remaining || 0,
+      daysSinceCreation: subscriptionData.days_since_creation || 0,
+      expired: subscriptionData.trial_expired || false
+    };
+  };
+
+  return {
+    hasFeature,
+    isTrialExpired,
+    getTrialInfo,
+    subscriptionData,
+    loading,
+    userLimit: subscriptionData?.subscription?.user_limit || 1
+  };
+};

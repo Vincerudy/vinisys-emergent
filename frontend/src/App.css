@@ -1,0 +1,174 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #b3d2f4; /* Fond d'écran blanc */
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+.homContainer{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: row-reverse;
+ 
+}
+.BlocListItems{
+  overflow-y: scroll;
+  height: 92%;
+}
+/* Style pour l'ascenseur (scrollbar) */
+.BlocListItems::-webkit-scrollbar {
+  width: 12px; /* Largeur de l'ascenseur */
+}
+
+/* Track de l'ascenseur (background) */
+.BlocListItems::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Couleur de fond de l'ascenseur */
+  border-radius: 10px;
+}
+
+/* Barre de défilement (scrollbar) */
+.BlocListItems::-webkit-scrollbar-thumb {
+  background-color: #3454d1; /* Couleur bleue de la barre */
+  border-radius: 10px;       /* Arrondir la barre */
+  border: 2px solid #f1f1f1; /* Bordure autour de la barre */
+}
+
+/* Change la couleur de la barre au survol */
+.BlocListItems::-webkit-scrollbar-thumb:hover {
+  background-color: #3454d1; /* Couleur plus foncée au survol */
+}
+
+.chart-container {
+  width: 90%; /* Le graphique prend 90% de la largeur du conteneur parent */
+  margin: 0 auto; /* Centrer le graphique */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Vous pouvez également définir une hauteur si nécessaire */
+.chart-container svg {
+  width: 100% !important; /* Forcer le graphique à utiliser toute la largeur du conteneur */
+  height: auto;
+}
+.backgroundColorPersonel{
+  background-color: #04b344;
+}
+.backgroundColorFacturation{
+  background-color: #e89300;
+}
+.backgroundColorCompta{
+  background-color: #3454d1;
+}
+.backgroundColorAdministrative{
+  background-color: #952a85;
+}
+.backgroundColorInformation{
+  background-color: #00adb6;
+}
+.titleBlox{
+  height: 50px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.blocContainer{
+  height: auto;
+  width: 100%;
+  display: flex;
+ 
+  justify-content:center;
+  align-items: center;
+   
+}
+.blocGride{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  width: 70%;
+  height: 100%;
+}
+.blocModule{
+  width: 48%;
+  height: 48%;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+.blocInfo{
+  width: 30%;
+  height: 100%;
+  border-radius: 5px;
+  margin-top: 0.5%;
+  margin-right: 0.5%;
+  margin-bottom: 4%;
+
+  background-color: #0f539c2d;
+}
+
+.titreBlocHomePage{
+  color: #4b4a4a;
+}
+
+.home-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.home-grid {
+  display: flex;
+  justify-content: center;
+ 
+  width: 100%;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.home-block {
+  padding: 20px;
+  border: 1px solid #ccc;
+  background-color: #4b4a4a;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.home-block:hover {
+  background-color: #3454d1;
+}
+
+.info-block {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.info-block h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.info-block p {
+  color: #555;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+}

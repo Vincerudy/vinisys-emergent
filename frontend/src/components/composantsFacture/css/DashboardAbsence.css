@@ -1,0 +1,85 @@
+/* Style général pour la page */
+.dashboard-container {
+  padding: 20px;
+
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+/* Section de bienvenue */
+.welcome-section {
+  background-color: #3454d1;
+  padding: 20px;
+  border-radius: 8px;
+ 
+  color: #fff;
+}
+
+.welcome-title {
+  color: #fff;
+}
+
+.welcome-text {
+  color: #ffffff;
+}
+
+.user-image {
+  float: right;
+}
+
+/* Section absence et congés */
+.absence-card {
+  background-color: #f0f2f5;
+  color: #000;
+  border-radius: 8px;
+}
+
+.absence-button {
+  background-color: #e94d44;
+  border-color: #e94d44;
+  color: #fff;
+}
+
+.absence-title {
+  margin-top: 20px;
+  color: #ffffff;
+}
+
+.balance-dropdown-button {
+  margin-bottom: 20px;
+}
+
+.counter-card {
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+}
+
+.counter-value {
+  color: #000;
+}
+
+.counter-label {
+  color: #555;
+}
+
+/* Section Agenda */
+.agenda-card {
+  background-color: #f0f2f5;
+  color: #000;
+  border-radius: 8px;
+}
+
+.agenda-title {
+  color: #000;
+}
+
+.agenda-text {
+  margin-top: 20px;
+  text-align: center;
+  color: #555;
+}
+
+.agenda-img {
+  margin-top: 10px;
+}

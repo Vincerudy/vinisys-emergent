@@ -1,0 +1,689 @@
+import React, { useState, useEffect } from 'react';
+import { FiArrowLeft, FiPlus, FiEdit2, FiTrash2, FiSave, FiSettings } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import api from '../contexte/Api';
+import { useAuth } from '../contexte/AuthContext';
+import Swal from 'sweetalert2';
+
+const ParametresDepenses = () => {
+  const { id: userId } = useAuth();
+  const [activeTab, setActiveTab] = useState('categories');
+  const [loading, setLoading] = useState(false);
+  
+  // États pour les catégories
+  const [categories, setCategories] = useState([]);
+  const [newCategory, setNewCategory] = useState({ nom: '', description: '', type: 'autres' });
+  const [editingCategory, setEditingCategory] = useState(null);
+  
+  // États pour les barèmes
+  const [baremes, setBaremes] = useState([]);
+  const [newBareme, setNewBareme] = useState({
+    nom: '',
+    puissanceFiscaleMin: '',
+    puissanceFiscaleMax: '',
+    tarifParKm: '',
+    annee: new Date().getFullYear()
+  });
+  const [editingBareme, setEditingBareme] = useState(null);
+
+  // États pour les taux TVA
+  const [tauxTVA, setTauxTVA] = useState([
+    { id: 1, taux: 0, nom: 'Exonéré', actif: true },
+    { id: 2, taux: 5.5, nom: 'Taux réduit', actif: true },
+    { id: 3, taux: 10, nom: 'Restauration', actif: true },
+    { id: 4, taux: 20, nom: 'Taux normal', actif: true }
+  ]);
+
+  useEffect(() => {
+    loadData();
+  }, [activeTab]);
+
+  const loadData = async () => {
+    if (activeTab === 'categories') {
+      await loadCategories();
+    } else if (activeTab === 'baremes') {
+      await loadBaremes();
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/categories/${userId}`);
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des catégories:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadBaremes = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/baremes/${userId}`);
+      setBaremes(response.data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des barèmes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Gestion des catégories
+  const handleCreateCategory = async (e) => {
+    e.preventDefault();
+    if (!newCategory.nom.trim()) {
+      Swal.fire('Erreur', 'Le nom de la catégorie est obligatoire', 'error');
+      return;
+    }
+
+    try {
+      await api.post('/categorie', { ...newCategory, userId });
+      setNewCategory({ nom: '', description: '', type: 'autres' });
+      loadCategories();
+      Swal.fire('Succès', 'Catégorie créée avec succès', 'success');
+    } catch (error) {
+      console.error('Erreur lors de la création:', error);
+      Swal.fire('Erreur', 'Impossible de créer la catégorie', 'error');
+    }
+  };
+
+  const handleUpdateCategory = async (categoryId) => {
+    if (!editingCategory.nom.trim()) {
+      Swal.fire('Erreur', 'Le nom de la catégorie est obligatoire', 'error');
+      return;
+    }
+
+    try {
+      await api.put(`/categorie/${categoryId}`, { ...editingCategory, userId });
+      setEditingCategory(null);
+      loadCategories();
+      Swal.fire('Succès', 'Catégorie mise à jour avec succès', 'success');
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour:', error);
+      Swal.fire('Erreur', 'Impossible de mettre à jour la catégorie', 'error');
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId, categoryName) => {
+    const result = await Swal.fire({
+      title: 'Confirmer la suppression',
+      text: `Voulez-vous vraiment supprimer la catégorie "${categoryName}" ?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.put(`/categorie/${categoryId}`, { userId, actif: false });
+        loadCategories();
+        Swal.fire('Supprimé !', 'La catégorie a été désactivée.', 'success');
+      } catch (error) {
+        Swal.fire('Erreur', 'Impossible de supprimer la catégorie', 'error');
+      }
+    }
+  };
+
+  // Gestion des barèmes
+  const handleCreateBareme = async (e) => {
+    e.preventDefault();
+    const { nom, puissanceFiscaleMin, puissanceFiscaleMax, tarifParKm, annee } = newBareme;
+    
+    if (!nom.trim() || !puissanceFiscaleMin || !puissanceFiscaleMax || !tarifParKm) {
+      Swal.fire('Erreur', 'Tous les champs sont obligatoires', 'error');
+      return;
+    }
+
+    if (parseInt(puissanceFiscaleMin) >= parseInt(puissanceFiscaleMax)) {
+      Swal.fire('Erreur', 'La puissance minimum doit être inférieure à la maximum', 'error');
+      return;
+    }
+
+    try {
+      await api.post('/bareme', { ...newBareme, userId });
+      setNewBareme({
+        nom: '',
+        puissanceFiscaleMin: '',
+        puissanceFiscaleMax: '',
+        tarifParKm: '',
+        annee: new Date().getFullYear()
+      });
+      loadBaremes();
+      Swal.fire('Succès', 'Barème créé avec succès', 'success');
+    } catch (error) {
+      console.error('Erreur lors de la création:', error);
+      const message = error.response?.data?.message || 'Impossible de créer le barème';
+      Swal.fire('Erreur', message, 'error');
+    }
+  };
+
+  const getTypeIcon = (type) => {
+    const icons = {
+      kilometrique: '🚗',
+      repas: '🍽️',
+      autres: '📋'
+    };
+    return icons[type] || '📋';
+  };
+
+  const getTypeColor = (type) => {
+    const colors = {
+      kilometrique: 'primary',
+      repas: 'success',
+      autres: 'warning'
+    };
+    return colors[type] || 'secondary';
+  };
+
+  return (
+    <div className="nxl-content">
+      <div className="page-header">
+        <div className="page-header-left d-flex align-items-center">
+          <Link to="/depenses/tableau-bord" className="btn btn-outline-primary me-3">
+            <FiArrowLeft />
+          </Link>
+          <div className="page-header-title">
+            <h5 className="m-b-10">Paramètres du module Dépenses</h5>
+            <p className="fs-13 text-muted m-b-0">
+              Configuration des catégories, barèmes et taux TVA
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation par onglets */}
+      <div className="card">
+        <div className="card-header">
+          <ul className="nav nav-tabs card-header-tabs" role="tablist">
+            <li className="nav-item">
+              <button 
+                className={`nav-link ${activeTab === 'categories' ? 'active' : ''}`}
+                onClick={() => setActiveTab('categories')}
+              >
+                <FiSettings className="me-2" />
+                Catégories
+              </button>
+            </li>
+            <li className="nav-item">
+              <button 
+                className={`nav-link ${activeTab === 'baremes' ? 'active' : ''}`}
+                onClick={() => setActiveTab('baremes')}
+              >
+                🚗 Barèmes kilométriques
+              </button>
+            </li>
+            <li className="nav-item">
+              <button 
+                className={`nav-link ${activeTab === 'tva' ? 'active' : ''}`}
+                onClick={() => setActiveTab('tva')}
+              >
+                💰 Taux TVA
+              </button>
+            </li>
+            <li className="nav-item">
+              <button 
+                className={`nav-link ${activeTab === 'general' ? 'active' : ''}`}
+                onClick={() => setActiveTab('general')}
+              >
+                ⚙️ Général
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div className="card-body">
+          {/* Onglet Catégories */}
+          {activeTab === 'categories' && (
+            <div>
+              <div className="row mb-4">
+                <div className="col-md-8">
+                  <h6>Gestion des catégories de dépenses</h6>
+                  <p className="text-muted small">
+                    Personnalisez les catégories selon vos besoins métier
+                  </p>
+                </div>
+                <div className="col-md-4 text-md-end">
+                  <button 
+                    className="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#newCategoryModal"
+                  >
+                    <FiPlus className="me-2" />
+                    Nouvelle catégorie
+                  </button>
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="text-center py-4">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Chargement...</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table table-hover">
+                    <thead className="table-light">
+                      <tr>
+                        <th>Nom</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Statut</th>
+                        <th className="text-end">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.map(category => (
+                        <tr key={category.id}>
+                          <td>
+                            <div className="d-flex align-items-center">
+                              <span className="me-2">{getTypeIcon(category.type)}</span>
+                              <strong>{category.nom}</strong>
+                            </div>
+                          </td>
+                          <td>
+                            <span className={`badge bg-${getTypeColor(category.type)}-subtle text-${getTypeColor(category.type)}`}>
+                              {category.type === 'kilometrique' ? 'Kilométrique' :
+                               category.type === 'repas' ? 'Repas' : 'Autres'}
+                            </span>
+                          </td>
+                          <td>
+                            <small className="text-muted">
+                              {category.description || '-'}
+                            </small>
+                          </td>
+                          <td>
+                            <span className={`badge ${category.actif ? 'bg-success' : 'bg-secondary'}`}>
+                              {category.actif ? 'Actif' : 'Inactif'}
+                            </span>
+                          </td>
+                          <td className="text-end">
+                            <div className="btn-group btn-group-sm">
+                              <button 
+                                className="btn btn-outline-primary"
+                                onClick={() => setEditingCategory(category)}
+                                data-bs-toggle="modal"
+                                data-bs-target="#editCategoryModal"
+                              >
+                                <FiEdit2 />
+                              </button>
+                              <button 
+                                className="btn btn-outline-danger"
+                                onClick={() => handleDeleteCategory(category.id, category.nom)}
+                              >
+                                <FiTrash2 />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {categories.length === 0 && (
+                        <tr>
+                          <td colSpan="5" className="text-center py-4">
+                            <div className="text-muted">
+                              <i className="fas fa-tags fa-2x mb-3 opacity-25"></i>
+                              <p>Aucune catégorie personnalisée créée</p>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Onglet Barèmes kilométriques */}
+          {activeTab === 'baremes' && (
+            <div>
+              <div className="row mb-4">
+                <div className="col-md-8">
+                  <h6>Barèmes kilométriques URSSAF</h6>
+                  <p className="text-muted small">
+                    Configurez les tarifs de remboursement selon la puissance fiscale des véhicules
+                  </p>
+                </div>
+                <div className="col-md-4 text-md-end">
+                  <button 
+                    className="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#newBaremeModal"
+                  >
+                    <FiPlus className="me-2" />
+                    Nouveau barème
+                  </button>
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="text-center py-4">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Chargement...</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table table-hover">
+                    <thead className="table-light">
+                      <tr>
+                        <th>Nom</th>
+                        <th>Puissance fiscale</th>
+                        <th>Tarif/km</th>
+                        <th>Année</th>
+                        <th>Statut</th>
+                        <th className="text-end">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {baremes.map(bareme => (
+                        <tr key={bareme.id}>
+                          <td><strong>{bareme.nom}</strong></td>
+                          <td>
+                            <span className="badge bg-info-subtle text-info">
+                              {bareme.puissance_fiscale_min} - {bareme.puissance_fiscale_max} CV
+                            </span>
+                          </td>
+                          <td>
+                            <strong className="text-primary">
+                              {parseFloat(bareme.tarif_par_km).toFixed(3)}€
+                            </strong>
+                          </td>
+                          <td>{bareme.annee}</td>
+                          <td>
+                            <span className={`badge ${bareme.actif ? 'bg-success' : 'bg-secondary'}`}>
+                              {bareme.actif ? 'Actif' : 'Inactif'}
+                            </span>
+                          </td>
+                          <td className="text-end">
+                            <div className="btn-group btn-group-sm">
+                              <button 
+                                className="btn btn-outline-primary"
+                                onClick={() => setEditingBareme(bareme)}
+                              >
+                                <FiEdit2 />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {baremes.length === 0 && (
+                        <tr>
+                          <td colSpan="6" className="text-center py-4">
+                            <div className="text-muted">
+                              <i className="fas fa-car fa-2x mb-3 opacity-25"></i>
+                              <p>Aucun barème configuré</p>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Onglet Taux TVA */}
+          {activeTab === 'tva' && (
+            <div>
+              <div className="row mb-4">
+                <div className="col-md-8">
+                  <h6>Gestion des taux de TVA</h6>
+                  <p className="text-muted small">
+                    Configurez les taux de TVA disponibles pour les différentes catégories de dépenses
+                  </p>
+                </div>
+              </div>
+
+              <div className="table-responsive">
+                <table className="table table-hover">
+                  <thead className="table-light">
+                    <tr>
+                      <th>Nom</th>
+                      <th>Taux</th>
+                      <th>Utilisation recommandée</th>
+                      <th>Statut</th>
+                      <th className="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tauxTVA.map(taux => (
+                      <tr key={taux.id}>
+                        <td><strong>{taux.nom}</strong></td>
+                        <td>
+                          <span className="badge bg-primary-subtle text-primary">
+                            {taux.taux}%
+                          </span>
+                        </td>
+                        <td>
+                          <small className="text-muted">
+                            {taux.taux === 0 ? 'Frais kilométriques, formations' :
+                             taux.taux === 5.5 ? 'Livres, médicaments, transports' :
+                             taux.taux === 10 ? 'Restauration, hébergement' :
+                             taux.taux === 20 ? 'Biens et services standard' : ''}
+                          </small>
+                        </td>
+                        <td>
+                          <span className={`badge ${taux.actif ? 'bg-success' : 'bg-secondary'}`}>
+                            {taux.actif ? 'Actif' : 'Inactif'}
+                          </span>
+                        </td>
+                        <td className="text-end">
+                          <button 
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() => {
+                              const newTaux = [...tauxTVA];
+                              const index = newTaux.findIndex(t => t.id === taux.id);
+                              newTaux[index].actif = !newTaux[index].actif;
+                              setTauxTVA(newTaux);
+                            }}
+                          >
+                            {taux.actif ? 'Désactiver' : 'Activer'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Onglet Paramètres généraux */}
+          {activeTab === 'general' && (
+            <div>
+              <h6>Paramètres généraux</h6>
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="card">
+                    <div className="card-body">
+                      <h6 className="card-title">OCR (Reconnaissance optique)</h6>
+                      <p className="card-text small text-muted">
+                        Activation/désactivation de la reconnaissance automatique de documents
+                      </p>
+                      <div className="form-check form-switch">
+                        <input className="form-check-input" type="checkbox" id="ocrSwitch" defaultChecked />
+                        <label className="form-check-label" htmlFor="ocrSwitch">
+                          Activer l'OCR
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="card">
+                    <div className="card-body">
+                      <h6 className="card-title">Validation automatique</h6>
+                      <p className="card-text small text-muted">
+                        Règles de validation automatique des dépenses
+                      </p>
+                      <div className="mb-3">
+                        <label className="form-label">Montant maximum sans validation</label>
+                        <div className="input-group">
+                          <input type="number" className="form-control" defaultValue="50" />
+                          <span className="input-group-text">€</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Modal Nouvelle catégorie */}
+      <div className="modal fade" id="newCategoryModal" tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <form onSubmit={handleCreateCategory}>
+              <div className="modal-header">
+                <h5 className="modal-title">Nouvelle catégorie</h5>
+                <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Nom *</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={newCategory.nom}
+                    onChange={(e) => setNewCategory(prev => ({...prev, nom: e.target.value}))}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Type *</label>
+                  <select
+                    className="form-select"
+                    value={newCategory.type}
+                    onChange={(e) => setNewCategory(prev => ({...prev, type: e.target.value}))}
+                    required
+                  >
+                    <option value="kilometrique">🚗 Kilométrique</option>
+                    <option value="repas">🍽️ Repas</option>
+                    <option value="autres">📋 Autres</option>
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea
+                    className="form-control"
+                    rows="3"
+                    value={newCategory.description}
+                    onChange={(e) => setNewCategory(prev => ({...prev, description: e.target.value}))}
+                    placeholder="Description optionnelle de la catégorie"
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                  Annuler
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  <FiSave className="me-2" />
+                  Créer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Nouveau barème */}
+      <div className="modal fade" id="newBaremeModal" tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <form onSubmit={handleCreateBareme}>
+              <div className="modal-header">
+                <h5 className="modal-title">Nouveau barème kilométrique</h5>
+                <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Nom *</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={newBareme.nom}
+                    onChange={(e) => setNewBareme(prev => ({...prev, nom: e.target.value}))}
+                    placeholder="ex: Véhicule jusqu'à 3 CV"
+                    required
+                  />
+                </div>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Puissance min (CV) *</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={newBareme.puissanceFiscaleMin}
+                      onChange={(e) => setNewBareme(prev => ({...prev, puissanceFiscaleMin: e.target.value}))}
+                      min="1"
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Puissance max (CV) *</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={newBareme.puissanceFiscaleMax}
+                      onChange={(e) => setNewBareme(prev => ({...prev, puissanceFiscaleMax: e.target.value}))}
+                      min="1"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Tarif par km (€) *</label>
+                    <input
+                      type="number"
+                      step="0.001"
+                      className="form-control"
+                      value={newBareme.tarifParKm}
+                      onChange={(e) => setNewBareme(prev => ({...prev, tarifParKm: e.target.value}))}
+                      placeholder="0.502"
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Année *</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={newBareme.annee}
+                      onChange={(e) => setNewBareme(prev => ({...prev, annee: e.target.value}))}
+                      min="2020"
+                      max="2030"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                  Annuler
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  <FiSave className="me-2" />
+                  Créer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ParametresDepenses;

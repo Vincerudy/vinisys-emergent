@@ -1,0 +1,30 @@
+.inventaire-container {
+    padding: 16px;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  
+  .info-paragraph {
+    background-color: #e6f7ff;
+    border-left: 4px solid #1890ff;
+    padding: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .export-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+  
+  @media (max-width: 768px) {
+    .export-button-wrapper {
+      justify-content: center;
+    }
+  
+    .inventaire-container {
+      padding: 12px;
+    }
+  }
+  

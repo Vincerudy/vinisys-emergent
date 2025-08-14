@@ -1,0 +1,94 @@
+/* Styles par défaut pour la page email */
+.email-customization-page {
+    padding: 20px;
+    height: 80vh;
+    display: flex;
+    overflow: auto;
+    flex-direction: column;
+    justify-content: start;
+    align-items: end;  /* Centrer verticalement */
+    background-color: #ffffff;
+    border-radius: 10px;
+    gap: 20px;  /* Ajoute de l'espace entre les cartes */
+    scroll-behavior: smooth;  /* Effet de défilement fluide */
+  }
+  
+  /* Personnalisation de la barre de défilement pour Webkit (Chrome, Edge, Safari) */
+  .email-customization-page::-webkit-scrollbar {
+    width: 8px; /* Largeur de la barre */
+    border-radius: 10px;  /* Coins arrondis */
+  }
+  
+  .email-customization-page::-webkit-scrollbar-thumb {
+    background-color: #3454d1; /* Couleur de la barre */
+    border-radius: 10px; /* Coins arrondis du "thumb" */
+    border: 2px solid transparent; /* Crée un petit espace autour de la barre pour un effet propre */
+    background-clip: content-box; /* Ne colore que l'intérieur du "thumb" */
+    transition: background-color 0.3s ease; /* Transition douce pour la couleur */
+  }
+  
+  .email-customization-page::-webkit-scrollbar-thumb:hover {
+    background-color: #00bcd4; /* Couleur au survol */
+  }
+  
+  .email-customization-page::-webkit-scrollbar-track {
+    background-color: transparent;  /* Pas de fond pour la piste */
+    border-radius: 10px; /* Coins arrondis de la piste */
+  }
+  
+  /* Styles pour le mot de passe et la visibilité */
+  .password-container {
+    position: relative;
+  }
+  
+  .eye-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Pour Firefox */
+  .email-customization-page {
+    scrollbar-color: #3454d1 transparent;  /* Couleur de la barre et de la piste */
+    scrollbar-width: thin;  /* Barre fine */
+  }
+  
+  .email-customization-page:hover::-webkit-scrollbar {
+    opacity: 1;  /* Affiche la barre de défilement lors du survol */
+  }
+  
+  .ant-card-mail {
+    width: 60%;  
+    min-width: 400px;  
+    margin: auto;
+    border: none;  
+    box-shadow: none;  
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    /* Pour éviter que le bouton ne chevauche le contenu */
+  }
+  
+  .top-right-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .ant-card-mail {
+    width: 60%;  /* Ajuste selon tes besoins */
+    min-width: 400px;  /* Empêche la carte d’être trop petite sur des petits écrans */
+    margin-bottom: 20px;  /* Espace entre les cartes */
+    border: none;  /* Enlève la bordure de la carte */
+    box-shadow: none;  /* Enlève l'ombre de la carte */
+  }
+  
+  /* Version mobile */
+  @media (max-width: 768px) {
+ 
+  }
+  

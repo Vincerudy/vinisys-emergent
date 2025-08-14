@@ -1,0 +1,25 @@
+.ContainerLayout{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+}
+.subContainerLayout{
+  display: flex;
+  flex-direction: row;
+  height: 90%;
+ 
+}
+.main-content{
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 768px) {
+  .subContainerLayout{
+    display: flex;
+    flex-direction: column-reverse;
+    flex: 1;
+ 
+  }
+}

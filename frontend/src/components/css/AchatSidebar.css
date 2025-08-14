@@ -1,0 +1,194 @@
+/* AchatSidebar.css */
+
+.achat-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: stretch;
+}
+
+.achat-sidebar-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+}
+
+.achat-sidebar-panel {
+  position: relative;
+  width: 600px;
+  max-width: 90vw;
+  height: 100vh;
+  background: white;
+  margin-left: auto;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+}
+
+.achat-sidebar-panel.open {
+  transform: translateX(0);
+}
+
+.achat-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.achat-sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  flex-shrink: 0;
+}
+
+.achat-sidebar-body {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.achat-sidebar-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.achat-sidebar-body::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+.achat-sidebar-body::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.achat-sidebar-body::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.achat-sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .achat-sidebar-panel {
+    width: 100vw;
+    max-width: 100vw;
+  }
+  
+  .achat-sidebar-header,
+  .achat-sidebar-body,
+  .achat-sidebar-footer {
+    padding: 1rem;
+  }
+}
+
+/* Animation improvements */
+.achat-sidebar-overlay {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Form styling within sidebar */
+.achat-sidebar-body .space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.achat-sidebar-body .space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.achat-sidebar-body .grid {
+  display: grid;
+}
+
+.achat-sidebar-body .grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.achat-sidebar-body .grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.achat-sidebar-body .gap-2 {
+  gap: 0.5rem;
+}
+
+.achat-sidebar-body .gap-3 {
+  gap: 0.75rem;
+}
+
+.achat-sidebar-body .gap-4 {
+  gap: 1rem;
+}
+
+/* Input and select styling */
+.achat-sidebar-body input,
+.achat-sidebar-body select,
+.achat-sidebar-body textarea {
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.achat-sidebar-body input:focus,
+.achat-sidebar-body select:focus,
+.achat-sidebar-body textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button styling */
+.achat-sidebar-body button {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.15s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achat-sidebar-footer button {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.15s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
