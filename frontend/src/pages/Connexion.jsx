@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../contexte/Api';
 import { useAuth } from '../contexte/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './css/Connexion.css'; // Importation du fichier CSS
