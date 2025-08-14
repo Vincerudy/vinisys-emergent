@@ -130,8 +130,8 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     formData.append('societe_id', societe_id);
     formData.append('saisie_ocr', mode === 'ocr');
 
-    // Ajout des justificatifs
-    justificatifs.forEach((file, index) => {
+    // Ajout des justificatifs (fichiers attachés + justificatifs normaux)
+    attachedFiles.forEach((file, index) => {
       formData.append('justificatifs', file);
     });
 
