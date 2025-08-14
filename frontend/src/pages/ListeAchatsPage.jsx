@@ -163,7 +163,7 @@ const ListeAchatsPage = () => {
         </div>
         <div className="header-actions">
           <button 
-            onClick={() => setSidebarOpen(true)}
+            onClick={handleNewExpenseClick}
             className="btn-primary"
           >
             <FiPlus size={18} />
