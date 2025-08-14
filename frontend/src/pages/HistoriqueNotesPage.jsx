@@ -30,12 +30,24 @@ const HistoriqueNotesPage = () => {
   const fetchHistorique = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/notes-frais/historique/${societe_id}`, {
-        params: filtres
+      // Utiliser l'endpoint existant avec un filtre pour les notes validées/refusées
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/notes-frais/0`, {
+        params: { 
+          societe_id: societe_id,
+          statut_historique: 'true', // Filtre pour notes validées/refusées
+          ...filtres 
+        }
       });
-      setHistorique(response.data || []);
+      
+      // Filtrer seulement les notes avec un historique de validation
+      const notesAvecHistorique = (response.data.notes || []).filter(note => 
+        note.statut === 'validee' || note.statut === 'refusee' || note.date_validation
+      );
+      
+      setHistorique(notesAvecHistorique);
     } catch (error) {
       console.error('Erreur chargement historique:', error);
+      setHistorique([]);
     } finally {
       setLoading(false);
     }
