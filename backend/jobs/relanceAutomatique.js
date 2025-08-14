@@ -12,14 +12,16 @@ class RelanceAutomatique {
   async initTransporter() {
     try {
       this.transporter = nodemailer.createTransporter({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: process.env.SMTP_PORT || 587,
-        secure: false,
+        host: 'ssl0.ovh.net',
+        port: 465,
+        secure: true,
         auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS
+          user: 'support-vinisys@vinisys.com',
+          pass: 'viniCinema12selfie2025Mail'
         }
       });
+      
+      console.log('✅ Transporteur email configuré avec OVH');
     } catch (error) {
       console.error('❌ Erreur lors de l\'initialisation du transporteur email:', error);
     }
