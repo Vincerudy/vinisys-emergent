@@ -227,7 +227,10 @@ const ParametrageCategoriesPage = () => {
 
                 <div className="category-actions">
                   <button
-                    onClick={() => handleEdit(category)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit(category);
+                    }}
                     className="action-btn edit"
                     title="Modifier"
                   >
@@ -235,7 +238,10 @@ const ParametrageCategoriesPage = () => {
                   </button>
                   
                   <button
-                    onClick={() => handleToggleActive(category)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleActive(category);
+                    }}
                     className={`action-btn toggle ${category.actif ? 'active' : 'inactive'}`}
                     title={category.actif ? 'Désactiver' : 'Activer'}
                   >
@@ -243,7 +249,10 @@ const ParametrageCategoriesPage = () => {
                   </button>
 
                   <button
-                    onClick={() => handleDelete(category)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(category);
+                    }}
                     className="action-btn delete"
                     title="Supprimer"
                   >
