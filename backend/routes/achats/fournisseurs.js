@@ -57,8 +57,18 @@ router.post('/fournisseur', async (req, res) => {
                 siret, numero_tva, conditions_paiement, compte_comptable, societe_id
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `, [
-            nom, adresse, ville, code_postal, pays, telephone, email,
-            siret, numero_tva, conditions_paiement, compte_comptable, societe_id
+            nom, 
+            adresse || null, 
+            ville || null, 
+            code_postal || null, 
+            pays || 'France', 
+            telephone || null, 
+            email || null,
+            siret || null, 
+            numero_tva || null, 
+            conditions_paiement || null, 
+            compte_comptable || null, 
+            societe_id
         ]);
 
         res.status(201).json({
