@@ -105,6 +105,7 @@ import ValidationNotesPage from "../pages/ValidationNotesPage";
 import HistoriqueNotesPage from "../pages/HistoriqueNotesPage";
 import FournisseursPage from "../pages/FournisseursPage";
 import ParametrageCategoriesPage from "../pages/ParametrageCategoriesPage";
+import DetailCategorieAchatPage from "../pages/DetailCategorieAchatPage";
 import RapportPage from "../pages/RapportPage";
 
 import axios from "axios";
