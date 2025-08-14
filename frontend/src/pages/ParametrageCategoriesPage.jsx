@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   FiPlus,
   FiEdit,
@@ -7,12 +8,10 @@ import {
   FiToggleLeft,
   FiToggleRight,
   FiSearch,
-  FiSave,
-  FiX,
-  FiCheck,
-  FiAlertCircle,
   FiTag,
-  FiPercent
+  FiPercent,
+  FiCalendar,
+  FiInfo
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
