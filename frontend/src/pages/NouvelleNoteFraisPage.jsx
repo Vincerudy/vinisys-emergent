@@ -255,7 +255,7 @@ const NouvelleNoteFraisPage = () => {
           </div>
           <div className="statut-badge">
             <FiCheck />
-            {isEditMode ? 'Modification' : 'Brouillon'}
+            {isEditMode ? `Mode édition - Note #${noteId}` : 'Nouvelle note'}
           </div>
         </div>
         <div className="header-actions">
