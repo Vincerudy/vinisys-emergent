@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './css/CahierRecettesPage.css';
-import { Button, Input, DatePicker, message, Pagination, Select, ConfigProvider } from 'antd'; // Ajout de Select pour changer le nombre de lignes par page
+import { Button, Input, DatePicker, message, Pagination, Select, ConfigProvider, Spin } from 'antd'; // Ajout de Spin pour loading
 import { SaveOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 import locale from 'antd/es/locale/fr_FR';
+import axios from 'axios';
+import { useAuth } from '../../contexte/AuthContext';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
