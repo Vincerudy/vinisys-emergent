@@ -143,7 +143,6 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
 
       // Si noteId est null, créer d'abord la note
       if (!noteId) {
-        const { id: user_id } = useAuth();
         const currentDate = new Date();
         const startOfWeek = new Date(currentDate);
         startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Lundi
