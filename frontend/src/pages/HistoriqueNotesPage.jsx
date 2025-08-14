@@ -269,10 +269,10 @@ const HistoriqueNotesPage = () => {
                         <FiFileText className="text-gray-400 mr-2" />
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {note.numero_note}
+                            {note.numero}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {note.motif}
+                            {note.titre}
                           </div>
                         </div>
                       </div>
@@ -280,7 +280,9 @@ const HistoriqueNotesPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <FiUser className="text-gray-400 mr-2" />
-                        <div className="text-sm text-gray-900">{note.utilisateur_nom}</div>
+                        <div className="text-sm text-gray-900">
+                          {note.utilisateur_prenom} {note.utilisateur_nom}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -291,14 +293,17 @@ const HistoriqueNotesPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-gray-900">
                         <FiCalendar className="text-gray-400 mr-2" />
-                        {formatDate(note.date_traitement)}
+                        {formatDate(note.date_validation || note.updated_at)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(note.statut)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-blue-600 hover:text-blue-900 mr-3">
+                      <button 
+                        onClick={() => window.location.hash = `#/notes-frais/note/${note.id}`}
+                        className="text-blue-600 hover:text-blue-900 mr-3"
+                      >
                         <FiEye size={16} />
                       </button>
                     </td>
