@@ -79,10 +79,24 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
                 saisie_ocr, statut
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'brouillon')
         `, [
-            numero_facture, fournisseur_id, date_achat, date_facture, date_echeance,
-            montantHT, montantTVA, montantTTC, tauxTVA, tva_deductible ? 1 : 0,
-            categorie_achat_id, projet_id, description, mode_paiement,
-            utilisateur_id, societe_id, compte_comptable_achat, compte_comptable_tva,
+            numero_facture || null, 
+            fournisseur_id, 
+            date_achat, 
+            date_facture || null, 
+            date_echeance || null,
+            montantHT, 
+            montantTVA, 
+            montantTTC, 
+            tauxTVA, 
+            tva_deductible ? 1 : 0,
+            categorie_achat_id || null, 
+            projet_id || null, 
+            description || null, 
+            mode_paiement || 'virement',
+            utilisateur_id, 
+            societe_id, 
+            compte_comptable_achat || null, 
+            compte_comptable_tva || '44566',
             saisie_ocr ? 1 : 0
         ]);
 
