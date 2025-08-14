@@ -133,83 +133,107 @@ const ParametrageCategoriesPage = () => {
             <p>Chargement des catégories...</p>
           </div>
         ) : (
-          <div className="categories-grid">
-            {filteredCategories.map((category) => (
-              <div 
-                key={category.id} 
-                className={`category-card ${!category.actif ? 'inactive' : ''} clickable`}
-                onClick={() => handleEdit(category)}
-              >
-                <div className="category-header">
-                  <div className="category-info">
-                    <h3 className="category-name">{category.nom}</h3>
-                    <span className="category-code">{category.code}</span>
-                  </div>
-                  <div className="category-status">
-                    {category.actif ? (
-                      <span className="status-badge active">Actif</span>
-                    ) : (
-                      <span className="status-badge inactive">Inactif</span>
-                    )}
-                  </div>
-                </div>
-
-                {category.description && (
-                  <p className="category-description">{category.description}</p>
-                )}
-
-                <div className="category-details">
-                  <div className="detail-item">
-                    <FiPercent className="detail-icon" />
-                    <span>TVA déductible: </span>
-                    <strong className={category.tva_deductible === 'Oui' ? 'text-green' : 'text-red'}>
-                      {category.tva_deductible}
-                    </strong>
-                  </div>
-                </div>
-
-                <div className="category-actions">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEdit(category);
-                    }}
-                    className="action-btn edit"
-                    title="Modifier"
+          <div className="categories-table-container">
+            <table className="categories-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Description</th>
+                  <th>TVA déductible</th>
+                  <th>Statut</th>
+                  <th>Créée le</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCategories.map((category) => (
+                  <tr 
+                    key={category.id} 
+                    className={`category-row ${!category.actif ? 'inactive' : ''} clickable`}
+                    onClick={() => handleViewCategory(category)}
                   >
-                    <FiEdit size={16} />
-                  </button>
-                  
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleActive(category);
-                    }}
-                    className={`action-btn toggle ${category.actif ? 'active' : 'inactive'}`}
-                    title={category.actif ? 'Désactiver' : 'Activer'}
-                  >
-                    {category.actif ? <FiToggleRight size={16} /> : <FiToggleLeft size={16} />}
-                  </button>
+                    <td className="code-cell">
+                      <span className="category-code">{category.code}</span>
+                    </td>
+                    <td className="name-cell">
+                      <div className="category-name">
+                        <FiTag className="category-icon" />
+                        <strong>{category.nom}</strong>
+                      </div>
+                    </td>
+                    <td className="description-cell">
+                      <span className="category-description">
+                        {category.description || 'Aucune description'}
+                      </span>
+                    </td>
+                    <td className="tva-cell">
+                      <span className={`tva-badge ${category.tva_deductible === 'Oui' ? 'deductible' : 'non-deductible'}`}>
+                        <FiPercent className="tva-icon" />
+                        {category.tva_deductible}
+                      </span>
+                    </td>
+                    <td className="status-cell">
+                      <span className={`status-badge ${category.actif ? 'active' : 'inactive'}`}>
+                        {category.actif ? 'Actif' : 'Inactif'}
+                      </span>
+                    </td>
+                    <td className="date-cell">
+                      <div className="date-info">
+                        <FiCalendar className="date-icon" />
+                        {new Date(category.created_at).toLocaleDateString('fr-FR')}
+                      </div>
+                    </td>
+                    <td className="actions-cell">
+                      <div className="category-actions">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewCategory(category);
+                          }}
+                          className="action-btn view"
+                          title="Voir détails"
+                        >
+                          <FiEye size={16} />
+                        </button>
+                        
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleActive(category);
+                          }}
+                          className={`action-btn toggle ${category.actif ? 'active' : 'inactive'}`}
+                          title={category.actif ? 'Désactiver' : 'Activer'}
+                        >
+                          {category.actif ? <FiToggleRight size={16} /> : <FiToggleLeft size={16} />}
+                        </button>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(category);
-                    }}
-                    className="action-btn delete"
-                    title="Supprimer"
-                  >
-                    <FiTrash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(category);
+                          }}
+                          className="action-btn delete"
+                          title="Supprimer"
+                        >
+                          <FiTrash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
             {filteredCategories.length === 0 && !loading && (
               <div className="empty-state">
                 <FiTag size={48} />
                 <h3>Aucune catégorie trouvée</h3>
                 <p>Commencez par créer votre première catégorie analytique</p>
+                <button onClick={handleCreate} className="btn-primary">
+                  <FiPlus size={18} />
+                  Créer une catégorie
+                </button>
               </div>
             )}
           </div>
