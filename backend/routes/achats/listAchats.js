@@ -44,10 +44,6 @@ router.get('/:societeId', async (req, res) => {
             whereClause += ' AND a.categorie_achat_id = ?';
             params.push(categorie);
         }
-        if (projet) {
-            whereClause += ' AND a.projet_id = ?';
-            params.push(projet);
-        }
         if (search) {
             whereClause += ' AND (a.description LIKE ? OR a.numero_facture LIKE ? OR f.nom LIKE ?)';
             const searchTerm = `%${search}%`;
