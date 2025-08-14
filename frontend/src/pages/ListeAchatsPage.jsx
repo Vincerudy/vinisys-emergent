@@ -47,7 +47,7 @@ const ListeAchatsPage = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     if (urlParams.get('sidebar') === 'open') {
-      setSidebarOpen(true);
+      handleNewExpenseClick(); // Ouvre la modale au lieu du sidebar directement
       // Nettoyer l'URL après ouverture
       window.history.replaceState({}, '', location.pathname);
     }
