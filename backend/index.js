@@ -957,6 +957,13 @@ io.on('connection', (socket) => {
   });
 });
 
+// =====================================
+// INITIALISATION JOB DE RELANCE AUTOMATIQUE
+// =====================================
+const relanceJob = new RelanceAutomatique();
+relanceJob.start();
+console.log('✅ Job de relance automatique initialisé');
+
 server.listen(port, '0.0.0.0', () => {
   console.log(`🚀 Serveur démarré sur http://0.0.0.0:${port}`);
 });
