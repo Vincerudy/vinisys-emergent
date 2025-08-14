@@ -45,7 +45,7 @@ router.get('/:societeId', async (req, res) => {
             params.push(categorie);
         }
         if (search) {
-            whereClause += ' AND (a.description LIKE ? OR a.numero_facture LIKE ? OR f.nom LIKE ?)';
+            whereClause += ' AND (a.description LIKE ? OR a.numero LIKE ? OR f.nom LIKE ?)';
             const searchTerm = `%${search}%`;
             params.push(searchTerm, searchTerm, searchTerm);
         }
