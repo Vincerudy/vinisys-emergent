@@ -386,6 +386,13 @@ const ListeAchatsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Sidebar de création d'achat */}
+      <AchatSidebar 
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onSaved={fetchAchats}
+      />
     </div>
   );
 };
