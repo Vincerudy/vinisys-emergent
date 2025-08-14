@@ -74,9 +74,9 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
             INSERT INTO achats (
                 numero, fournisseur_id, fournisseur_nom, date_achat,
                 montant_ht, montant_tva, montant_ttc, taux_tva, tva_deductible,
-                categorie_achat_id, description, mode_paiement,
+                categorie_id, categorie_achat_id, description, mode_paiement,
                 societe_id, saisie_ocr, statut
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'brouillon')
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'brouillon')
         `, [
             numero_facture || `ACH-${Date.now()}`, 
             fournisseur_id || null,
@@ -87,7 +87,8 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
             montantTTC, 
             tauxTVA, 
             tva_deductible ? 'Oui' : 'Non',
-            categorie_achat_id || null, 
+            categorie_achat_id || 1, // categorie_id (obligatoire)
+            categorie_achat_id || 1, // categorie_achat_id
             description || null, 
             mode_paiement || 'virement',
             societe_id, 
