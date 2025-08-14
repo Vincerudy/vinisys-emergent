@@ -58,8 +58,8 @@ const fetchFournisseurs = async () => {
       });
       
       alert(editingFournisseur ? 'Fournisseur modifié' : 'Fournisseur créé');
-      resetForm();
-      fetchFournisseurs();
+      handleSaved();
+      closeSidebar();
     } catch (error) {
       console.error('Erreur sauvegarde:', error);
       alert('Erreur lors de la sauvegarde');
