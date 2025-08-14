@@ -367,7 +367,7 @@ const fetchFournisseurs = async () => {
               <div className="flex justify-end space-x-3 mt-6">
                 <button
                   type="button"
-                  onClick={resetForm}
+                  onClick={closeSidebar}
                   className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg"
                 >
                   Annuler
