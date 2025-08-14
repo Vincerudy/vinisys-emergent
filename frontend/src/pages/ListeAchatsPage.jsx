@@ -122,11 +122,11 @@ const ListeAchatsPage = () => {
         </div>
         <div className="header-actions">
           <button 
-            onClick={() => window.location.href = '/#/achats/nouveau'}
+            onClick={() => setSidebarOpen(true)}
             className="btn-primary"
           >
             <FiPlus size={18} />
-            Nouvel achat
+            Nouvelle dépense
           </button>
           <button className="btn-secondary">
             <FiDownload size={18} />
