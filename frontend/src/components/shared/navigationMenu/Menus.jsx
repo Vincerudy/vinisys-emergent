@@ -64,9 +64,7 @@ const Menus = () => {
 
     return (
         <>   
-                <li
-
-                >
+                <li>
                                     <Link to="/" className="nxl-link text-capitalize">
                                         <span className="nxl-micon"> {getIcon('feather-cast')} </span>
                                         <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
@@ -77,9 +75,7 @@ const Menus = () => {
                                         </span>
                                     </Link>
                 </li>
-                <li
-
->
+                <li>
                     <Link to="/alertes" className="nxl-link text-capitalize">
                         <span className="nxl-micon"> {getIcon('feather-alert-circle')} </span>
                         <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
