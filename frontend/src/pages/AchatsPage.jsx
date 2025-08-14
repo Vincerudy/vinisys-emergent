@@ -134,7 +134,7 @@ const AchatsPage = () => {
         </div>
         <div className="filter-actions">
           <button 
-            onClick={() => window.open('/#/achats/nouveau', '_blank')}
+            onClick={() => window.location.href = '/#/achats/liste?sidebar=open'}
             className="action-btn"
           >
             <FiPlus className="action-icon" />
