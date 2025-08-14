@@ -428,11 +428,21 @@ const ListeAchatsPage = () => {
         </div>
       </div>
 
+      {/* Modale de sélection du mode */}
+      <ModeSelectionModal 
+        isOpen={modeModalOpen}
+        onClose={() => setModeModalOpen(false)}
+        onModeSelected={handleModeSelection}
+      />
+
       {/* Sidebar de création d'achat */}
       <AchatSidebar 
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onSaved={fetchAchats}
+        prefilledData={sidebarPrefilledData}
+        attachedFile={sidebarAttachedFile}
+        mode={sidebarMode}
       />
     </div>
   );
