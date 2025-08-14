@@ -105,7 +105,7 @@ const SocieteConfiguration = () => {
 
   return (
     <div className="societe-configuration">
-      <h2>Configuration de la Société</h2>
+      <h2>Configuration de la Société </h2>
       <Form
         form={form}
         layout="vertical"

@@ -14,9 +14,9 @@
 
 .frais-sidebar {
   background: white;
-  width: min(600px, calc(100vw - 40px)); /* Largeur responsive avec maximum */
+  
   height: 100vh;
-  max-width: 600px;
+  
   display: flex;
   flex-direction: column;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);

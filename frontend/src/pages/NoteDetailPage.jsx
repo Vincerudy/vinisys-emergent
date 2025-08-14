@@ -20,6 +20,7 @@ import { useAuth } from '../contexte/AuthContext';
 import FraisSidebar from '../components/FraisSidebar';
 import ConfirmationModal from '../components/ConfirmationModal';
 import './css/NoteDetailPage.css';
+import { Modal } from 'antd';
 
 const NoteDetailPage = () => {
   const { societe_id, id: user_id } = useAuth();
@@ -302,8 +303,8 @@ const NoteDetailPage = () => {
                   <tr>
                     <th>Date</th>
                     <th>Type de frais</th>
-                    <th>Vendeur</th>
-                    <th>Description</th>
+ 
+                    <th>Motif</th>
                     <th>Montant TTC</th>
                     <th>Pays</th>
                     <th>Moyen paiement</th>
@@ -321,9 +322,7 @@ const NoteDetailPage = () => {
                           {fraisItem.type_frais_nom || 'Non défini'}
                         </span>
                       </td>
-                      <td className="frais-vendeur">
-                        <strong>{fraisItem.vendeur}</strong>
-                      </td>
+ 
                       <td className="frais-description">
                         {fraisItem.description}
                       </td>

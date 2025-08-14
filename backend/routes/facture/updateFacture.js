@@ -15,6 +15,7 @@ router.post('/factures/modifier/:id', async (req, res) => {
     const connection = await db.getConnection(); // Obtenir une connexion
     //let userSession = req.session.user;
 
+
     try {
         // Commencer une transaction
         await connection.beginTransaction();
@@ -22,9 +23,9 @@ router.post('/factures/modifier/:id', async (req, res) => {
         // Mettre à jour la facture
         await connection.query(
             `UPDATE factures
-             SET numero = ?, client_id = ?, date_facture = ?, total = ?, total_tva = ?, ht = ?, type_saisie = ?, total_tps = ?, taxe_secondaire = ?, total_taxe_secondaire = ?
+             SET numero = ?, client_id = ?, date_facture = ?, total = ?, total_tva = ?, ht = ?, type_saisie = ?,  taxe_secondaire = ?, total_taxe_secondaire = ?
              WHERE id = ? AND societe_id = ?`,
-            [invoiceNumber, client, date, totalTTC, totalTVA, totalHT, entryMode, totalTPS || '0', taxe_secondaire || null, total_taxe_secondaire || '0', id, societe_id]
+            [invoiceNumber, client, date, totalTTC, totalTVA, totalHT, entryMode, taxe_secondaire || null, total_taxe_secondaire || '0', id, societe_id]
         );
 
         // Supprimer les produits existants liés à cette facture

@@ -118,7 +118,6 @@ router.get('/listeFacture/:id', async (req, res) => {
             logo_soci: fac.logo_soci,
             devise: fac.devise,
             siret: fac.siret,
-            total_tps: fac.total_tps,
             taxe_secondaire: fac.taxe_secondaire,
             total_taxe_secondaire: fac.total_taxe_secondaire,
             vendeur_nom: fac.vendeur_nom,

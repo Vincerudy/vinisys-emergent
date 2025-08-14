@@ -40,17 +40,19 @@ const FournisseursPage = () => {
     fetchFournisseurs();
   }, [societe_id]);
 
-  const fetchFournisseurs = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/achats/fournisseurs/${societe_id}`);
-      setFournisseurs(response.data || []);
-    } catch (error) {
-      console.error('Erreur chargement fournisseurs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchFournisseurs = async () => {
+  try {
+    setLoading(true);
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/achats/fournisseurs/${societe_id}`);
+    console.log('API response:', response.data); // <-- ajoute ça
+    setFournisseurs(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Erreur chargement fournisseurs:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

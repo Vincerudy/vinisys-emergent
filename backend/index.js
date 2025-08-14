@@ -1,228 +1,180 @@
 const express = require('express');
+require('dotenv').config();
 const cors = require('cors');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+const morgan = require('morgan');
 const db = require('./config/db');
 const path = require('path');
-const fs = require('fs').promises;
-
+const http = require('http');
 const app = express();
-const PORT = process.env.PORT || 8001;
-const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret_jwt_ici';
 
+const server = http.createServer(app);
 
+const { Server } = require('socket.io');
+const io = new Server(server, {
+  cors: {
+    origin: [
+      'https://client.vinisys.com',
+      'http://localhost:5173',
+      'https://www.pilotage.vinisys.com',
+      'http://localhost:5174',
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+  transports: ['websocket', 'polling'], // Ajout explicite pour forcer WebSocket
+});
 
-// Middleware
-app.use(cors());
+const port = process.env.PORT;
+
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(`https://${req.headers.host}${req.url}`);
+    }
+    next();
+  });
+}
+
+// Autoriser toutes les origines en mode développement
+app.use(
+  cors({
+    origin: true, // Autorise toutes les origines
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true,
+  })
+);
+
+app.options('*', cors());
+
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    console.log('Requête OPTIONS:', req.path, 'Headers:', req.headers);
+  }
+  next();
+});
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(morgan('combined'));
 
-// Servir les fichiers statiques
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const sessionStore = new MySQLStore({}, db);
 
-// Créer les dossiers d'upload si ils n'existent pas
-const createUploadDirs = async () => {
-    const dirs = [
-        path.join(__dirname, 'uploads'),
-        path.join(__dirname, 'uploads/achats'),
-        path.join(__dirname, 'uploads/notes-frais'),
-        path.join(__dirname, 'uploads/depenses') // Ancien dossier pour compatibilité
-    ];
-    
-    for (const dir of dirs) {
-        try {
-            await fs.mkdir(dir, { recursive: true });
-        } catch (error) {
-            console.log(`Dossier ${dir} existe déjà ou erreur:`, error.message);
-        }
-    }
-};
+app.use(
+  session({
+    name: 'vinisys_session_id',
+    secret: process.env.SESSION_SECRET || 'default_session_secret',
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 1000 * 60 * 60 * 1,
+    },
+  })
+);
 
-createUploadDirs();
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Route de base
+const activeTokens = new Set();
+app.use((req, res, next) => {
+  req.activeTokens = activeTokens;
+  next();
+});
+
+(() => {
+  activeTokens.clear();
+  console.log('🧹 Tous les tokens ont été réinitialisés après redémarrage.');
+})();
+
 app.get('/', (req, res) => {
-    res.json({ 
-        message: 'API Vinisys - Modules Dépenses/Achats et Notes de frais',
-        version: '2.0.0',
-        modules: ['achats', 'notes-frais', 'legacy-depenses']
-    });
+  res.send('✅ Express fonctionne !');
 });
 
-// Test de connexion à la base de données
 app.get('/api/test-db', async (req, res) => {
-    try {
-        const [rows] = await db.execute('SELECT 1 as test');
-        res.json({ 
-            message: 'Connexion réussie à la base de données',
-            timestamp: new Date().toISOString(),
-            modules: {
-                achats: 'Dépenses/Achats entreprise',
-                notes_frais: 'Notes de frais employés'
-            }
-        });
-    } catch (error) {
-        console.error('Erreur de connexion à la base de données:', error);
-        res.status(500).json({ error: 'Erreur de connexion à la base de données' });
-    }
+  try {
+    const [rows] = await db.query('SELECT 1');
+    res.json({ message: 'Connexion réussie à la base de données', result: rows });
+  } catch (err) {
+    console.error('Erreur de connexion à la base de données :', err);
+    res.status(500).json({ message: 'Erreur de connexion à la base de données', error: err.message });
+  }
 });
-
-// Authentification
-app.post('/api/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Email et mot de passe requis' });
-        }
-
-        const [users] = await db.execute(
-            'SELECT u.*, s.companyName as societe_nom FROM users u LEFT JOIN societes s ON u.societe_id = s.id WHERE u.email = ?',
-            [email]
-        );
-
-        if (users.length === 0) {
-            return res.status(401).json({ message: 'Utilisateur non trouvé ou inactif' });
-        }
-
-        const user = users[0];
-        const isValidPassword = await bcrypt.compare(password, user.password);
-
-        if (!isValidPassword) {
-            return res.status(401).json({ message: 'Mot de passe incorrect' });
-        }
-
-        // Récupérer les permissions
-        const [permissions] = await db.execute(
-            'SELECT permission FROM user_permissions WHERE user_id = ?',
-            [user.id]
-        );
-
-        const userPermissions = permissions.map(p => p.permission);
-
-        const token = jwt.sign(
-            {
-                id: user.id,
-                societe_id: user.societe_id,
-                email: user.email,
-                permissions: userPermissions
-            },
-            JWT_SECRET,
-            { expiresIn: '3h' }
-        );
-
-        res.json({
-            token,
-            id: user.id,
-            email: user.email,
-            nom: user.lastName,
-            prenom: user.firstName,
-            societe_id: user.societe_id,
-            permissions: userPermissions,
-            urlPhoto: user.urlPhoto || null
-        });
-
-    } catch (error) {
-        console.error('Erreur lors de la connexion:', error);
-        res.status(500).json({ message: 'Erreur serveur' });
-    }
-});
-
-// Vérification du token
-app.get('/api/token', (req, res) => {
-    try {
-        const token = req.headers.authorization?.split(' ')[1];
-        
-        if (!token) {
-            return res.status(401).json({ message: 'Token manquant' });
-        }
-
-        const decoded = jwt.verify(token, JWT_SECRET);
-        res.json({ message: 'Token valide', user: decoded });
-    } catch (error) {
-        res.status(401).json({ message: 'Token invalide' });
-    }
-});
-
-// =====================================
-// ROUTES EXISTANTES (Facturation, etc.)
-// =====================================
 
 const routes = [
-    require('./routes/auth'),
-    require('./routes/login'),
-    require('./routes/loginPilote'),
-    require('./routes/globalRoute'),
-    require('./routes/resetPass'),
-    require('./routes/senderMail'),
-    require('./routes/token/verifyToken'),
-    require('./routes/images/imageRoutes'),
-    require('./routes/client/insertClient'),
-    require('./routes/client/listeClient'),
-    require('./routes/client/updateClient'),
-    require('./routes/client/suppressionClient'),
-    require('./routes/facture/insertFacture'),
-    require('./routes/facture/listeFacture'),
-    require('./routes/facture/updateFacture'),
-    require('./routes/facture/deleteFacture'),
-    require('./routes/facture/dataGraphiqueFacture'),
-    require('./routes/facture/dataGraphCircle'),
-    require('./routes/facture/updateStatut'),
-    require('./routes/facture/jobAlertes'),
-    require('./routes/facture/modeReglementFacture'),
-    require('./routes/facture/transformFacture'),
-    require('./routes/facture/numeroFacture'),
-    require('./routes/facture/alertes'),
-    require('./routes/facture/insertParametrageFacturation'),
-    require('./routes/facture/ParametreFacturationRead'),
-    require('./routes/facture/dashbordData'),
-    require('./routes/facture/cahierRecette'),
-    require('./routes/societe/updateSociete'),
-    require('./routes/societe/readSociete'),
-    require('./routes/parametrage_societe/mail_settings'),
-    require('./routes/societe/updateParametrageSocieteClient'),
-    require('./routes/societe/listeSocieteClient'),
-    require('./routes/societe/listeSocieteInscrite'),
-    require('./routes/employees/insertUpdateEmployees'),
-    require('./routes/produits/insertPorduit'),
-    require('./routes/produits/ListeProduits'),
-    require('./routes/produits/AffichagePorduit'),
-    require('./routes/produits/deleteProduit'),
-    require('./routes/produits/mouvementsStock'),
-    require('./routes/produits/ListeMouvements'),
-    require('./routes/produits/ImportProduit'),
-    require('./routes/produits/inventaire'),
-    require('./routes/tva/tvaInit'),
-    require('./routes/tva/listetva'),
-    require('./routes/tva/updatetva'),
-    require('./routes/tva/listeTvaActiv'),
-    require('./routes/users/createUser'),
-    require('./routes/utilisateurs/utilisateur'),
-    require('./routes/ticket/insertTicket'),
-    require('./routes/ticket/ticketDetail'),
-    require('./routes/ticket/inserMessage'),
-    require('./routes/ticket/messageRead'),
-    require('./routes/ticket/listeTicketClient'),
-    require('./routes/ticket/listeTicketMaintenance'),
-    require('./routes/ticket/TicketDetailMaintenance'),
-    require('./routes/ticket/MaintenanceMessageRead'),
-  //  require('./routes/ticket/testSentTicket'),
-  ];
-  
-  routes.forEach((route) => app.use('/api', route));
+  require('./routes/auth'),
+  require('./routes/login'),
+  require('./routes/loginPilote'),
+  require('./routes/globalRoute'),
+  require('./routes/resetPass'),
+  require('./routes/senderMail'),
+  require('./routes/token/verifyToken'),
+  require('./routes/images/imageRoutes'),
+  require('./routes/client/insertClient'),
+  require('./routes/client/listeClient'),
+  require('./routes/client/updateClient'),
+  require('./routes/client/suppressionClient'),
+  require('./routes/facture/insertFacture'),
+  require('./routes/facture/listeFacture'),
+  require('./routes/facture/updateFacture'),
+  require('./routes/facture/deleteFacture'),
+  require('./routes/facture/dataGraphiqueFacture'),
+  require('./routes/facture/dataGraphCircle'),
+  require('./routes/facture/updateStatut'),
+  require('./routes/facture/jobAlertes'),
+  require('./routes/facture/modeReglementFacture'),
+  require('./routes/facture/transformFacture'),
+  require('./routes/facture/numeroFacture'),
+  require('./routes/facture/alertes'),
+  require('./routes/facture/insertParametrageFacturation'),
+  require('./routes/facture/ParametreFacturationRead'),
+  require('./routes/facture/dashbordData'),
+  require('./routes/facture/cahierRecette'),
+  require('./routes/societe/updateSociete'),
+  require('./routes/societe/readSociete'),
+  require('./routes/parametrage_societe/mail_settings'),
+  require('./routes/societe/updateParametrageSocieteClient'),
+  require('./routes/societe/listeSocieteClient'),
+  require('./routes/societe/listeSocieteInscrite'),
+  require('./routes/employees/insertUpdateEmployees'),
+  require('./routes/produits/insertPorduit'),
+  require('./routes/produits/ListeProduits'),
+  require('./routes/produits/AffichagePorduit'),
+  require('./routes/produits/deleteProduit'),
+  require('./routes/produits/mouvementsStock'),
+  require('./routes/produits/ListeMouvements'),
+  require('./routes/produits/ImportProduit'),
+  require('./routes/produits/inventaire'),
+  require('./routes/tva/tvaInit'),
+  require('./routes/tva/listetva'),
+  require('./routes/tva/updatetva'),
+  require('./routes/tva/listeTvaActiv'),
+  require('./routes/users/createUser'),
+  require('./routes/utilisateurs/utilisateur'),
+  require('./routes/ticket/insertTicket'),
+  require('./routes/ticket/ticketDetail'),
+  require('./routes/ticket/inserMessage')(io),
+  require('./routes/ticket/messageRead'),
+  require('./routes/ticket/listeTicketClient'),
+  require('./routes/ticket/listeTicketMaintenance'),
+  require('./routes/ticket/TicketDetailMaintenance'),
+  require('./routes/ticket/MaintenanceMessageRead'),
+  // Routes pour le module Dépenses
+  require('./routes/depenses/listeDepenses'),
+  require('./routes/depenses/insertDepense'),
+  require('./routes/depenses/detailDepense'),
+  require('./routes/depenses/updateDepense'),
+  require('./routes/depenses/validationDepense'),
+  require('./routes/depenses/categoriesDepenses'),
+  require('./routes/depenses/baremesKilometriques'),
+  require('./routes/depenses/exportStats'),
+//  require('./routes/ticket/testSentTicket'),
+];
 
-// Routes manquantes appelées par le frontend
-app.get('/api/parametrage-facturation/:id', (req, res) => {
-    res.json({
-        vatLabel: 'TVA',
-        devise: '€',
-        company_name: 'Votre entreprise'
-    });
-});
-
-app.get('/api/alertesprogrammee/:userId/:societeId', (req, res) => {
-    res.json([]);
-});
+routes.forEach((route) => app.use('/api', route));
 
 // =====================================
 // ROUTES MODULES SÉPARES
@@ -298,14 +250,50 @@ app.get('/api/types-frais', async (req, res) => {
 app.get('/api/types-frais/manage/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
-        const [typesFrais] = await db.execute(
+
+        // Vérifier si la société a déjà des types de frais
+        const [typesFraisExistants] = await db.execute(
             'SELECT * FROM types_frais WHERE societe_id = ? ORDER BY libelle ASC',
             [societeId]
         );
+
+        // Si aucun type trouvé, insérer les valeurs par défaut
+        if (typesFraisExistants.length === 0) {
+            const insertQuery = `
+                INSERT INTO types_frais 
+                (nom, code, description, actif, created_at, updated_at, societe_id, libelle) VALUES
+                ('Transport - Kilomètres','KM','Frais kilométriques pour véhicule personnel',1,NOW(),NOW(),?, 'Kilomètres'),
+                ('Transport - Taxi/VTC','TAXI','Frais de taxi, VTC, ou transport à la demande',1,NOW(),NOW(),?, 'Taxi/VTC'),
+                ('Transport - Train/Bus','TRANSPORT_PUBLIC','Transport en commun : train, bus, métro',1,NOW(),NOW(),?, 'Train/Bus'),
+                ('Transport - Avion','AVION','Billets d''avion pour déplacements professionnels',1,NOW(),NOW(),?, 'Avion'),
+                ('Hébergement - Hôtel','HOTEL','Nuitées d''hôtel lors de déplacements',1,NOW(),NOW(),?, 'Hôtel'),
+                ('Hébergement - Autre','HEBERGEMENT_AUTRE','Autres types d''hébergement (AirBnB, etc.)',1,NOW(),NOW(),?, 'Autre hébergement'),
+                ('Repas - Client','REPAS_CLIENT','Repas avec clients ou prospects',1,NOW(),NOW(),?, 'Repas client'),
+                ('Repas - Déplacement','REPAS_DEPLACEMENT','Repas lors de déplacements professionnels',1,NOW(),NOW(),?, 'Repas déplacement')
+            `;
+
+            // Exécuter l’insertion avec societeId pour chaque ligne
+            await db.execute(insertQuery, Array(8).fill(societeId));
+
+            // Récupérer à nouveau la liste après insertion
+            const [typesFraisInserts] = await db.execute(
+                'SELECT * FROM types_frais WHERE societe_id = ? ORDER BY libelle ASC',
+                [societeId]
+            );
+
+            return res.json({ 
+                success: true,
+                types_frais: typesFraisInserts,
+                message: "Types de frais par défaut insérés"
+            });
+        }
+
+        // Sinon, renvoyer la liste existante
         res.json({ 
             success: true,
-            types_frais: typesFrais 
+            types_frais: typesFraisExistants
         });
+
     } catch (error) {
         console.error('Erreur gestion types de frais:', error);
         res.status(500).json({ 
@@ -314,6 +302,7 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
         });
     }
 });
+
 
 // PUT /api/types-frais/:typeId - Modifier un type de frais
 app.put('/api/types-frais/:typeId', async (req, res) => {
@@ -938,31 +927,32 @@ app.use((error, req, res, next) => {
         message: process.env.NODE_ENV === 'development' ? error.message : 'Une erreur est survenue'
     });
 });
-
-// Route 404
-app.use('*', (req, res) => {
-    res.status(404).json({ 
-        error: 'Route non trouvée',
-        requested_route: req.originalUrl,
-        available_endpoints: {
-            auth: ['/api/login', '/api/token'],
-            facturation: ['/api/listeFacture', '/api/dashbordData', '/api/insertFacture', '/api/updateFacture'],
-            clients: ['/api/insertClient', '/api/listeClient', '/api/updateClient'],
-            achats: ['/api/achats', '/api/achat', '/api/achats/dashboard', '/api/achats/fournisseurs'],
-            notes_frais: ['/api/notes-frais', '/api/note-frais', '/api/notes-frais/dashboard', '/api/notes-frais/validation'],
-            common: ['/api/types-frais', '/api/categories-achats', '/api/projets']
-        }
-    });
+app.use((err, req, res, next) => {
+  console.error('Erreur non gérée :', err.stack);
+  res.status(500).json({ message: 'Erreur interne du serveur' });
 });
 
-// Démarrage du serveur
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Serveur Vinisys v2.0 démarré sur le port ${PORT}`);
-    console.log(`📊 Modules disponibles:`);
-    console.log(`   - 🧾 Achats/Dépenses entreprise: /api/achats/*`);
-    console.log(`   - 💳 Notes de frais employés: /api/notes-frais/*`);
-    console.log(`   - 🔧 Endpoints communs: /api/types-frais, /api/categories-achats, /api/projets`);
-    console.log(`   - 🔐 Authentification: /api/login, /api/token`);
+io.on('connection', (socket) => {
+  console.log("Un utilisateur est connecté avec l'ID : " + socket.id);
+
+  socket.emit('message', 'Bienvenue sur le 5000 !');
+
+  socket.on('join_ticket_room', (ticketId) => {
+    console.log(`👥 L'utilisateur ${socket.id} rejoint la room ticket_${ticketId}`);
+    socket.join(`ticket_${ticketId}`);
+  });
+
+  socket.on('sendMessage', (data) => {
+    console.log('Message reçu : ', data);
+    io.emit('message', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Utilisateur déconnecté au 5000: ' + socket.id);
+    io.emit('new_message', 'data test');
+  });
 });
 
-module.exports = app;
+server.listen(port, '0.0.0.0', () => {
+  console.log(`🚀 Serveur démarré sur http://0.0.0.0:${port}`);
+});

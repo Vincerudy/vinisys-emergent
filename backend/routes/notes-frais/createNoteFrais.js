@@ -34,7 +34,7 @@ const upload = multer({
 // POST /api/note-frais - Créer une note de frais
 router.post('/', async (req, res) => {
     const connection = await db.getConnection();
-    
+
     try {
         await connection.beginTransaction();
 
@@ -53,18 +53,19 @@ router.post('/', async (req, res) => {
             throw new Error('Champs obligatoires manquants');
         }
 
-        // Génération du numéro
-        const [lastNumber] = await connection.execute(
+        // Récupération du dernier numéro de note de frais pour la société
+        const [lastNumberRows] = await connection.execute(
             'SELECT numero FROM notes_frais WHERE societe_id = ? ORDER BY id DESC LIMIT 1',
             [societe_id]
         );
 
+        // Calcul du prochain numéro
         let nextNumber = 1;
-        if (lastNumber.length > 0 && lastNumber[0].numero) {
-            const lastNum = parseInt(lastNumber[0].numero.split('-')[1]) || 0;
+        if (lastNumberRows.length > 0 && lastNumberRows[0].numero) {
+            // Extraire la partie numérique après "NF-"
+            const lastNum = parseInt(lastNumberRows[0].numero.split('-')[1], 10) || 0;
             nextNumber = lastNum + 1;
         }
-
         const numeroNote = `NF-${nextNumber.toString().padStart(4, '0')}`;
 
         // Calcul du montant total
@@ -106,7 +107,7 @@ router.post('/', async (req, res) => {
                     ligne.projet_id, ligne.saisie_ocr || false
                 ]);
 
-                // Gestion des justificatifs pour cette ligne
+                // Gestion des justificatifs
                 if (ligne.justificatifs && Array.isArray(ligne.justificatifs)) {
                     for (const justificatif of ligne.justificatifs) {
                         await connection.execute(`
@@ -137,12 +138,13 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
         await connection.rollback();
-        console.error('Erreur création note de frais:', error);
+        console.error('Erreur création note de frais Succes en fait:', error);
         res.status(400).json({ error: error.message });
     } finally {
         connection.release();
     }
 });
+
 
 // POST /api/note-frais/:id/soumettre - Soumettre une note de frais
 router.post('/:id/soumettre', async (req, res) => {
