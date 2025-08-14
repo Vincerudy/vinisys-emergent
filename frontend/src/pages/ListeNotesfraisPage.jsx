@@ -46,25 +46,21 @@ const ListeNotesfraisPage = () => {
   const fetchNotesfrais = async () => {
     try {
       setLoading(true);
-      // Récupérer toutes les notes de frais de la société
+      // Récupérer toutes les notes de frais pour la société
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/notes-frais/societe/${societe_id}`,
+        `${import.meta.env.VITE_API_URL}/notes-frais/liste/${societe_id}`,
         { params: filters }
       );
-      setNotesfrais(response.data.notes || []);
-    } catch (error) {
-      console.error('Erreur chargement notes:', error);
-      // Fallback vers l'ancien endpoint si le nouveau n'existe pas
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/notes-frais/${user_id}`,
-          { params: filters }
-        );
+      
+      if (response.data.success) {
         setNotesfrais(response.data.notes || []);
-      } catch (fallbackError) {
-        console.error('Erreur fallback:', fallbackError);
+      } else {
+        console.warn('Réponse API sans succès:', response.data);
         setNotesfrais([]);
       }
+    } catch (error) {
+      console.error('Erreur chargement notes:', error);
+      setNotesfrais([]);
     } finally {
       setLoading(false);
     }
