@@ -964,25 +964,6 @@ const relanceJob = new RelanceAutomatique();
 relanceJob.start();
 console.log('✅ Job de relance automatique initialisé');
 
-// Route de test pour le job complet
-app.get('/api/test/job-complet-relance', async (req, res) => {
-  try {
-    console.log('🧪 Test complet du job de relance automatique');
-    await relanceJob.executeRelanceJob();
-    res.json({ 
-      success: true, 
-      message: 'Job complet de relance automatique exécuté avec succès' 
-    });
-  } catch (error) {
-    console.error('❌ Erreur lors du test du job complet:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erreur lors de l\'exécution du job complet',
-      error: error.message 
-    });
-  }
-});
-
 server.listen(port, '0.0.0.0', () => {
   console.log(`🚀 Serveur démarré sur http://0.0.0.0:${port}`);
 });
