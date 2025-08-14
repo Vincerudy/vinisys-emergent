@@ -114,7 +114,7 @@ const ListeAchatsPage = () => {
         <div className="header-content">
           <h1 className="page-title">
             <FiFileText />
-            Liste des Achats & Dépenses
+            Liste des Dépenses
           </h1>
           <p className="page-subtitle">
             Gérez et consultez tous vos achats et dépenses d'entreprise
