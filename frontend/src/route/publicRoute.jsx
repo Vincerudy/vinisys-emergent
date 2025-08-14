@@ -493,6 +493,10 @@ export const publicRoute = createHashRouter([
                 element: <ProtectedRoute element={<ListeNotesfraisPage />} />,
             },
             {
+                path: "/notes-frais/note",
+                element: <ProtectedRoute element={<NoteDetailPage />} />,
+            },
+            {
                 path: "/notes-frais/note/:id",
                 element: <ProtectedRoute element={<NoteDetailPage />} />,
             },
