@@ -44,19 +44,27 @@ const ListeNotesfraisPage = () => {
   }, [societe_id, filters]);
 
   const fetchNotesfrais = async () => {
-    if (!user_id) {
-      return;
-    }
-    
     try {
       setLoading(true);
+      // Récupérer toutes les notes de frais de la société
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/notes-frais/${user_id}`,
+        `${import.meta.env.VITE_API_URL}/notes-frais/societe/${societe_id}`,
         { params: filters }
       );
       setNotesfrais(response.data.notes || []);
     } catch (error) {
       console.error('Erreur chargement notes:', error);
+      // Fallback vers l'ancien endpoint si le nouveau n'existe pas
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/notes-frais/${user_id}`,
+          { params: filters }
+        );
+        setNotesfrais(response.data.notes || []);
+      } catch (fallbackError) {
+        console.error('Erreur fallback:', fallbackError);
+        setNotesfrais([]);
+      }
     } finally {
       setLoading(false);
     }
