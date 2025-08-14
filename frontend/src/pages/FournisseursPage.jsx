@@ -42,29 +42,6 @@ const fetchFournisseurs = async () => {
 };
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const url = editingFournisseur 
-        ? `${import.meta.env.VITE_API_URL}/achats/fournisseurs/${societe_id}/${editingFournisseur.id}`
-        : `${import.meta.env.VITE_API_URL}/achats/fournisseurs/${societe_id}`;
-        
-      const method = editingFournisseur ? 'PUT' : 'POST';
-      
-      await axios({
-        method: method,
-        url: url,
-        data: formData
-      });
-      
-      alert(editingFournisseur ? 'Fournisseur modifié' : 'Fournisseur créé');
-      handleSaved();
-      closeSidebar();
-    } catch (error) {
-      console.error('Erreur sauvegarde:', error);
-      alert('Erreur lors de la sauvegarde');
-    }
-  };
 
   const handleDelete = async (id) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?')) {
