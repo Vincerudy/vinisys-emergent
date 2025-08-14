@@ -55,13 +55,17 @@ const ListeAchatsPage = () => {
   const fetchAchats = async () => {
     try {
       setLoading(true);
+      console.log('🔄 Fetching achats for societe_id:', societe_id);
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/achats/${societe_id}`,
         { params: filters }
       );
+      console.log('✅ API Response:', response.data);
+      console.log('📊 Achats data:', response.data.achats);
       setAchats(response.data.achats || []);
     } catch (error) {
-      console.error('Erreur chargement achats:', error);
+      console.error('❌ Erreur chargement achats:', error);
+      console.error('❌ Error details:', error.response?.data);
     } finally {
       setLoading(false);
     }
