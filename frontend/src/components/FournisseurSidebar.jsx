@@ -305,7 +305,7 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+          <div className="fournisseur-sidebar-footer">
             <button
               type="button"
               onClick={onClose}
