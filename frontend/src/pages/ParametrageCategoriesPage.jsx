@@ -43,31 +43,11 @@ const ParametrageCategoriesPage = () => {
   };
 
   const handleCreate = () => {
-    console.log('🔄 Creating new category...');
-    setEditingCategory(null);
-    setFormData({
-      nom: '',
-      code: '',
-      description: '',
-      actif: true,
-      tva_deductible: 'Oui'
-    });
-    setShowModal(true);
-    console.log('✅ Modal should be open, showModal:', true);
+    navigate('/achats/parametrage/new');
   };
 
-  const handleEdit = (category) => {
-    console.log('🔄 Editing category:', category.nom);
-    setEditingCategory(category);
-    setFormData({
-      nom: category.nom || '',
-      code: category.code || '',
-      description: category.description || '',
-      actif: category.actif === 1,
-      tva_deductible: category.tva_deductible || 'Oui'
-    });
-    setShowModal(true);
-    console.log('✅ Edit modal should be open, showModal:', true);
+  const handleViewCategory = (category) => {
+    navigate(`/achats/parametrage/${category.id}`);
   };
 
   const handleSave = async () => {
