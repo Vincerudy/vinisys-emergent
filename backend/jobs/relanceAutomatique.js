@@ -31,11 +31,32 @@ class RelanceAutomatique {
   start() {
     // Exécuter toutes les 30 minutes
     cron.schedule('*/30 * * * *', async () => {
-      console.log('🔄 Démarrage du job de relance automatique...', new Date().toISOString());
+      const now = new Date();
+      console.log('🔄 Démarrage du job de relance automatique...', now.toISOString());
+      console.log('⏰ Heure locale:', now.toLocaleString('fr-FR', {timeZone: 'UTC'}));
       await this.executeRelanceJob();
     });
 
     console.log('✅ Job de relance automatique configuré (toutes les 30 minutes)');
+    console.log('⏰ Prochain cycle prévu à:', this.getNextCronTime());
+  }
+
+  // Méthode utilitaire pour calculer la prochaine exécution
+  getNextCronTime() {
+    const now = new Date();
+    const minutes = now.getMinutes();
+    const nextMinutes = minutes < 30 ? 30 : 60;
+    const nextTime = new Date(now);
+    
+    if (nextMinutes === 60) {
+      nextTime.setHours(nextTime.getHours() + 1);
+      nextTime.setMinutes(0);
+    } else {
+      nextTime.setMinutes(nextMinutes);
+    }
+    
+    nextTime.setSeconds(0);
+    return nextTime.toLocaleString('fr-FR', {timeZone: 'UTC'});
   }
 
   // Logique principale du job
