@@ -12,7 +12,7 @@ import './css/PaiementPage.css';
 const { Title, Text } = Typography;
 
 // Clé publique Stripe
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'your_stripe_publishable_key_here');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'your_stripe_publishable_key_here');
 
 const PaiementPage = () => {
   const { societe_id } = useAuth();
