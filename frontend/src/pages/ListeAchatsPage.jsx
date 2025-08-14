@@ -287,30 +287,30 @@ const ListeAchatsPage = () => {
                     {formatDate(achat.date_achat)}
                   </td>
                   <td className="invoice-cell">
-                    {achat.numero_facture || '-'}
+                    {achat.numero || '-'}
                   </td>
                   <td className="supplier-cell">
                     <div className="supplier-info">
-                      <strong>{achat.fournisseur || 'Non spécifié'}</strong>
+                      <strong>{achat.fournisseur_nom_table || 'Non spécifié'}</strong>
                     </div>
                   </td>
                   <td className="description-cell">
                     <div className="description-content">
-                      <strong>{achat.designation}</strong>
-                      {achat.categorie && (
-                        <span className="category-tag">{achat.categorie}</span>
+                      <strong>{achat.description || 'Sans description'}</strong>
+                      {achat.categorie_nom && (
+                        <span className="category-tag">{achat.categorie_nom}</span>
                       )}
                     </div>
                   </td>
                   <td className="amount-cell">
-                    {formatCurrency(achat.montant_ht)}
+                    {formatCurrency(parseFloat(achat.montant_ht) || 0)}
                   </td>
                   <td className="tax-cell">
-                    {formatCurrency(achat.montant_tva)}
+                    {formatCurrency(parseFloat(achat.montant_tva) || 0)}
                     <span className="tax-rate">({achat.taux_tva}%)</span>
                   </td>
                   <td className="total-cell">
-                    <strong>{formatCurrency(achat.montant_ttc)}</strong>
+                    <strong>{formatCurrency(parseFloat(achat.montant_ttc) || 0)}</strong>
                   </td>
                   <td className="status-cell">
                     {getStatusBadge(achat.statut)}
