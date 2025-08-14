@@ -75,6 +75,24 @@ const fetchFournisseurs = async () => {
     fetchFournisseurs(); // Refresh the list
   };
 
+  const handleDelete = async (fournisseurId) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?')) {
+      try {
+        const response = await axios.delete(
+          `${import.meta.env.VITE_API_URL}/achats/fournisseurs/fournisseur/${fournisseurId}`
+        );
+        
+        if (response.status === 200) {
+          alert('Fournisseur supprimé avec succès');
+          fetchFournisseurs(); // Refresh the list
+        }
+      } catch (error) {
+        console.error('Erreur suppression fournisseur:', error);
+        alert('Erreur lors de la suppression du fournisseur');
+      }
+    }
+  };
+
   const filteredFournisseurs = fournisseurs.filter(f =>
     f.nom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     f.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
