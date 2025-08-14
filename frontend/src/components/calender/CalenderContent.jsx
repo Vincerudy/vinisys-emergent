@@ -293,20 +293,36 @@ const CalenderContent = () => {
                             </div>
                         </div>
 
-                        {/* Temporairement remplacé pour corriger les erreurs d'affichage */}
-                        <div className="calendar-placeholder" style={{
-                            height: '600px',
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: '#f9f9f9',
-                            color: '#666',
-                            fontSize: '16px'
-                        }}>
-                            📅 Calendrier temporairement indisponible - En cours de réparation
-                        </div>
+                        <FullCalendar
+                            ref={calendarRef}
+                            plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+                            headerToolbar={false}
+                            initialView="dayGridMonth"
+                            events={filteredEvents}
+                            selectable={true}
+                            selectMirror={true}
+                            editable={true}
+                            weekends={showWeekends}
+                            firstDay={isWeekMonday}
+                            dateClick={handleDateClick}
+                            select={handleSelect}
+                            eventClick={handleEventClick}
+                            datesSet={handleDatesSet}
+                            eventContent={renderEventContent}
+                            height="auto"
+                            views={{
+                                twoWeek: {
+                                    type: 'dayGrid',
+                                    duration: { weeks: 2 },
+                                    buttonText: '2 weeks'
+                                },
+                                threeWeek: {
+                                    type: 'dayGrid',
+                                    duration: { weeks: 3 },
+                                    buttonText: '3 weeks'
+                                }
+                            }}
+                        />
 
                         {isAddModalOpen && (
                             <CalenderModal
