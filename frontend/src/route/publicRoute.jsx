@@ -104,6 +104,7 @@ import TestNoteFraisPage from "../pages/TestNoteFraisPage";
 import ValidationNotesPage from "../pages/ValidationNotesPage";
 import HistoriqueNotesPage from "../pages/HistoriqueNotesPage";
 import FournisseursPage from "../pages/FournisseursPage";
+import ParametrageCategoriesPage from "../pages/ParametrageCategoriesPage";
 import RapportPage from "../pages/RapportPage";
 
 import axios from "axios";
