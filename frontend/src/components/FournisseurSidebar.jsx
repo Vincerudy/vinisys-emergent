@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiX, FiUser, FiMail, FiPhone, FiMapPin, FiDollarSign } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
+import './css/FournisseurSidebar.css';
 
 const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
   const { societe_id } = useAuth();
