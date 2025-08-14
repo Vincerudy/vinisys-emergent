@@ -46,20 +46,28 @@ const ListeNotesfraisPage = () => {
   const fetchNotesfrais = async () => {
     try {
       setLoading(true);
+      console.log('DEBUG - societe_id:', societe_id);
+      console.log('DEBUG - user_id:', user_id);
+      console.log('DEBUG - filters:', filters);
+      
       // Utiliser l'endpoint existant avec un paramètre spécial pour récupérer toutes les notes
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/notes-frais/0`, // 0 pour toutes les notes
-        { 
-          params: { 
-            societe_id: societe_id,
-            ...filters 
-          } 
-        }
-      );
+      const apiUrl = `${import.meta.env.VITE_API_URL}/notes-frais/0`;
+      const params = { 
+        societe_id: societe_id,
+        ...filters 
+      };
+      
+      console.log('DEBUG - API URL:', apiUrl);
+      console.log('DEBUG - API params:', params);
+      
+      const response = await axios.get(apiUrl, { params });
+      
+      console.log('DEBUG - API response:', response.data);
       
       setNotesfrais(response.data.notes || []);
     } catch (error) {
       console.error('Erreur chargement notes:', error);
+      console.error('Error response:', error.response?.data);
       setNotesfrais([]);
     } finally {
       setLoading(false);
