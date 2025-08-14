@@ -12,7 +12,7 @@ import './css/PaiementPage.css';
 const { Title, Text } = Typography;
 
 // Clé publique Stripe
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'your_stripe_publishable_key_here');
+const stripePromise = loadStripe(import.meta.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'your_stripe_publishable_key_here');
 
 const PaiementPage = () => {
   const { societe_id } = useAuth();
@@ -20,7 +20,7 @@ const PaiementPage = () => {
   const [searchParams] = useSearchParams();
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); 
   const [planDetails, setPlanDetails] = useState(null);
 
   const planType = searchParams.get('plan');
