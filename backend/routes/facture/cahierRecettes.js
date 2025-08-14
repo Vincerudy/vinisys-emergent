@@ -34,7 +34,10 @@ router.get('/cahier-recettes/:societe_id', async (req, res) => {
       JOIN clients c ON c.id = f.client_id
       LEFT JOIN Reglement_mode rm ON rm.numero_facture = f.numero
       WHERE f.societe_id = ?
-        AND f.statut IN ('payée', 'accepté')
+        AND (
+          f.statut IN ('payée', 'accepté') 
+          OR rm.numero_facture IS NOT NULL
+        )
     `;
 
     let params = [societe_id];
