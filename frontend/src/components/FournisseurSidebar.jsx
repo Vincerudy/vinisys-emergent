@@ -37,7 +37,7 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
         code_postal: '',
         pays: 'France',
         siret: '',
-        tva_intracom: '',
+        numero_tva: '',
         conditions_paiement: '30',
         compte_comptable: ''
       });
