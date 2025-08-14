@@ -148,69 +148,78 @@ const NouvelleNoteFraisPage = () => {
         return;
       }
 
-      // Préparer les données pour l'envoi
-      const noteData = {
-        user_id: user_id,
-        societe_id: societe_id,
+      const montantTTC = parseFloat(formData.montant_ttc.replace(',', '.')) || 0;
+      
+      // Vérifier que le montant est > 0
+      if (montantTTC <= 0) {
+        alert('Le montant doit être supérieur à 0');
+        setSaving(false);
+        return;
+      }
+
+      let finalNoteId = noteId; // Pour le mode édition
+      
+      // En mode création, créer d'abord la note si le montant > 0
+      if (!isEditMode) {
+        const currentDate = new Date();
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Lundi
+        
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6); // Dimanche
+        
+        const noteData = {
+          user_id,
+          societe_id,
+          periode_debut: startOfWeek.toISOString().split('T')[0],
+          periode_fin: endOfWeek.toISOString().split('T')[0],
+          titre: `Note de frais - ${startOfWeek.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}`,
+          description: 'Nouvelle note de frais',
+          statut: 'brouillon'
+        };
+
+        const noteResponse = await axios.post(`${import.meta.env.VITE_API_URL}/note-frais`, noteData);
+        
+        if (noteResponse.data.success && noteResponse.data.note_id) {
+          finalNoteId = noteResponse.data.note_id;
+        } else {
+          throw new Error('Erreur lors de la création de la note');
+        }
+      }
+
+      // Préparer les données du frais
+      const fraisData = {
+        note_id: finalNoteId,
+        type_frais_id: 1, // Frais divers par défaut
         vendeur: formData.vendeur.trim(),
         date_frais: formData.date_frais || new Date().toISOString().split('T')[0],
         pays: formData.pays,
         devise: formData.devise,
-        montant_ttc: parseFloat(formData.montant_ttc.replace(',', '.')) || 0,
+        montant: montantTTC,
         montant_ht: parseFloat(formData.montant_ht.replace(',', '.')) || 0,
         montant_tva: parseFloat(formData.montant_tva.replace(',', '.')) || 0,
         moyen_paiement: formData.moyen_paiement,
-        motif: formData.motif.trim(),
+        description: formData.motif.trim() || 'Frais professionnel',
         projet_id: formData.projet_id || null,
-        commentaire: formData.commentaire.trim(),
-        statut
+        commentaire: formData.commentaire.trim()
       };
 
-      console.log('Envoi des données:', noteData);
+      console.log('Envoi des données frais:', fraisData);
 
-      let response;
-      if (isEditMode) {
-        // Mode édition - PUT
-        response = await axios.put(
-          `${import.meta.env.VITE_API_URL}/note-frais/${noteId}`,
-          noteData
-        );
-      } else {
-        // Mode création - POST
-        response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/note-frais/simple`,
-          noteData
-        );
-      }
+      // Créer le frais
+      const fraisResponse = await axios.post(`${import.meta.env.VITE_API_URL}/frais`, fraisData);
 
-      if ((response.status === 201 || response.status === 200) && response.data.success) {
+      if ((fraisResponse.status === 201 || fraisResponse.status === 200) && fraisResponse.data.success) {
         const message = isEditMode 
-          ? `Note de frais modifiée avec succès`
+          ? `Frais modifié avec succès`
           : statut === 'brouillon' 
-            ? `Note de frais sauvegardée en brouillon (${response.data.data.numero || ''})`
-            : `Note de frais soumise pour validation (${response.data.data.numero || ''})`;
+            ? `Frais sauvegardé en brouillon - Note #${finalNoteId}`
+            : `Frais soumis pour validation - Note #${finalNoteId}`;
         
         alert(message);
         
-        if (statut === 'soumise' || isEditMode) {
-          window.location.href = '/#/notes-frais/liste';
-        } else {
-          // Réinitialiser le formulaire après sauvegarde en brouillon (création seulement)
-          setFormData({
-            vendeur: '',
-            date_frais: '',
-            pays: 'France',
-            devise: 'EUR',
-            montant_ttc: '',
-            montant_ht: '',
-            montant_tva: '',
-            moyen_paiement: 'Carte de Crédit Société',
-            motif: '',
-            projet_id: '',
-            commentaire: ''
-          });
-          setJustificatif(null);
-        }
+        // Rediriger vers la page de détail de la note
+        window.location.hash = `#/notes-frais/note/${finalNoteId}`;
       }
     } catch (error) {
       console.error('Erreur sauvegarde:', error);
