@@ -56,7 +56,7 @@ const ListeAchatsPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/achats/list/${societe_id}`,
+        `${import.meta.env.VITE_API_URL}/achats/${societe_id}`,
         { params: filters }
       );
       setAchats(response.data.achats || []);
