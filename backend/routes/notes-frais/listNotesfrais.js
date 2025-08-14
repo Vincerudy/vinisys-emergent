@@ -17,8 +17,14 @@ router.get('/:userId', async (req, res) => {
 
         const offset = (page - 1) * limit;
         
-        let whereClause = 'WHERE nf.user_id = ?';
-        let params = [userId];
+        let whereClause = 'WHERE 1=1';
+        let params = [];
+
+        // Si userId n'est pas 0, filtrer par user_id
+        if (userId !== '0') {
+            whereClause += ' AND nf.user_id = ?';
+            params.push(userId);
+        }
 
         if (societe_id) {
             whereClause += ' AND nf.societe_id = ?';
