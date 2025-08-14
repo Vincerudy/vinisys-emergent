@@ -18,10 +18,11 @@ import './css/AchatSidebar.css';
 const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attachedFile = null, mode: initialMode = 'manuel' }) => {
   const { societe_id, id: user_id } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('manuel'); // 'manuel' ou 'ocr'
+  const [mode, setMode] = useState(initialMode); // 'manuel' ou 'ocr'
   const [fournisseurs, setFournisseurs] = useState([]);
   const [categories, setCategories] = useState([]);
   const [projets, setProjets] = useState([]);
+  const [attachedFiles, setAttachedFiles] = useState([]);
 
   const [achat, setAchat] = useState({
     numero_facture: '',
