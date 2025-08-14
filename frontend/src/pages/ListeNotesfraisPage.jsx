@@ -46,21 +46,36 @@ const ListeNotesfraisPage = () => {
   const fetchNotesfrais = async () => {
     try {
       setLoading(true);
-      // Récupérer toutes les notes de frais pour la société
+      // Récupérer toutes les notes de frais - utiliser l'endpoint existant sans filtrer par user
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/notes-frais/liste/${societe_id}`,
+        `${import.meta.env.VITE_API_URL}/notes-frais/all/${societe_id}`,
         { params: filters }
       );
       
       if (response.data.success) {
         setNotesfrais(response.data.notes || []);
       } else {
-        console.warn('Réponse API sans succès:', response.data);
-        setNotesfrais([]);
+        // Fallback - utiliser l'endpoint existant mais récupérer toutes les notes via un endpoint générique
+        const fallbackResponse = await axios.get(
+          `${import.meta.env.VITE_API_URL}/notes-frais/liste-complete`,
+          { params: { societe_id: societe_id, ...filters } }
+        );
+        setNotesfrais(fallbackResponse.data.notes || []);
       }
     } catch (error) {
       console.error('Erreur chargement notes:', error);
-      setNotesfrais([]);
+      // Dernier fallback - essayer avec user_id mais afficher un avertissement
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/notes-frais/${user_id}`,
+          { params: { societe_id: societe_id, ...filters } }
+        );
+        setNotesfrais(response.data.notes || []);
+        console.warn('Utilisation du fallback - affichage des notes de l\'utilisateur uniquement');
+      } catch (fallbackError) {
+        console.error('Tous les endpoints ont échoué:', fallbackError);
+        setNotesfrais([]);
+      }
     } finally {
       setLoading(false);
     }
