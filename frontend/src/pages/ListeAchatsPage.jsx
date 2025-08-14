@@ -128,6 +128,26 @@ const ListeAchatsPage = () => {
     }
   };
 
+  const handleModeSelection = (mode, ocrData = null, file = null) => {
+    if (mode === 'manuel') {
+      // Mode manuel : ouvre le sidebar vide
+      setSidebarPrefilledData(null);
+      setSidebarAttachedFile(null);
+      setSidebarMode('manuel');
+      setSidebarOpen(true);
+    } else if (mode === 'ocr') {
+      // Mode OCR : ouvre le sidebar avec données pré-remplies
+      setSidebarPrefilledData(ocrData);
+      setSidebarAttachedFile(file);
+      setSidebarMode('ocr');
+      setSidebarOpen(true);
+    }
+  };
+
+  const handleNewExpenseClick = () => {
+    setModeModalOpen(true);
+  };
+
   return (
     <div className="liste-achats-page">
       {/* Header */}
