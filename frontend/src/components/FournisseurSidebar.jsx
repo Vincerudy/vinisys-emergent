@@ -259,8 +259,8 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
                 </label>
                 <input
                   type="text"
-                  name="tva_intracom"
-                  value={formData.tva_intracom}
+                  name="numero_tva"
+                  value={formData.numero_tva}
                   onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="FR12345678901"
