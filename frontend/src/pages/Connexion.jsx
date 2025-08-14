@@ -66,8 +66,8 @@ const Connexion = () => {
     try {
       if (isLogin) {
         console.log('LOGIN API CALL ATTEMPT');
-        console.log('API URL:', `${import.meta.env.VITE_API_URL}/login`);
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password });
+        console.log('API URL: Using proxy /api/login');
+        const response = await api.post('/login', { email, password });
         const data = response.data;
         login(data);
         localStorage.setItem('token', data.token);
@@ -81,7 +81,7 @@ const Connexion = () => {
         console.log('TEST M', data.permissions)
         navigate('/home');
       } else {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/signup/sylver`, { 
+        const response = await api.post('/signup/sylver', { 
           email, 
           password, 
           firstName, 
