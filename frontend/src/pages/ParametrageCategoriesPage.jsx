@@ -51,39 +51,7 @@ const ParametrageCategoriesPage = () => {
   };
 
   const handleSave = async () => {
-    try {
-      if (!formData.nom || !formData.code) {
-        alert('Le nom et le code sont obligatoires');
-        return;
-      }
-
-      const payload = {
-        ...formData,
-        actif: formData.actif ? 1 : 0,
-        societe_id: societe_id
-      };
-
-      if (editingCategory) {
-        // Modification
-        await axios.put(
-          `${import.meta.env.VITE_API_URL}/categories-achats/${editingCategory.id}`,
-          payload
-        );
-      } else {
-        // Création
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/categories-achats`,
-          payload
-        );
-      }
-
-      setShowModal(false);
-      fetchCategories();
-      alert(editingCategory ? 'Catégorie modifiée avec succès' : 'Catégorie créée avec succès');
-    } catch (error) {
-      console.error('Erreur sauvegarde:', error);
-      alert('Erreur lors de la sauvegarde');
-    }
+    // Cette fonction n'est plus nécessaire - supprimée
   };
 
   const handleToggleActive = async (category) => {
