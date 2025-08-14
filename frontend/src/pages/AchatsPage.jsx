@@ -478,7 +478,7 @@ const AchatsPage = () => {
         <h3 className="text-lg font-semibold mb-4">Actions rapides</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <button 
-            onClick={() => window.location.href = '/#/achats/nouveau'}
+            onClick={() => window.location.href = '/#/achats/liste?sidebar=open'}
             className="border border-gray-300 hover:border-blue-500 rounded-lg p-4 text-center transition-colors group"
           >
             <FiPlus className="mx-auto mb-2 text-blue-600 group-hover:scale-110 transition-transform" size={24} />
