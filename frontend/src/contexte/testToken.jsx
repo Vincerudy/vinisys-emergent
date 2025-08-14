@@ -17,11 +17,16 @@ const testToken = async (value, logout) => {
       console.log('MOI MOUKO 3EM', value);
     }
   } catch (error) {
-    console.log('VOILA LE TOKEN 3', error.response.status);
+    console.log('VOILA LE TOKEN 3', error.response?.status || 'Connection failed');
    
+    // Seulement déconnecter si c'est un 401/403, pas si c'est une erreur de connexion
+    if (error.response?.status === 401 || error.response?.status === 403) {
       logout();
       console.log('Token expiré');
-      localStorage.clear();  // On déconnecte l'utilisateur
+      localStorage.clear();
+    } else {
+      console.log('Erreur de connexion - pas de déconnexion automatique');
+    }
  
   }
 };
