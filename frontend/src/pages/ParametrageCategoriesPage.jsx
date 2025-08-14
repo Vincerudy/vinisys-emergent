@@ -19,18 +19,10 @@ import './css/ParametrageCategoriesPage.css';
 
 const ParametrageCategoriesPage = () => {
   const { societe_id } = useAuth();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
-  const [formData, setFormData] = useState({
-    nom: '',
-    code: '',
-    description: '',
-    actif: true,
-    tva_deductible: 'Oui'
-  });
 
   useEffect(() => {
     fetchCategories();
