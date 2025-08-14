@@ -57,13 +57,7 @@ export const menuList = [
             },
             {
                 id: 2,
-                name: "Nouvel achat",
-                path: "/achats/nouveau",
-                subdropdownMenu: false,
-            },
-            {
-                id: 3,
-                name: "Liste des achats",
+                name: "Liste des dépenses",
                 path: "/achats/liste",
                 subdropdownMenu: false,
             },
