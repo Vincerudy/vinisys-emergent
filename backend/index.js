@@ -133,7 +133,7 @@ const routes = [
   require('./routes/facture/insertParametrageFacturation'),
   require('./routes/facture/ParametreFacturationRead'),
   require('./routes/facture/dashbordData'),
-  require('./routes/facture/cahierRecette'),
+  require('./routes/facture/cahierRecettes'),
   require('./routes/societe/updateSociete'),
   require('./routes/societe/readSociete'),
   require('./routes/parametrage_societe/mail_settings'),
