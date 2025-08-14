@@ -13,7 +13,7 @@ import { useAuth } from '../contexte/AuthContext';
 import './css/FraisSidebar.css';
 
 const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
-  const { societe_id } = useAuth();
+  const { societe_id, id: user_id } = useAuth();
 
   const [formData, setFormData] = useState({
     type_frais_id: '',
