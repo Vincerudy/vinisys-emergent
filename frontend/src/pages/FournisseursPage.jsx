@@ -79,28 +79,23 @@ const fetchFournisseurs = async () => {
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      nom: '',
-      email: '',
-      telephone: '',
-      adresse: '',
-      ville: '',
-      code_postal: '',
-      pays: 'France',
-      siret: '',
-      tva_intracom: '',
-      conditions_paiement: '30',
-      compte_comptable: ''
-    });
+  const openCreateSidebar = () => {
     setEditingFournisseur(null);
-    setShowModal(false);
+    setShowSidebar(true);
   };
 
-  const openEditModal = (fournisseur) => {
-    setFormData(fournisseur);
+  const openEditSidebar = (fournisseur) => {
     setEditingFournisseur(fournisseur);
-    setShowModal(true);
+    setShowSidebar(true);
+  };
+
+  const closeSidebar = () => {
+    setShowSidebar(false);
+    setEditingFournisseur(null);
+  };
+
+  const handleSaved = () => {
+    fetchFournisseurs(); // Refresh the list
   };
 
   const filteredFournisseurs = fournisseurs.filter(f =>
