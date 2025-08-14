@@ -964,36 +964,20 @@ const relanceJob = new RelanceAutomatique();
 relanceJob.start();
 console.log('✅ Job de relance automatique initialisé');
 
-// Route de test temporaire pour vérifier l'envoi d'email
-app.get('/api/test/email-relance', async (req, res) => {
+// Route de test pour le job complet
+app.get('/api/test/job-complet-relance', async (req, res) => {
   try {
-    console.log('🧪 Test d\'envoi d\'email de relance');
-    
-    // Créer un email de test
-    const testFacture = {
-      numero: 'TEST-001',
-      date_facture: '2025-08-09',
-      total: '100.00',
-      client_nom: 'Client Test',
-      client_email: 'vincerudy@hotmail.fr', // Email de test
-      id: 999
-    };
-    
-    const testSociete = {
-      companyName: 'Test Company'
-    };
-    
-    await relanceJob.envoyerEmailRelance(testFacture, testSociete);
-    
+    console.log('🧪 Test complet du job de relance automatique');
+    await relanceJob.executeRelanceJob();
     res.json({ 
       success: true, 
-      message: 'Test d\'email de relance envoyé avec succès' 
+      message: 'Job complet de relance automatique exécuté avec succès' 
     });
   } catch (error) {
-    console.error('❌ Erreur lors du test d\'email:', error);
+    console.error('❌ Erreur lors du test du job complet:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Erreur lors de l\'envoi du test d\'email',
+      message: 'Erreur lors de l\'exécution du job complet',
       error: error.message 
     });
   }
