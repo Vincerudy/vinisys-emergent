@@ -96,21 +96,13 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
 
         const achatId = result.insertId;
 
-        // Gestion des justificatifs
+        // Gestion des justificatifs - Stocker le chemin dans la colonne justificatif_path
         if (req.files && req.files.length > 0) {
-            for (const file of req.files) {
-                await connection.execute(`
-                    INSERT INTO justificatifs_achats (
-                        achat_id, nom_fichier, chemin_fichier, type_mime, taille_fichier
-                    ) VALUES (?, ?, ?, ?, ?)
-                `, [
-                    achatId,
-                    file.originalname,
-                    file.path,
-                    file.mimetype,
-                    file.size
-                ]);
-            }
+            // Pour l'instant, on stocke seulement le premier fichier dans justificatif_path
+            const firstFile = req.files[0];
+            await connection.execute(`
+                UPDATE achats SET justificatif_path = ? WHERE id = ?
+            `, [firstFile.path, achatId]);
         }
 
         await connection.commit();
