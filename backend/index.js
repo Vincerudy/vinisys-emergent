@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const db = require('./config/db');
 const path = require('path');
 const http = require('http');
+const RelanceAutomatique = require('./jobs/relanceAutomatique');
 const app = express();
 
 const server = http.createServer(app);
