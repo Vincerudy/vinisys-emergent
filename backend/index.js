@@ -186,6 +186,9 @@ app.use('/api/achat', require('./routes/achats/createAchat'));
 app.use('/api/achats/dashboard', require('./routes/achats/dashboardAchats'));
 app.use('/api/achats/fournisseurs', require('./routes/achats/fournisseurs'));
 
+// Catégories achats
+app.use('/api/categories-achats', require('./routes/achats/categoriesAchats'));
+
 // Module Notes de frais (Employés)
 app.use('/api/notes-frais', require('./routes/notes-frais/listNotesfrais'));
 app.use('/api/note-frais', require('./routes/notes-frais/createNoteFrais'));
