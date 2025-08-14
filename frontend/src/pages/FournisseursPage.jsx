@@ -32,10 +32,12 @@ const fetchFournisseurs = async () => {
   try {
     setLoading(true);
     const response = await axios.get(`${import.meta.env.VITE_API_URL}/achats/fournisseurs/${societe_id}`);
-    console.log('API response:', response.data); // <-- ajoute ça
-    setFournisseurs(Array.isArray(response.data) ? response.data : []);
+    console.log('API response:', response.data);
+    // La réponse contient les fournisseurs dans response.data.fournisseurs
+    setFournisseurs(Array.isArray(response.data.fournisseurs) ? response.data.fournisseurs : []);
   } catch (error) {
     console.error('Erreur chargement fournisseurs:', error);
+    setFournisseurs([]);
   } finally {
     setLoading(false);
   }
