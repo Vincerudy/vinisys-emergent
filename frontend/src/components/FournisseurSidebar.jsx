@@ -120,8 +120,8 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
             </button>
           </div>
 
-          {/* Form */}
-          <div className="flex-1 overflow-y-auto p-6">
+          {/* Form Body */}
+          <div className="fournisseur-sidebar-body">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Nom */}
               <div>
