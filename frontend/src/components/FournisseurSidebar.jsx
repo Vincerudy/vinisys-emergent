@@ -71,17 +71,17 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
       let response;
       if (isEditMode) {
         response = await axios.put(
-          `${import.meta.env.VITE_API_URL}/achats/fournisseurs/${fournisseur.id}`,
+          `${import.meta.env.VITE_API_URL}/achats/fournisseur/${fournisseur.id}`,
           payload
         );
       } else {
         response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/achats/fournisseurs`,
+          `${import.meta.env.VITE_API_URL}/achats/fournisseur`,
           payload
         );
       }
 
-      if (response.data.success) {
+      if (response.status === 201 || response.status === 200) {
         alert(isEditMode ? 'Fournisseur modifié avec succès' : 'Fournisseur créé avec succès');
         onSaved(); // Callback to refresh the list
         onClose();
