@@ -58,13 +58,11 @@ router.get('/:societeId', async (req, res) => {
         const query = `
             SELECT 
                 a.*,
-                f.nom as fournisseur_nom,
-                ca.nom as categorie_nom,
-                p.nom as projet_nom
+                f.nom as fournisseur_nom_table,
+                ca.nom as categorie_nom
             FROM achats a
             LEFT JOIN fournisseurs f ON a.fournisseur_id = f.id
             LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id
-            LEFT JOIN projets p ON a.projet_id = p.id
             ${whereClause}
             ORDER BY a.date_achat DESC, a.created_at DESC
             LIMIT ? OFFSET ?
