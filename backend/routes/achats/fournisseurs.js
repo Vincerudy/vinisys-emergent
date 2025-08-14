@@ -92,7 +92,7 @@ router.put('/fournisseur/:id', async (req, res) => {
             return res.status(404).json({ error: 'Fournisseur non trouvé' });
         }
 
-        // Mettre à jour le fournisseur
+        // Mettre à jour le fournisseur (convertir undefined en null)
         await db.execute(`
             UPDATE fournisseurs SET 
                 nom = ?, adresse = ?, ville = ?, code_postal = ?, pays = ?,
@@ -100,8 +100,18 @@ router.put('/fournisseur/:id', async (req, res) => {
                 conditions_paiement = ?, compte_comptable = ?
             WHERE id = ?
         `, [
-            nom, adresse, ville, code_postal, pays, telephone, email,
-            siret, numero_tva, conditions_paiement, compte_comptable, id
+            nom, 
+            adresse || null, 
+            ville || null, 
+            code_postal || null, 
+            pays || 'France', 
+            telephone || null, 
+            email || null,
+            siret || null, 
+            numero_tva || null, 
+            conditions_paiement || null, 
+            compte_comptable || null, 
+            id
         ]);
 
         res.json({ message: 'Fournisseur modifié avec succès' });
