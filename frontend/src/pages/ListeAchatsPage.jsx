@@ -33,6 +33,7 @@ const ListeAchatsPage = () => {
   });
   const [selectedAchats, setSelectedAchats] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const itemsPerPage = 10;
 
   useEffect(() => {
