@@ -85,8 +85,8 @@ router.get('/:societeId', async (req, res) => {
                 SUM(a.montant_ttc) as montant_total,
                 SUM(a.montant_ht) as montant_ht_total,
                 SUM(a.montant_tva) as tva_total,
-                SUM(CASE WHEN a.tva_deductible = 1 THEN a.montant_tva ELSE 0 END) as tva_deductible,
-                SUM(CASE WHEN a.tva_deductible = 0 THEN a.montant_tva ELSE 0 END) as tva_non_deductible
+                SUM(CASE WHEN a.tva_deductible = 'Oui' THEN a.montant_tva ELSE 0 END) as tva_deductible,
+                SUM(CASE WHEN a.tva_deductible = 'Non' THEN a.montant_tva ELSE 0 END) as tva_non_deductible
             FROM achats a
             ${whereClause}
         `;
