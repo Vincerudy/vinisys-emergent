@@ -192,7 +192,11 @@ const ParametrageCategoriesPage = () => {
         ) : (
           <div className="categories-grid">
             {filteredCategories.map((category) => (
-              <div key={category.id} className={`category-card ${!category.actif ? 'inactive' : ''}`}>
+              <div 
+                key={category.id} 
+                className={`category-card ${!category.actif ? 'inactive' : ''} clickable`}
+                onClick={() => handleEdit(category)}
+              >
                 <div className="category-header">
                   <div className="category-info">
                     <h3 className="category-name">{category.nom}</h3>
