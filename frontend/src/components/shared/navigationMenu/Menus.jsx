@@ -105,7 +105,6 @@ const Menus = () => {
   // Si c'est un menu avec des sous-menus mais que tous sont filtrés, ne pas afficher
   // Si c'est un menu direct (dropdownMenu vide initialement), l'afficher
   if (Array.isArray(dropdownMenu) && dropdownMenu.length > 0 && filteredDropdown.length === 0) {
-    console.log(`❌ Menu Debug - Hiding menu "${name}" because no submenu passed filter`);
     return null;
   }
 
