@@ -47,6 +47,7 @@ const Menus = () => {
 
     // Si les données d'abonnement sont en cours de chargement, afficher le menu de base
     if (loading) {
+        console.log('🔄 Menu: Loading subscription data...');
         return (
             <li>
                 <Link to="/" className="nxl-link text-capitalize">
@@ -59,8 +60,13 @@ const Menus = () => {
         );
     }
 
+    console.log('🎯 Menu: hasFeature function available:', typeof hasFeature);
+    console.log('🎯 Menu: Testing hasFeature(facturation):', hasFeature('facturation'));
+
     // Filtrer le menu selon l'abonnement
     const filteredMenuList = filterMenuBySubscription(menuList, hasFeature);
+    console.log('🎯 Menu: Original menu items:', menuList.length);
+    console.log('🎯 Menu: Filtered menu items:', filteredMenuList.length);
 
     return (
         <>   
