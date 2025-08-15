@@ -5,7 +5,7 @@ import { menuList } from "@/utils/fackData/menuList";
 import getIcon from "@/utils/getIcon";
 import { hasPermission } from '../../../contexte/permissions';
 import { useSubscription } from '../../../hooks/useSubscription';
-import { filterMenuBySubscription } from '../../../utils/subscriptionFilter';
+import { filterMenuBySubscription, SUBSCRIPTION_FEATURES_MAP } from '../../../utils/subscriptionFilter';
 
 const Menus = () => {
     const [openDropdown, setOpenDropdown] = useState(null);
