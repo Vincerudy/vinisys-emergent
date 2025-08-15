@@ -104,7 +104,7 @@ const Menus = () => {
     if (!item.permission) return true; // pas de permission => afficher
 
     // D'abord vérifier le plan société
-    if (!hasFeature(getFeatureFromPermission(item.permission))) {
+    if (!hasFeature(SUBSCRIPTION_FEATURES_MAP[item.permission])) {
       return false; // La société n'a pas cette fonctionnalité
     }
     
