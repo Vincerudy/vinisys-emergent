@@ -33,15 +33,26 @@ export const useSubscription = () => {
 
   // Vérifier si une fonctionnalité est accessible
   const hasFeature = (featureName) => {
+    console.log(`🔍 useSubscription: Checking feature '${featureName}'`);
+    
     if (!subscriptionData || !subscriptionData.subscription) {
+      console.log('❌ useSubscription: No subscription data available');
       return false; // Si pas de données, bloquer par défaut
     }
 
     const { subscription } = subscriptionData;
+    console.log(`📊 useSubscription: Subscription data:`, {
+      enable_facturation: subscription.enable_facturation,
+      enable_notes_frais: subscription.enable_notes_frais,
+      enable_depenses: subscription.enable_depenses,
+      enable_rapport_financier: subscription.enable_rapport_financier
+    });
 
     switch (featureName) {
       case 'facturation':
-        return subscription.enable_facturation === 1;
+        const result = subscription.enable_facturation === 1;
+        console.log(`✅ useSubscription: facturation = ${result}`);
+        return result;
       case 'notes_frais':
         return subscription.enable_notes_frais === 1;
       case 'depenses':
@@ -67,6 +78,7 @@ export const useSubscription = () => {
       case 'user_input':
         return subscription.enable_user_input === 1;
       default:
+        console.log(`✅ useSubscription: '${featureName}' = true (default)`);
         return true; // Fonctionnalités de base (dashboard, paramétrage, etc.) toujours disponibles
     }
   };
