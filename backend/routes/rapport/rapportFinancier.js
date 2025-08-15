@@ -30,33 +30,36 @@ router.get('/:societeId', async (req, res) => {
         // Chiffre d'affaires total sur la période
         const [caTotal] = await connection.execute(`
             SELECT 
-                SUM(total_ttc) as total_ca,
+                SUM(CAST(total AS DECIMAL(10,2))) as total_ca,
                 COUNT(*) as nombre_factures
             FROM factures 
             WHERE societe_id = ? 
                 AND date_facture BETWEEN ? AND ?
-                AND statut != 'annulee'
+                AND statut != 'annulée'
+                AND total IS NOT NULL
         `, [societeId, date_debut, date_fin]);
 
         // Montant encaissé vs en attente
         const [paiements] = await connection.execute(`
             SELECT 
-                SUM(CASE WHEN statut = 'payee' THEN total_ttc ELSE 0 END) as encaisse,
-                SUM(CASE WHEN statut IN ('envoyee', 'acceptee') THEN total_ttc ELSE 0 END) as en_attente
+                SUM(CASE WHEN statut = 'payée' THEN CAST(total AS DECIMAL(10,2)) ELSE 0 END) as encaisse,
+                SUM(CASE WHEN statut IN ('en attente', 'accepté') THEN CAST(total AS DECIMAL(10,2)) ELSE 0 END) as en_attente
             FROM factures 
             WHERE societe_id = ? 
                 AND date_facture BETWEEN ? AND ?
-                AND statut != 'annulee'
+                AND statut != 'annulée'
+                AND total IS NOT NULL
         `, [societeId, date_debut, date_fin]);
 
         // Total des avoirs émis (crédits/remboursements)
         const [avoirs] = await connection.execute(`
             SELECT 
-                COALESCE(SUM(total_ttc), 0) as total_avoirs
+                COALESCE(SUM(CAST(total AS DECIMAL(10,2))), 0) as total_avoirs
             FROM factures 
             WHERE societe_id = ? 
                 AND date_facture BETWEEN ? AND ?
                 AND type_fact = 'avoir'
+                AND total IS NOT NULL
         `, [societeId, date_debut, date_fin]);
 
         // Répartition par TVA sur les factures
