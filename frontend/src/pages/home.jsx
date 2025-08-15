@@ -275,6 +275,15 @@ const Home = () => {
                 </div>
             </div>
             <Footer />
+            
+            {/* Modal pour visualiser la facture */}
+            <ModaleFactureVisualization
+                visible={modalVisible}
+                onClose={closeFactureModal}
+                facture={selectedFacture}
+                parametrage={parametrage}
+                tvas={[]} // Vous pouvez ajouter les données TVA si nécessaire
+            />
         </>
     )
 }
