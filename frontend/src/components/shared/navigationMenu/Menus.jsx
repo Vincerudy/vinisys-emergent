@@ -13,7 +13,7 @@ const Menus = () => {
     const [activeParent, setActiveParent] = useState("");
     const [activeChild, setActiveChild] = useState("");
     const pathName = useLocation().pathname;
-    const { hasFeature, loading } = useSubscription();
+    const { hasFeature, loading, subscriptionData } = useSubscription();
 
     const handleMainMenu = (e, name) => {
         if (openDropdown === name) {
