@@ -62,20 +62,22 @@ router.get('/:societeId', async (req, res) => {
                 AND total IS NOT NULL
         `, [societeId, date_debut, date_fin]);
 
-        // Répartition par TVA sur les factures
+        // Répartition par TVA sur les factures  
         const [tvaRepartition] = await connection.execute(`
             SELECT 
-                lf.taux_tva as taux,
-                SUM(lf.montant * (lf.taux_tva / 100)) as montant_tva,
-                SUM(lf.montant) as montant_ht
-            FROM lignes_facture lf
-            INNER JOIN factures f ON lf.facture_id = f.id
-            WHERE f.societe_id = ? 
-                AND f.date_facture BETWEEN ? AND ?
-                AND f.statut != 'annulee'
-                AND f.type_fact != 'avoir'
-            GROUP BY lf.taux_tva
-            ORDER BY lf.taux_tva
+                ROUND((total_tva / CAST(ht AS DECIMAL(10,2))) * 100, 2) as taux,
+                SUM(total_tva) as montant_tva,
+                SUM(CAST(ht AS DECIMAL(10,2))) as montant_ht
+            FROM factures
+            WHERE societe_id = ? 
+                AND date_facture BETWEEN ? AND ?
+                AND statut != 'annulée'
+                AND type_fact != 'avoir'
+                AND total IS NOT NULL
+                AND ht IS NOT NULL
+                AND total_tva > 0
+            GROUP BY ROUND((total_tva / CAST(ht AS DECIMAL(10,2))) * 100, 2)
+            ORDER BY taux
         `, [societeId, date_debut, date_fin]);
 
         // =====================================================
