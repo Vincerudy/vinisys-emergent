@@ -10,7 +10,10 @@ export const useSubscription = () => {
   // Récupérer les données d'abonnement
   useEffect(() => {
     const fetchSubscriptionData = async () => {
+      console.log(`🔍 useSubscription: Starting fetch - societe_id: ${societe_id}, isAuthenticated: ${isAuthenticated}`);
+      
       if (!societe_id || !isAuthenticated) {
+        console.log(`❌ useSubscription: Missing data - societe_id: ${societe_id}, isAuthenticated: ${isAuthenticated}`);
         setLoading(false);
         return;
       }
