@@ -6,6 +6,21 @@ export const SUBSCRIPTION_FEATURES_MAP = {
   'view_clients': 'facturation',
   'manage_invoice_param': 'facturation',
   
+  // Notes de frais - Maintenant géré par abonnement
+  'create_expense': 'notes_frais',
+  'view_expenses': 'notes_frais',
+  'validate_expenses': 'notes_frais',
+  'manage_expense_categories': 'notes_frais',
+  
+  // Dépenses - Géré par abonnement
+  'view_purchases': 'depenses',
+  'create_purchase': 'depenses',
+  'manage_suppliers': 'depenses',
+  
+  // Rapport financier - Géré par abonnement  
+  'view_reports': 'rapport_financier',
+  'access_reports': 'rapport_financier',
+  
   // Recette - Seulement pour les plans payants
   'view_recette_page': 'recette',
   
@@ -16,11 +31,6 @@ export const SUBSCRIPTION_FEATURES_MAP = {
   'view_inventory': 'inventaire_manuel',
   'manage_inventory': 'inventaire_manuel',
   'import_products': 'import_produits',
-  
-  // Notes de frais - Toujours disponibles (liées à facturation pour Starter)
-  'create_expense': true,
-  'view_expenses': true,
-  'validate_expenses': true,
   
   // Paramétrage général
   'campany_setting': true,
