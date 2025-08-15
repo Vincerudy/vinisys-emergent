@@ -19,6 +19,12 @@ export const SUBSCRIPTION_FEATURES_MAP = {
   'manage_suppliers': 'depenses',
   'view_depenses': 'depenses',
   
+  // Notes de frais - Mappé sur le même champ que dépenses
+  'view_notes_frais': 'notes_frais',
+  'create_expense': 'notes_frais',
+  'validate_expenses': 'notes_frais',
+  'manage_expense_categories': 'notes_frais',
+  
   // Rapport financier - Seulement plans payants
   'view_reports': 'rapport_financier',
   'access_reports': 'rapport_financier',
