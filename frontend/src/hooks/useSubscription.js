@@ -16,9 +16,7 @@ export const useSubscription = () => {
       }
 
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/subscription-status/${societe_id}`
-        );
+        const response = await api.get(`/subscription-status/${societe_id}`);
         
         if (response.data.success) {
           setSubscriptionData(response.data);
