@@ -33,7 +33,7 @@ const Schedule = ({ title, facturesRetard, onFactureClick }) => {
                                                     <span className="fs-10 fw-semibold text-uppercase d-block">Jours</span>
                                                 </div>
                                                 <div className="text-dark">
-                                                    <Link to="#" className="fw-bold mb-2 text-truncate-1-line">Facture N°{facture.invoiceNumber} - {facture.date}</Link>
+                                                    <span className="fw-bold mb-2 text-truncate-1-line d-block">Facture N°{facture.invoiceNumber} - {facture.date}</span>
                                                     <span className="fs-11 fw-normal text-muted text-truncate-1-line">Client :  {facture.client}</span>
                                                 </div>
                                             </div>
