@@ -1,30 +1,32 @@
 // Mapping des permissions du menu vers les fonctionnalités d'abonnement
 export const SUBSCRIPTION_FEATURES_MAP = {
-  // Facturation - Plan Starter (gratuit) a accès à la facturation de base
+  // Facturation - Disponible pour tous les plans
   'view_quotes': 'facturation',
   'view_invoices': 'facturation', 
   'view_clients': 'facturation',
   'manage_invoice_param': 'facturation',
   
-  // Notes de frais - Maintenant géré par abonnement
+  // Notes de frais - Seulement plans payants
   'create_expense': 'notes_frais',
   'view_expenses': 'notes_frais',
   'validate_expenses': 'notes_frais',
   'manage_expense_categories': 'notes_frais',
+  'view_notes_frais': 'notes_frais',
   
-  // Dépenses - Géré par abonnement
+  // Dépenses - Seulement plans payants
   'view_purchases': 'depenses',
   'create_purchase': 'depenses',
   'manage_suppliers': 'depenses',
+  'view_depenses': 'depenses',
   
-  // Rapport financier - Géré par abonnement  
+  // Rapport financier - Seulement plans payants
   'view_reports': 'rapport_financier',
   'access_reports': 'rapport_financier',
   
-  // Recette - Seulement pour les plans payants
+  // Recette - Seulement plans Pro et plus
   'view_recette_page': 'recette',
   
-  // Stock - Seulement pour les plans Pro et plus
+  // Stock - Seulement plans Pro et plus
   'create_product': 'stock',
   'view_stock': 'stock',
   'manage_stock': 'stock',
@@ -32,12 +34,15 @@ export const SUBSCRIPTION_FEATURES_MAP = {
   'manage_inventory': 'inventaire_manuel',
   'import_products': 'import_produits',
   
-  // Paramétrage général
-  'campany_setting': true,
-  'view_users': true,
+  // Paramétrage - Toujours disponible (facturation incluse)
+  'campany_setting': 'facturation',
+  'view_users': 'facturation',
   
-  // Autres fonctionnalités toujours disponibles
+  // Dashboard - Toujours disponible
   'view_dashboard': true,
+  'view_profile': true,
+  'view_settings': true
+};
   'view_profile': true,
   'view_settings': true,
   'access_reports': true
