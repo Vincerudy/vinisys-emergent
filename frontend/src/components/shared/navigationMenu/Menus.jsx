@@ -93,7 +93,13 @@ const Menus = () => {
                     </Link>
                 </li>
                 {filteredMenuList.map(({ dropdownMenu, id, name, path, icon, permission }) => {
-  // Filtrer dropdownMenu selon permission si elle existe
+  
+  // ÉTAPE 1: Vérifier d'abord si la société a accès à cette fonctionnalité selon son plan
+  if (permission && !hasFeature(getFeatureFromPermission(permission))) {
+    return null; // La société n'a pas cette fonctionnalité dans son plan
+  }
+  
+  // ÉTAPE 2: Filtrer les sous-menus selon les permissions utilisateur ET le plan société
   const filteredDropdown = Array.isArray(dropdownMenu) ? dropdownMenu.filter(item => {
     if (!item.permission) return true; // pas de permission => afficher
 
