@@ -233,17 +233,10 @@ export const menuList = [
     // Page Assistance avec Mise à niveau
     {
         id: 96,
-        name: "Assistance",
-        path: "#",
+        name: "Mise à niveau",
+        path: "/abonnement/plans",
         icon: 'feather-help-circle',
-        dropdownMenu: [
-            {
-                id: 1,
-                name: "Mettre à niveau",
-                path: "/abonnement/plans",
-                subdropdownMenu: false,
-            }
-        ]
+        dropdownMenu: []
     },
      
  
