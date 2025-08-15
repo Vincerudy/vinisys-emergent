@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../contexte/Api'; // Utiliser l'instance axios configurée
 import { useAuth } from '../contexte/AuthContext';
 
 export const useSubscription = () => {
