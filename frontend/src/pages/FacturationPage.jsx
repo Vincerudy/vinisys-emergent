@@ -64,6 +64,9 @@ import { hasPermission } from '../contexte/permissions';
 
 const FacturationPage = ( ) => {
   const { id, societe_id} = useAuth();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  
   const [clientList, setClientList] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const factureRef = useRef();
@@ -78,6 +81,12 @@ const FacturationPage = ( ) => {
   const [tvas, setTvas] = useState([]);
   const [useTaxeSecondaire, setUseTaxeSecondaire] = useState(false); // État pour le bouton radio
   const [editingTaxeSecondaire, setEditingTaxeSecondaire] = useState(null); // Taxe secondaire de la facture en cours d'édition
+
+  // États pour gérer la surbrillance et l'ouverture automatique
+  const [highlightedFactureId, setHighlightedFactureId] = useState(null);
+  const [autoOpenVisualization, setAutoOpenVisualization] = useState(false);
+  const [visualizationModalVisible, setVisualizationModalVisible] = useState(false);
+  const [selectedFactureForVisualization, setSelectedFactureForVisualization] = useState(null);
  
   
     fetchParamétrages(id)
