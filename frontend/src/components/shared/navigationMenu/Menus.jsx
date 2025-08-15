@@ -98,11 +98,6 @@ const Menus = () => {
     if (!item.permission) return true; // pas de permission => afficher
     const hasPermissionResult = hasPermission(item.permission);
     
-    // Debug pour Facturation
-    if (name === "Facturation") {
-      console.log(`🔍 Menu Debug - ${item.name}: permission=${item.permission}, hasPermission=${hasPermissionResult}`);
-    }
-    
     return hasPermissionResult; // sinon filtrer avec la fonction
   }) : [];
 
