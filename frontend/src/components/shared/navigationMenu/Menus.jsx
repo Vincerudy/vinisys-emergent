@@ -109,7 +109,9 @@ const Menus = () => {
   
   // ÉTAPE 1: Vérifier d'abord si la société a accès à cette fonctionnalité selon son plan
   if (permission && SUBSCRIPTION_FEATURES_MAP[permission] && !hasFeature(SUBSCRIPTION_FEATURES_MAP[permission])) {
-    console.log(`❌ Menu ${name} caché - plan société n'a pas la fonctionnalité ${SUBSCRIPTION_FEATURES_MAP[permission]}`);
+    if (name === "Notes de frais") {
+      console.log(`❌ Notes de frais CACHÉ - plan société n'a pas la fonctionnalité ${SUBSCRIPTION_FEATURES_MAP[permission]}`);
+    }
     return null; // La société n'a pas cette fonctionnalité dans son plan
   }
   
