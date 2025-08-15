@@ -5,6 +5,7 @@ export const menuList = [
         name: "Facturation",
         path: "#",
         icon: 'feather-grid',
+        permission: 'view_invoices', // Ajouté pour rendre visible
         dropdownMenu: [
             {
                 id: 1,
