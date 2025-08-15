@@ -1494,6 +1494,35 @@ const handleModalOk = async () => {
             </div>
         </Modal>
 
+        {/* Modal pour la visualisation des factures (depuis factures en retard) */}
+        <Modal
+          title={`Visualisation - ${selectedFactureForVisualization ? 
+            `${selectedFactureForVisualization.type_fact === 'DEVI' ? 'Devis' : 'Facture'} N°${selectedFactureForVisualization.numero}` 
+            : ''}`}
+          open={visualizationModalVisible}
+          onCancel={() => {
+            setVisualizationModalVisible(false);
+            setSelectedFactureForVisualization(null);
+            // Optionnel : supprimer le highlight après fermeture
+            // setHighlightedFactureId(null);
+          }}
+          footer={null}
+          width={900}
+          centered
+          className="facture-visualization-modal"
+        >
+          <div style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+            {selectedFactureForVisualization && (
+              <ModeleFacture 
+                factures={selectedFactureForVisualization}
+                type={selectedFactureForVisualization.type_fact}
+                parametrage={parametrage}
+                tvas={tvas}
+              />
+            )}
+          </div>
+        </Modal>
+
       </div>
  
   );
