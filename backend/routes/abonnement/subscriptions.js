@@ -15,6 +15,9 @@ const SUBSCRIPTION_PLANS = {
     price_yearly: 0,
     features: {
       enable_facturation: 1,
+      enable_notes_frais: 1,
+      enable_depenses: 1,
+      enable_rapport_financier: 1,
       enable_recette: 0,
       enable_mailing: 0,
       enable_relances_auto: 0,
@@ -36,6 +39,9 @@ const SUBSCRIPTION_PLANS = {
     price_yearly: 299,
     features: {
       enable_facturation: 1,
+      enable_notes_frais: 1,
+      enable_depenses: 1,
+      enable_rapport_financier: 1,
       enable_recette: 1,
       enable_mailing: 1,
       enable_relances_auto: 1,
@@ -57,6 +63,9 @@ const SUBSCRIPTION_PLANS = {
     price_yearly: 599,
     features: {
       enable_facturation: 1,
+      enable_notes_frais: 1,
+      enable_depenses: 1,
+      enable_rapport_financier: 1,
       enable_recette: 1,
       enable_mailing: 1,
       enable_relances_auto: 1,
@@ -78,6 +87,9 @@ const SUBSCRIPTION_PLANS = {
     price_yearly: 999,
     features: {
       enable_facturation: 1,
+      enable_notes_frais: 1,
+      enable_depenses: 1,
+      enable_rapport_financier: 1,
       enable_recette: 1,
       enable_mailing: 1,
       enable_relances_auto: 1,
