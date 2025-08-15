@@ -1020,9 +1020,16 @@ const handleModalOk = async () => {
                               }
                               rowKey="id"
                               className="invoice-table"
-                              rowClassName={(record, index) =>
-                                index % 2 === 0 ? 'table-row-even' : 'table-row-odd'
-                              }
+                              rowClassName={(record, index) => {
+                                let className = index % 2 === 0 ? 'table-row-even' : 'table-row-odd';
+                                
+                                // Ajouter la classe de surbrillance si c'est la facture highlightée
+                                if (highlightedFactureId && record.id === highlightedFactureId) {
+                                  className += ' highlighted-row';
+                                }
+                                
+                                return className;
+                              }}
                             />
                           </div>
                         </>
