@@ -13,11 +13,16 @@ const SUBSCRIPTION_PLANS = {
     price_monthly: 0,
     price_quarterly: 0,
     price_yearly: 0,
+    functionalities: [
+      "Gestion des factures (devis, factures, clients)",
+      "Paramétrage société",
+      "Gestion utilisateurs (max 2 utilisateurs)"
+    ],
     features: {
       enable_facturation: 1,
-      enable_notes_frais: 1,
-      enable_depenses: 1,
-      enable_rapport_financier: 1,
+      enable_notes_frais: 0,
+      enable_depenses: 0,
+      enable_rapport_financier: 0,
       enable_recette: 0,
       enable_mailing: 0,
       enable_relances_auto: 0,
@@ -37,6 +42,16 @@ const SUBSCRIPTION_PLANS = {
     price_monthly: 29,
     price_quarterly: 79,
     price_yearly: 299,
+    functionalities: [
+      "Toutes les fonctionnalités Starter",
+      "Gestion des notes de frais",
+      "Gestion des dépenses et achats",
+      "Rapports financiers",
+      "Cahier de recettes",
+      "Mailing et relances automatiques",
+      "Gestion de stock de base",
+      "Jusqu'à 5 utilisateurs"
+    ],
     features: {
       enable_facturation: 1,
       enable_notes_frais: 1,
@@ -61,6 +76,14 @@ const SUBSCRIPTION_PLANS = {
     price_monthly: 59,
     price_quarterly: 159,
     price_yearly: 599,
+    functionalities: [
+      "Toutes les fonctionnalités Pro",
+      "Import/Export produits et services",
+      "Gestion complète des stocks",
+      "Inventaires automatiques",
+      "Mouvements de stock avancés",
+      "Jusqu'à 15 utilisateurs"
+    ],
     features: {
       enable_facturation: 1,
       enable_notes_frais: 1,
@@ -85,6 +108,13 @@ const SUBSCRIPTION_PLANS = {
     price_monthly: 99,
     price_quarterly: 269,
     price_yearly: 999,
+    functionalities: [
+      "Toutes les fonctionnalités Ultra",
+      "Support prioritaire",
+      "Personnalisations avancées",
+      "Intégrations API",
+      "Utilisateurs illimités"
+    ],
     features: {
       enable_facturation: 1,
       enable_notes_frais: 1,
