@@ -464,4 +464,39 @@
    
       }
     }
+
+/* Styles pour la surbrillance des factures */
+.highlighted-row {
+  background-color: #e6f7ff !important;
+  border: 2px solid #1890ff !important;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3) !important;
+}
+
+.highlighted-row td {
+  border-color: #1890ff !important;
+}
+
+.highlighted-row:hover {
+  background-color: #bae7ff !important;
+}
+
+/* Animation pour attirer l'attention */
+@keyframes highlight-pulse {
+  0% { 
+    background-color: #e6f7ff; 
+    transform: scale(1);
+  }
+  50% { 
+    background-color: #bae7ff; 
+    transform: scale(1.01);
+  }
+  100% { 
+    background-color: #e6f7ff; 
+    transform: scale(1);
+  }
+}
+
+.highlighted-row {
+  animation: highlight-pulse 2s ease-in-out 3;
+}
     
