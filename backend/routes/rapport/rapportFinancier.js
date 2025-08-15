@@ -132,8 +132,8 @@ router.get('/:societeId', async (req, res) => {
                 COUNT(*) as nombre_notes
             FROM notes_frais 
             WHERE societe_id = ? 
-                AND date_validation BETWEEN ? AND ?
-                AND statut = 'validee'
+                AND DATE(COALESCE(date_validation, date_soumission, updated_at)) BETWEEN ? AND ?
+                AND statut IN ('validee', 'remboursee')
         `, [societeId, date_debut, date_fin]);
 
         // Répartition des notes de frais par type
@@ -146,8 +146,8 @@ router.get('/:societeId', async (req, res) => {
             LEFT JOIN lignes_frais lf ON tf.id = lf.type_frais_id
             LEFT JOIN notes_frais nf ON lf.note_frais_id = nf.id
             WHERE nf.societe_id = ? 
-                AND nf.date_validation BETWEEN ? AND ?
-                AND nf.statut = 'validee'
+                AND DATE(COALESCE(nf.date_validation, nf.date_soumission, nf.updated_at)) BETWEEN ? AND ?
+                AND nf.statut IN ('validee', 'remboursee')
                 AND tf.actif = 1
             GROUP BY tf.id, tf.nom
             HAVING montant > 0
