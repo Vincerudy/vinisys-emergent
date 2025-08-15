@@ -120,6 +120,7 @@ const routes = [
   require('./routes/client/suppressionClient'),
   require('./routes/facture/insertFacture'),
   require('./routes/facture/listeFacture'),
+  require('./routes/facture/getFactureDetails'),
   require('./routes/facture/updateFacture'),
   require('./routes/facture/deleteFacture'),
   require('./routes/facture/dataGraphiqueFacture'),
