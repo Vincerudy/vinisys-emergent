@@ -97,6 +97,7 @@ const Menus = () => {
   const filteredDropdown = Array.isArray(dropdownMenu) ? dropdownMenu.filter(item => {
     if (!item.permission) return true; // pas de permission => afficher
     const hasPermissionResult = hasPermission(item.permission);
+    const hasPermissionResult = hasPermission(item.permission);
     
     return hasPermissionResult; // sinon filtrer avec la fonction
   }) : [];
