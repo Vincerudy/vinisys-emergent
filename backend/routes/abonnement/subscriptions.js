@@ -388,25 +388,43 @@ router.get('/subscription-status/:societe_id', async (req, res) => {
     if (rows.length === 0) {
       return res.json({
         success: true,
+        subscription_expired: true,
         trial_expired: true,
-        message: 'Aucun abonnement trouvé - Période d\'essai expirée'
+        message: 'Aucun abonnement trouvé'
       });
     }
 
     const subscription = rows[0];
-    const createdAt = new Date(subscription.created_at);
     const now = new Date();
-    const daysDiff = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+    let subscriptionExpired = false;
+    let trialExpired = false;
 
-    // Vérifier si la période d'essai de 30 jours est expirée
-    const trialExpired = daysDiff > 30;
+    // Vérifier l'expiration selon le type de plan
+    if (subscription.plan_type === 'starter') {
+      // Plan gratuit - vérifier la période d'essai de 30 jours
+      const createdAt = new Date(subscription.created_at);
+      const daysDiff = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+      trialExpired = daysDiff > 30;
+    } else {
+      // Plans payants - vérifier la date d'expiration
+      if (subscription.plan_expires_at) {
+        const expiresAt = new Date(subscription.plan_expires_at);
+        subscriptionExpired = now > expiresAt;
+        
+        // Si l'abonnement payant est expiré, on bloque tout
+        if (subscriptionExpired) {
+          trialExpired = true;
+        }
+      }
+    }
 
     res.json({
       success: true,
       subscription: subscription,
+      subscription_expired: subscriptionExpired,
       trial_expired: trialExpired,
-      days_since_creation: daysDiff,
-      days_remaining: Math.max(0, 30 - daysDiff)
+      plan_expires_at: subscription.plan_expires_at,
+      message: subscriptionExpired ? 'Abonnement expiré' : trialExpired ? 'Période d\'essai expirée' : 'Abonnement actif'
     });
 
   } catch (error) {
