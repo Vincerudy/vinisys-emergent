@@ -158,7 +158,7 @@ const Home = () => {
     // Fonction pour rediriger vers la page factures avec facture sélectionnée (pour factures en retard)
     const redirectToFacturePage = (facture) => {
         // Redirection vers la page factures avec l'ID de la facture en paramètre
-        navigate(`/factures?highlight=${facture.id}`, { 
+        navigate(`/facturation/factures?highlight=${facture.id}`, { 
             state: { 
                 selectedFactureId: facture.id,
                 openVisualization: true 
