@@ -226,6 +226,9 @@ router.post('/activate-subscription', async (req, res) => {
       const updateQuery = `
         UPDATE options_societe SET 
           enable_facturation = ?,
+          enable_notes_frais = ?,
+          enable_depenses = ?,
+          enable_rapport_financier = ?,
           enable_recette = ?,
           enable_mailing = ?,
           enable_relances_auto = ?,
@@ -243,6 +246,9 @@ router.post('/activate-subscription', async (req, res) => {
 
       await db.query(updateQuery, [
         features.enable_facturation,
+        features.enable_notes_frais,
+        features.enable_depenses,
+        features.enable_rapport_financier,
         features.enable_recette,
         features.enable_mailing,
         features.enable_relances_auto,
