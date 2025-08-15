@@ -326,8 +326,9 @@ router.post('/activate-subscription', async (req, res) => {
           societe_id, enable_facturation, enable_notes_frais, enable_depenses, enable_rapport_financier,
           enable_recette, enable_mailing, enable_relances_auto, enable_stock, enable_import_produits_services,
           enable_mouvements_stock, enable_inventaire_manuel, enable_inventaire_auto,
-          enable_user_input, enable_user_limit, user_limit, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+          enable_user_input, enable_user_limit, user_limit, plan_type, billing_period, plan_expires_at,
+          created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
       `;
 
       await db.query(insertQuery, [
@@ -346,7 +347,10 @@ router.post('/activate-subscription', async (req, res) => {
         features.enable_inventaire_auto,
         features.enable_user_input,
         features.enable_user_limit,
-        features.user_limit
+        features.user_limit,
+        planType,
+        billingPeriod || 'monthly',
+        expiresAt
       ]);
 
       console.log(`✅ Nouvel abonnement créé pour la société ${societe_id}`);
