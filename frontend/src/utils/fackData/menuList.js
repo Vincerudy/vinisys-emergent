@@ -201,6 +201,7 @@ export const menuList = [
         name: "Paramétrage",
         path: "#",
         icon: 'feather-settings',
+        permission: 'campany_setting', // Ajouté pour rendre visible
         dropdownMenu: [
             {
                 id: 1,
