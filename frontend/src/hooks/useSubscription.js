@@ -10,28 +10,19 @@ export const useSubscription = () => {
   // Récupérer les données d'abonnement
   useEffect(() => {
     const fetchSubscriptionData = async () => {
-      console.log(`🔍 useSubscription: Starting fetch - societe_id: ${societe_id}, isAuthenticated: ${isAuthenticated}`);
-      
       if (!societe_id || !isAuthenticated) {
-        console.log(`❌ useSubscription: Missing data - societe_id: ${societe_id}, isAuthenticated: ${isAuthenticated}`);
         setLoading(false);
         return;
       }
 
       try {
-        console.log(`🔍 useSubscription: Fetching subscription data for societe_id: ${societe_id}`);
         const response = await api.get(`/subscription-status/${societe_id}`);
-        
-        console.log(`📡 useSubscription: API Response:`, response.data);
         
         if (response.data.success) {
           setSubscriptionData(response.data);
-          console.log(`✅ useSubscription: Data loaded successfully`);
-        } else {
-          console.log(`❌ useSubscription: API success=false:`, response.data.message);
         }
       } catch (error) {
-        console.error(`❌ useSubscription: API Error:`, error.response?.data || error.message);
+        console.error('Erreur lors de la récupération des données d\'abonnement:', error);
       } finally {
         setLoading(false);
       }
