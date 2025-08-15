@@ -9,6 +9,7 @@ import html2pdf from 'html2pdf.js';
 import ReactDOM from 'react-dom';
 import dayjs from 'dayjs';
 import { useAuth } from '../contexte/AuthContext';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import 'dayjs/locale/fr';
 import locale from 'antd/es/locale/fr_FR';
 import iconEnveloppe from '../assets/email.png'; 
