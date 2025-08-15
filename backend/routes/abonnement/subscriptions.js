@@ -401,10 +401,8 @@ router.get('/subscription-status/:societe_id', async (req, res) => {
 
     // Vérifier l'expiration selon le type de plan
     if (subscription.plan_type === 'starter') {
-      // Plan gratuit - vérifier la période d'essai de 30 jours
-      const createdAt = new Date(subscription.created_at);
-      const daysDiff = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
-      trialExpired = daysDiff > 30;
+      // Plan gratuit - pas d'expiration, toujours actif
+      trialExpired = false;
     } else {
       // Plans payants - vérifier la date d'expiration
       if (subscription.plan_expires_at) {
