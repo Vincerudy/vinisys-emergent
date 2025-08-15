@@ -3,6 +3,7 @@ import LeadsOverviewChart from '@/components/widgetsCharts/LeadsOverviewChart'
 import LatestLeads from '@/components/widgetsTables/LatestLeads'
 import Schedule from '@/components/widgetsList/Schedule'
 import { useAuth } from '../contexte/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, Table, Statistic, Row, Col, Tag, DatePicker } from 'antd';
 import Project from '@/components/widgetsList/Project'
