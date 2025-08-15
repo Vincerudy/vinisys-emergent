@@ -48,30 +48,35 @@ export const menuList = [
         name: "Achats & Dépenses",
         path: "#",
         icon: 'feather-shopping-cart',
+        permission: 'view_depenses',
         dropdownMenu: [
             {
                 id: 1,
                 name: "Tableau de bord",
                 path: "/achats",
                 subdropdownMenu: false,
+                permission: 'view_depenses',
             },
             {
                 id: 2,
                 name: "Liste des dépenses",
                 path: "/achats/liste",
                 subdropdownMenu: false,
+                permission: 'view_depenses',
             },
             {
                 id: 3,
                 name: "Fournisseurs",
                 path: "/achats/fournisseurs",
                 subdropdownMenu: false,
+                permission: 'view_depenses',
             },
             {
                 id: 4,
                 name: "Paramétrage",
                 path: "/achats/parametrage",
                 subdropdownMenu: false,
+                permission: 'view_depenses',
             }
         ]
     },
