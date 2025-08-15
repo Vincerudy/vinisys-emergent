@@ -14,7 +14,7 @@ const ModaleFactureVisualization = ({
   return (
     <Modal
       title={`${facture.type === 'DEVI' ? 'Devis' : 'Facture'} N°${facture.invoiceNumber || facture.numero}`}
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={null}
       width={800}
