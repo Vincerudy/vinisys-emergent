@@ -245,6 +245,25 @@ router.post('/activate-subscription', async (req, res) => {
     const plan = SUBSCRIPTION_PLANS[planType];
     const features = plan.features;
 
+    // Calculer la date d'expiration selon la période de facturation
+    let expiresAt = null;
+    if (planType !== 'starter') { // Le plan gratuit n'expire pas
+      const now = new Date();
+      switch (billingPeriod) {
+        case 'monthly':
+          expiresAt = new Date(now.setMonth(now.getMonth() + 1));
+          break;
+        case 'quarterly':
+          expiresAt = new Date(now.setMonth(now.getMonth() + 3));
+          break;
+        case 'yearly':
+          expiresAt = new Date(now.setFullYear(now.getFullYear() + 1));
+          break;
+        default:
+          expiresAt = new Date(now.setMonth(now.getMonth() + 1));
+      }
+    }
+
     // Vérifier si la société existe dans options_societe
     const [existing] = await db.query(
       'SELECT id FROM options_societe WHERE societe_id = ?',
@@ -270,6 +289,9 @@ router.post('/activate-subscription', async (req, res) => {
           enable_user_input = ?,
           enable_user_limit = ?,
           user_limit = ?,
+          plan_type = ?,
+          billing_period = ?,
+          plan_expires_at = ?,
           updated_at = NOW()
         WHERE societe_id = ?
       `;
@@ -290,6 +312,9 @@ router.post('/activate-subscription', async (req, res) => {
         features.enable_user_input,
         features.enable_user_limit,
         features.user_limit,
+        planType,
+        billingPeriod || 'monthly',
+        expiresAt,
         societe_id
       ]);
 
