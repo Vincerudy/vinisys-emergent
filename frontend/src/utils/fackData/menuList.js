@@ -139,42 +139,49 @@ export const menuList = [
         name: "Notes de frais",
         path: "#",
         icon: 'feather-file-text',
+        permission: 'view_notes_frais',
         dropdownMenu: [
             {
                 id: 1,
                 name: "Tableau de bord",
                 path: "/notes-frais",
                 subdropdownMenu: false,
+                permission: 'view_notes_frais',
             },
             {
                 id: 2,
                 name: "Liste des notes",
                 path: "/notes-frais/liste",
                 subdropdownMenu: false,
+                permission: 'view_notes_frais',
             },
             {
                 id: 3,
                 name: "Créer une note",
                 path: "/notes-frais/nouvelle",
                 subdropdownMenu: false,
+                permission: 'create_expense',
             },
             {
                 id: 6,
                 name: "Paramétrage",
                 path: "/notes-frais/parametrage",
                 subdropdownMenu: false,
+                permission: 'manage_expense_categories',
             },
             {
                 id: 4,
                 name: "Validation notes",
                 path: "/notes-frais/validation",
                 subdropdownMenu: false,
+                permission: 'validate_expenses',
             },
             {
                 id: 5,
                 name: "Historique",
                 path: "/notes-frais/historique",
                 subdropdownMenu: false,
+                permission: 'view_notes_frais',
             }
         ]
     },
