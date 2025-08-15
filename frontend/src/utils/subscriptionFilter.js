@@ -34,9 +34,9 @@ export const SUBSCRIPTION_FEATURES_MAP = {
   'manage_inventory': 'inventaire_manuel',
   'import_products': 'import_produits',
   
-  // Paramétrage - Toujours disponible (facturation incluse)
-  'campany_setting': 'facturation',
-  'view_users': 'facturation',
+  // Paramétrage - Toujours disponible pour tous les plans
+  'campany_setting': true,
+  'view_users': true,
   
   // Dashboard - Toujours disponible
   'view_dashboard': true,
