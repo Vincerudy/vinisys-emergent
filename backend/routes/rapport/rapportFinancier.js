@@ -5,7 +5,17 @@ const db = require('../../config/db');
 // GET /api/rapport/financier/:societeId - Générer rapport financier complet
 router.get('/:societeId', async (req, res) => {
     const { societeId } = req.params;
-    const { date_debut, date_fin, periode } = req.query;
+    let { date_debut, date_fin, periode } = req.query;
+    
+    // Si aucune date n'est fournie, utiliser le mois courant
+    if (!date_debut || !date_fin) {
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        
+        date_debut = firstDay.toISOString().split('T')[0];
+        date_fin = lastDay.toISOString().split('T')[0];
+    }
     
     const connection = await db.getConnection();
     
