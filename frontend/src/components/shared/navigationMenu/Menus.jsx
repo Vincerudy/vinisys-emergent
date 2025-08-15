@@ -92,7 +92,7 @@ const Menus = () => {
                         </span>
                     </Link>
                 </li>
-                {filteredMenuList.map(({ dropdownMenu, id, name, path, icon }) => {
+                {filteredMenuList.map(({ dropdownMenu, id, name, path, icon, permission }) => {
   // Filtrer dropdownMenu selon permission si elle existe
   const filteredDropdown = Array.isArray(dropdownMenu) ? dropdownMenu.filter(item => {
     if (!item.permission) return true; // pas de permission => afficher
