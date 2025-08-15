@@ -100,6 +100,7 @@ const fetchDataGraph = async (vale) => {
 
 const Home = () => {
     const { id, societe_id, token, logout  } = useAuth(); 
+    const navigate = useNavigate(); 
  
   
     const [clientList, setClientList] = useState([]);
