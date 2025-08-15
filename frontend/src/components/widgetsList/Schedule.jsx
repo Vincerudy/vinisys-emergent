@@ -6,7 +6,7 @@ import ImageGroup from '@/components/shared/ImageGroup'
 import useCardTitleActions from '@/hooks/useCardTitleActions'
 import CardLoader from '@/components/shared/CardLoader'
 
-const Schedule = ({ title, facturesRetard }) => {
+const Schedule = ({ title, facturesRetard, onFactureClick }) => {
 
     console.log('facturesRetard', facturesRetard)
     const { refreshKey, isRemoved, isExpanded, handleRefresh, handleExpand, handleDelete } = useCardTitleActions();
