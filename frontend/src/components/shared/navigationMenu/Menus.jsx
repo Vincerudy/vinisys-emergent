@@ -94,12 +94,16 @@ const Menus = () => {
                 </li>
                 {filteredMenuList.map(({ dropdownMenu, id, name, path, icon, permission }) => {
   
-  // DEBUG - Log pour vérifier le mapping
-  if (name === "Notes de frais" || name === "Achats & Dépenses" || name === "Rapport") {
-    console.log(`🔍 DEBUG Menu ${name}:`, {
+  // LOG DÉTAILLÉ pour Notes de frais spécifiquement
+  if (name === "Notes de frais") {
+    console.log(`🔍 MENU DEBUG Notes de frais:`, {
+      name,
       permission,
+      subscriptionLoading: loading,
+      subscriptionData: subscriptionData,
       mappedFeature: SUBSCRIPTION_FEATURES_MAP[permission],
-      hasFeatureResult: SUBSCRIPTION_FEATURES_MAP[permission] ? hasFeature(SUBSCRIPTION_FEATURES_MAP[permission]) : 'NO_MAPPING'
+      hasFeatureResult: SUBSCRIPTION_FEATURES_MAP[permission] ? hasFeature(SUBSCRIPTION_FEATURES_MAP[permission]) : 'NO_MAPPING',
+      enable_notes_frais: subscriptionData?.subscription?.enable_notes_frais
     });
   }
   
