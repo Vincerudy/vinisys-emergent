@@ -256,10 +256,8 @@ const Home = () => {
                           size="small"
                           onRow={(record) => ({
                             onClick: () => {
-                              console.log('Ligne cliquée :', record);
-                              // Exemple : ouvrir une modal, panneau, ou rediriger
-                              // showModal(record);
-                              // navigate(`/societes/${record.id}`);
+                              console.log('Activité récente cliquée :', record);
+                              openFactureModal(record);
                             },
                             style: { cursor: 'pointer' }
                           })}
