@@ -75,6 +75,10 @@ export const useSubscription = () => {
         return subscription.enable_inventaire_auto === 1;
       case 'user_input':
         return subscription.enable_user_input === 1;
+      case 'campany_setting':
+        return subscription.enable_user_input === 1;
+      case 'view_users':
+        return subscription.enable_user_limit === 1;
       default:
         console.log(`✅ useSubscription: '${featureName}' = true (default)`);
         return true; // Fonctionnalités de base (dashboard, paramétrage, etc.) toujours disponibles
