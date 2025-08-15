@@ -94,8 +94,18 @@ const Menus = () => {
                 </li>
                 {filteredMenuList.map(({ dropdownMenu, id, name, path, icon, permission }) => {
   
+  // DEBUG - Log pour vérifier le mapping
+  if (name === "Notes de frais" || name === "Achats & Dépenses" || name === "Rapport") {
+    console.log(`🔍 DEBUG Menu ${name}:`, {
+      permission,
+      mappedFeature: SUBSCRIPTION_FEATURES_MAP[permission],
+      hasFeatureResult: SUBSCRIPTION_FEATURES_MAP[permission] ? hasFeature(SUBSCRIPTION_FEATURES_MAP[permission]) : 'NO_MAPPING'
+    });
+  }
+  
   // ÉTAPE 1: Vérifier d'abord si la société a accès à cette fonctionnalité selon son plan
-  if (permission && !hasFeature(SUBSCRIPTION_FEATURES_MAP[permission])) {
+  if (permission && SUBSCRIPTION_FEATURES_MAP[permission] && !hasFeature(SUBSCRIPTION_FEATURES_MAP[permission])) {
+    console.log(`❌ Menu ${name} caché - plan société n'a pas la fonctionnalité ${SUBSCRIPTION_FEATURES_MAP[permission]}`);
     return null; // La société n'a pas cette fonctionnalité dans son plan
   }
   
