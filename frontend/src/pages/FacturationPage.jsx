@@ -188,6 +188,35 @@ const FacturationPage = ( ) => {
     obtenirFactures();
   }, []);
 
+  // useEffect pour gérer le paramètre highlight depuis l'URL
+  useEffect(() => {
+    const highlightId = searchParams.get('highlight');
+    const openVisualization = location.state?.openVisualization;
+    
+    if (highlightId) {
+      console.log(`📋 Highlighting facture with ID: ${highlightId}`);
+      setHighlightedFactureId(parseInt(highlightId));
+      
+      // Si demandé, ouvrir automatiquement la visualisation
+      if (openVisualization) {
+        setAutoOpenVisualization(true);
+      }
+    }
+  }, [searchParams, location.state]);
+
+  // useEffect pour ouvrir automatiquement la facture quand les données sont chargées
+  useEffect(() => {
+    if (autoOpenVisualization && highlightedFactureId && invoices.length > 0) {
+      const factureToOpen = invoices.find(f => f.id === highlightedFactureId);
+      if (factureToOpen) {
+        console.log(`🔍 Auto-opening facture for visualization:`, factureToOpen);
+        setSelectedFactureForVisualization(factureToOpen);
+        setVisualizationModalVisible(true);
+        setAutoOpenVisualization(false); // Reset pour éviter les réouvertures
+      }
+    }
+  }, [autoOpenVisualization, highlightedFactureId, invoices]);
+
  
 
   const filteredInvoices = invoices?.filter((invoice) => {
