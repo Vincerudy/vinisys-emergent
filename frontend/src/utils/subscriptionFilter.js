@@ -43,10 +43,6 @@ export const SUBSCRIPTION_FEATURES_MAP = {
   'view_profile': true,
   'view_settings': true
 };
-  'view_profile': true,
-  'view_settings': true,
-  'access_reports': true
-};
 
 // Fonction pour filtrer le menu selon l'abonnement
 export const filterMenuBySubscription = (menuItems, hasFeature) => {
