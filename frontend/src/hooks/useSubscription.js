@@ -61,8 +61,7 @@ export const useSubscription = () => {
       case 'facturation':
         const result = subscription.enable_facturation === 1;
         console.log(`✅ useSubscription: facturation = ${result}`, subscription);
-        // Force retourner true pour debug
-        return true;
+        return result;
       case 'notes_frais':
         return subscription.enable_notes_frais === 1;
       case 'depenses':
