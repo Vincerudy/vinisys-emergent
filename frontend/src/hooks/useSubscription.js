@@ -44,6 +44,12 @@ export const useSubscription = () => {
     switch (featureName) {
       case 'facturation':
         return subscription.enable_facturation === 1;
+      case 'notes_frais':
+        return subscription.enable_notes_frais === 1;
+      case 'depenses':
+        return subscription.enable_depenses === 1;
+      case 'rapport_financier':
+        return subscription.enable_rapport_financier === 1;
       case 'recette':
         return subscription.enable_recette === 1;
       case 'mailing':
@@ -62,10 +68,8 @@ export const useSubscription = () => {
         return subscription.enable_inventaire_auto === 1;
       case 'user_input':
         return subscription.enable_user_input === 1;
-      case 'notes_frais':
-        return subscription.enable_facturation === 1; // Notes de frais liées à facturation
       default:
-        return true; // Fonctionnalités de base toujours disponibles
+        return true; // Fonctionnalités de base (dashboard, paramétrage, etc.) toujours disponibles
     }
   };
 
