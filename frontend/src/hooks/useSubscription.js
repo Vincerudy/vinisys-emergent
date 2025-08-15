@@ -50,9 +50,7 @@ export const useSubscription = () => {
 
     switch (featureName) {
       case 'facturation':
-        const result = subscription.enable_facturation === 1;
-        console.log(`✅ useSubscription: facturation = ${result}`, subscription);
-        return result;
+        return subscription.enable_facturation === 1;
       case 'notes_frais':
         return subscription.enable_notes_frais === 1;
       case 'depenses':
