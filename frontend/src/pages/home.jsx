@@ -122,6 +122,10 @@ const Home = () => {
       const [facturesRetard, setFacturesRetard] = useState([])
       const [salesDataGraphCircle, setsalesDataGraphCircle] = useState([]);
       const [societes, setSocietes] = useState([]);
+    
+    // États pour la modal facture
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedFacture, setSelectedFacture] = useState(null);
 
 
 
