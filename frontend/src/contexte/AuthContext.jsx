@@ -47,8 +47,10 @@ export const AuthProvider = ({ children }) => {
     setUrlPhoto('');
   };
 
+  const isAuthenticated = !!token; // Dérivé du token
+
   return (
-    <AuthContext.Provider value={{ token, id, email, permissions, urlPhoto, societe_id, login, logout }}>
+    <AuthContext.Provider value={{ token, id, email, permissions, urlPhoto, societe_id, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
