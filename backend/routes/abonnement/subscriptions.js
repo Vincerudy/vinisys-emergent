@@ -268,16 +268,19 @@ router.post('/activate-subscription', async (req, res) => {
       // Création d'un nouvel enregistrement
       const insertQuery = `
         INSERT INTO options_societe (
-          societe_id, enable_facturation, enable_recette, enable_mailing,
-          enable_relances_auto, enable_stock, enable_import_produits_services,
+          societe_id, enable_facturation, enable_notes_frais, enable_depenses, enable_rapport_financier,
+          enable_recette, enable_mailing, enable_relances_auto, enable_stock, enable_import_produits_services,
           enable_mouvements_stock, enable_inventaire_manuel, enable_inventaire_auto,
           enable_user_input, enable_user_limit, user_limit, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
       `;
 
       await db.query(insertQuery, [
         societe_id,
         features.enable_facturation,
+        features.enable_notes_frais,
+        features.enable_depenses,
+        features.enable_rapport_financier,
         features.enable_recette,
         features.enable_mailing,
         features.enable_relances_auto,
