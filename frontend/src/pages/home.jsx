@@ -240,7 +240,11 @@ const Home = () => {
                 <div className='row'>
                     <SiteOverviewStatistics parametrage={parametrage} />
                     <PaymentRecordChart salesDataGraph={salesDataGraph} />
-                    <Schedule facturesRetard={facturesRetard} title={"Factures en retard"}  />
+                    <Schedule 
+                        facturesRetard={facturesRetard} 
+                        title={"Factures en retard"} 
+                        onFactureClick={redirectToFacturePage}
+                    />
                     <Col xs={22} md={8}>
                     <Card
                         title="Activités recentes"
