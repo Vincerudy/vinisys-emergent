@@ -141,7 +141,30 @@ const Home = () => {
  
       const para = await fetchParamétrages(vale)
       setParametrage(para)
-  }
+    }
+
+    // Fonction pour ouvrir la modal avec une facture (pour activités récentes)
+    const openFactureModal = (facture) => {
+        setSelectedFacture(facture);
+        setModalVisible(true);
+    };
+
+    // Fonction pour fermer la modal
+    const closeFactureModal = () => {
+        setModalVisible(false);
+        setSelectedFacture(null);
+    };
+
+    // Fonction pour rediriger vers la page factures avec facture sélectionnée (pour factures en retard)
+    const redirectToFacturePage = (facture) => {
+        // Redirection vers la page factures avec l'ID de la facture en paramètre
+        navigate(`/factures?highlight=${facture.id}`, { 
+            state: { 
+                selectedFactureId: facture.id,
+                openVisualization: true 
+            } 
+        });
+    };
 
     useEffect(() => {
  
