@@ -16,13 +16,19 @@ export const useSubscription = () => {
       }
 
       try {
+        console.log(`🔍 useSubscription: Fetching subscription data for societe_id: ${societe_id}`);
         const response = await api.get(`/subscription-status/${societe_id}`);
+        
+        console.log(`📡 useSubscription: API Response:`, response.data);
         
         if (response.data.success) {
           setSubscriptionData(response.data);
+          console.log(`✅ useSubscription: Data loaded successfully`);
+        } else {
+          console.log(`❌ useSubscription: API success=false:`, response.data.message);
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération du statut d\'abonnement:', error);
+        console.error(`❌ useSubscription: API Error:`, error.response?.data || error.message);
       } finally {
         setLoading(false);
       }
