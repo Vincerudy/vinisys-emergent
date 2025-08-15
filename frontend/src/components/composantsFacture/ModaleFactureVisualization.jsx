@@ -1,6 +1,5 @@
 import React from 'react';
-import { Modal } from 'antd';
-import ModeleFacture from './ModeleFacture';
+import { Modal, Descriptions, Tag } from 'antd';
 
 const ModaleFactureVisualization = ({ 
   visible, 
@@ -17,17 +16,43 @@ const ModaleFactureVisualization = ({
       open={visible}
       onCancel={onClose}
       footer={null}
-      width={800}
+      width={600}
       centered
       className="facture-modal"
     >
       <div style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-        <ModeleFacture 
-          factures={facture}
-          type={facture.type}
-          parametrage={parametrage}
-          tvas={tvas}
-        />
+        <Descriptions title="Informations de la facture" bordered>
+          <Descriptions.Item label="Numéro">
+            {facture.invoiceNumber || facture.numero}
+          </Descriptions.Item>
+          <Descriptions.Item label="Type">
+            {facture.type === 'DEVI' ? 'Devis' : 'Facture'}
+          </Descriptions.Item>
+          <Descriptions.Item label="Date">
+            {facture.date}
+          </Descriptions.Item>
+          <Descriptions.Item label="Client">
+            {facture.client}
+          </Descriptions.Item>
+          <Descriptions.Item label="Montant">
+            {facture.totalAmount}
+          </Descriptions.Item>
+          <Descriptions.Item label="Statut">
+            <Tag color={
+              facture.statut === 'accepté' ? 'green' :
+              facture.statut === 'en attente' ? 'orange' :
+              facture.statut === 'payée' ? 'blue' : 'default'
+            }>
+              {facture.statut}
+            </Tag>
+          </Descriptions.Item>
+        </Descriptions>
+        
+        {/* Note pour l'utilisation complète de ModeleFacture */}
+        <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
+          <p><strong>Note :</strong> Pour une visualisation complète de la facture avec tous les détails, 
+          veuillez vous rendre dans la section Facturation.</p>
+        </div>
       </div>
     </Modal>
   );
