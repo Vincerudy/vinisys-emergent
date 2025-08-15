@@ -95,7 +95,7 @@ const Menus = () => {
                 {filteredMenuList.map(({ dropdownMenu, id, name, path, icon, permission }) => {
   
   // ÉTAPE 1: Vérifier d'abord si la société a accès à cette fonctionnalité selon son plan
-  if (permission && !hasFeature(getFeatureFromPermission(permission))) {
+  if (permission && !hasFeature(SUBSCRIPTION_FEATURES_MAP[permission])) {
     return null; // La société n'a pas cette fonctionnalité dans son plan
   }
   
