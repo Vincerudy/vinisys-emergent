@@ -1,5 +1,7 @@
-import React from 'react';
-import { Modal, Descriptions, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Modal, Spin } from 'antd';
+import ModeleFacture from './ModeleFacture';
+import axios from 'axios';
 
 const ModaleFactureVisualization = ({ 
   visible, 
@@ -8,6 +10,46 @@ const ModaleFactureVisualization = ({
   parametrage,
   tvas 
 }) => {
+  const [factureCompleteData, setFactureCompleteData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Fonction pour récupérer les données complètes de la facture
+  const fetchFactureComplete = async (factureId, societeId) => {
+    if (!factureId || !societeId) return;
+    
+    setLoading(true);
+    try {
+      // Récupérer toutes les factures pour trouver celle avec les détails complets
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/listeFacture/${societeId}`);
+      const factures = response.data;
+      
+      // Trouver la facture spécifique
+      const factureComplete = factures.find(f => f.id === factureId);
+      
+      if (factureComplete) {
+        console.log('Facture complète trouvée:', factureComplete);
+        setFactureCompleteData(factureComplete);
+      } else {
+        console.error('Facture non trouvée dans la liste');
+        setFactureCompleteData(facture); // Fallback sur les données de base
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la facture complète:', error);
+      setFactureCompleteData(facture); // Fallback sur les données de base
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Charger les données complètes quand la modal s'ouvre
+  useEffect(() => {
+    if (visible && facture && facture.id) {
+      // Extraire societe_id du contexte ou des données de facture
+      const societeId = facture.societe_id || 2; // Fallback sur 2
+      fetchFactureComplete(facture.id, societeId);
+    }
+  }, [visible, facture]);
+
   if (!facture) return null;
 
   return (
@@ -16,43 +58,28 @@ const ModaleFactureVisualization = ({
       open={visible}
       onCancel={onClose}
       footer={null}
-      width={600}
+      width={900}
       centered
       className="facture-modal"
     >
       <div style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-        <Descriptions title="Informations de la facture" bordered>
-          <Descriptions.Item label="Numéro">
-            {facture.invoiceNumber || facture.numero}
-          </Descriptions.Item>
-          <Descriptions.Item label="Type">
-            {facture.type === 'DEVI' ? 'Devis' : 'Facture'}
-          </Descriptions.Item>
-          <Descriptions.Item label="Date">
-            {facture.date}
-          </Descriptions.Item>
-          <Descriptions.Item label="Client">
-            {facture.client}
-          </Descriptions.Item>
-          <Descriptions.Item label="Montant">
-            {facture.totalAmount}
-          </Descriptions.Item>
-          <Descriptions.Item label="Statut">
-            <Tag color={
-              facture.statut === 'accepté' ? 'green' :
-              facture.statut === 'en attente' ? 'orange' :
-              facture.statut === 'payée' ? 'blue' : 'default'
-            }>
-              {facture.statut}
-            </Tag>
-          </Descriptions.Item>
-        </Descriptions>
-        
-        {/* Note pour l'utilisation complète de ModeleFacture */}
-        <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
-          <p><strong>Note :</strong> Pour une visualisation complète de la facture avec tous les détails, 
-          veuillez vous rendre dans la section Facturation.</p>
-        </div>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <Spin size="large" />
+            <p>Chargement des détails de la facture...</p>
+          </div>
+        ) : factureCompleteData ? (
+          <ModeleFacture 
+            factures={factureCompleteData}
+            type={factureCompleteData.type_fact || facture.type}
+            parametrage={parametrage}
+            tvas={tvas || []}
+          />
+        ) : (
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <p>Impossible de charger les détails de la facture.</p>
+          </div>
+        )}
       </div>
     </Modal>
   );
