@@ -103,7 +103,13 @@ const Menus = () => {
   const filteredDropdown = Array.isArray(dropdownMenu) ? dropdownMenu.filter(item => {
     if (!item.permission) return true; // pas de permission => afficher
 
-    return hasPermission(item.permission); // sinon filtrer avec la fonction
+    // D'abord vérifier le plan société
+    if (!hasFeature(getFeatureFromPermission(item.permission))) {
+      return false; // La société n'a pas cette fonctionnalité
+    }
+    
+    // Ensuite vérifier les permissions utilisateur
+    return hasPermission(item.permission);
   }) : [];
 
 
