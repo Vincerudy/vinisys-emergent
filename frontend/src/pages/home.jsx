@@ -16,6 +16,7 @@ import PageHeaderDate from '@/components/shared/pageHeader/PageHeaderDate'
 import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import Footer from '@/components/shared/Footer'
 import { projectsDataTwo } from '@/utils/fackData/projectsDataTwo'
+import ModaleFactureVisualization from '@/components/composantsFacture/ModaleFactureVisualization'
 
 const fetchDataFactures = async (vale) => {
 
