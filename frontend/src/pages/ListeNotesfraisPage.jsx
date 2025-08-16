@@ -548,7 +548,7 @@ const ListeNotesfraisPage = () => {
           </button>
           
           <div className="pagination-info">
-            Page {currentPage} sur {totalPages} ({filteredNotes.length} résultats)
+            Page {currentPage} sur {totalPages} ({totalNotes} résultats)
           </div>
           
           <button
