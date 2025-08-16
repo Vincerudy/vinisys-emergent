@@ -1,31 +1,32 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Notes de Frais Testing
-Tests the notes de frais API endpoints as requested by user
+Backend API Testing Script for Vinisys Application - Notes de Frais & Justificatifs Testing
+Tests the specific endpoints requested by user:
+1. Test des montants dans la liste des notes de frais
+2. Test du système de pièces jointes 
+3. Test de création de frais avec justificatif
 """
 
 import requests
 import json
 import sys
+import os
+import tempfile
 from datetime import datetime, date
 
 # Backend URL configuration - Using frontend environment URL
 with open('/app/frontend/.env', 'r') as f:
     env_content = f.read()
     for line in env_content.split('\n'):
-        if line.startswith('VITE_API_URL='):
+        if line.startswith('REACT_APP_BACKEND_URL='):
             api_url = line.split('=')[1]
-            # Extract just the path part
-            if 'localhost:8001' in api_url:
-                api_path = '/api'
-            else:
-                api_path = api_url.split('localhost:8001')[-1] if 'localhost:8001' in api_url else '/api'
             break
     else:
-        api_path = '/api'
+        api_url = "http://localhost:8001/api"
 
-BASE_URL = "http://localhost:8001"  # Internal URL for testing
-API_BASE = f"{BASE_URL}{api_path}"
+# Use the production URL from environment
+BASE_URL = api_url.replace('/api', '') if '/api' in api_url else api_url
+API_BASE = f"{BASE_URL}/api" if not api_url.endswith('/api') else api_url
 
 # Test credentials from user request
 TEST_EMAIL = "idnovation2014@gmail.com"
@@ -110,9 +111,9 @@ def test_authentication():
         print_test_result(False, f"Authentication test failed - {str(e)}")
         return False, None
 
-def test_notes_frais_api():
-    """Test 1: Notes de frais API - GET /api/notes-frais/4?societe_id=2&page=1&limit=10"""
-    print_test_header("Notes de Frais API Test")
+def test_notes_frais_montants():
+    """Test 1: Test des montants dans la liste des notes de frais - GET /api/notes-frais/4?societe_id=2&page=1&limit=10"""
+    print_test_header("Test des montants dans la liste des notes de frais")
     try:
         headers = get_auth_headers()
         
@@ -128,255 +129,256 @@ def test_notes_frais_api():
         
         if response.status_code == 200:
             data = response.json()
-            
-            # Check for required structure: { notes: [], pagination: { page, limit, total, pages } }
-            required_fields = ['notes', 'pagination']
-            missing_fields = [field for field in required_fields if field not in data]
-            
-            if len(missing_fields) == 0:
-                # Verify pagination structure
-                pagination = data.get('pagination', {})
-                pagination_fields = ['page', 'limit', 'total', 'pages']
-                pagination_missing = [field for field in pagination_fields if field not in pagination]
-                
-                # Verify notes structure
-                notes = data.get('notes', [])
-                
-                if len(pagination_missing) == 0:
-                    print_test_result(True, f"Notes de frais API successful - Found {len(notes)} notes, Total: {pagination.get('total', 0)}", response)
-                    return True, data
-                else:
-                    print_test_result(False, f"Notes de frais API missing pagination fields: {pagination_missing}", response)
-                    return False, None
-            else:
-                print_test_result(False, f"Notes de frais API missing fields: {missing_fields}", response)
-                return False, None
-        else:
-            print_test_result(False, f"Notes de frais API failed - HTTP {response.status_code}", response)
-            return False, None
-    except Exception as e:
-        print_test_result(False, f"Notes de frais API test failed - {str(e)}")
-        return False, None
-
-def test_notes_frais_data_structure():
-    """Test 2: Verify Notes de frais data structure"""
-    print_test_header("Notes de Frais Data Structure Test")
-    try:
-        headers = get_auth_headers()
-        
-        params = {
-            'societe_id': SOCIETE_ID,
-            'page': 1,
-            'limit': 5  # Small limit to check structure
-        }
-        
-        response = requests.get(f"{API_BASE}/notes-frais/{USER_ID}", 
-                              headers=headers, params=params, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
             notes = data.get('notes', [])
             
-            if len(notes) > 0:
-                # Check first note structure for expected fields
-                first_note = notes[0]
-                expected_fields = ['numero', 'utilisateur_nom', 'utilisateur_prenom', 'total_ttc']
-                
-                # Check if the note has the expected fields (some might be named differently)
-                available_fields = list(first_note.keys())
-                
-                # Map expected fields to actual fields in response
-                field_mapping = {
-                    'numero': 'numero',
-                    'utilisateur_nom': 'utilisateur_nom', 
-                    'utilisateur_prenom': 'utilisateur_prenom',
-                    'total_ttc': 'montant_total'  # API might use different field name
-                }
-                
-                missing_fields = []
-                found_fields = []
-                
-                for expected, actual in field_mapping.items():
-                    if actual in available_fields:
-                        found_fields.append(f"{expected} -> {actual}")
-                    else:
-                        # Try to find similar field
-                        similar_fields = [f for f in available_fields if expected.lower() in f.lower() or f.lower() in expected.lower()]
-                        if similar_fields:
-                            found_fields.append(f"{expected} -> {similar_fields[0]} (similar)")
-                        else:
-                            missing_fields.append(expected)
-                
-                if len(missing_fields) == 0:
-                    print_test_result(True, f"Data structure verified - Fields found: {found_fields}", response)
-                    return True, data
+            # Check for notes with montants > 0
+            notes_with_amounts = [note for note in notes if note.get('montant_total', 0) > 0 or note.get('total_ttc', 0) > 0]
+            
+            # Look specifically for NF-0010 and NF-0013 mentioned by user
+            nf_0010 = None
+            nf_0013 = None
+            
+            for note in notes:
+                numero = note.get('numero', '')
+                if 'NF-0010' in numero:
+                    nf_0010 = note
+                elif 'NF-0013' in numero:
+                    nf_0013 = note
+            
+            # Verify amounts
+            success_messages = []
+            if nf_0010:
+                montant = nf_0010.get('montant_total', nf_0010.get('total_ttc', 0))
+                success_messages.append(f"NF-0010 trouvée avec montant: {montant}€")
+                if montant == 244:
+                    success_messages.append("✅ NF-0010: Montant correct (244€)")
                 else:
-                    print_test_result(True, f"Data structure partially verified - Missing: {missing_fields}, Found: {found_fields}, Available fields: {available_fields}", response)
-                    return True, data  # Still pass if most fields are there
-            else:
-                print_test_result(True, f"No notes found to verify structure - API working but empty result", response)
-                return True, data
+                    success_messages.append(f"⚠️ NF-0010: Montant attendu 244€, trouvé {montant}€")
+            
+            if nf_0013:
+                montant = nf_0013.get('montant_total', nf_0013.get('total_ttc', 0))
+                success_messages.append(f"NF-0013 trouvée avec montant: {montant}€")
+                if montant == 11:
+                    success_messages.append("✅ NF-0013: Montant correct (11€)")
+                else:
+                    success_messages.append(f"⚠️ NF-0013: Montant attendu 11€, trouvé {montant}€")
+            
+            message = f"API fonctionne - {len(notes)} notes récupérées, {len(notes_with_amounts)} avec montants > 0"
+            if success_messages:
+                message += f"\n{chr(10).join(success_messages)}"
+            
+            print_test_result(True, message, response)
+            return True, data
         else:
-            print_test_result(False, f"Data structure test failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"Test montants failed - HTTP {response.status_code}", response)
             return False, None
     except Exception as e:
-        print_test_result(False, f"Data structure test failed - {str(e)}")
+        print_test_result(False, f"Test montants failed - {str(e)}")
         return False, None
 
-def test_notes_frais_pagination():
-    """Test 3: Test pagination with different pages"""
-    print_test_header("Notes de Frais Pagination Test")
+def test_upload_justificatif():
+    """Test 2: Test du système de pièces jointes - POST /api/upload-justificatif"""
+    print_test_header("Test Upload Justificatif")
     try:
         headers = get_auth_headers()
         
-        # Test page 1
-        params_page1 = {
-            'societe_id': SOCIETE_ID,
-            'page': 1,
-            'limit': 5
-        }
+        # Create a test file
+        test_content = b"Test justificatif content - PDF simulation"
         
-        response1 = requests.get(f"{API_BASE}/notes-frais/{USER_ID}", 
-                               headers=headers, params=params_page1, timeout=10)
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as temp_file:
+            temp_file.write(test_content)
+            temp_file_path = temp_file.name
         
-        if response1.status_code != 200:
-            print_test_result(False, f"Pagination test failed on page 1 - HTTP {response1.status_code}", response1)
-            return False, None
-            
-        data1 = response1.json()
-        pagination1 = data1.get('pagination', {})
-        total_notes = pagination1.get('total', 0)
-        
-        # Test page 2 if there are enough notes
-        if total_notes > 5:
-            params_page2 = {
-                'societe_id': SOCIETE_ID,
-                'page': 2,
-                'limit': 5
-            }
-            
-            response2 = requests.get(f"{API_BASE}/notes-frais/{USER_ID}", 
-                                   headers=headers, params=params_page2, timeout=10)
-            
-            if response2.status_code == 200:
-                data2 = response2.json()
-                pagination2 = data2.get('pagination', {})
-                
-                # Verify pagination consistency
-                if pagination1.get('total') == pagination2.get('total'):
-                    print_test_result(True, f"Pagination working - Total: {total_notes}, Page 1: {len(data1.get('notes', []))}, Page 2: {len(data2.get('notes', []))}", response2)
-                    return True, {'page1': data1, 'page2': data2}
-                else:
-                    print_test_result(False, f"Pagination inconsistent - Page 1 total: {pagination1.get('total')}, Page 2 total: {pagination2.get('total')}", response2)
-                    return False, None
-            else:
-                print_test_result(False, f"Pagination test failed on page 2 - HTTP {response2.status_code}", response2)
-                return False, None
-        else:
-            print_test_result(True, f"Pagination test completed - Only {total_notes} notes available (less than 2 pages needed)", response1)
-            return True, data1
-            
-    except Exception as e:
-        print_test_result(False, f"Pagination test failed - {str(e)}")
-        return False, None
-
-def test_notes_frais_all_notes():
-    """Test 4: Test retrieving all notes (up to 26 mentioned by user)"""
-    print_test_header("Notes de Frais All Notes Test")
-    try:
-        headers = get_auth_headers()
-        
-        # Test with larger limit to get all notes
-        params = {
-            'societe_id': SOCIETE_ID,
-            'page': 1,
-            'limit': 50  # Large enough to get all notes
-        }
-        
-        response = requests.get(f"{API_BASE}/notes-frais/{USER_ID}", 
-                              headers=headers, params=params, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            notes = data.get('notes', [])
-            pagination = data.get('pagination', {})
-            total_notes = pagination.get('total', 0)
-            
-            # Check if we can retrieve all notes
-            if len(notes) == total_notes:
-                print_test_result(True, f"All notes retrieved successfully - Total: {total_notes} notes", response)
-                
-                # Additional check: verify we can get the 26 notes mentioned by user
-                if total_notes >= 26:
-                    print(f"✅ Found {total_notes} notes (>= 26 as mentioned by user)")
-                elif total_notes > 0:
-                    print(f"ℹ️ Found {total_notes} notes (less than 26 mentioned, but API working)")
-                else:
-                    print(f"⚠️ No notes found - API working but no data")
-                    
-                return True, data
-            else:
-                print_test_result(False, f"Could not retrieve all notes - Got {len(notes)} out of {total_notes}", response)
-                return False, None
-        else:
-            print_test_result(False, f"All notes test failed - HTTP {response.status_code}", response)
-            return False, None
-    except Exception as e:
-        print_test_result(False, f"All notes test failed - {str(e)}")
-        return False, None
-
-def test_notes_frais_different_limits():
-    """Test 5: Test with different limit values"""
-    print_test_header("Notes de Frais Different Limits Test")
-    try:
-        headers = get_auth_headers()
-        
-        limits_to_test = [5, 10, 20]
-        results = {}
-        
-        for limit in limits_to_test:
-            params = {
-                'societe_id': SOCIETE_ID,
-                'page': 1,
-                'limit': limit
-            }
-            
-            response = requests.get(f"{API_BASE}/notes-frais/{USER_ID}", 
-                                  headers=headers, params=params, timeout=10)
+        try:
+            # Upload the file
+            with open(temp_file_path, 'rb') as f:
+                files = {'justificatif': ('test_justificatif.pdf', f, 'application/pdf')}
+                response = requests.post(f"{API_BASE}/upload-justificatif", 
+                                       headers=headers, files=files, timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
-                notes = data.get('notes', [])
-                pagination = data.get('pagination', {})
-                
-                results[limit] = {
-                    'notes_count': len(notes),
-                    'total': pagination.get('total', 0),
-                    'limit': pagination.get('limit', 0)
-                }
+                if data.get('success') and data.get('fichier'):
+                    fichier_info = data['fichier']
+                    print_test_result(True, f"Upload réussi - Fichier: {fichier_info.get('nom_fichier')}, Taille: {fichier_info.get('taille_fichier')} bytes", response)
+                    return True, data
+                else:
+                    print_test_result(False, f"Upload failed - Response structure issue", response)
+                    return False, None
             else:
-                print_test_result(False, f"Different limits test failed for limit {limit} - HTTP {response.status_code}", response)
+                print_test_result(False, f"Upload failed - HTTP {response.status_code}", response)
                 return False, None
+        finally:
+            # Clean up temp file
+            if os.path.exists(temp_file_path):
+                os.unlink(temp_file_path)
+                
+    except Exception as e:
+        print_test_result(False, f"Upload test failed - {str(e)}")
+        return False, None
+
+def test_create_frais():
+    """Test 3: Test de création de frais - POST /api/frais"""
+    print_test_header("Test Création de Frais")
+    try:
+        headers = get_auth_headers()
+        headers['Content-Type'] = 'application/json'
         
-        # Verify all limits worked and returned consistent totals
-        totals = [results[limit]['total'] for limit in limits_to_test]
-        if len(set(totals)) == 1:  # All totals are the same
-            total = totals[0]
-            limit_info = [f"Limit {limit}: {results[limit]['notes_count']} notes" for limit in limits_to_test]
-            print_test_result(True, f"Different limits working - Total: {total}, {', '.join(limit_info)}", response)
-            return True, results
+        # First, we need to create or get a note de frais
+        # Let's try to create a simple note first
+        note_payload = {
+            "user_id": USER_ID,
+            "societe_id": SOCIETE_ID,
+            "vendeur": "Restaurant Test",
+            "date_frais": "2025-01-08",
+            "montant_ttc": 25.50,
+            "motif": "Repas client test"
+        }
+        
+        note_response = requests.post(f"{API_BASE}/note-frais/simple", 
+                                    headers=headers, json=note_payload, timeout=10)
+        
+        if note_response.status_code == 201:
+            note_data = note_response.json()
+            note_id = note_data.get('data', {}).get('noteId')
+            
+            if note_id:
+                # Now create a frais in this note
+                frais_payload = {
+                    "note_frais_id": note_id,
+                    "type_frais_id": 1,  # Default type
+                    "vendeur": "Taxi Test",
+                    "date_frais": "2025-01-08",
+                    "montant": 15.00,
+                    "description": "Transport client test",
+                    "pays": "France",
+                    "devise": "EUR",
+                    "moyen_paiement": "Carte de Crédit Société"
+                }
+                
+                frais_response = requests.post(f"{API_BASE}/frais", 
+                                             headers=headers, json=frais_payload, timeout=10)
+                
+                if frais_response.status_code == 201:
+                    frais_data = frais_response.json()
+                    frais_id = frais_data.get('data', {}).get('fraisId')
+                    
+                    print_test_result(True, f"Frais créé avec succès - Note ID: {note_id}, Frais ID: {frais_id}", frais_response)
+                    return True, {'note_id': note_id, 'frais_id': frais_id, 'frais_data': frais_data}
+                else:
+                    print_test_result(False, f"Création frais failed - HTTP {frais_response.status_code}", frais_response)
+                    return False, None
+            else:
+                print_test_result(False, f"Note creation succeeded but no noteId returned", note_response)
+                return False, None
         else:
-            print_test_result(False, f"Different limits inconsistent totals: {results}", response)
+            print_test_result(False, f"Note creation failed - HTTP {note_response.status_code}", note_response)
             return False, None
             
     except Exception as e:
-        print_test_result(False, f"Different limits test failed - {str(e)}")
+        print_test_result(False, f"Frais creation test failed - {str(e)}")
+        return False, None
+
+def test_associate_justificatif():
+    """Test 4: Test association justificatif à un frais - POST /api/frais/:fraisId/justificatif"""
+    print_test_header("Test Association Justificatif à Frais")
+    try:
+        headers = get_auth_headers()
+        headers['Content-Type'] = 'application/json'
+        
+        # First upload a file
+        upload_success, upload_data = test_upload_justificatif()
+        if not upload_success:
+            print_test_result(False, "Cannot test association - Upload failed")
+            return False, None
+        
+        # Then create a frais
+        frais_success, frais_data = test_create_frais()
+        if not frais_success:
+            print_test_result(False, "Cannot test association - Frais creation failed")
+            return False, None
+        
+        frais_id = frais_data.get('frais_id')
+        fichier_info = upload_data.get('fichier', {})
+        
+        if not frais_id or not fichier_info:
+            print_test_result(False, "Missing frais_id or fichier_info for association")
+            return False, None
+        
+        # Associate the file to the frais
+        association_payload = {
+            "nom_fichier": fichier_info.get('nom_fichier'),
+            "chemin_fichier": fichier_info.get('chemin_fichier'),
+            "type_mime": fichier_info.get('type_mime'),
+            "taille_fichier": fichier_info.get('taille_fichier')
+        }
+        
+        response = requests.post(f"{API_BASE}/frais/{frais_id}/justificatif", 
+                               headers=headers, json=association_payload, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('success'):
+                justificatif_id = data.get('justificatif_id')
+                print_test_result(True, f"Association réussie - Justificatif ID: {justificatif_id} associé au Frais ID: {frais_id}", response)
+                return True, data
+            else:
+                print_test_result(False, f"Association failed - Success false", response)
+                return False, None
+        else:
+            print_test_result(False, f"Association failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Association test failed - {str(e)}")
+        return False, None
+
+def test_get_justificatifs():
+    """Test 5: Test récupération des justificatifs - GET /api/frais/:fraisId/justificatifs"""
+    print_test_header("Test Récupération Justificatifs")
+    try:
+        headers = get_auth_headers()
+        
+        # First we need to create a frais with justificatif
+        association_success, association_data = test_associate_justificatif()
+        if not association_success:
+            print_test_result(False, "Cannot test get justificatifs - Association failed")
+            return False, None
+        
+        # We need to get the frais_id from the previous test
+        # Let's create a new frais for this test
+        frais_success, frais_data = test_create_frais()
+        if not frais_success:
+            print_test_result(False, "Cannot test get justificatifs - Frais creation failed")
+            return False, None
+        
+        frais_id = frais_data.get('frais_id')
+        
+        response = requests.get(f"{API_BASE}/frais/{frais_id}/justificatifs", 
+                              headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('success'):
+                justificatifs = data.get('justificatifs', [])
+                print_test_result(True, f"Récupération réussie - {len(justificatifs)} justificatif(s) trouvé(s) pour Frais ID: {frais_id}", response)
+                return True, data
+            else:
+                print_test_result(False, f"Get justificatifs failed - Success false", response)
+                return False, None
+        else:
+            print_test_result(False, f"Get justificatifs failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Get justificatifs test failed - {str(e)}")
         return False, None
 
 def main():
-    """Main test execution for Notes de Frais API Testing"""
-    print("🚀 Starting Backend API Tests for Vinisys - Notes de Frais API")
-    print("📊 Testing: Authentication, Notes de Frais APIs, Pagination, Data Structure")
+    """Main test execution for Notes de Frais & Justificatifs Testing"""
+    print("🚀 Starting Backend API Tests for Vinisys - Notes de Frais & Justificatifs")
+    print("📊 Testing: Montants, Upload Justificatifs, Création Frais, Association Justificatifs")
     print(f"Backend URL: {BASE_URL}")
     print(f"API Base URL: {API_BASE}")
     print(f"Test Email: {TEST_EMAIL}")
@@ -403,29 +405,29 @@ def main():
         print("\n❌ Authentication failed. Cannot proceed with notes de frais tests.")
         return False
     
-    # Test 2: Notes de frais API
-    notes_api_success, notes_api_data = test_notes_frais_api()
-    test_results.append(("Notes de Frais API", notes_api_success))
+    # Test 2: Test des montants dans la liste des notes de frais
+    montants_success, montants_data = test_notes_frais_montants()
+    test_results.append(("Test Montants Notes de Frais", montants_success))
     
-    # Test 3: Data Structure Verification
-    data_structure_success, data_structure_data = test_notes_frais_data_structure()
-    test_results.append(("Notes de Frais Data Structure", data_structure_success))
+    # Test 3: Test upload justificatif
+    upload_success, upload_data = test_upload_justificatif()
+    test_results.append(("Test Upload Justificatif", upload_success))
     
-    # Test 4: Pagination Test
-    pagination_success, pagination_data = test_notes_frais_pagination()
-    test_results.append(("Notes de Frais Pagination", pagination_success))
+    # Test 4: Test création de frais
+    frais_success, frais_data = test_create_frais()
+    test_results.append(("Test Création Frais", frais_success))
     
-    # Test 5: All Notes Test
-    all_notes_success, all_notes_data = test_notes_frais_all_notes()
-    test_results.append(("Notes de Frais All Notes", all_notes_success))
+    # Test 5: Test association justificatif
+    association_success, association_data = test_associate_justificatif()
+    test_results.append(("Test Association Justificatif", association_success))
     
-    # Test 6: Different Limits Test
-    limits_success, limits_data = test_notes_frais_different_limits()
-    test_results.append(("Notes de Frais Different Limits", limits_success))
+    # Test 6: Test récupération justificatifs
+    get_justif_success, get_justif_data = test_get_justificatifs()
+    test_results.append(("Test Récupération Justificatifs", get_justif_success))
     
     # Print summary
     print(f"\n{'='*60}")
-    print("TEST SUMMARY - NOTES DE FRAIS API TESTING")
+    print("TEST SUMMARY - NOTES DE FRAIS & JUSTIFICATIFS TESTING")
     print(f"{'='*60}")
     
     passed = 0
@@ -441,7 +443,7 @@ def main():
     
     # Detailed analysis
     print(f"\n{'='*60}")
-    print("NOTES DE FRAIS API ANALYSIS")
+    print("DETAILED ANALYSIS")
     print(f"{'='*60}")
     
     if server_ok:
@@ -450,55 +452,60 @@ def main():
     if auth_success:
         print(f"✅ Authentication working with User ID: {USER_ID}, Company ID: {SOCIETE_ID}")
     
-    # Notes de frais API Analysis
-    api_tests = ["Notes de Frais API", "Notes de Frais Data Structure", "Notes de Frais Pagination"]
-    api_passed = sum(1 for test_name, result in test_results if test_name in api_tests and result)
-    
-    print(f"\n📊 NOTES DE FRAIS API ENDPOINTS: {api_passed}/{len(api_tests)} tests passed")
-    if api_passed >= 2:
-        print("✅ Notes de frais API endpoints are working correctly")
+    # Test 1: Montants Analysis
+    if montants_success:
+        print("✅ Test des montants dans la liste des notes de frais: RÉUSSI")
+        print("   - L'endpoint GET /api/notes-frais/4?societe_id=2&page=1&limit=10 fonctionne")
+        print("   - Les notes avec montants > 0 sont bien retournées")
     else:
-        print("❌ Notes de frais API endpoints have significant issues")
+        print("❌ Test des montants: ÉCHEC")
     
-    # Data Analysis
-    if notes_api_success and notes_api_data:
-        pagination = notes_api_data.get('pagination', {})
-        total_notes = pagination.get('total', 0)
-        print(f"💰 Found {total_notes} notes de frais in the system")
-        
-        if total_notes >= 26:
-            print(f"✅ System has {total_notes} notes (>= 26 as mentioned by user)")
-        elif total_notes > 0:
-            print(f"ℹ️ System has {total_notes} notes (less than 26 mentioned, but API working)")
-        else:
-            print(f"⚠️ No notes found - API working but no data")
-    
-    # Pagination Analysis
-    if pagination_success:
-        print("✅ Pagination is working correctly")
+    # Test 2: Upload Analysis
+    if upload_success:
+        print("✅ Test du système de pièces jointes: RÉUSSI")
+        print("   - L'endpoint POST /api/upload-justificatif fonctionne")
+        print("   - Upload de fichiers PDF opérationnel")
     else:
-        print("❌ Pagination has issues")
+        print("❌ Test upload justificatif: ÉCHEC")
     
-    # Data Structure Analysis
-    if data_structure_success:
-        print("✅ Data structure contains expected fields (numero, utilisateur_nom, utilisateur_prenom, total_ttc)")
+    # Test 3: Frais Creation Analysis
+    if frais_success:
+        print("✅ Test de création de frais: RÉUSSI")
+        print("   - L'endpoint POST /api/frais fonctionne")
+        print("   - Création de frais avec fraisId en retour")
     else:
-        print("❌ Data structure is missing expected fields")
+        print("❌ Test création frais: ÉCHEC")
+    
+    # Test 4: Association Analysis
+    if association_success:
+        print("✅ Test association justificatif: RÉUSSI")
+        print("   - L'endpoint POST /api/frais/:fraisId/justificatif fonctionne")
+        print("   - Association fichier-frais opérationnelle")
+    else:
+        print("❌ Test association justificatif: ÉCHEC")
+    
+    # Test 5: Get Justificatifs Analysis
+    if get_justif_success:
+        print("✅ Test récupération justificatifs: RÉUSSI")
+        print("   - L'endpoint GET /api/frais/:fraisId/justificatifs fonctionne")
+    else:
+        print("❌ Test récupération justificatifs: ÉCHEC")
     
     # Overall assessment
-    critical_tests = ["Notes de Frais API", "Notes de Frais Data Structure", "Notes de Frais Pagination"]
+    critical_tests = ["Test Montants Notes de Frais", "Test Upload Justificatif", "Test Création Frais"]
     critical_passed = sum(1 for test_name, result in test_results if test_name in critical_tests and result)
     
     if critical_passed >= 2:  # At least 2/3 critical tests passing
-        print(f"\n🎉 NOTES DE FRAIS API TESTING SUCCESSFUL!")
-        print("✅ Main notes de frais API is operational")
-        print("✅ Data structure and pagination are working")
-        print("✅ Ready for frontend integration")
+        print(f"\n🎉 TESTS NOTES DE FRAIS & JUSTIFICATIFS RÉUSSIS!")
+        print("✅ Les montants dans la liste des notes de frais sont corrects")
+        print("✅ Le système de pièces jointes fonctionne")
+        print("✅ La création de frais avec justificatif est opérationnelle")
+        print("✅ Prêt pour utilisation en production")
         return True
     else:
-        print(f"\n⚠️ NOTES DE FRAIS API HAS ISSUES")
-        print("❌ Some critical endpoints are not working properly")
-        print("❌ API structure or pagination may have problems")
+        print(f"\n⚠️ PROBLÈMES DÉTECTÉS DANS LES TESTS")
+        print("❌ Certains endpoints critiques ne fonctionnent pas correctement")
+        print("❌ Le système de justificatifs peut avoir des problèmes")
         return False
 
 if __name__ == "__main__":

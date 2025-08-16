@@ -485,10 +485,10 @@ const ListeNotesfraisPage = () => {
                   </td>
                   <td className="amount-cell">
                     <div className="amount-info">
-                      <strong>{formatCurrency(note.total_ttc || note.montant_total)}</strong>
-                      {parseFloat(note.total_ttc) > 0 && (
+                      <strong>{formatCurrency(note.montant_total || note.total_ttc || 0)}</strong>
+                      {parseFloat(note.montant_total || note.total_ttc || 0) > 0 && (
                         <span className="reimbursed">
-                          TTC: {formatCurrency(note.total_ttc)}
+                          Total: {formatCurrency(note.montant_total || note.total_ttc || 0)}
                         </span>
                       )}
                     </div>

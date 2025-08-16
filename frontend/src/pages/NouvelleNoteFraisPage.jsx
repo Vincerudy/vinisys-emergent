@@ -77,6 +77,10 @@ const NouvelleNoteFraisPage = () => {
         const note = response.data.note;
         const ligneFrais = note.lignes_frais[0]; // Prendre la première ligne
         
+        console.log('📝 Note complète chargée:', note);
+        console.log('📄 Ligne de frais:', ligneFrais);
+        console.log('📎 Justificatifs disponibles:', ligneFrais?.justificatifs);
+        
         setFormData({
           vendeur: ligneFrais?.vendeur || '',
           date_frais: ligneFrais?.date_frais || '',
@@ -90,6 +94,27 @@ const NouvelleNoteFraisPage = () => {
           projet_id: ligneFrais?.projet_id?.toString() || '',
           commentaire: ''
         });
+
+        // Charger les justificatifs de la première ligne de frais
+        if (ligneFrais?.id && ligneFrais?.justificatifs && ligneFrais.justificatifs.length > 0) {
+          const premierJustificatif = ligneFrais.justificatifs[0];
+          
+          console.log('🔗 Chargement du justificatif:', premierJustificatif);
+          
+          // Reconstituer l'objet justificatif pour l'affichage
+          setJustificatif({
+            url: `${import.meta.env.VITE_API_URL}${premierJustificatif.url}`,
+            nom: premierJustificatif.nom_fichier,
+            type: premierJustificatif.type_mime,
+            file: null, // Pas de fichier local pour un justificatif existant
+            existing: true, // Marquer comme existant
+            id: premierJustificatif.id
+          });
+
+          console.log('✅ Justificatif chargé depuis l\'API note:', premierJustificatif);
+        } else {
+          console.log('❌ Aucun justificatif trouvé pour cette ligne de frais');
+        }
       }
     } catch (error) {
       console.error('Erreur chargement note:', error);
@@ -158,6 +183,7 @@ const NouvelleNoteFraisPage = () => {
       }
 
       let finalNoteId = noteId; // Pour le mode édition
+      let uploadedFile = null; // Pour stocker les infos du fichier uploadé
       
       // En mode création, créer d'abord la note si le montant > 0
       if (!isEditMode) {
@@ -187,6 +213,34 @@ const NouvelleNoteFraisPage = () => {
         }
       }
 
+      // Upload du justificatif si il existe
+      if (justificatif && justificatif.file) {
+        try {
+          const formDataUpload = new FormData();
+          formDataUpload.append('justificatif', justificatif.file);
+
+          console.log('Upload du justificatif en cours...');
+          const uploadResponse = await axios.post(
+            `${import.meta.env.VITE_API_URL}/upload-justificatif`, 
+            formDataUpload,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          );
+
+          if (uploadResponse.data.success) {
+            uploadedFile = uploadResponse.data.fichier;
+            console.log('Justificatif uploadé:', uploadedFile);
+          }
+        } catch (uploadError) {
+          console.error('Erreur upload justificatif:', uploadError);
+          // Continuer même si l'upload échoue, mais informer l'utilisateur
+          alert('Attention: L\'upload du justificatif a échoué, mais le frais sera sauvegardé sans justificatif.');
+        }
+      }
+
       // Préparer les données du frais
       const fraisData = {
         note_id: finalNoteId,
@@ -210,13 +264,33 @@ const NouvelleNoteFraisPage = () => {
       const fraisResponse = await axios.post(`${import.meta.env.VITE_API_URL}/frais`, fraisData);
 
       if ((fraisResponse.status === 201 || fraisResponse.status === 200) && fraisResponse.data.success) {
+        const fraisId = fraisResponse.data.data.fraisId;
+
+        // Associer le justificatif au frais si l'upload a réussi
+        if (uploadedFile && fraisId) {
+          try {
+            console.log('Association du justificatif au frais:', fraisId);
+            await axios.post(`${import.meta.env.VITE_API_URL}/frais/${fraisId}/justificatif`, {
+              nom_fichier: uploadedFile.nom_fichier,
+              chemin_fichier: uploadedFile.chemin_fichier,
+              type_mime: uploadedFile.type_mime,
+              taille_fichier: uploadedFile.taille_fichier
+            });
+            console.log('Justificatif associé avec succès');
+          } catch (associationError) {
+            console.error('Erreur association justificatif:', associationError);
+            // Le frais est créé, mais l'association du justificatif a échoué
+            alert('Le frais a été créé mais l\'association du justificatif a échoué.');
+          }
+        }
+
         const message = isEditMode 
           ? `Frais modifié avec succès`
           : statut === 'brouillon' 
             ? `Frais sauvegardé en brouillon - Note #${finalNoteId}`
             : `Frais soumis pour validation - Note #${finalNoteId}`;
         
-        alert(message);
+        alert(message + (uploadedFile ? ' (avec justificatif)' : ''));
         
         // Rediriger vers la page de détail de la note
         window.location.hash = `#/notes-frais/note/${finalNoteId}`;
