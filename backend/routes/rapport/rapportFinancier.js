@@ -158,14 +158,15 @@ router.get('/:societeId', async (req, res) => {
         // SECTION 4: CALCUL DU BÉNÉFICE NET COMPTABLE
         // =====================================================
 
+        const ca_total = parseFloat(caTotal[0]?.total_ca || 0);
         const ca_encaisse = parseFloat(paiements[0]?.encaisse || 0);
         const total_avoirs = parseFloat(avoirs[0]?.total_avoirs || 0);
         const depenses_ttc = parseFloat(depensesTotal[0]?.total_ttc || 0);
         const tva_recuperable = parseFloat(depensesTotal[0]?.total_tva || 0);
         const notes_frais_rembourse = parseFloat(notesFraisTotal[0]?.total_rembourse || 0);
 
-        // Formule: Bénéfice net = (CA encaissé - Avoirs) - (Dépenses TTC - TVA récupérable) - Notes de frais
-        const benefice_net = (ca_encaisse - total_avoirs) - (depenses_ttc - tva_recuperable) - notes_frais_rembourse;
+        // Formule: Bénéfice net = (CA total - Avoirs) - (Dépenses TTC - TVA récupérable) - Notes de frais
+        const benefice_net = (ca_total - total_avoirs) - (depenses_ttc - tva_recuperable) - notes_frais_rembourse;
 
         // =====================================================
         // STRUCTURE DE LA RÉPONSE
