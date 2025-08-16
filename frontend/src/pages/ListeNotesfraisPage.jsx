@@ -43,11 +43,13 @@ const ListeNotesfraisPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [validationComment, setValidationComment] = useState('');
+  const [totalNotes, setTotalNotes] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
   useEffect(() => {
     fetchNotesfrais();
-  }, [societe_id, filters]);
+  }, [societe_id, filters, currentPage]);
 
   const fetchNotesfrais = async () => {
     try {
@@ -55,13 +57,16 @@ const ListeNotesfraisPage = () => {
       console.log('🔍 fetchNotesfrais: Début de l\'appel API');
       console.log('🔍 fetchNotesfrais: societe_id =', societe_id);
       console.log('🔍 fetchNotesfrais: filters =', filters);
+      console.log('🔍 fetchNotesfrais: currentPage =', currentPage);
       
-      // Utiliser l'endpoint existant avec un paramètre spécial pour récupérer toutes les notes
+      // Utiliser la pagination côté serveur
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/notes-frais/0`,
         { 
           params: { 
             societe_id: societe_id,
+            page: currentPage,
+            limit: itemsPerPage,
             ...filters 
           } 
         }
@@ -74,21 +79,7 @@ const ListeNotesfraisPage = () => {
       
       if (response.data.notes && response.data.notes.length > 0) {
         console.log('✅ fetchNotesfrais: Première note =', response.data.notes[0]);
-        console.log('✅ fetchNotesfrais: Deuxième note =', response.data.notes[1]);
-        console.log('✅ fetchNotesfrais: Structure première note:');
-        const firstNote = response.data.notes[0];
-        Object.keys(firstNote).forEach(key => {
-          console.log(`    ${key}: ${firstNote[key]}`);
-        });
-        
-        // Vérifier s'il y a des notes avec des montants > 0
-        const notesWithAmount = response.data.notes.filter(note => 
-          parseFloat(note.total_ttc || 0) > 0
-        );
-        console.log('💰 fetchNotesfrais: Notes avec montant > 0 =', notesWithAmount.length);
-        if (notesWithAmount.length > 0) {
-          console.log('💰 fetchNotesfrais: Première note avec montant =', notesWithAmount[0]);
-        }
+        console.log('✅ fetchNotesfrais: Dernière note =', response.data.notes[response.data.notes.length - 1]);
         
         // Vérifier les différents statuts
         const statuts = [...new Set(response.data.notes.map(note => note.statut))];
@@ -101,6 +92,14 @@ const ListeNotesfraisPage = () => {
       // Log avant de set state
       console.log('🔄 fetchNotesfrais: Avant setState, notes à setter =', response.data.notes?.length || 0);
       setNotesfrais(response.data.notes || []);
+      
+      // Mettre à jour les informations de pagination
+      if (response.data.pagination) {
+        setTotalNotes(response.data.pagination.total);
+        setTotalPages(response.data.pagination.pages);
+        console.log('📊 Pagination info: total =', response.data.pagination.total, 'pages =', response.data.pagination.pages);
+      }
+      
       console.log('✅ fetchNotesfrais: setState effectué avec', response.data.notes?.length || 0, 'notes');
       
     } catch (error) {
@@ -126,17 +125,14 @@ const ListeNotesfraisPage = () => {
   };
 
   const filteredNotes = notesfrais.filter(note =>
-    note.numero_note?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    note.numero?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     note.utilisateur_nom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.motif?.toLowerCase().includes(searchTerm.toLowerCase())
+    note.titre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    note.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const paginatedNotes = filteredNotes.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const totalPages = Math.ceil(filteredNotes.length / itemsPerPage);
+  // Utiliser directement notesfrais pour l'affichage puisqu'on utilise la pagination serveur
+  const displayedNotes = searchTerm ? filteredNotes : notesfrais;
 
   const getStatusBadge = (statut) => {
     const badges = {
@@ -183,6 +179,46 @@ const ListeNotesfraisPage = () => {
       setValidationComment('');
     } catch (error) {
       console.error('Erreur action groupée:', error);
+    }
+  };
+
+  // Gestionnaires pour les actions individuelles
+  const handleViewNote = (noteId) => {
+    console.log('Voir la note:', noteId);
+    // TODO: Implémenter la navigation vers la page de détail
+    window.location.href = `/#/notes-frais/detail/${noteId}`;
+  };
+
+  const handleEditNote = (noteId) => {
+    console.log('Modifier la note:', noteId);
+    // TODO: Implémenter la navigation vers la page d'édition
+    window.location.href = `/#/notes-frais/modifier/${noteId}`;
+  };
+
+  const handleValidateNote = async (noteId) => {
+    try {
+      console.log('Valider la note:', noteId);
+      await axios.put(`${import.meta.env.VITE_API_URL}/notes-frais/validate`, {
+        note_id: noteId,
+        action: 'validate'
+      });
+      fetchNotesfrais(); // Recharger la liste
+    } catch (error) {
+      console.error('Erreur validation note:', error);
+      alert('Erreur lors de la validation de la note');
+    }
+  };
+
+  const handleDeleteNote = async (noteId) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette note de frais ?')) {
+      try {
+        console.log('Supprimer la note:', noteId);
+        await axios.delete(`${import.meta.env.VITE_API_URL}/notes-frais/${noteId}`);
+        fetchNotesfrais(); // Recharger la liste
+      } catch (error) {
+        console.error('Erreur suppression note:', error);
+        alert('Erreur lors de la suppression de la note');
+      }
     }
   };
 
@@ -374,7 +410,7 @@ const ListeNotesfraisPage = () => {
                     type="checkbox"
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedNotes(paginatedNotes.map(n => n.id));
+                        setSelectedNotes(displayedNotes.map(n => n.id));
                       } else {
                         setSelectedNotes([]);
                       }
@@ -394,7 +430,7 @@ const ListeNotesfraisPage = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedNotes.map((note) => (
+              {displayedNotes.map((note) => (
                 <tr key={note.id} className="table-row">
                   <td>
                     <input
@@ -411,44 +447,44 @@ const ListeNotesfraisPage = () => {
                   </td>
                   <td className="note-number-cell">
                     <div className="note-number">
-                      <strong>{note.numero_note}</strong>
-                      {note.nb_lignes && (
-                        <span className="lines-count">{note.nb_lignes} ligne(s)</span>
+                      <strong>{note.numero}</strong>
+                      {note.nb_lignes_frais && (
+                        <span className="lines-count">{note.nb_lignes_frais} ligne(s)</span>
                       )}
                     </div>
                   </td>
                   <td className="date-cell">
                     <FiCalendar className="cell-icon" />
-                    {formatDate(note.date_creation)}
+                    {formatDate(note.created_at)}
                   </td>
                   <td className="user-cell">
                     <div className="user-info">
                       <FiUser className="user-icon" />
                       <div className="user-details">
-                        <strong>{note.utilisateur_nom}</strong>
-                        <span className="user-role">{note.utilisateur_role || 'Employé'}</span>
+                        <strong>{note.utilisateur_prenom} {note.utilisateur_nom}</strong>
+                        <span className="user-role">Employé</span>
                       </div>
                     </div>
                   </td>
                   <td className="motif-cell">
                     <div className="motif-content">
-                      <strong>{note.motif || 'Non spécifié'}</strong>
-                      {note.destination && (
-                        <span className="destination">→ {note.destination}</span>
+                      <strong>{note.titre || 'Non spécifié'}</strong>
+                      {note.description && (
+                        <span className="destination">→ {note.description}</span>
                       )}
                     </div>
                   </td>
                   <td className="type-cell">
                     <span className="type-badge">
-                      {note.type_principal || 'Mixte'}
+                      Note de frais
                     </span>
                   </td>
                   <td className="amount-cell">
                     <div className="amount-info">
-                      <strong>{formatCurrency(note.montant_total)}</strong>
-                      {note.montant_rembourse > 0 && (
+                      <strong>{formatCurrency(note.total_ttc || note.montant_total)}</strong>
+                      {parseFloat(note.total_ttc) > 0 && (
                         <span className="reimbursed">
-                          Remb: {formatCurrency(note.montant_rembourse)}
+                          TTC: {formatCurrency(note.total_ttc)}
                         </span>
                       )}
                     </div>
@@ -461,18 +497,34 @@ const ListeNotesfraisPage = () => {
                   </td>
                   <td className="actions-cell">
                     <div className="action-buttons">
-                      <button className="btn-action view" title="Voir détails">
+                      <button 
+                        className="btn-action view" 
+                        title="Voir détails"
+                        onClick={() => handleViewNote(note.id)}
+                      >
                         <FiEye size={14} />
                       </button>
-                      <button className="btn-action edit" title="Modifier">
+                      <button 
+                        className="btn-action edit" 
+                        title="Modifier"
+                        onClick={() => handleEditNote(note.id)}
+                      >
                         <FiEdit size={14} />
                       </button>
                       {note.statut === 'soumise' && (
-                        <button className="btn-action validate" title="Valider">
+                        <button 
+                          className="btn-action validate" 
+                          title="Valider"
+                          onClick={() => handleValidateNote(note.id)}
+                        >
                           <FiCheck size={14} />
                         </button>
                       )}
-                      <button className="btn-action delete" title="Supprimer">
+                      <button 
+                        className="btn-action delete" 
+                        title="Supprimer"
+                        onClick={() => handleDeleteNote(note.id)}
+                      >
                         <FiTrash2 size={14} />
                       </button>
                     </div>
@@ -496,7 +548,7 @@ const ListeNotesfraisPage = () => {
           </button>
           
           <div className="pagination-info">
-            Page {currentPage} sur {totalPages} ({filteredNotes.length} résultats)
+            Page {currentPage} sur {totalPages} ({totalNotes} résultats)
           </div>
           
           <button
