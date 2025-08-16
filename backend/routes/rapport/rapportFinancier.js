@@ -241,12 +241,20 @@ router.get('/:societeId', async (req, res) => {
             },
             benefice_net: benefice_net,
             resume_calcul: {
-                ca_encaisse: ca_total,  // Utiliser CA total pour le bénéfice comptable
+                ca_encaisse: ca_encaisse,  // CA réellement encaissé (comme dashboard)
                 moins_avoirs: total_avoirs,
                 moins_depenses_ttc: depenses_ttc,
                 plus_tva_recuperable: tva_recuperable,
                 moins_notes_frais: notes_frais_rembourse,
                 resultat: benefice_net
+            },
+
+            // Nouveau: Ajout des détails pour debug et transparence
+            debug_info: {
+                ca_total_facture: ca_total,  // Total facturé
+                ca_encaisse: ca_encaisse,    // Total encaissé  
+                tva_due: tva_encaissee,      // TVA sur CA encaissé
+                periode: `${date_debut} à ${date_fin}`
             }
         };
 
