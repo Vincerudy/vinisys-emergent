@@ -453,7 +453,7 @@ const ListeNotesfraisPage = () => {
                     <div className="note-number">
                       <strong>{note.numero}</strong>
                       {note.nb_lignes_frais && (
-                        <span className="lines-count">{note.nb_lignes_frais} ligne(s)</span>
+                        <span className="lines-count">{note.nb_lignes_frais} frais</span>
                       )}
                     </div>
                   </td>
