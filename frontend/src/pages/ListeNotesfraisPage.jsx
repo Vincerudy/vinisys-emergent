@@ -47,7 +47,7 @@ const ListeNotesfraisPage = () => {
 
   useEffect(() => {
     fetchNotesfrais();
-  }, [societe_id, filters]);
+  }, [societe_id, filters, currentPage]);
 
   const fetchNotesfrais = async () => {
     try {
