@@ -92,6 +92,14 @@ const ListeNotesfraisPage = () => {
       // Log avant de set state
       console.log('🔄 fetchNotesfrais: Avant setState, notes à setter =', response.data.notes?.length || 0);
       setNotesfrais(response.data.notes || []);
+      
+      // Mettre à jour les informations de pagination
+      if (response.data.pagination) {
+        setTotalNotes(response.data.pagination.total);
+        setTotalPages(response.data.pagination.pages);
+        console.log('📊 Pagination info: total =', response.data.pagination.total, 'pages =', response.data.pagination.pages);
+      }
+      
       console.log('✅ fetchNotesfrais: setState effectué avec', response.data.notes?.length || 0, 'notes');
       
     } catch (error) {
