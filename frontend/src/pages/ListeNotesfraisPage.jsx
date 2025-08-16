@@ -190,13 +190,13 @@ const ListeNotesfraisPage = () => {
   const handleViewNote = (noteId) => {
     console.log('Voir la note:', noteId);
     // TODO: Implémenter la navigation vers la page de détail
-    window.location.href = `/#/notes-frais/detail/${noteId}`;
+    window.location.href = `/#/notes-frais/note/${noteId}`;
   };
 
   const handleEditNote = (noteId) => {
     console.log('Modifier la note:', noteId);
     // TODO: Implémenter la navigation vers la page d'édition
-    window.location.href = `/#/notes-frais/modifier/${noteId}`;
+    window.location.href = `/#/notes-frais/note/${noteId}`;
   };
 
   const handleValidateNote = async (noteId) => {
@@ -241,7 +241,7 @@ const ListeNotesfraisPage = () => {
         </div>
         <div className="header-actions">
           <button 
-            onClick={() => window.location.href = '/#/notes-frais/nouvelle'}
+            onClick={() => window.location.href = '/#/notes-frais/note'}
             className="btn-primary"
           >
             <FiPlus size={18} />
