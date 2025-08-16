@@ -419,7 +419,7 @@ const ListeNotesfraisPage = () => {
                         setSelectedNotes([]);
                       }
                     }}
-                    checked={selectedNotes.length === paginatedNotes.length && paginatedNotes.length > 0}
+                    checked={selectedNotes.length === displayedNotes.length && displayedNotes.length > 0}
                   />
                 </th>
                 <th>N° Note</th>
