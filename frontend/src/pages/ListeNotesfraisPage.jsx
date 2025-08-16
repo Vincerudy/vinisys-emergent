@@ -126,10 +126,6 @@ const ListeNotesfraisPage = () => {
   // Utiliser directement notesfrais pour l'affichage puisqu'on utilise la pagination serveur
   const displayedNotes = searchTerm ? filteredNotes : notesfrais;
 
-  // Pour la pagination côté serveur, nous devrons récupérer ces infos de l'API
-  const [totalNotes, setTotalNotes] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-
   const getStatusBadge = (statut) => {
     const badges = {
       'brouillon': { class: 'status-draft', text: 'Brouillon', icon: FiEdit },
