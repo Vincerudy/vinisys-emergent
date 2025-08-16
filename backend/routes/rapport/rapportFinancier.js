@@ -212,7 +212,7 @@ router.get('/:societeId', async (req, res) => {
             },
             benefice_net: benefice_net,
             resume_calcul: {
-                ca_encaisse: ca_encaisse,
+                ca_encaisse: ca_total,  // Utiliser CA total pour le bénéfice comptable
                 moins_avoirs: total_avoirs,
                 moins_depenses_ttc: depenses_ttc,
                 plus_tva_recuperable: tva_recuperable,
