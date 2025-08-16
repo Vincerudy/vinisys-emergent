@@ -558,6 +558,25 @@ app.get('/api/note-frais/:noteId', async (req, res) => {
             ORDER BY lf.created_at DESC
         `, [noteId]);
 
+        // Pour chaque ligne de frais, récupérer ses justificatifs
+        for (let i = 0; i < lignes.length; i++) {
+            const [justificatifs] = await db.execute(`
+                SELECT 
+                    id,
+                    nom_fichier,
+                    chemin_fichier,
+                    type_mime,
+                    taille_fichier,
+                    CONCAT('/api/image/', chemin_fichier) as url,
+                    created_at
+                FROM justificatifs_frais 
+                WHERE ligne_frais_id = ?
+                ORDER BY created_at DESC
+            `, [lignes[i].id]);
+            
+            lignes[i].justificatifs = justificatifs;
+        }
+
         const noteComplete = {
             ...notes[0],
             lignes_frais: lignes
