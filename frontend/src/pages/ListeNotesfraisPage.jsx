@@ -452,44 +452,44 @@ const ListeNotesfraisPage = () => {
                   </td>
                   <td className="note-number-cell">
                     <div className="note-number">
-                      <strong>{note.numero_note}</strong>
-                      {note.nb_lignes && (
-                        <span className="lines-count">{note.nb_lignes} ligne(s)</span>
+                      <strong>{note.numero}</strong>
+                      {note.nb_lignes_frais && (
+                        <span className="lines-count">{note.nb_lignes_frais} ligne(s)</span>
                       )}
                     </div>
                   </td>
                   <td className="date-cell">
                     <FiCalendar className="cell-icon" />
-                    {formatDate(note.date_creation)}
+                    {formatDate(note.created_at)}
                   </td>
                   <td className="user-cell">
                     <div className="user-info">
                       <FiUser className="user-icon" />
                       <div className="user-details">
-                        <strong>{note.utilisateur_nom}</strong>
-                        <span className="user-role">{note.utilisateur_role || 'Employé'}</span>
+                        <strong>{note.utilisateur_prenom} {note.utilisateur_nom}</strong>
+                        <span className="user-role">Employé</span>
                       </div>
                     </div>
                   </td>
                   <td className="motif-cell">
                     <div className="motif-content">
-                      <strong>{note.motif || 'Non spécifié'}</strong>
-                      {note.destination && (
-                        <span className="destination">→ {note.destination}</span>
+                      <strong>{note.titre || 'Non spécifié'}</strong>
+                      {note.description && (
+                        <span className="destination">→ {note.description}</span>
                       )}
                     </div>
                   </td>
                   <td className="type-cell">
                     <span className="type-badge">
-                      {note.type_principal || 'Mixte'}
+                      Note de frais
                     </span>
                   </td>
                   <td className="amount-cell">
                     <div className="amount-info">
-                      <strong>{formatCurrency(note.montant_total)}</strong>
-                      {note.montant_rembourse > 0 && (
+                      <strong>{formatCurrency(note.total_ttc || note.montant_total)}</strong>
+                      {parseFloat(note.total_ttc) > 0 && (
                         <span className="reimbursed">
-                          Remb: {formatCurrency(note.montant_rembourse)}
+                          TTC: {formatCurrency(note.total_ttc)}
                         </span>
                       )}
                     </div>
