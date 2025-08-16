@@ -1,31 +1,32 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Notes de Frais Testing
-Tests the notes de frais API endpoints as requested by user
+Backend API Testing Script for Vinisys Application - Notes de Frais & Justificatifs Testing
+Tests the specific endpoints requested by user:
+1. Test des montants dans la liste des notes de frais
+2. Test du système de pièces jointes 
+3. Test de création de frais avec justificatif
 """
 
 import requests
 import json
 import sys
+import os
+import tempfile
 from datetime import datetime, date
 
 # Backend URL configuration - Using frontend environment URL
 with open('/app/frontend/.env', 'r') as f:
     env_content = f.read()
     for line in env_content.split('\n'):
-        if line.startswith('VITE_API_URL='):
+        if line.startswith('REACT_APP_BACKEND_URL='):
             api_url = line.split('=')[1]
-            # Extract just the path part
-            if 'localhost:8001' in api_url:
-                api_path = '/api'
-            else:
-                api_path = api_url.split('localhost:8001')[-1] if 'localhost:8001' in api_url else '/api'
             break
     else:
-        api_path = '/api'
+        api_url = "http://localhost:8001/api"
 
-BASE_URL = "http://localhost:8001"  # Internal URL for testing
-API_BASE = f"{BASE_URL}{api_path}"
+# Use the production URL from environment
+BASE_URL = api_url.replace('/api', '') if '/api' in api_url else api_url
+API_BASE = f"{BASE_URL}/api" if not api_url.endswith('/api') else api_url
 
 # Test credentials from user request
 TEST_EMAIL = "idnovation2014@gmail.com"
