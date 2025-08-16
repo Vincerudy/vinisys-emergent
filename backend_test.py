@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Financial Report Testing
-Tests the financial report API endpoints as requested
+Backend API Testing Script for Vinisys Application - Notes de Frais Testing
+Tests the notes de frais API endpoints as requested by user
 """
 
 import requests
@@ -25,6 +25,7 @@ API_BASE = f"{BASE_URL}{api_path}"
 # Test credentials from user request
 TEST_EMAIL = "idnovation2014@gmail.com"
 TEST_PASSWORD = "123456"
+USER_ID = 4  # User specified UserID = 4
 SOCIETE_ID = 2  # User specified societe_id = 2
 AUTH_TOKEN = None  # Will be set after login
 
