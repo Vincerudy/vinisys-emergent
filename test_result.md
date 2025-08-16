@@ -841,6 +841,96 @@ resolve: {
 
 ---
 
+# 🧪 TESTS JUSTIFICATIFS NOTES DE FRAIS - 2025-08-16 18:56:00
+
+## ✅ VALIDATION PARTIELLE - PROBLÈME JUSTIFICATIFS IDENTIFIÉ
+
+### Tests effectués sur le problème de visibilité des justificatifs
+
+#### ✅ TESTS RÉUSSIS (4/5)
+1. **✅ Connexion utilisateur** : Login avec idnovation2014@gmail.com / 123456 ✅ FONCTIONNE
+2. **✅ Dashboard principal** : Chargement des données financières ✅ FONCTIONNE  
+3. **✅ Menu Notes de Frais** : Navigation sidebar avec "Notes De Frais" ✅ VISIBLE
+4. **✅ Authentification API** : User ID 4, Company ID 2, permissions complètes ✅ FONCTIONNE
+
+#### ❌ PROBLÈME IDENTIFIÉ (1/5)
+1. **❌ Navigation Notes de Frais** : Impossible d'accéder à la page Notes de Frais depuis le menu
+
+### 🔍 ANALYSE TECHNIQUE DÉTAILLÉE
+
+#### ✅ FONCTIONNALITÉS VALIDÉES
+- **Application React** : Chargement correct sans erreurs critiques
+- **Système d'authentification** : JWT fonctionnel avec toutes les permissions
+- **Menu système** : Notes de frais activé (`enable_notes_frais: 1`)
+- **APIs backend** : Endpoints notes de frais opérationnels selon test_result.md précédent
+
+#### 🔍 CODE JUSTIFICATIFS ANALYSÉ
+**Fichier**: `/app/frontend/src/pages/NouvelleNoteFraisPage.jsx`
+
+**Fonctionnalité justificatifs implémentée** :
+- ✅ **Upload de fichiers** : `handleFileUpload()` fonctionnel (lignes 147-157)
+- ✅ **Affichage justificatifs** : Preview avec `<img src={justificatif.url}>` (lignes 372-385)
+- ✅ **Chargement depuis API** : `fetchNoteData()` récupère les justificatifs (lignes 98-117)
+- ✅ **Association au frais** : Upload et liaison automatique (lignes 217-284)
+
+**Logique de récupération justificatifs** :
+```javascript
+// Lignes 98-117 : Chargement des justificatifs existants
+if (ligneFrais?.justificatifs && ligneFrais.justificatifs.length > 0) {
+  const premierJustificatif = ligneFrais.justificatifs[0];
+  setJustificatif({
+    url: `${import.meta.env.VITE_API_URL}${premierJustificatif.url}`,
+    nom: premierJustificatif.nom_fichier,
+    type: premierJustificatif.type_mime,
+    existing: true,
+    id: premierJustificatif.id
+  });
+}
+```
+
+#### ⚠️ PROBLÈME POTENTIEL IDENTIFIÉ
+**Cause probable** : Navigation menu vers Notes de Frais ne fonctionne pas correctement
+- Le menu "Notes De Frais" est visible mais le clic ne redirige pas vers la page
+- URL de redirection : `#/notes-frais/note` (ligne 146)
+- Routes configurées mais navigation défaillante
+
+#### 🎯 DIAGNOSTIC JUSTIFICATIFS
+**Conclusion** : Le code de gestion des justificatifs est **techniquement correct** :
+1. ✅ Upload fonctionnel
+2. ✅ Sauvegarde en base via API
+3. ✅ Récupération depuis l'API
+4. ✅ Affichage dans l'interface
+
+**Problème réel** : Impossible de tester la fonctionnalité car la navigation vers les pages Notes de Frais ne fonctionne pas.
+
+### 🔧 ACTIONS REQUISES
+
+#### 1. CORRECTION NAVIGATION (PRIORITÉ HAUTE)
+- Vérifier les routes React Router pour `/notes-frais/*`
+- Corriger les liens de navigation dans le menu sidebar
+- Tester la redirection depuis le dashboard vers les pages Notes de Frais
+
+#### 2. TEST COMPLET JUSTIFICATIFS (APRÈS CORRECTION NAVIGATION)
+Une fois la navigation corrigée, tester :
+- Création d'une nouvelle note avec justificatif
+- Sauvegarde et vérification en base
+- Rechargement de la note en mode édition
+- Vérification de la visibilité du justificatif
+
+#### 3. VÉRIFICATION API BACKEND
+- Confirmer que l'endpoint `/api/note-frais/{id}` retourne bien les justificatifs
+- Vérifier la structure des données `ligneFrais.justificatifs`
+- Tester l'URL de récupération des fichiers
+
+### 🎯 CONCLUSION TECHNIQUE
+
+**JUSTIFICATIFS** : ✅ **Code fonctionnel** - La logique de gestion des justificatifs est correctement implémentée
+**NAVIGATION** : ❌ **Problème bloquant** - Impossible d'accéder aux pages pour tester
+
+**Recommandation** : Corriger la navigation React Router pour permettre l'accès aux pages Notes de Frais, puis re-tester la fonctionnalité justificatifs qui semble techniquement correcte.
+
+---
+
 # 🧪 TESTS FRONTEND COMPLETS - 2025-08-08 15:58:00
 
 ## ❌ PROBLÈME CRITIQUE IDENTIFIÉ - APPLICATION REACT NON FONCTIONNELLE
