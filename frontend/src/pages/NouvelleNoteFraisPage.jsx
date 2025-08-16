@@ -77,6 +77,10 @@ const NouvelleNoteFraisPage = () => {
         const note = response.data.note;
         const ligneFrais = note.lignes_frais[0]; // Prendre la première ligne
         
+        console.log('📝 Note complète chargée:', note);
+        console.log('📄 Ligne de frais:', ligneFrais);
+        console.log('📎 Justificatifs disponibles:', ligneFrais?.justificatifs);
+        
         setFormData({
           vendeur: ligneFrais?.vendeur || '',
           date_frais: ligneFrais?.date_frais || '',
@@ -95,6 +99,8 @@ const NouvelleNoteFraisPage = () => {
         if (ligneFrais?.id && ligneFrais?.justificatifs && ligneFrais.justificatifs.length > 0) {
           const premierJustificatif = ligneFrais.justificatifs[0];
           
+          console.log('🔗 Chargement du justificatif:', premierJustificatif);
+          
           // Reconstituer l'objet justificatif pour l'affichage
           setJustificatif({
             url: `${import.meta.env.VITE_API_URL}${premierJustificatif.url}`,
@@ -105,7 +111,9 @@ const NouvelleNoteFraisPage = () => {
             id: premierJustificatif.id
           });
 
-          console.log('Justificatif chargé depuis l\'API note:', premierJustificatif);
+          console.log('✅ Justificatif chargé depuis l\'API note:', premierJustificatif);
+        } else {
+          console.log('❌ Aucun justificatif trouvé pour cette ligne de frais');
         }
       }
     } catch (error) {
