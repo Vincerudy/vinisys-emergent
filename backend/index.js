@@ -815,6 +815,159 @@ app.put('/api/frais/:fraisId', async (req, res) => {
     }
 });
 
+// Configuration multer pour les justificatifs de frais
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadPath = path.join(__dirname, 'uploads/notes-frais');
+        // Créer le dossier s'il n'existe pas
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'frais-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|pdf/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+        
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Seuls les fichiers JPEG, PNG et PDF sont autorisés'));
+        }
+    }
+});
+
+// POST /api/upload-justificatif - Upload d'un justificatif
+app.post('/api/upload-justificatif', upload.single('justificatif'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'Aucun fichier fourni'
+            });
+        }
+
+        const fileInfo = {
+            nom_fichier: req.file.originalname,
+            chemin_fichier: req.file.filename, // Nom du fichier sur le serveur
+            type_mime: req.file.mimetype,
+            taille_fichier: req.file.size,
+            url: `/api/image/${req.file.filename}` // URL pour accéder au fichier
+        };
+
+        console.log('Fichier uploadé:', fileInfo);
+
+        res.json({
+            success: true,
+            message: 'Fichier uploadé avec succès',
+            fichier: fileInfo
+        });
+
+    } catch (error) {
+        console.error('Erreur upload fichier:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de l\'upload du fichier',
+            error: error.message
+        });
+    }
+});
+
+// POST /api/frais/:fraisId/justificatif - Associer un justificatif à un frais
+app.post('/api/frais/:fraisId/justificatif', async (req, res) => {
+    try {
+        const { fraisId } = req.params;
+        const { nom_fichier, chemin_fichier, type_mime, taille_fichier } = req.body;
+
+        if (!nom_fichier || !chemin_fichier || !type_mime || !taille_fichier) {
+            return res.status(400).json({
+                success: false,
+                message: 'Informations de fichier manquantes'
+            });
+        }
+
+        // Vérifier que le frais existe
+        const [fraisExists] = await db.execute(
+            'SELECT id FROM lignes_frais WHERE id = ?',
+            [fraisId]
+        );
+
+        if (fraisExists.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Frais non trouvé'
+            });
+        }
+
+        // Insérer le justificatif
+        const [result] = await db.execute(`
+            INSERT INTO justificatifs_frais (
+                ligne_frais_id, nom_fichier, chemin_fichier, type_mime, taille_fichier, created_at
+            ) VALUES (?, ?, ?, ?, ?, NOW())
+        `, [fraisId, nom_fichier, chemin_fichier, type_mime, taille_fichier]);
+
+        console.log('Justificatif associé au frais:', fraisId, result.insertId);
+
+        res.json({
+            success: true,
+            message: 'Justificatif associé au frais avec succès',
+            justificatif_id: result.insertId
+        });
+
+    } catch (error) {
+        console.error('Erreur association justificatif:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de l\'association du justificatif',
+            error: error.message
+        });
+    }
+});
+
+// GET /api/frais/:fraisId/justificatifs - Récupérer les justificatifs d'un frais
+app.get('/api/frais/:fraisId/justificatifs', async (req, res) => {
+    try {
+        const { fraisId } = req.params;
+
+        const [justificatifs] = await db.execute(`
+            SELECT 
+                id,
+                nom_fichier,
+                chemin_fichier,
+                type_mime,
+                taille_fichier,
+                CONCAT('/api/image/', chemin_fichier) as url,
+                created_at
+            FROM justificatifs_frais 
+            WHERE ligne_frais_id = ?
+            ORDER BY created_at DESC
+        `, [fraisId]);
+
+        res.json({
+            success: true,
+            justificatifs: justificatifs
+        });
+
+    } catch (error) {
+        console.error('Erreur récupération justificatifs:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des justificatifs',
+            error: error.message
+        });
+    }
+});
+
 // ENDPOINTS POUR LA VALIDATION DES NOTES DE FRAIS
 
 // GET /api/notes-frais/validation/:societeId - Notes en attente de validation
