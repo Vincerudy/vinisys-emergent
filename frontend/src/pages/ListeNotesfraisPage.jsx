@@ -430,7 +430,7 @@ const ListeNotesfraisPage = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedNotes.map((note) => (
+              {displayedNotes.map((note) => (
                 <tr key={note.id} className="table-row">
                   <td>
                     <input
