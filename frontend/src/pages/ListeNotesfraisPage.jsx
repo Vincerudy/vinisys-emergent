@@ -502,18 +502,34 @@ const ListeNotesfraisPage = () => {
                   </td>
                   <td className="actions-cell">
                     <div className="action-buttons">
-                      <button className="btn-action view" title="Voir détails">
+                      <button 
+                        className="btn-action view" 
+                        title="Voir détails"
+                        onClick={() => handleViewNote(note.id)}
+                      >
                         <FiEye size={14} />
                       </button>
-                      <button className="btn-action edit" title="Modifier">
+                      <button 
+                        className="btn-action edit" 
+                        title="Modifier"
+                        onClick={() => handleEditNote(note.id)}
+                      >
                         <FiEdit size={14} />
                       </button>
                       {note.statut === 'soumise' && (
-                        <button className="btn-action validate" title="Valider">
+                        <button 
+                          className="btn-action validate" 
+                          title="Valider"
+                          onClick={() => handleValidateNote(note.id)}
+                        >
                           <FiCheck size={14} />
                         </button>
                       )}
-                      <button className="btn-action delete" title="Supprimer">
+                      <button 
+                        className="btn-action delete" 
+                        title="Supprimer"
+                        onClick={() => handleDeleteNote(note.id)}
+                      >
                         <FiTrash2 size={14} />
                       </button>
                     </div>
