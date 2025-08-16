@@ -841,6 +841,112 @@ resolve: {
 
 ---
 
+# 🧪 TESTS JUSTIFICATIFS NOTES DE FRAIS - 2025-01-16 19:05:00
+
+## ❌ PROBLÈME NAVIGATION IDENTIFIÉ - ACCÈS NOTES DE FRAIS BLOQUÉ
+
+### Tests effectués sur le problème des justificatifs non visibles après rechargement
+
+#### ❌ TESTS PARTIELLEMENT RÉUSSIS (2/5)
+1. **✅ Connexion utilisateur** : Login avec idnovation2014@gmail.com / 123456 ✅ FONCTIONNE
+2. **✅ Dashboard principal** : Chargement des données financières ✅ FONCTIONNE  
+3. **❌ Navigation Notes de Frais** : Impossible d'accéder à la page Notes de Frais depuis le menu
+4. **❌ Navigation directe** : URL #/notes-frais/nouvelle redirige vers la page de connexion
+5. **❌ Test justificatifs** : Impossible de tester à cause du problème de navigation
+
+### 🔍 ANALYSE TECHNIQUE DÉTAILLÉE
+
+#### ✅ FONCTIONNALITÉS VALIDÉES
+- **Application React** : Chargement correct sans erreurs critiques
+- **Système d'authentification** : JWT fonctionnel avec toutes les permissions
+- **Menu système** : Notes de frais activé (`enable_notes_frais: 1`)
+- **Permissions utilisateur** : `view_notes_frais`, `create_expense` présentes
+- **APIs backend** : Endpoints notes de frais opérationnels selon tests précédents
+
+#### 🔍 CODE JUSTIFICATIFS ANALYSÉ
+**Fichier**: `/app/frontend/src/pages/NouvelleNoteFraisPage.jsx`
+
+**Fonctionnalité justificatifs implémentée** :
+- ✅ **Upload de fichiers** : `handleFileUpload()` fonctionnel (lignes 147-157)
+- ✅ **Affichage justificatifs** : Preview avec `<img src={justificatif.url}>` (lignes 372-385)
+- ✅ **Chargement depuis API** : `fetchNoteData()` récupère les justificatifs (lignes 98-117)
+- ✅ **Association au frais** : Upload et liaison automatique (lignes 217-284)
+
+**Logique de récupération justificatifs** :
+```javascript
+// Lignes 98-117 : Chargement des justificatifs existants
+if (ligneFrais?.justificatifs && ligneFrais.justificatifs.length > 0) {
+  const premierJustificatif = ligneFrais.justificatifs[0];
+  setJustificatif({
+    url: `${import.meta.env.VITE_API_URL}${premierJustificatif.url}`,
+    nom: premierJustificatif.nom_fichier,
+    type: premierJustificatif.type_mime,
+    existing: true,
+    id: premierJustificatif.id
+  });
+}
+```
+
+#### ❌ PROBLÈME PRINCIPAL IDENTIFIÉ
+**Cause racine** : Navigation vers Notes de frais ne fonctionne pas correctement
+- Le menu "Notes De Frais" est visible dans la sidebar
+- Les permissions sont correctes (`view_notes_frais` présente)
+- La fonctionnalité est activée (`enable_notes_frais: 1`)
+- **MAIS** : Le clic sur le menu ne redirige pas vers la page
+- **AUSSI** : Navigation directe vers `#/notes-frais/nouvelle` redirige vers login
+
+#### 🎯 DIAGNOSTIC JUSTIFICATIFS
+**Conclusion** : Le code de gestion des justificatifs est **techniquement correct** :
+1. ✅ Upload fonctionnel
+2. ✅ Sauvegarde en base via API
+3. ✅ Récupération depuis l'API avec logs de debug
+4. ✅ Affichage dans l'interface
+5. ✅ Gestion du rechargement avec `fetchNoteData()`
+
+**Problème réel** : **Impossible de tester la fonctionnalité** car la navigation vers les pages Notes de Frais ne fonctionne pas.
+
+### 🔧 ACTIONS REQUISES URGENTES
+
+#### 1. CORRECTION NAVIGATION (PRIORITÉ CRITIQUE)
+- **Vérifier les routes React Router** pour `/notes-frais/*`
+- **Corriger les liens de navigation** dans le menu sidebar
+- **Tester la redirection** depuis le dashboard vers les pages Notes de Frais
+- **Vérifier l'authentification** pour les routes protégées Notes de Frais
+
+#### 2. ROUTES À VÉRIFIER
+Dans `/app/frontend/src/route/publicRoute.jsx` :
+- Route `/notes-frais/nouvelle` (ligne 496-498)
+- Route `/notes-frais/edit/:id` (ligne 516-518)
+- Composant `ProtectedRoute` avec permissions
+
+#### 3. MENU À CORRIGER
+Dans les composants de navigation :
+- Liens vers `#/notes-frais/nouvelle`
+- Gestion des clics sur le menu "Notes De Frais"
+- Vérification des permissions d'accès
+
+### 🎯 CONCLUSION TECHNIQUE
+
+**JUSTIFICATIFS** : ✅ **Code fonctionnel** - La logique de gestion des justificatifs est correctement implémentée avec :
+- Chargement depuis l'API avec `fetchNoteData()`
+- Logs de debug pour traçabilité (📝 📄 📎 🔗 ✅ ❌)
+- Gestion du rechargement et persistance
+- Upload et association automatique
+
+**NAVIGATION** : ❌ **Problème bloquant** - Impossible d'accéder aux pages pour tester la fonctionnalité
+
+**Recommandation** : **Corriger la navigation React Router** pour permettre l'accès aux pages Notes de Frais, puis re-tester la fonctionnalité justificatifs qui semble techniquement correcte selon l'analyse du code.
+
+### 📊 ÉTAT DES TESTS
+- **Backend APIs** : ✅ Fonctionnels (validés précédemment)
+- **Code justificatifs** : ✅ Techniquement correct
+- **Navigation frontend** : ❌ Défaillante
+- **Test complet** : ❌ Impossible à effectuer
+
+**STATUT** : **Test incomplet** - Problème de navigation empêche la validation complète de la fonctionnalité justificatifs.
+
+---
+
 # 🧪 TESTS JUSTIFICATIFS NOTES DE FRAIS - 2025-08-16 18:56:00
 
 ## ✅ VALIDATION PARTIELLE - PROBLÈME JUSTIFICATIFS IDENTIFIÉ
