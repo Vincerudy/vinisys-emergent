@@ -33,6 +33,12 @@ const ListeNotesfraisPage = () => {
     montant_min: '',
     montant_max: ''
   });
+
+  // Debug: Log quand notesfrais change
+  useEffect(() => {
+    console.log('🔄 notesfrais state changed:', notesfrais);
+    console.log('🔄 notesfrais count:', notesfrais.length);
+  }, [notesfrais]);
   const [selectedNotes, setSelectedNotes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showValidationModal, setShowValidationModal] = useState(false);
