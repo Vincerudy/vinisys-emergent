@@ -73,9 +73,9 @@ def test_server_connectivity():
         return False
 
 def test_authentication():
-    """Test 1: Authentication with admin@admin.com / admin credentials"""
+    """Test 1: Authentication with specified credentials"""
     global AUTH_TOKEN
-    print_test_header("Authentication Test - Admin Login")
+    print_test_header("Authentication Test - User Login")
     try:
         payload = {
             "email": TEST_EMAIL,
@@ -89,11 +89,11 @@ def test_authentication():
             user_id = data.get('id')
             societe_id = data.get('societe_id')
             
-            if AUTH_TOKEN and societe_id == SOCIETE_ID:
+            if AUTH_TOKEN and user_id == USER_ID and societe_id == SOCIETE_ID:
                 print_test_result(True, f"Authentication successful - User ID: {user_id}, Company ID: {societe_id}", response)
                 return True, data
             else:
-                print_test_result(False, f"Authentication response issue - Expected societe_id: {SOCIETE_ID}, Got: {societe_id}", response)
+                print_test_result(False, f"Authentication response issue - Expected User ID: {USER_ID}, Got: {user_id}, Expected societe_id: {SOCIETE_ID}, Got: {societe_id}", response)
                 return False, None
         else:
             print_test_result(False, f"Authentication failed - HTTP {response.status_code}", response)
