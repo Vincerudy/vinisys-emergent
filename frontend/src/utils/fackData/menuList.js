@@ -166,21 +166,21 @@ export const menuList = [
             {
                 id: 6,
                 name: "Paramétrage",
-                path: "/#/notes-frais/parametrage",
+                path: "/notes-frais/parametrage",
                 subdropdownMenu: false,
                 permission: 'manage_expense_categories',
             },
             {
                 id: 4,
                 name: "Validation notes",
-                path: "/#/notes-frais/validation",
+                path: "/notes-frais/validation",
                 subdropdownMenu: false,
                 permission: 'validate_expenses',
             },
             {
                 id: 5,
                 name: "Historique",
-                path: "/#/notes-frais/historique",
+                path: "/notes-frais/historique",
                 subdropdownMenu: false,
                 permission: 'view_notes_frais',
             }
