@@ -43,6 +43,8 @@ const ListeNotesfraisPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [validationComment, setValidationComment] = useState('');
+  const [totalNotes, setTotalNotes] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
   useEffect(() => {
