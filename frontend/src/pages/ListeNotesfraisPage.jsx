@@ -121,12 +121,12 @@ const ListeNotesfraisPage = () => {
     note.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const paginatedNotes = filteredNotes.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // Utiliser directement notesfrais pour l'affichage puisqu'on utilise la pagination serveur
+  const displayedNotes = searchTerm ? filteredNotes : notesfrais;
 
-  const totalPages = Math.ceil(filteredNotes.length / itemsPerPage);
+  // Pour la pagination côté serveur, nous devrons récupérer ces infos de l'API
+  const [totalNotes, setTotalNotes] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const getStatusBadge = (statut) => {
     const badges = {
