@@ -126,9 +126,10 @@ const ListeNotesfraisPage = () => {
   };
 
   const filteredNotes = notesfrais.filter(note =>
-    note.numero_note?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    note.numero?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     note.utilisateur_nom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.motif?.toLowerCase().includes(searchTerm.toLowerCase())
+    note.titre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    note.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const paginatedNotes = filteredNotes.slice(
