@@ -47,7 +47,11 @@ const ListeNotesfraisPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
+
+
+
   useEffect(() => {
+
     fetchNotesfrais();
   }, [societe_id, filters, currentPage]);
 
