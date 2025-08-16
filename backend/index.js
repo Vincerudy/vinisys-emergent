@@ -7,6 +7,8 @@ const morgan = require('morgan');
 const db = require('./config/db');
 const path = require('path');
 const http = require('http');
+const multer = require('multer');
+const fs = require('fs');
 const RelanceAutomatique = require('./jobs/relanceAutomatique');
 const app = express();
 
