@@ -74,10 +74,32 @@ const ListeNotesfraisPage = () => {
       
       if (response.data.notes && response.data.notes.length > 0) {
         console.log('✅ fetchNotesfrais: Première note =', response.data.notes[0]);
+        console.log('✅ fetchNotesfrais: Deuxième note =', response.data.notes[1]);
+        console.log('✅ fetchNotesfrais: Structure première note:');
+        const firstNote = response.data.notes[0];
+        Object.keys(firstNote).forEach(key => {
+          console.log(`    ${key}: ${firstNote[key]}`);
+        });
+        
+        // Vérifier s'il y a des notes avec des montants > 0
+        const notesWithAmount = response.data.notes.filter(note => 
+          parseFloat(note.total_ttc || 0) > 0
+        );
+        console.log('💰 fetchNotesfrais: Notes avec montant > 0 =', notesWithAmount.length);
+        if (notesWithAmount.length > 0) {
+          console.log('💰 fetchNotesfrais: Première note avec montant =', notesWithAmount[0]);
+        }
+        
+        // Vérifier les différents statuts
+        const statuts = [...new Set(response.data.notes.map(note => note.statut))];
+        console.log('📊 fetchNotesfrais: Statuts trouvés =', statuts);
+        
       } else {
         console.log('❌ fetchNotesfrais: Aucune note reçue ou structure incorrecte');
       }
       
+      // Log avant de set state
+      console.log('🔄 fetchNotesfrais: Avant setState, notes à setter =', response.data.notes?.length || 0);
       setNotesfrais(response.data.notes || []);
       console.log('✅ fetchNotesfrais: setState effectué avec', response.data.notes?.length || 0, 'notes');
       
