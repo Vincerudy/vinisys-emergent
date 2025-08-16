@@ -27,7 +27,35 @@ router.get('/:societeId', async (req, res) => {
         // SECTION 1: CHIFFRE D'AFFAIRES ET FACTURES
         // =====================================================
         
-        // Chiffre d'affaires total sur la période
+        // Chiffre d'affaires avec distinction encaissé/facturé (comme dashboard)
+        const [caDetaille] = await connection.execute(`
+            SELECT 
+                SUM(
+                    CASE WHEN regl.count_regl = 1 THEN CAST(fact.total AS DECIMAL(10,2)) ELSE 0 END
+                ) as ca_encaisse,
+                SUM(CAST(fact.total AS DECIMAL(10,2))) as ca_total,
+                COUNT(*) as nombre_factures,
+                SUM(
+                    CASE WHEN (regl.count_regl = 0 OR regl.count_regl IS NULL) THEN CAST(fact.total AS DECIMAL(10,2)) ELSE 0 END
+                ) as ca_en_attente,
+                SUM(
+                    CASE WHEN regl.count_regl = 1 THEN CAST(fact.total_tva AS DECIMAL(10,2)) ELSE 0 END
+                ) as tva_encaissee
+            FROM factures fact
+            LEFT JOIN (
+                SELECT societe_id, numero_facture, COUNT(0) AS count_regl
+                FROM Reglement_mode
+                WHERE Reste_A_Payer = 0
+                GROUP BY societe_id, numero_facture
+            ) regl ON regl.societe_id = fact.societe_id AND regl.numero_facture = fact.numero
+            WHERE fact.societe_id = ? 
+                AND fact.date_facture BETWEEN ? AND ?
+                AND fact.statut != 'annulée'
+                AND fact.type_fact = 'FACT'
+                AND fact.total IS NOT NULL
+        `, [societeId, date_debut, date_fin]);
+
+        // LEGACY: Ancien calcul pour compatibilité (à supprimer plus tard)
         const [caTotal] = await connection.execute(`
             SELECT 
                 SUM(CAST(total AS DECIMAL(10,2))) as total_ca,
