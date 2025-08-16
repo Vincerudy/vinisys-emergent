@@ -410,7 +410,7 @@ const ListeNotesfraisPage = () => {
                     type="checkbox"
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedNotes(paginatedNotes.map(n => n.id));
+                        setSelectedNotes(displayedNotes.map(n => n.id));
                       } else {
                         setSelectedNotes([]);
                       }
