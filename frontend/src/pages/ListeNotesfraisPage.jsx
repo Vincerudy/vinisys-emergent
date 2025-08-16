@@ -46,6 +46,10 @@ const ListeNotesfraisPage = () => {
   const fetchNotesfrais = async () => {
     try {
       setLoading(true);
+      console.log('🔍 fetchNotesfrais: Début de l\'appel API');
+      console.log('🔍 fetchNotesfrais: societe_id =', societe_id);
+      console.log('🔍 fetchNotesfrais: filters =', filters);
+      
       // Utiliser l'endpoint existant avec un paramètre spécial pour récupérer toutes les notes
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/notes-frais/0`,
@@ -57,12 +61,28 @@ const ListeNotesfraisPage = () => {
         }
       );
       
+      console.log('📡 fetchNotesfrais: Response complète =', response);
+      console.log('📡 fetchNotesfrais: response.data =', response.data);
+      console.log('📡 fetchNotesfrais: response.data.notes =', response.data.notes);
+      console.log('📡 fetchNotesfrais: Nombre de notes reçues =', response.data.notes?.length || 0);
+      
+      if (response.data.notes && response.data.notes.length > 0) {
+        console.log('✅ fetchNotesfrais: Première note =', response.data.notes[0]);
+      } else {
+        console.log('❌ fetchNotesfrais: Aucune note reçue ou structure incorrecte');
+      }
+      
       setNotesfrais(response.data.notes || []);
+      console.log('✅ fetchNotesfrais: setState effectué avec', response.data.notes?.length || 0, 'notes');
+      
     } catch (error) {
-      console.error('Erreur chargement notes:', error);
+      console.error('❌ fetchNotesfrais: Erreur chargement notes:', error);
+      console.error('❌ fetchNotesfrais: error.response =', error.response);
+      console.error('❌ fetchNotesfrais: error.message =', error.message);
       setNotesfrais([]);
     } finally {
       setLoading(false);
+      console.log('🔍 fetchNotesfrais: Fin de l\'appel (loading = false)');
     }
   };
 
