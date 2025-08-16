@@ -187,6 +187,46 @@ const ListeNotesfraisPage = () => {
     }
   };
 
+  // Gestionnaires pour les actions individuelles
+  const handleViewNote = (noteId) => {
+    console.log('Voir la note:', noteId);
+    // TODO: Implémenter la navigation vers la page de détail
+    window.location.href = `/#/notes-frais/detail/${noteId}`;
+  };
+
+  const handleEditNote = (noteId) => {
+    console.log('Modifier la note:', noteId);
+    // TODO: Implémenter la navigation vers la page d'édition
+    window.location.href = `/#/notes-frais/modifier/${noteId}`;
+  };
+
+  const handleValidateNote = async (noteId) => {
+    try {
+      console.log('Valider la note:', noteId);
+      await axios.put(`${import.meta.env.VITE_API_URL}/notes-frais/validate`, {
+        note_id: noteId,
+        action: 'validate'
+      });
+      fetchNotesfrais(); // Recharger la liste
+    } catch (error) {
+      console.error('Erreur validation note:', error);
+      alert('Erreur lors de la validation de la note');
+    }
+  };
+
+  const handleDeleteNote = async (noteId) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette note de frais ?')) {
+      try {
+        console.log('Supprimer la note:', noteId);
+        await axios.delete(`${import.meta.env.VITE_API_URL}/notes-frais/${noteId}`);
+        fetchNotesfrais(); // Recharger la liste
+      } catch (error) {
+        console.error('Erreur suppression note:', error);
+        alert('Erreur lors de la suppression de la note');
+      }
+    }
+  };
+
   return (
     <div className="liste-notesfrais-page">
       {/* Header */}
