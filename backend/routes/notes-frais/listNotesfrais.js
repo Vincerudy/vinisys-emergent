@@ -31,17 +31,19 @@ router.get('/:userId', async (req, res) => {
             params.push(societe_id);
         }
 
-        if (statut) {
+        // Filtrer par statut seulement si ce n'est pas "all"
+        if (statut && statut !== 'all') {
             whereClause += ' AND nf.statut = ?';
             params.push(statut);
         }
 
-        if (dateDebut) {
+        // Filtrer par dates seulement si elles sont définies et non vides
+        if (dateDebut && dateDebut !== '') {
             whereClause += ' AND nf.periode_debut >= ?';
             params.push(dateDebut);
         }
 
-        if (dateFin) {
+        if (dateFin && dateFin !== '') {
             whereClause += ' AND nf.periode_fin <= ?';
             params.push(dateFin);
         }
