@@ -14,7 +14,12 @@ with open('/app/frontend/.env', 'r') as f:
     env_content = f.read()
     for line in env_content.split('\n'):
         if line.startswith('VITE_API_URL='):
-            api_path = line.split('=')[1]
+            api_url = line.split('=')[1]
+            # Extract just the path part
+            if 'localhost:8001' in api_url:
+                api_path = '/api'
+            else:
+                api_path = api_url.split('localhost:8001')[-1] if 'localhost:8001' in api_url else '/api'
             break
     else:
         api_path = '/api'
