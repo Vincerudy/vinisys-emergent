@@ -90,6 +90,34 @@ const NouvelleNoteFraisPage = () => {
           projet_id: ligneFrais?.projet_id?.toString() || '',
           commentaire: ''
         });
+
+        // Charger les justificatifs de la première ligne de frais
+        if (ligneFrais?.id) {
+          try {
+            const justificatifsResponse = await axios.get(
+              `${import.meta.env.VITE_API_URL}/frais/${ligneFrais.id}/justificatifs`
+            );
+
+            if (justificatifsResponse.data.success && justificatifsResponse.data.justificatifs.length > 0) {
+              const premierJustificatif = justificatifsResponse.data.justificatifs[0];
+              
+              // Reconstituer l'objet justificatif pour l'affichage
+              setJustificatif({
+                url: `${import.meta.env.VITE_API_URL}${premierJustificatif.url}`,
+                nom: premierJustificatif.nom_fichier,
+                type: premierJustificatif.type_mime,
+                file: null, // Pas de fichier local pour un justificatif existant
+                existing: true, // Marquer comme existant
+                id: premierJustificatif.id
+              });
+
+              console.log('Justificatif chargé:', premierJustificatif);
+            }
+          } catch (justificatifError) {
+            console.error('Erreur chargement justificatifs:', justificatifError);
+            // Ne pas bloquer le chargement si les justificatifs échouent
+          }
+        }
       }
     } catch (error) {
       console.error('Erreur chargement note:', error);
