@@ -207,10 +207,10 @@ router.get('/:societeId', async (req, res) => {
                 type: periode
             },
             chiffre_affaires: {
-                total: parseFloat(caTotal[0]?.total_ca || 0),
-                encaisse: ca_encaisse,
-                en_attente: parseFloat(paiements[0]?.en_attente || 0),
-                avoirs: total_avoirs,
+                total: parseFloat(caDetaille[0]?.ca_total || 0),
+                encaisse: parseFloat(caDetaille[0]?.ca_encaisse || 0), 
+                en_attente: parseFloat(caDetaille[0]?.ca_en_attente || 0),
+                avoirs: parseFloat(avoirs[0]?.total_avoirs || 0),
                 tva_repartition: tvaRepartition.map(tva => ({
                     taux: parseFloat(tva.taux),
                     montant: parseFloat(tva.montant_tva),
