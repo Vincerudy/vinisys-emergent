@@ -242,7 +242,7 @@ app.get('/api/types-frais', async (req, res) => {
         );
         res.json({ 
             success: true,
-            types_frais: typesFrais 
+            types: typesFrais 
         });
     } catch (error) {
         console.error('Erreur types de frais:', error);
