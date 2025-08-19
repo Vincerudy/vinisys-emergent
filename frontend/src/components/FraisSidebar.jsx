@@ -276,48 +276,56 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
 
         {/* Content */}
         <div className="sidebar-content">
-          {/* Left Panel - Justificatif */}
+          {/* Left Panel - Justificatif OU Carte kilométrique */}
           <div className="justificatif-panel">
-            <div className="justificatif-header">
-              <h3>Justificatif</h3>
-              <div className="upload-actions">
-                <input
-                  type="file"
-                  id="frais-file-upload"
-                  accept="image/*,.pdf"
-                  onChange={(e) => {
-                    if (e.target.files[0]) {
-                      handleFileUpload(e.target.files[0]);
-                    }
-                  }}
-                  style={{ display: 'none' }}
-                />
-                <label htmlFor="frais-file-upload" className="upload-btn">
-                  <FiUpload />
-                  Charger
-                </label>
-                <button className="camera-btn" disabled>
-                  <FiCamera />
-                  Scanner
-                </button>
-              </div>
-            </div>
-            
-            <div className="justificatif-preview">
-              {justificatif ? (
-                <img 
-                  src={justificatif.url} 
-                  alt="Justificatif" 
-                  className="receipt-image"
-                />
-              ) : (
-                <div className="receipt-placeholder">
-                  <FiFileText size={64} color="#cbd5e1" />
-                  <p>Aucun justificatif</p>
-                  <small>Chargez une image ou un PDF</small>
+            {isKilometriqueType ? (
+              // Affichage de la carte Google Maps pour les frais kilométriques
+              <FraisKilometriques onCalculationChange={handleKilometriqueCalculation} />
+            ) : (
+              // Affichage classique du justificatif
+              <>
+                <div className="justificatif-header">
+                  <h3>Justificatif</h3>
+                  <div className="upload-actions">
+                    <input
+                      type="file"
+                      id="frais-file-upload"
+                      accept="image/*,.pdf"
+                      onChange={(e) => {
+                        if (e.target.files[0]) {
+                          handleFileUpload(e.target.files[0]);
+                        }
+                      }}
+                      style={{ display: 'none' }}
+                    />
+                    <label htmlFor="frais-file-upload" className="upload-btn">
+                      <FiUpload />
+                      Charger
+                    </label>
+                    <button className="camera-btn" disabled>
+                      <FiCamera />
+                      Scanner
+                    </button>
+                  </div>
                 </div>
-              )}
-            </div>
+                
+                <div className="justificatif-preview">
+                  {justificatif ? (
+                    <img 
+                      src={justificatif.url} 
+                      alt="Justificatif" 
+                      className="receipt-image"
+                    />
+                  ) : (
+                    <div className="receipt-placeholder">
+                      <FiFileText size={64} color="#cbd5e1" />
+                      <p>Aucun justificatif</p>
+                      <small>Chargez une image ou un PDF</small>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Right Panel - Form */}
