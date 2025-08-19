@@ -866,6 +866,43 @@ const upload = multer({
     }
 });
 
+// POST /api/frais/upload-auto - Upload automatique pour un frais
+app.post('/api/frais/upload-auto', upload.single('justificatif'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'Aucun fichier fourni'
+            });
+        }
+
+        const fileInfo = {
+            nom_fichier: req.file.originalname,
+            chemin_fichier: req.file.filename,
+            type_mime: req.file.mimetype,
+            taille_fichier: req.file.size,
+            url: `/api/image/${req.file.filename}`,
+            temp_id: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` // ID temporaire pour associer plus tard
+        };
+
+        console.log('Fichier uploadé automatiquement:', fileInfo);
+
+        res.json({
+            success: true,
+            message: 'Fichier uploadé avec succès',
+            fichier: fileInfo
+        });
+
+    } catch (error) {
+        console.error('Erreur upload automatique:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de l\'upload du fichier',
+            error: error.message
+        });
+    }
+});
+
 // POST /api/upload-justificatif - Upload d'un justificatif
 app.post('/api/upload-justificatif', upload.single('justificatif'), async (req, res) => {
     try {
