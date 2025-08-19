@@ -53,7 +53,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
       ]);
       
       setProjets(projetsRes.data.projets || []);
-      setTypesFrais(typesFraisRes.data.types_frais || []);
+      setTypesFrais(typesFraisRes.data.types || []);
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
