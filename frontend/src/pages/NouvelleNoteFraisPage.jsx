@@ -74,8 +74,20 @@ const NouvelleNoteFraisPage = () => {
 
   const fetchInitialData = async () => {
     try {
-      const projetsRes = await axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`);
+      const [projetsRes, typesFraisRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`),
+        axios.get(`${import.meta.env.VITE_API_URL}/types-frais`)
+      ]);
+      
       setProjets(projetsRes.data.projets || []);
+      setTypesFrais(typesFraisRes.data.types || []);
+      
+      // Définir un type par défaut si disponible
+      if (typesFraisRes.data.types && typesFraisRes.data.types.length > 0) {
+        const defaultType = typesFraisRes.data.types.find(t => t.nom.includes('divers')) || 
+                           typesFraisRes.data.types[0];
+        setFormData(prev => ({ ...prev, type_frais_id: defaultType.id.toString() }));
+      }
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
