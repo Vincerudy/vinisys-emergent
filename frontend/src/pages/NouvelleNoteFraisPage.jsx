@@ -72,6 +72,23 @@ const NouvelleNoteFraisPage = () => {
     }
   }, [societe_id, noteId, isEditMode]);
 
+  // Surveiller le changement de type de frais pour détecter les frais kilométriques
+  useEffect(() => {
+    const typeKilometrique = parseInt(formData.type_frais_id) === 14; // ID du type "Transport - Kilomètres"
+    setIsKilometriqueType(typeKilometrique);
+    
+    // Réinitialiser les données si on change de type
+    if (!typeKilometrique) {
+      setKilometriqueData({
+        distance: 0,
+        tarif_km: 0,
+        puissance_fiscale: '',
+        point_depart: '',
+        point_arrivee: ''
+      });
+    }
+  }, [formData.type_frais_id]);
+
   const fetchInitialData = async () => {
     try {
       const [projetsRes, typesFraisRes] = await Promise.all([
