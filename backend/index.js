@@ -710,6 +710,27 @@ app.post('/api/frais', async (req, res) => {
             projet_id || null
         ]);
 
+        const fraisId = result.insertId;
+
+        // Associer le justificatif si fourni
+        if (req.body.justificatif_info) {
+            try {
+                const justificatif = req.body.justificatif_info;
+                console.log('Association justificatif au frais:', fraisId, justificatif);
+                
+                await db.execute(`
+                    INSERT INTO justificatifs_frais (
+                        ligne_frais_id, nom_fichier, chemin_fichier, type_mime, taille_fichier, created_at
+                    ) VALUES (?, ?, ?, ?, ?, NOW())
+                `, [fraisId, justificatif.nom_fichier, justificatif.chemin_fichier, justificatif.type_mime, justificatif.taille_fichier]);
+                
+                console.log('Justificatif associé avec succès au frais:', fraisId);
+            } catch (justificatifError) {
+                console.error('Erreur association justificatif:', justificatifError);
+                // Ne pas faire échouer la création du frais si le justificatif échoue
+            }
+        }
+
         // Mettre à jour le montant total de la note
         await db.execute(`
             UPDATE notes_frais 
