@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
+import FraisKilometriques from './FraisKilometriques';
 import './css/FraisSidebar.css';
 
 const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
@@ -33,6 +34,16 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
   const [typesFrais, setTypesFrais] = useState([]);
   const [saving, setSaving] = useState(false);
   const [justificatif, setJustificatif] = useState(null);
+  
+  // États pour les frais kilométriques
+  const [isKilometriqueType, setIsKilometriqueType] = useState(false);
+  const [kilometriqueData, setKilometriqueData] = useState({
+    distance: 0,
+    tarif_km: 0,
+    puissance_fiscale: '',
+    point_depart: '',
+    point_arrivee: ''
+  });
 
   const isEditMode = !!fraisData;
 
@@ -53,7 +64,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
       ]);
       
       setProjets(projetsRes.data.projets || []);
-      setTypesFrais(typesFraisRes.data.types_frais || []);
+      setTypesFrais(typesFraisRes.data.types || []);
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
@@ -110,6 +121,39 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
         montant_tva: tva.toFixed(2).replace('.', ',')
       }));
     }
+  };
+
+  // Surveiller le changement de type de frais pour détecter les frais kilométriques
+  useEffect(() => {
+    const typeKilometrique = parseInt(formData.type_frais_id) === 14; // ID du type "Transport - Kilomètres"
+    setIsKilometriqueType(typeKilometrique);
+    
+    // Réinitialiser les données si on change de type
+    if (!typeKilometrique) {
+      setKilometriqueData({
+        distance: 0,
+        tarif_km: 0,
+        puissance_fiscale: '',
+        point_depart: '',
+        point_arrivee: ''
+      });
+    }
+  }, [formData.type_frais_id]);
+
+  // Gestionnaire pour les données kilométriques
+  const handleKilometriqueCalculation = (calculationData) => {
+    console.log('📍 Calcul kilométrique reçu:', calculationData);
+    
+    setKilometriqueData(calculationData);
+    
+    // Mettre à jour automatiquement les montants
+    setFormData(prev => ({
+      ...prev,
+      montant_ttc: calculationData.montant_ttc.toFixed(2).replace('.', ','),
+      montant_ht: calculationData.montant_ttc.toFixed(2).replace('.', ','), // Pas de TVA sur frais kilométriques
+      montant_tva: '0,00',
+      description: `Trajet ${calculationData.point_depart} → ${calculationData.point_arrivee} (${calculationData.distance.toFixed(2)} km)`
+    }));
   };
 
   const handleFileUpload = (file) => {
@@ -232,48 +276,56 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
 
         {/* Content */}
         <div className="sidebar-content">
-          {/* Left Panel - Justificatif */}
+          {/* Left Panel - Justificatif OU Carte kilométrique */}
           <div className="justificatif-panel">
-            <div className="justificatif-header">
-              <h3>Justificatif</h3>
-              <div className="upload-actions">
-                <input
-                  type="file"
-                  id="frais-file-upload"
-                  accept="image/*,.pdf"
-                  onChange={(e) => {
-                    if (e.target.files[0]) {
-                      handleFileUpload(e.target.files[0]);
-                    }
-                  }}
-                  style={{ display: 'none' }}
-                />
-                <label htmlFor="frais-file-upload" className="upload-btn">
-                  <FiUpload />
-                  Charger
-                </label>
-                <button className="camera-btn" disabled>
-                  <FiCamera />
-                  Scanner
-                </button>
-              </div>
-            </div>
-            
-            <div className="justificatif-preview">
-              {justificatif ? (
-                <img 
-                  src={justificatif.url} 
-                  alt="Justificatif" 
-                  className="receipt-image"
-                />
-              ) : (
-                <div className="receipt-placeholder">
-                  <FiFileText size={64} color="#cbd5e1" />
-                  <p>Aucun justificatif</p>
-                  <small>Chargez une image ou un PDF</small>
+            {isKilometriqueType ? (
+              // Affichage de la carte Google Maps pour les frais kilométriques
+              <FraisKilometriques onCalculationChange={handleKilometriqueCalculation} />
+            ) : (
+              // Affichage classique du justificatif
+              <>
+                <div className="justificatif-header">
+                  <h3>Justificatif</h3>
+                  <div className="upload-actions">
+                    <input
+                      type="file"
+                      id="frais-file-upload"
+                      accept="image/*,.pdf"
+                      onChange={(e) => {
+                        if (e.target.files[0]) {
+                          handleFileUpload(e.target.files[0]);
+                        }
+                      }}
+                      style={{ display: 'none' }}
+                    />
+                    <label htmlFor="frais-file-upload" className="upload-btn">
+                      <FiUpload />
+                      Charger
+                    </label>
+                    <button className="camera-btn" disabled>
+                      <FiCamera />
+                      Scanner
+                    </button>
+                  </div>
                 </div>
-              )}
-            </div>
+                
+                <div className="justificatif-preview">
+                  {justificatif ? (
+                    <img 
+                      src={justificatif.url} 
+                      alt="Justificatif" 
+                      className="receipt-image"
+                    />
+                  ) : (
+                    <div className="receipt-placeholder">
+                      <FiFileText size={64} color="#cbd5e1" />
+                      <p>Aucun justificatif</p>
+                      <small>Chargez une image ou un PDF</small>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Right Panel - Form */}
