@@ -242,7 +242,7 @@ app.get('/api/types-frais', async (req, res) => {
         );
         res.json({ 
             success: true,
-            types_frais: typesFrais 
+            types: typesFrais 
         });
     } catch (error) {
         console.error('Erreur types de frais:', error);
@@ -710,6 +710,27 @@ app.post('/api/frais', async (req, res) => {
             projet_id || null
         ]);
 
+        const fraisId = result.insertId;
+
+        // Associer le justificatif si fourni
+        if (req.body.justificatif_info) {
+            try {
+                const justificatif = req.body.justificatif_info;
+                console.log('Association justificatif au frais:', fraisId, justificatif);
+                
+                await db.execute(`
+                    INSERT INTO justificatifs_frais (
+                        ligne_frais_id, nom_fichier, chemin_fichier, type_mime, taille_fichier, created_at
+                    ) VALUES (?, ?, ?, ?, ?, NOW())
+                `, [fraisId, justificatif.nom_fichier, justificatif.chemin_fichier, justificatif.type_mime, justificatif.taille_fichier]);
+                
+                console.log('Justificatif associé avec succès au frais:', fraisId);
+            } catch (justificatifError) {
+                console.error('Erreur association justificatif:', justificatifError);
+                // Ne pas faire échouer la création du frais si le justificatif échoue
+            }
+        }
+
         // Mettre à jour le montant total de la note
         await db.execute(`
             UPDATE notes_frais 
@@ -863,6 +884,104 @@ const upload = multer({
         } else {
             cb(new Error('Seuls les fichiers JPEG, PNG et PDF sont autorisés'));
         }
+    }
+});
+
+// GET /api/types-frais - Récupérer tous les types de frais
+app.get('/api/types-frais', async (req, res) => {
+    try {
+        const [types] = await db.execute(`
+            SELECT id, nom, description
+            FROM types_frais 
+            WHERE actif = 1
+            ORDER BY nom
+        `);
+
+        res.json({
+            success: true,
+            types: types
+        });
+
+    } catch (error) {
+        console.error('Erreur récupération types de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des types de frais',
+            error: error.message
+        });
+    }
+});
+
+// GET /api/baremes-kilometriques - Récupérer les barèmes kilométriques actifs
+app.get('/api/baremes-kilometriques', async (req, res) => {
+    try {
+        const annee = req.query.annee || new Date().getFullYear();
+        
+        const [baremes] = await db.execute(`
+            SELECT id, puissance_fiscale, tarif_km, annee
+            FROM baremes_kilometriques 
+            WHERE annee = ? AND actif = 1
+            ORDER BY 
+                CASE puissance_fiscale
+                    WHEN '3 CV et moins' THEN 1
+                    WHEN '4 CV' THEN 2
+                    WHEN '5 CV' THEN 3
+                    WHEN '6 CV' THEN 4
+                    WHEN '7 CV et plus' THEN 5
+                    ELSE 6
+                END
+        `, [annee]);
+
+        res.json({
+            success: true,
+            baremes: baremes,
+            annee: parseInt(annee)
+        });
+
+    } catch (error) {
+        console.error('Erreur récupération barèmes kilométriques:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des barèmes kilométriques',
+            error: error.message
+        });
+    }
+});
+
+// POST /api/frais/upload-auto - Upload automatique pour un frais
+app.post('/api/frais/upload-auto', upload.single('justificatif'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'Aucun fichier fourni'
+            });
+        }
+
+        const fileInfo = {
+            nom_fichier: req.file.originalname,
+            chemin_fichier: req.file.filename,
+            type_mime: req.file.mimetype,
+            taille_fichier: req.file.size,
+            url: `/api/image/${req.file.filename}`,
+            temp_id: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` // ID temporaire pour associer plus tard
+        };
+
+        console.log('Fichier uploadé automatiquement:', fileInfo);
+
+        res.json({
+            success: true,
+            message: 'Fichier uploadé avec succès',
+            fichier: fileInfo
+        });
+
+    } catch (error) {
+        console.error('Erreur upload automatique:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de l\'upload du fichier',
+            error: error.message
+        });
     }
 });
 

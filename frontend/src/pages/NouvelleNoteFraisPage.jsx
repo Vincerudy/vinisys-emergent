@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
+import FraisKilometriques from '../components/FraisKilometriques';
 import './css/NouvelleNoteFraisPage.css';
 
 const NouvelleNoteFraisPage = () => {
@@ -29,6 +30,7 @@ const NouvelleNoteFraisPage = () => {
   
   const [justificatif, setJustificatif] = useState(null);
   const [formData, setFormData] = useState({
+    type_frais_id: '',
     vendeur: '',
     date_frais: '',
     pays: 'France',
@@ -43,8 +45,19 @@ const NouvelleNoteFraisPage = () => {
   });
 
   const [projets, setProjets] = useState([]);
+  const [typesFrais, setTypesFrais] = useState([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(isEditMode);
+  
+  // États pour les frais kilométriques
+  const [isKilometriqueType, setIsKilometriqueType] = useState(false);
+  const [kilometriqueData, setKilometriqueData] = useState({
+    distance: 0,
+    tarif_km: 0,
+    puissance_fiscale: '',
+    point_depart: '',
+    point_arrivee: ''
+  });
 
   useEffect(() => {
     if (!isEditMode) {
@@ -59,10 +72,39 @@ const NouvelleNoteFraisPage = () => {
     }
   }, [societe_id, noteId, isEditMode]);
 
+  // Surveiller le changement de type de frais pour détecter les frais kilométriques
+  useEffect(() => {
+    const typeKilometrique = parseInt(formData.type_frais_id) === 14; // ID du type "Transport - Kilomètres"
+    setIsKilometriqueType(typeKilometrique);
+    
+    // Réinitialiser les données si on change de type
+    if (!typeKilometrique) {
+      setKilometriqueData({
+        distance: 0,
+        tarif_km: 0,
+        puissance_fiscale: '',
+        point_depart: '',
+        point_arrivee: ''
+      });
+    }
+  }, [formData.type_frais_id]);
+
   const fetchInitialData = async () => {
     try {
-      const projetsRes = await axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`);
+      const [projetsRes, typesFraisRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`),
+        axios.get(`${import.meta.env.VITE_API_URL}/types-frais`)
+      ]);
+      
       setProjets(projetsRes.data.projets || []);
+      setTypesFrais(typesFraisRes.data.types || []);
+      
+      // Définir un type par défaut si disponible
+      if (typesFraisRes.data.types && typesFraisRes.data.types.length > 0) {
+        const defaultType = typesFraisRes.data.types.find(t => t.nom.includes('divers')) || 
+                           typesFraisRes.data.types[0];
+        setFormData(prev => ({ ...prev, type_frais_id: defaultType.id.toString() }));
+      }
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
@@ -103,7 +145,7 @@ const NouvelleNoteFraisPage = () => {
           
           // Reconstituer l'objet justificatif pour l'affichage
           setJustificatif({
-            url: `${import.meta.env.VITE_API_URL}${premierJustificatif.url}`,
+            url: `${import.meta.env.VITE_API_URL.replace('/api', '')}${premierJustificatif.url}`,
             nom: premierJustificatif.nom_fichier,
             type: premierJustificatif.type_mime,
             file: null, // Pas de fichier local pour un justificatif existant
@@ -125,23 +167,36 @@ const NouvelleNoteFraisPage = () => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-
-    // Calcul automatique de la TVA et HT si TTC est modifié
+    console.log(`🔄 note: Changement ${field} =`, value);
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Recalcul automatique TVA si montant change
     if (field === 'montant_ttc' && value) {
       const ttc = parseFloat(value.replace(',', '.')) || 0;
-      const tva = ttc * 0.2; // TVA à 20%
+      const tva = ttc * 0.20;
       const ht = ttc - tva;
-      
       setFormData(prev => ({
         ...prev,
         montant_ht: ht.toFixed(2).replace('.', ','),
         montant_tva: tva.toFixed(2).replace('.', ',')
       }));
     }
+  };
+
+  // Gestionnaire pour les données kilométriques
+  const handleKilometriqueCalculation = (calculationData) => {
+    console.log('📍 Calcul kilométrique reçu:', calculationData);
+    
+    setKilometriqueData(calculationData);
+    
+    // Mettre à jour automatiquement les montants
+    setFormData(prev => ({
+      ...prev,
+      montant_ttc: calculationData.montant_ttc.toFixed(2).replace('.', ','),
+      montant_ht: calculationData.montant_ttc.toFixed(2).replace('.', ','), // Pas de TVA sur frais kilométriques
+      montant_tva: '0,00',
+      motif: `Trajet ${calculationData.point_depart} → ${calculationData.point_arrivee} (${calculationData.distance.toFixed(2)} km)`
+    }));
   };
 
   const handleFileUpload = (file) => {
@@ -243,8 +298,8 @@ const NouvelleNoteFraisPage = () => {
 
       // Préparer les données du frais
       const fraisData = {
-        note_id: finalNoteId,
-        type_frais_id: 1, // Frais divers par défaut
+        note_frais_id: finalNoteId,
+        type_frais_id: parseInt(formData.type_frais_id) || 1,
         vendeur: formData.vendeur.trim(),
         date_frais: formData.date_frais || new Date().toISOString().split('T')[0],
         pays: formData.pays,
@@ -257,6 +312,17 @@ const NouvelleNoteFraisPage = () => {
         projet_id: formData.projet_id || null,
         commentaire: formData.commentaire.trim()
       };
+
+      // Ajouter les données kilométriques si c'est un frais kilométrique
+      if (isKilometriqueType && kilometriqueData.distance > 0) {
+        fraisData.kilometrique_data = {
+          distance: kilometriqueData.distance,
+          tarif_km: kilometriqueData.tarif_km,
+          puissance_fiscale: kilometriqueData.puissance_fiscale,
+          point_depart: kilometriqueData.point_depart,
+          point_arrivee: kilometriqueData.point_arrivee
+        };
+      }
 
       console.log('Envoi des données frais:', fraisData);
 
@@ -341,54 +407,78 @@ const NouvelleNoteFraisPage = () => {
       </div>
 
       <div className="content-container">
-        {/* Left Panel - Justificatif Preview */}
+        {/* Left Panel - Justificatif Preview OU Carte kilométrique */}
         <div className="justificatif-panel">
-          <div className="justificatif-header">
-            <h3>Justificatif</h3>
-            <div className="upload-actions">
-              <input
-                type="file"
-                id="file-upload"
-                accept="image/*,.pdf"
-                onChange={(e) => {
-                  if (e.target.files[0]) {
-                    handleFileUpload(e.target.files[0]);
-                  }
-                }}
-                style={{ display: 'none' }}
-              />
-              <label htmlFor="file-upload" className="upload-btn">
-                <FiUpload />
-                Charger fichier
-              </label>
-              <button className="camera-btn" disabled>
-                <FiCamera />
-                Scanner
-              </button>
-            </div>
-          </div>
-          
-          <div className="justificatif-preview">
-            {justificatif ? (
-              <img 
-                src={justificatif.url} 
-                alt="Justificatif" 
-                className="receipt-image"
-              />
-            ) : (
-              <div className="receipt-placeholder">
-                <FiFileText size={64} color="#cbd5e1" />
-                <p>Aucun justificatif</p>
-                <small>Chargez une image ou un PDF</small>
+          {isKilometriqueType ? (
+            // Affichage de la carte Google Maps pour les frais kilométriques
+            <FraisKilometriques onCalculationChange={handleKilometriqueCalculation} />
+          ) : (
+            // Affichage classique du justificatif
+            <>
+              <div className="justificatif-header">
+                <h3>Justificatif</h3>
+                <div className="upload-actions">
+                  <input
+                    type="file"
+                    id="file-upload"
+                    accept="image/*,.pdf"
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        handleFileUpload(e.target.files[0]);
+                      }
+                    }}
+                    style={{ display: 'none' }}
+                  />
+                  <label htmlFor="file-upload" className="upload-btn">
+                    <FiUpload />
+                    Charger fichier
+                  </label>
+                  <button className="camera-btn" disabled>
+                    <FiCamera />
+                    Scanner
+                  </button>
+                </div>
               </div>
-            )}
-          </div>
+              
+              <div className="justificatif-preview">
+                {justificatif ? (
+                  <img 
+                    src={justificatif.url} 
+                    alt="Justificatif" 
+                    className="receipt-image"
+                  />
+                ) : (
+                  <div className="receipt-placeholder">
+                    <FiFileText size={64} color="#cbd5e1" />
+                    <p>Aucun justificatif</p>
+                    <small>Chargez une image ou un PDF</small>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right Panel - Form */}
         <div className="form-panel">
           <div className="form-content">
             <div className="form-grid">
+              <div className="form-group">
+                <label>Type de frais *</label>
+                <select
+                  value={formData.type_frais_id}
+                  onChange={(e) => handleInputChange('type_frais_id', e.target.value)}
+                  className="form-input"
+                >
+                  <option value="">Sélectionner un type</option>
+                  {typesFrais.map(type => (
+                    <option key={type.id} value={type.id}>
+                      {type.nom}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="form-group">
                 <label>Vendeur *</label>
                 <input
