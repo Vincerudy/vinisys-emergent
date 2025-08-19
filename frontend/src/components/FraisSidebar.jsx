@@ -123,6 +123,39 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
     }
   };
 
+  // Surveiller le changement de type de frais pour détecter les frais kilométriques
+  useEffect(() => {
+    const typeKilometrique = parseInt(formData.type_frais_id) === 14; // ID du type "Transport - Kilomètres"
+    setIsKilometriqueType(typeKilometrique);
+    
+    // Réinitialiser les données si on change de type
+    if (!typeKilometrique) {
+      setKilometriqueData({
+        distance: 0,
+        tarif_km: 0,
+        puissance_fiscale: '',
+        point_depart: '',
+        point_arrivee: ''
+      });
+    }
+  }, [formData.type_frais_id]);
+
+  // Gestionnaire pour les données kilométriques
+  const handleKilometriqueCalculation = (calculationData) => {
+    console.log('📍 Calcul kilométrique reçu:', calculationData);
+    
+    setKilometriqueData(calculationData);
+    
+    // Mettre à jour automatiquement les montants
+    setFormData(prev => ({
+      ...prev,
+      montant_ttc: calculationData.montant_ttc.toFixed(2).replace('.', ','),
+      montant_ht: calculationData.montant_ttc.toFixed(2).replace('.', ','), // Pas de TVA sur frais kilométriques
+      montant_tva: '0,00',
+      description: `Trajet ${calculationData.point_depart} → ${calculationData.point_arrivee} (${calculationData.distance.toFixed(2)} km)`
+    }));
+  };
+
   const handleFileUpload = (file) => {
     if (file) {
       const url = URL.createObjectURL(file);
