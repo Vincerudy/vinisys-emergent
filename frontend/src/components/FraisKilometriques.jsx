@@ -46,6 +46,15 @@ const FraisKilometriques = ({ onCalculationChange }) => {
     try {
       console.log('🗺️ Initialisation Google Maps...');
       
+      // Vérifier que l'élément DOM existe
+      if (!mapRef.current) {
+        console.warn('⚠️ Élément DOM mapRef non disponible, retry dans 100ms');
+        setTimeout(() => initializeMap(), 100);
+        return;
+      }
+
+      console.log('✅ Élément DOM mapRef trouvé, initialisation...');
+      
       const loader = new Loader({
         apiKey: GOOGLE_MAPS_API_KEY,
         version: 'weekly',
@@ -65,6 +74,11 @@ const FraisKilometriques = ({ onCalculationChange }) => {
       const { Autocomplete } = await loader.importLibrary('places');
 
       console.log('📍 Création de la carte...');
+
+      // Double vérification avant création de la carte
+      if (!mapRef.current) {
+        throw new Error('Élément DOM mapRef disparu pendant le chargement');
+      }
 
       // Initialiser la carte centrée sur la France
       const mapInstance = new Map(mapRef.current, {
@@ -90,41 +104,41 @@ const FraisKilometriques = ({ onCalculationChange }) => {
 
       // Vérifier que les éléments DOM existent
       if (!autocompleteARef.current || !autocompleteBRef.current) {
-        throw new Error('Éléments DOM d\'autocomplétion non trouvés');
+        console.warn('⚠️ Éléments autocomplete non disponibles, skip autocomplete setup');
+      } else {
+        // Autocomplete pour point A
+        const autocompleteA = new Autocomplete(autocompleteARef.current, {
+          componentRestrictions: { country: 'fr' },
+          fields: ['place_id', 'formatted_address', 'geometry'],
+          types: ['geocode']
+        });
+
+        // Autocomplete pour point B  
+        const autocompleteB = new Autocomplete(autocompleteBRef.current, {
+          componentRestrictions: { country: 'fr' },
+          fields: ['place_id', 'formatted_address', 'geometry'],
+          types: ['geocode']
+        });
+
+        console.log('👂 Configuration des événements...');
+
+        // Écouteurs pour les changements d'adresse
+        autocompleteA.addListener('place_changed', () => {
+          const place = autocompleteA.getPlace();
+          if (place.formatted_address) {
+            console.log('📍 Point A sélectionné:', place.formatted_address);
+            setPointA(place.formatted_address);
+          }
+        });
+
+        autocompleteB.addListener('place_changed', () => {
+          const place = autocompleteB.getPlace();
+          if (place.formatted_address) {
+            console.log('📍 Point B sélectionné:', place.formatted_address);
+            setPointB(place.formatted_address);
+          }
+        });
       }
-
-      // Autocomplete pour point A
-      const autocompleteA = new Autocomplete(autocompleteARef.current, {
-        componentRestrictions: { country: 'fr' },
-        fields: ['place_id', 'formatted_address', 'geometry'],
-        types: ['geocode']
-      });
-
-      // Autocomplete pour point B  
-      const autocompleteB = new Autocomplete(autocompleteBRef.current, {
-        componentRestrictions: { country: 'fr' },
-        fields: ['place_id', 'formatted_address', 'geometry'],
-        types: ['geocode']
-      });
-
-      console.log('👂 Configuration des événements...');
-
-      // Écouteurs pour les changements d'adresse
-      autocompleteA.addListener('place_changed', () => {
-        const place = autocompleteA.getPlace();
-        if (place.formatted_address) {
-          console.log('📍 Point A sélectionné:', place.formatted_address);
-          setPointA(place.formatted_address);
-        }
-      });
-
-      autocompleteB.addListener('place_changed', () => {
-        const place = autocompleteB.getPlace();
-        if (place.formatted_address) {
-          console.log('📍 Point B sélectionné:', place.formatted_address);
-          setPointB(place.formatted_address);
-        }
-      });
 
       // Écouteur pour le drag des waypoints
       directionsRendererInstance.addListener('directions_changed', () => {
@@ -152,7 +166,8 @@ const FraisKilometriques = ({ onCalculationChange }) => {
       console.error('💡 Détails de l\'erreur:', {
         message: error.message,
         stack: error.stack,
-        apiKey: GOOGLE_MAPS_API_KEY ? 'Présente' : 'Manquante'
+        apiKey: GOOGLE_MAPS_API_KEY ? 'Présente' : 'Manquante',
+        mapRefExists: !!mapRef.current
       });
       
       setError(`Erreur lors de l'initialisation de Google Maps: ${error.message}`);
