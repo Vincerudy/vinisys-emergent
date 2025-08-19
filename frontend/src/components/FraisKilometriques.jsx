@@ -23,8 +23,13 @@ const FraisKilometriques = ({ onCalculationChange }) => {
   const GOOGLE_MAPS_API_KEY = 'AIzaSyCYKDWRjBPotRjX-AgWnL5Y7-iKAbsu2KA';
 
   useEffect(() => {
-    initializeMap();
-    fetchBaremes();
+    // Petit délai pour s'assurer que le DOM est prêt
+    const initTimeout = setTimeout(() => {
+      initializeMap();
+      fetchBaremes();
+    }, 100);
+
+    return () => clearTimeout(initTimeout);
   }, []);
 
   const fetchBaremes = async () => {
