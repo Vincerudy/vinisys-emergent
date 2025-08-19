@@ -44,15 +44,27 @@ const FraisKilometriques = ({ onCalculationChange }) => {
 
   const initializeMap = async () => {
     try {
+      console.log('🗺️ Initialisation Google Maps...');
+      
       const loader = new Loader({
         apiKey: GOOGLE_MAPS_API_KEY,
         version: 'weekly',
-        libraries: ['places']
+        libraries: ['places'],
+        region: 'FR',
+        language: 'fr'
       });
+
+      console.log('📡 Chargement des bibliothèques Google Maps...');
+      
+      // Vérifier que Google Maps est disponible
+      await loader.load();
+      console.log('✅ Google Maps chargé avec succès');
 
       const { Map } = await loader.importLibrary('maps');
       const { DirectionsService, DirectionsRenderer } = await loader.importLibrary('routes');
       const { Autocomplete } = await loader.importLibrary('places');
+
+      console.log('📍 Création de la carte...');
 
       // Initialiser la carte centrée sur la France
       const mapInstance = new Map(mapRef.current, {
@@ -61,30 +73,47 @@ const FraisKilometriques = ({ onCalculationChange }) => {
         mapTypeControl: true,
         streetViewControl: true,
         fullscreenControl: true,
+        zoomControl: true,
+        mapTypeId: 'roadmap'
       });
+
+      console.log('🧭 Configuration des services de direction...');
 
       const directionsServiceInstance = new DirectionsService();
       const directionsRendererInstance = new DirectionsRenderer({
         draggable: true,
         map: mapInstance,
+        panel: null
       });
+
+      console.log('🔍 Configuration de l\'autocomplétion...');
+
+      // Vérifier que les éléments DOM existent
+      if (!autocompleteARef.current || !autocompleteBRef.current) {
+        throw new Error('Éléments DOM d\'autocomplétion non trouvés');
+      }
 
       // Autocomplete pour point A
       const autocompleteA = new Autocomplete(autocompleteARef.current, {
         componentRestrictions: { country: 'fr' },
-        fields: ['place_id', 'formatted_address', 'geometry']
+        fields: ['place_id', 'formatted_address', 'geometry'],
+        types: ['geocode']
       });
 
       // Autocomplete pour point B  
       const autocompleteB = new Autocomplete(autocompleteBRef.current, {
         componentRestrictions: { country: 'fr' },
-        fields: ['place_id', 'formatted_address', 'geometry']
+        fields: ['place_id', 'formatted_address', 'geometry'],
+        types: ['geocode']
       });
+
+      console.log('👂 Configuration des événements...');
 
       // Écouteurs pour les changements d'adresse
       autocompleteA.addListener('place_changed', () => {
         const place = autocompleteA.getPlace();
         if (place.formatted_address) {
+          console.log('📍 Point A sélectionné:', place.formatted_address);
           setPointA(place.formatted_address);
         }
       });
@@ -92,6 +121,7 @@ const FraisKilometriques = ({ onCalculationChange }) => {
       autocompleteB.addListener('place_changed', () => {
         const place = autocompleteB.getPlace();
         if (place.formatted_address) {
+          console.log('📍 Point B sélectionné:', place.formatted_address);
           setPointB(place.formatted_address);
         }
       });
@@ -102,7 +132,9 @@ const FraisKilometriques = ({ onCalculationChange }) => {
         if (directions && directions.routes && directions.routes[0]) {
           const route = directions.routes[0];
           const leg = route.legs[0];
-          setDistance(leg.distance.value / 1000); // Convertir en km
+          const distanceKm = leg.distance.value / 1000;
+          console.log('📏 Distance calculée:', distanceKm, 'km');
+          setDistance(distanceKm);
           setPointA(leg.start_address);
           setPointB(leg.end_address);
         }
@@ -113,9 +145,17 @@ const FraisKilometriques = ({ onCalculationChange }) => {
       setDirectionsRenderer(directionsRendererInstance);
       setLoading(false);
 
+      console.log('🎉 Google Maps initialisé avec succès !');
+
     } catch (error) {
-      console.error('Erreur initialisation Google Maps:', error);
-      setError('Erreur lors de l\'initialisation de Google Maps');
+      console.error('❌ Erreur initialisation Google Maps:', error);
+      console.error('💡 Détails de l\'erreur:', {
+        message: error.message,
+        stack: error.stack,
+        apiKey: GOOGLE_MAPS_API_KEY ? 'Présente' : 'Manquante'
+      });
+      
+      setError(`Erreur lors de l'initialisation de Google Maps: ${error.message}`);
       setLoading(false);
     }
   };
