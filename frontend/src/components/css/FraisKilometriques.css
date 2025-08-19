@@ -1,11 +1,13 @@
 .frais-kilometriques {
   width: 100%;
-  max-width: 500px;
+  max-width: 100%; /* Assurer que ça tient dans le conteneur parent */
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 20px 0;
+  border-radius: 8px; /* Réduire pour tenir dans sidebar */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Réduire l'ombre */
+  padding: 15px; /* Réduire le padding */
+  margin: 0; /* Supprimer les marges */
+  box-sizing: border-box;
+  overflow: hidden; /* Empêcher débordement */
 }
 
 .frais-kilometriques.loading,
@@ -13,7 +15,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-height: 150px; /* Réduire la hauteur minimum */
+  text-align: center;
 }
 
 .loading-spinner {
@@ -21,13 +24,13 @@
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007bff;
+  width: 30px; /* Réduire la taille */
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto 15px;
+  margin: 0 auto 10px;
 }
 
 @keyframes spin {
@@ -38,28 +41,78 @@
 .error-message {
   text-align: center;
   color: #dc3545;
+  padding: 10px;
 }
 
 .error-message i {
-  font-size: 24px;
-  margin-bottom: 10px;
+  font-size: 20px;
+  margin-bottom: 8px;
   display: block;
 }
 
+.retry-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.retry-btn:hover {
+  background: #0056b3;
+}
+
+.manual-input {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.manual-input h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #495057;
+}
+
+.manual-input p {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.manual-form input, .manual-form select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
 .frais-km-header {
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #e9ecef;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .frais-km-header h3 {
   color: #2c3e50;
-  font-size: 18px;
+  font-size: 16px; /* Réduire la taille */
   font-weight: 600;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .frais-km-header i {
@@ -67,21 +120,21 @@
 }
 
 .route-inputs {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .input-group {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .input-group label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 500;
   color: #495057;
-  margin-bottom: 5px;
-  font-size: 14px;
+  margin-bottom: 4px;
+  font-size: 13px;
 }
 
 .start-marker {
@@ -95,10 +148,10 @@
 .input-group input,
 .input-group select {
   width: 100%;
-  padding: 10px 12px;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 8px 10px; /* Réduire le padding */
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 13px;
   transition: border-color 0.2s ease;
   box-sizing: border-box;
 }
@@ -107,36 +160,39 @@
 .input-group select:focus {
   outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
 }
 
 .map-container {
-  margin: 20px 0;
-  border-radius: 8px;
+  margin: 15px 0;
+  border-radius: 6px;
   overflow: hidden;
-  border: 2px solid #e9ecef;
+  border: 1px solid #e9ecef;
+  position: relative;
 }
 
 .google-map {
   width: 100%;
-  height: 300px;
-  min-height: 300px;
+  height: 250px; /* Réduire la hauteur pour le sidebar */
+  min-height: 250px;
+  display: block;
 }
 
 .calculation-result {
   background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  border-left: 4px solid #007bff;
-  margin-top: 20px;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #007bff;
+  margin-top: 15px;
 }
 
 .result-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 6px 0;
   border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
 }
 
 .result-item:last-child {
@@ -146,16 +202,16 @@
 .result-item.total {
   background: #007bff;
   color: white;
-  margin: 10px -15px -15px;
-  padding: 15px;
+  margin: 8px -12px -12px;
+  padding: 12px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .result-item .label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 500;
 }
 
@@ -169,30 +225,23 @@
 }
 
 .result-item i {
-  width: 16px;
+  width: 14px;
   text-align: center;
+  font-size: 12px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Responsive pour sidebar */
+@media (max-width: 1200px) {
   .frais-kilometriques {
-    margin: 10px 0;
-    padding: 15px;
+    padding: 10px;
   }
   
   .google-map {
-    height: 250px;
+    height: 200px;
   }
   
-  .result-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-  }
-  
-  .result-item.total {
-    flex-direction: row;
-    align-items: center;
+  .frais-km-header h3 {
+    font-size: 15px;
   }
 }
 
@@ -212,16 +261,19 @@
   }
 }
 
-/* Autocomplete styling */
+/* Autocomplete styling pour sidebar */
 .pac-container {
-  border-radius: 8px !important;
+  border-radius: 6px !important;
   border: none !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  font-size: 13px !important;
+  z-index: 9999 !important; /* S'assurer qu'il est au-dessus */
 }
 
 .pac-item {
-  padding: 12px 16px !important;
+  padding: 10px 12px !important;
   border-bottom: 1px solid #e9ecef !important;
+  font-size: 13px !important;
 }
 
 .pac-item:hover {
