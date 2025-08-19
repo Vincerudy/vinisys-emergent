@@ -298,8 +298,8 @@ const NouvelleNoteFraisPage = () => {
 
       // Préparer les données du frais
       const fraisData = {
-        note_id: finalNoteId,
-        type_frais_id: 1, // Frais divers par défaut
+        note_frais_id: finalNoteId,
+        type_frais_id: parseInt(formData.type_frais_id) || 1,
         vendeur: formData.vendeur.trim(),
         date_frais: formData.date_frais || new Date().toISOString().split('T')[0],
         pays: formData.pays,
@@ -312,6 +312,17 @@ const NouvelleNoteFraisPage = () => {
         projet_id: formData.projet_id || null,
         commentaire: formData.commentaire.trim()
       };
+
+      // Ajouter les données kilométriques si c'est un frais kilométrique
+      if (isKilometriqueType && kilometriqueData.distance > 0) {
+        fraisData.kilometrique_data = {
+          distance: kilometriqueData.distance,
+          tarif_km: kilometriqueData.tarif_km,
+          puissance_fiscale: kilometriqueData.puissance_fiscale,
+          point_depart: kilometriqueData.point_depart,
+          point_arrivee: kilometriqueData.point_arrivee
+        };
+      }
 
       console.log('Envoi des données frais:', fraisData);
 
