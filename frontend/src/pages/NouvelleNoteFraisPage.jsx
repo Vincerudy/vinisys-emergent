@@ -167,23 +167,36 @@ const NouvelleNoteFraisPage = () => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-
-    // Calcul automatique de la TVA et HT si TTC est modifié
+    console.log(`🔄 note: Changement ${field} =`, value);
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Recalcul automatique TVA si montant change
     if (field === 'montant_ttc' && value) {
       const ttc = parseFloat(value.replace(',', '.')) || 0;
-      const tva = ttc * 0.2; // TVA à 20%
+      const tva = ttc * 0.20;
       const ht = ttc - tva;
-      
       setFormData(prev => ({
         ...prev,
         montant_ht: ht.toFixed(2).replace('.', ','),
         montant_tva: tva.toFixed(2).replace('.', ',')
       }));
     }
+  };
+
+  // Gestionnaire pour les données kilométriques
+  const handleKilometriqueCalculation = (calculationData) => {
+    console.log('📍 Calcul kilométrique reçu:', calculationData);
+    
+    setKilometriqueData(calculationData);
+    
+    // Mettre à jour automatiquement les montants
+    setFormData(prev => ({
+      ...prev,
+      montant_ttc: calculationData.montant_ttc.toFixed(2).replace('.', ','),
+      montant_ht: calculationData.montant_ttc.toFixed(2).replace('.', ','), // Pas de TVA sur frais kilométriques
+      montant_tva: '0,00',
+      motif: `Trajet ${calculationData.point_depart} → ${calculationData.point_arrivee} (${calculationData.distance.toFixed(2)} km)`
+    }));
   };
 
   const handleFileUpload = (file) => {
