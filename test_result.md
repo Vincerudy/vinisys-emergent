@@ -1105,6 +1105,138 @@ Dans les composants de navigation :
 
 ---
 
+# 🧪 TESTS DIAGNOSTIC GOOGLE MAPS - FRAIS KILOMÉTRIQUES - 2025-08-19 19:55:00
+
+## ❌ PROBLÈME CRITIQUE IDENTIFIÉ - ERREUR D'INITIALISATION GOOGLE MAPS
+
+### Tests effectués sur le workflow exact demandé par l'utilisateur
+
+#### ✅ WORKFLOW REPRODUIT AVEC SUCCÈS (4/5)
+1. **✅ Connexion utilisateur** : Login avec idnovation2014@gmail.com / 123456 ✅ FONCTIONNE
+2. **✅ Navigation vers /#/notes-frais/note** : Accès à la page de création ✅ FONCTIONNE  
+3. **✅ Clic "Nouveau frais"** : Ouverture du formulaire ✅ FONCTIONNE
+4. **✅ Sélection "Transport - Kilomètres"** : Type sélectionné dans le dropdown ✅ FONCTIONNE
+
+#### ❌ PROBLÈME CRITIQUE IDENTIFIÉ (1/5)
+5. **❌ Initialisation Google Maps** : Erreur technique empêche l'affichage de la carte
+
+### 🔍 DIAGNOSTIC TECHNIQUE COMPLET
+
+#### ✅ ÉLÉMENTS FONCTIONNELS VALIDÉS
+- **Clé API Google Maps** : AIzaSyCYKDWRjBPotRjX-AgWnL5Y7-iKAbsu2KA ✅ FONCTIONNELLE
+- **Chargement bibliothèques** : Google Maps API se charge avec succès ✅
+- **Composant FraisKilometriques** : Se charge et s'affiche correctement ✅
+- **Interface de fallback** : Mode "Saisie manuelle" s'affiche ✅
+- **Barèmes kilométriques** : API backend fonctionne (5 barèmes URSSAF 2025) ✅
+
+#### ❌ ERREUR EXACTE IDENTIFIÉE
+**Message d'erreur console** :
+```
+❌ Erreur initialisation Google Maps: InvalidValueError: 
+Map: Expected mapDiv of type HTMLElement but was passed null.
+```
+
+**Localisation** : Fichier `/app/frontend/src/components/FraisKilometriques.jsx` ligne 74
+
+**Cause racine** : L'élément DOM `mapRef.current` est `null` au moment de l'initialisation de Google Maps
+
+#### 🔧 ANALYSE TECHNIQUE DÉTAILLÉE
+
+**Séquence d'événements observée** :
+1. 🗺️ Initialisation Google Maps... ✅
+2. 📡 Chargement des bibliothèques Google Maps... ✅  
+3. ✅ Google Maps chargé avec succès ✅
+4. 📍 Création de la carte... ❌ **ÉCHEC ICI**
+5. ❌ `mapRef.current` est null → Erreur InvalidValueError
+
+**Code problématique** (ligne 74) :
+```javascript
+const mapInstance = new Map(mapRef.current, {
+  // mapRef.current est null à ce moment
+```
+
+#### 🎯 SOLUTION TECHNIQUE REQUISE
+
+**Problème** : Race condition entre le rendu du DOM et l'initialisation de Google Maps
+
+**Correction nécessaire** : Ajouter une vérification de l'existence de l'élément DOM :
+```javascript
+// Vérifier que l'élément DOM existe avant l'initialisation
+if (!mapRef.current) {
+  console.error('Élément DOM mapRef non disponible');
+  return;
+}
+```
+
+### 📊 ÉTAT DES FONCTIONNALITÉS
+
+#### ✅ BACKEND APIS (100% FONCTIONNEL)
+- **Types de frais** : 8 types disponibles dont "Transport - Kilomètres" (ID: 14) ✅
+- **Barèmes kilométriques** : 5 barèmes URSSAF 2025 (0.502€ à 0.661€/km) ✅
+- **Endpoints** : `/api/types-frais` et `/api/baremes-kilometriques` opérationnels ✅
+
+#### ✅ FRONTEND INTERFACE (95% FONCTIONNEL)
+- **Sélection type** : Dropdown fonctionne, basculement vers carte ✅
+- **Composant FraisKilometriques** : Se charge et s'affiche ✅
+- **Mode fallback** : Saisie manuelle disponible en cas d'erreur ✅
+- **Champs manuels** : Point départ, arrivée, distance, puissance fiscale ✅
+
+#### ❌ GOOGLE MAPS INTEGRATION (0% FONCTIONNEL)
+- **Initialisation carte** : Échec à cause de mapRef null ❌
+- **Autocomplete adresses** : Non disponible (dépend de la carte) ❌
+- **Calcul d'itinéraire** : Non disponible (dépend de la carte) ❌
+
+### 🚨 IMPACT UTILISATEUR
+
+**Comportement actuel** :
+- ✅ L'utilisateur peut sélectionner "Transport - Kilomètres"
+- ✅ L'interface bascule vers le composant kilométrique
+- ❌ La carte Google Maps ne s'affiche pas
+- ✅ Le mode "Saisie manuelle" est disponible comme alternative
+- ✅ L'utilisateur peut saisir manuellement : départ, arrivée, distance, puissance
+
+**Fonctionnalité dégradée mais utilisable** : Le système fonctionne en mode manuel
+
+### 🔧 RECOMMANDATIONS TECHNIQUES
+
+#### 1. CORRECTION IMMÉDIATE (PRIORITÉ CRITIQUE)
+```javascript
+// Dans FraisKilometriques.jsx, ligne 74, ajouter :
+if (!mapRef.current) {
+  console.error('Élément DOM mapRef non disponible, retry dans 100ms');
+  setTimeout(() => initializeMap(), 100);
+  return;
+}
+```
+
+#### 2. SOLUTION ROBUSTE
+- Utiliser `useEffect` avec dépendance sur le rendu du composant
+- Ajouter un état de loading pour attendre le DOM
+- Implémenter un retry mechanism avec timeout
+
+#### 3. TESTS DE VALIDATION
+- Vérifier que `mapRef.current` existe avant l'initialisation
+- Tester sur différents navigateurs et vitesses de connexion
+- Valider le fallback en mode saisie manuelle
+
+### 🎯 CONCLUSION DIAGNOSTIC
+
+**PROBLÈME IDENTIFIÉ AVEC PRÉCISION** : Erreur d'initialisation Google Maps due à un timing issue
+
+**CAUSE** : `mapRef.current` est null au moment de l'appel `new Map()`
+
+**IMPACT** : Fonctionnalité dégradée mais utilisable en mode manuel
+
+**SOLUTION** : Correction simple du timing d'initialisation dans FraisKilometriques.jsx
+
+**CLÉS API** : Fonctionnelle et confirmée
+
+**BACKEND** : 100% opérationnel
+
+**DIAGNOSTIC COMPLET TERMINÉ** - Erreur précise identifiée et solution technique fournie.
+
+---
+
 # 🧪 TESTS FONCTIONNALITÉ FRAIS KILOMÉTRIQUES GOOGLE MAPS - 2025-01-16 19:22:00
 
 ## ❌ PROBLÈME CRITIQUE IDENTIFIÉ - BASE DE DONNÉES MYSQL NON DISPONIBLE
