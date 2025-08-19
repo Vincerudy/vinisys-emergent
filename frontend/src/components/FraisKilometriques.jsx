@@ -49,89 +49,111 @@ const FraisKilometriques = ({ onCalculationChange }) => {
 
   const initializeMap = async () => {
     try {
-      console.log('🗺️ Initialisation Google Maps...');
+      console.log('🗺️ Début initialisation Google Maps...');
+      setLoading(true);
+      setError('');
       
-      // Vérifier que l'élément DOM existe
-      if (!mapRef.current) {
-        console.warn('⚠️ Élément DOM mapRef non disponible, retry dans 100ms');
-        setTimeout(() => initializeMap(), 100);
-        return;
-      }
+      // Attendre que l'élément DOM soit disponible avec retry
+      let retries = 0;
+      const maxRetries = 10;
+      
+      const waitForMapRef = () => {
+        return new Promise((resolve, reject) => {
+          const checkMapRef = () => {
+            retries++;
+            console.log(`🔍 Vérification mapRef (tentative ${retries}/${maxRetries})`);
+            
+            if (mapRef.current) {
+              console.log('✅ Element mapRef trouvé!');
+              resolve(true);
+            } else if (retries >= maxRetries) {
+              reject(new Error('Timeout: élément mapRef introuvable après 10 tentatives'));
+            } else {
+              console.log('⏳ mapRef pas encore disponible, retry dans 200ms...');
+              setTimeout(checkMapRef, 200);
+            }
+          };
+          checkMapRef();
+        });
+      };
 
-      console.log('✅ Élément DOM mapRef trouvé, initialisation...');
+      // Attendre que mapRef soit disponible
+      await waitForMapRef();
+
+      console.log('📚 Chargement des bibliothèques Google Maps...');
       
       const loader = new Loader({
         apiKey: GOOGLE_MAPS_API_KEY,
         version: 'weekly',
-        libraries: ['places'],
-        region: 'FR',
-        language: 'fr'
+        libraries: ['places', 'geometry']
       });
 
-      console.log('📡 Chargement des bibliothèques Google Maps...');
-      
-      // Vérifier que Google Maps est disponible
-      await loader.load();
-      console.log('✅ Google Maps chargé avec succès');
-
-      const { Map } = await loader.importLibrary('maps');
-      const { DirectionsService, DirectionsRenderer } = await loader.importLibrary('routes');
-      const { Autocomplete } = await loader.importLibrary('places');
+      // Chargement avec timeout
+      const libraries = await Promise.race([
+        loader.importLibrary('maps').then(maps => ({ maps })),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout chargement Google Maps')), 10000)
+        )
+      ]);
 
       console.log('📍 Création de la carte...');
 
-      // Double vérification avant création de la carte
+      // Vérification finale avant création de la carte
       if (!mapRef.current) {
-        throw new Error('Élément DOM mapRef disparu pendant le chargement');
+        throw new Error('Element mapRef disparu pendant le chargement');
       }
 
-      // Initialiser la carte centrée sur la France
-      const mapInstance = new Map(mapRef.current, {
+      // Créer la carte
+      const mapInstance = new libraries.maps.Map(mapRef.current, {
         zoom: 6,
-        center: { lat: 46.603354, lng: 1.888334 }, // Centre de la France
-        mapTypeControl: true,
-        streetViewControl: true,
-        fullscreenControl: true,
+        center: { lat: 46.8566, lng: 2.3522 }, // Centre exact de la France
+        mapTypeControl: false, // Simplifier l'interface pour sidebar
+        streetViewControl: false,
+        fullscreenControl: false,
         zoomControl: true,
-        mapTypeId: 'roadmap'
+        mapTypeId: 'roadmap',
+        styles: [] // Style par défaut
       });
 
-      console.log('🧭 Configuration des services de direction...');
+      console.log('✅ Carte créée avec succès!');
 
-      const directionsServiceInstance = new DirectionsService();
-      const directionsRendererInstance = new DirectionsRenderer({
+      // Chargement des services de direction
+      const [routesLib, placesLib] = await Promise.all([
+        loader.importLibrary('routes'),
+        loader.importLibrary('places')
+      ]);
+
+      const directionsServiceInstance = new routesLib.DirectionsService();
+      const directionsRendererInstance = new routesLib.DirectionsRenderer({
         draggable: true,
         map: mapInstance,
-        panel: null
+        suppressMarkers: false,
+        suppressInfoWindows: true
       });
 
-      console.log('🔍 Configuration de l\'autocomplétion...');
+      console.log('🧭 Services de direction configurés');
 
-      // Vérifier que les éléments DOM existent
-      if (!autocompleteARef.current || !autocompleteBRef.current) {
-        console.warn('⚠️ Éléments autocomplete non disponibles, skip autocomplete setup');
-      } else {
-        // Autocomplete pour point A
-        const autocompleteA = new Autocomplete(autocompleteARef.current, {
+      // Configuration autocomplete seulement si les éléments existent
+      if (autocompleteARef.current && autocompleteBRef.current) {
+        console.log('🔍 Configuration autocomplétion...');
+        
+        const autocompleteA = new placesLib.Autocomplete(autocompleteARef.current, {
           componentRestrictions: { country: 'fr' },
-          fields: ['place_id', 'formatted_address', 'geometry'],
-          types: ['geocode']
+          fields: ['formatted_address', 'geometry'],
+          types: ['address']
         });
 
-        // Autocomplete pour point B  
-        const autocompleteB = new Autocomplete(autocompleteBRef.current, {
+        const autocompleteB = new placesLib.Autocomplete(autocompleteBRef.current, {
           componentRestrictions: { country: 'fr' },
-          fields: ['place_id', 'formatted_address', 'geometry'],
-          types: ['geocode']
+          fields: ['formatted_address', 'geometry'],
+          types: ['address']
         });
 
-        console.log('👂 Configuration des événements...');
-
-        // Écouteurs pour les changements d'adresse
+        // Événements autocomplete
         autocompleteA.addListener('place_changed', () => {
           const place = autocompleteA.getPlace();
           if (place.formatted_address) {
-            console.log('📍 Point A sélectionné:', place.formatted_address);
+            console.log('📍 Point A:', place.formatted_address);
             setPointA(place.formatted_address);
           }
         });
@@ -139,13 +161,15 @@ const FraisKilometriques = ({ onCalculationChange }) => {
         autocompleteB.addListener('place_changed', () => {
           const place = autocompleteB.getPlace();
           if (place.formatted_address) {
-            console.log('📍 Point B sélectionné:', place.formatted_address);
+            console.log('📍 Point B:', place.formatted_address);
             setPointB(place.formatted_address);
           }
         });
+
+        console.log('✅ Autocomplétion configurée');
       }
 
-      // Écouteur pour le drag des waypoints
+      // Événement directions changed
       directionsRendererInstance.addListener('directions_changed', () => {
         const directions = directionsRendererInstance.getDirections();
         if (directions && directions.routes && directions.routes[0]) {
@@ -159,23 +183,24 @@ const FraisKilometriques = ({ onCalculationChange }) => {
         }
       });
 
+      // Sauvegarder les instances
       setMap(mapInstance);
       setDirectionsService(directionsServiceInstance);
       setDirectionsRenderer(directionsRendererInstance);
+      
+      console.log('🎉 Google Maps initialisé avec succès!');
       setLoading(false);
-
-      console.log('🎉 Google Maps initialisé avec succès !');
 
     } catch (error) {
       console.error('❌ Erreur initialisation Google Maps:', error);
-      console.error('💡 Détails de l\'erreur:', {
+      console.error('🔧 Détails:', {
         message: error.message,
-        stack: error.stack,
         apiKey: GOOGLE_MAPS_API_KEY ? 'Présente' : 'Manquante',
-        mapRefExists: !!mapRef.current
+        mapRefExists: !!mapRef.current,
+        retries: retries
       });
       
-      setError(`Erreur lors de l'initialisation de Google Maps: ${error.message}`);
+      setError(`Erreur Google Maps: ${error.message}`);
       setLoading(false);
     }
   };
