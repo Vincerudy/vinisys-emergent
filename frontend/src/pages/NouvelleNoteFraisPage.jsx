@@ -45,6 +45,7 @@ const NouvelleNoteFraisPage = () => {
   });
 
   const [projets, setProjets] = useState([]);
+  const [typesFrais, setTypesFrais] = useState([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(isEditMode);
   
