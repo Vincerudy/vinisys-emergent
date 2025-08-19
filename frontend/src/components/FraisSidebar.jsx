@@ -34,6 +34,16 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
   const [typesFrais, setTypesFrais] = useState([]);
   const [saving, setSaving] = useState(false);
   const [justificatif, setJustificatif] = useState(null);
+  
+  // États pour les frais kilométriques
+  const [isKilometriqueType, setIsKilometriqueType] = useState(false);
+  const [kilometriqueData, setKilometriqueData] = useState({
+    distance: 0,
+    tarif_km: 0,
+    puissance_fiscale: '',
+    point_depart: '',
+    point_arrivee: ''
+  });
 
   const isEditMode = !!fraisData;
 
