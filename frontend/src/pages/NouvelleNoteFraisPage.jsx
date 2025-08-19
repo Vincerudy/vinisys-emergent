@@ -46,6 +46,16 @@ const NouvelleNoteFraisPage = () => {
   const [projets, setProjets] = useState([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(isEditMode);
+  
+  // États pour les frais kilométriques
+  const [isKilometriqueType, setIsKilometriqueType] = useState(false);
+  const [kilometriqueData, setKilometriqueData] = useState({
+    distance: 0,
+    tarif_km: 0,
+    puissance_fiscale: '',
+    point_depart: '',
+    point_arrivee: ''
+  });
 
   useEffect(() => {
     if (!isEditMode) {
