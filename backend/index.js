@@ -887,6 +887,42 @@ const upload = multer({
     }
 });
 
+// GET /api/baremes-kilometriques - Récupérer les barèmes kilométriques actifs
+app.get('/api/baremes-kilometriques', async (req, res) => {
+    try {
+        const annee = req.query.annee || new Date().getFullYear();
+        
+        const [baremes] = await db.execute(`
+            SELECT id, puissance_fiscale, tarif_km, annee
+            FROM baremes_kilometriques 
+            WHERE annee = ? AND actif = 1
+            ORDER BY 
+                CASE puissance_fiscale
+                    WHEN '3 CV et moins' THEN 1
+                    WHEN '4 CV' THEN 2
+                    WHEN '5 CV' THEN 3
+                    WHEN '6 CV' THEN 4
+                    WHEN '7 CV et plus' THEN 5
+                    ELSE 6
+                END
+        `, [annee]);
+
+        res.json({
+            success: true,
+            baremes: baremes,
+            annee: parseInt(annee)
+        });
+
+    } catch (error) {
+        console.error('Erreur récupération barèmes kilométriques:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des barèmes kilométriques',
+            error: error.message
+        });
+    }
+});
+
 // POST /api/frais/upload-auto - Upload automatique pour un frais
 app.post('/api/frais/upload-auto', upload.single('justificatif'), async (req, res) => {
     try {
