@@ -103,7 +103,7 @@ const NouvelleNoteFraisPage = () => {
           
           // Reconstituer l'objet justificatif pour l'affichage
           setJustificatif({
-            url: `${import.meta.env.VITE_API_URL}${premierJustificatif.url}`,
+            url: `http://localhost:8001${premierJustificatif.url}`,
             nom: premierJustificatif.nom_fichier,
             type: premierJustificatif.type_mime,
             file: null, // Pas de fichier local pour un justificatif existant
