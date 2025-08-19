@@ -887,6 +887,31 @@ const upload = multer({
     }
 });
 
+// GET /api/types-frais - Récupérer tous les types de frais
+app.get('/api/types-frais', async (req, res) => {
+    try {
+        const [types] = await db.execute(`
+            SELECT id, nom, description
+            FROM types_frais 
+            WHERE actif = 1
+            ORDER BY nom
+        `);
+
+        res.json({
+            success: true,
+            types: types
+        });
+
+    } catch (error) {
+        console.error('Erreur récupération types de frais:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des types de frais',
+            error: error.message
+        });
+    }
+});
+
 // GET /api/baremes-kilometriques - Récupérer les barèmes kilométriques actifs
 app.get('/api/baremes-kilometriques', async (req, res) => {
     try {
