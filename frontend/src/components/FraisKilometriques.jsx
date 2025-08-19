@@ -235,6 +235,52 @@ const FraisKilometriques = ({ onCalculationChange }) => {
         <div className="error-message">
           <i className="fas fa-exclamation-triangle"></i>
           <p>{error}</p>
+          <button 
+            className="retry-btn"
+            onClick={() => {
+              setError('');
+              setLoading(true);
+              initializeMap();
+            }}
+          >
+            <i className="fas fa-redo"></i>
+            Réessayer
+          </button>
+          <div className="manual-input">
+            <h4>Saisie manuelle</h4>
+            <p>En cas de problème avec Google Maps, vous pouvez saisir manuellement :</p>
+            <div className="manual-form">
+              <input
+                type="text"
+                placeholder="Point de départ"
+                value={pointA}
+                onChange={(e) => setPointA(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Point d'arrivée"
+                value={pointB}
+                onChange={(e) => setPointB(e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Distance en km"
+                value={distance}
+                onChange={(e) => setDistance(parseFloat(e.target.value) || 0)}
+              />
+              <select
+                value={selectedBareme}
+                onChange={(e) => setSelectedBareme(e.target.value)}
+              >
+                <option value="">Sélectionner puissance</option>
+                {baremes.map(bareme => (
+                  <option key={bareme.id} value={bareme.id}>
+                    {bareme.puissance_fiscale} - {bareme.tarif_km}€/km
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     );
