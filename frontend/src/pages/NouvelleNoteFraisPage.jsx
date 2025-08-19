@@ -30,6 +30,7 @@ const NouvelleNoteFraisPage = () => {
   
   const [justificatif, setJustificatif] = useState(null);
   const [formData, setFormData] = useState({
+    type_frais_id: '',
     vendeur: '',
     date_frais: '',
     pays: 'France',
