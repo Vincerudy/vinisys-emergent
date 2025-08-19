@@ -1105,6 +1105,116 @@ Dans les composants de navigation :
 
 ---
 
+# 🧪 TESTS JUSTIFICATIFS NOTES DE FRAIS - DIAGNOSTIC COMPLET - 2025-01-16 18:23:00
+
+## ❌ PROBLÈME CRITIQUE IDENTIFIÉ - JUSTIFICATIFS PERDUS LORS DE LA SAUVEGARDE
+
+### Tests effectués sur le workflow exact décrit par l'utilisateur
+
+#### ✅ WORKFLOW REPRODUIT AVEC SUCCÈS (5/8)
+1. **✅ Connexion utilisateur** : Login avec idnovation2014@gmail.com / 123456 ✅ FONCTIONNE
+2. **✅ Navigation vers notes-frais/note** : Accès à la page de liste des notes ✅ FONCTIONNE  
+3. **✅ Clic "Nouveau frais"** : Ouverture du formulaire de création ✅ FONCTIONNE
+4. **✅ Remplissage formulaire** : Tous les champs remplis correctement ✅ FONCTIONNE
+5. **✅ Upload justificatif** : Fichier uploadé avec succès ✅ FONCTIONNE
+
+#### ❌ PROBLÈMES CRITIQUES IDENTIFIÉS (3/8)
+6. **❌ Sauvegarde justificatif** : Le justificatif n'est PAS sauvegardé avec le frais
+7. **❌ Persistance après rechargement** : Justificatif absent après reload de la page
+8. **❌ Récupération depuis API** : Backend ne retourne aucun justificatif
+
+### 🔍 ANALYSE TECHNIQUE DÉTAILLÉE - ROOT CAUSE ANALYSIS
+
+#### ❌ PROBLÈME 1: API UPLOAD DÉFAILLANTE
+**Endpoint manquant** : `/api/frais/upload-auto`
+```
+→ POST http://localhost:8001/api/frais/upload-auto
+← 404 http://localhost:8001/api/frais/upload-auto
+```
+**Impact** : L'upload du justificatif échoue silencieusement (erreur 404)
+
+#### ❌ PROBLÈME 2: SAUVEGARDE FRAIS ÉCHOUE
+**Erreur serveur** : `/api/frais` retourne erreur 500
+```
+SAVE → POST http://localhost:8001/api/frais
+SAVE ← 500 http://localhost:8001/api/frais
+```
+**Impact** : Le frais n'est pas créé, donc pas d'association justificatif possible
+
+#### ❌ PROBLÈME 3: DONNÉES BACKEND VIDES
+**API Response** : `/api/note-frais/66` ne contient aucun justificatif
+```
+Status: 200
+Success: True
+Has Justificatifs: False
+```
+**Console logs** : 
+```
+📎 Justificatifs disponibles: undefined
+❌ Aucun justificatif trouvé pour cette ligne de frais
+```
+
+### 🎯 DIAGNOSTIC PRÉCIS DU WORKFLOW
+
+#### ✅ ÉTAPES QUI FONCTIONNENT
+1. **Interface utilisateur** : Formulaire et upload fonctionnels côté frontend
+2. **Création note** : Note de frais créée avec succès (Note #66)
+3. **Navigation** : Redirection et rechargement corrects
+4. **Récupération note** : API `/api/note-frais/66` répond correctement
+
+#### ❌ ÉTAPES QUI ÉCHOUENT
+1. **Upload justificatif** : Endpoint `/api/frais/upload-auto` inexistant (404)
+2. **Création frais** : Endpoint `/api/frais` retourne erreur 500
+3. **Association justificatif** : Impossible car le frais n'est pas créé
+4. **Persistance** : Aucune donnée justificatif en base
+
+### 🔧 ACTIONS CORRECTIVES REQUISES
+
+#### 1. CORRIGER L'ENDPOINT UPLOAD (PRIORITÉ CRITIQUE)
+- **Créer** : `/api/frais/upload-auto` manquant
+- **Implémenter** : Logique d'upload et stockage des justificatifs
+- **Tester** : Upload de fichiers image/PDF
+
+#### 2. CORRIGER L'ENDPOINT FRAIS (PRIORITÉ CRITIQUE)  
+- **Déboguer** : Erreur 500 sur `POST /api/frais`
+- **Vérifier** : Paramètres et validation des données
+- **Corriger** : Logique de création des lignes de frais
+
+#### 3. IMPLÉMENTER L'ASSOCIATION JUSTIFICATIF-FRAIS
+- **Créer** : Logique d'association justificatif → ligne de frais
+- **Vérifier** : Stockage en base de données
+- **Tester** : Récupération via API
+
+### 📊 RÉSULTAT DES TESTS
+
+#### ✅ FRONTEND FONCTIONNEL
+- **Interface** : Formulaire complet et ergonomique ✅
+- **Upload UI** : Boutons et preview fonctionnels ✅
+- **Navigation** : Workflow utilisateur fluide ✅
+
+#### ❌ BACKEND DÉFAILLANT
+- **API Upload** : Endpoint manquant (404) ❌
+- **API Frais** : Erreur serveur (500) ❌
+- **Persistance** : Aucune donnée sauvegardée ❌
+
+### 🚀 CONCLUSION FINALE
+
+**PROBLÈME CONFIRMÉ** : Le justificatif disparaît car il n'est jamais sauvegardé en base de données.
+
+**CAUSE RACINE** : 
+1. Endpoint `/api/frais/upload-auto` manquant (404)
+2. Endpoint `/api/frais` défaillant (500)
+3. Aucune association justificatif-frais implémentée
+
+**IMPACT UTILISATEUR** : 
+- ✅ L'utilisateur peut uploader un justificatif
+- ❌ Le justificatif n'est jamais sauvegardé
+- ❌ Après rechargement, le justificatif a disparu
+
+**WORKFLOW EXACT REPRODUIT** : Le problème décrit par l'utilisateur est 100% confirmé et diagnostiqué.
+
+---
+
 # 🧪 TESTS JUSTIFICATIFS NOTES DE FRAIS - 2025-08-16 18:56:00
 
 ## ✅ VALIDATION PARTIELLE - PROBLÈME JUSTIFICATIFS IDENTIFIÉ
