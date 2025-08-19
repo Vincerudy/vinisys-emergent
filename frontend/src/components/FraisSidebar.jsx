@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
+import FraisKilometriques from './FraisKilometriques';
 import './css/FraisSidebar.css';
 
 const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
