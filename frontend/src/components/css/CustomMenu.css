@@ -99,26 +99,26 @@
   text-align: center !important;
 }
 
-/* TEXTE - Positionnement sous l'icône */
+/* TEXTE - Positionnement sous l'icône - PLUS PETIT */
 .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext,
 .nxl-menu .nxl-item .nxl-link .nxl-mtext,
 .sidebar .nxl-item .nxl-link .nxl-mtext,
 .navigation .nxl-item .nxl-link .nxl-mtext {
   font-weight: 600 !important;
-  font-size: 11px !important;
+  font-size: 8px !important;
   color: #5a9bd4 !important;
   text-transform: none !important;
   letter-spacing: 0px !important;
   padding: 0 !important;
   margin: 0 !important;
-  line-height: 1.2 !important;
+  line-height: 1.1 !important;
   order: 2 !important;
   display: block !important;
   text-align: center !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
-  max-width: 90px !important;
+  max-width: 50px !important;
 }
 
 /* SUPPRIMER COMPLETEMENT les flèches */
