@@ -12,9 +12,10 @@ const NavigationMenu = () => {
                 <div className="nxl-sidebar-body">
                     <PerfectScrollbar>
                         <MenuResponsible />
-                     </PerfectScrollbar>
-                 </div>
-                 <div className={`${navigationOpen ? "nxl-menu-overlay" : ""}`}></div>
+                    </PerfectScrollbar>
+                </div>
+                <div className={`${navigationOpen ? "nxl-menu-overlay" : ""}`}></div>
+            </div>
         </nav>
     )
 }
