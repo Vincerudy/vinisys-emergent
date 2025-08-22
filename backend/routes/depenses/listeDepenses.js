@@ -10,7 +10,8 @@ router.get('/depenses/all', async (req, res) => {
     statut, 
     dateDebut, 
     dateFin,
-    search 
+    search,
+    categorie_id 
   } = req.query;
 
   try {
