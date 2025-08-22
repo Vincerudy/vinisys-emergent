@@ -1,4 +1,68 @@
-/* 🎯 MENU LATERAL - ICONES AU-DESSUS DU TEXTE (Design exact de l'image) */
+/* 🎯 MENU LATERAL - ICONES AU-DESSUS DU TEXTE avec SCROLL INDEPENDANT */
+
+/* SIDEBAR FIXE avec scroll indépendant */
+.nxl-navigation .nxl-sidebar,
+.sidebar,
+.navigation {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 110px !important;
+  min-width: 110px !important;
+  max-width: 110px !important;
+  height: 100vh !important;
+  background: #f8f9fa !important;
+  border-right: 1px solid #e9ecef !important;
+  z-index: 1000 !important;
+  overflow: hidden !important;
+}
+
+/* Container du menu avec scroll indépendant */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body,
+.sidebar .sidebar-body,
+.navigation .sidebar-body {
+  height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 10px 5px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #cbd5e0 transparent !important;
+}
+
+/* Style de la scrollbar pour webkit (Chrome, Safari) */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body::-webkit-scrollbar,
+.sidebar .sidebar-body::-webkit-scrollbar,
+.navigation .sidebar-body::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body::-webkit-scrollbar-track,
+.sidebar .sidebar-body::-webkit-scrollbar-track,
+.navigation .sidebar-body::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body::-webkit-scrollbar-thumb,
+.sidebar .sidebar-body::-webkit-scrollbar-thumb,
+.navigation .sidebar-body::-webkit-scrollbar-thumb {
+  background: #cbd5e0 !important;
+  border-radius: 2px !important;
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body::-webkit-scrollbar-thumb:hover,
+.sidebar .sidebar-body::-webkit-scrollbar-thumb:hover,
+.navigation .sidebar-body::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0 !important;
+}
+
+/* Menu container */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu,
+.nxl-menu,
+.sidebar .menu,
+.navigation .menu {
+  padding: 10px 5px !important;
+  margin: 0 !important;
+}
 
 /* FORCER la structure verticale pour TOUS les liens de navigation */
 .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link,
@@ -64,26 +128,6 @@
   display: none !important;
 }
 
-/* Largeur de la sidebar - comme dans l'image */
-.nxl-navigation .nxl-sidebar,
-.sidebar,
-.navigation {
-  width: 110px !important;
-  min-width: 110px !important;
-  max-width: 110px !important;
-  transition: width 0.3s ease !important;
-  background: #f8f9fa !important;
-  border-right: 1px solid #e9ecef !important;
-}
-
-/* Menu container */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu,
-.nxl-menu,
-.sidebar .menu,
-.navigation .menu {
-  padding: 10px 5px !important;
-}
-
 /* Hover effects - comme dans l'image */
 .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover,
 .nxl-menu .nxl-item .nxl-link:hover,
@@ -133,6 +177,40 @@
   color: white !important;
 }
 
+/* CONTENU PRINCIPAL - Ajustement pour compenser la sidebar fixe */
+.nxl-body,
+.main-content,
+.content-area,
+body:not(.nxl-sidebar-compact) .nxl-body {
+  margin-left: 110px !important;
+  padding-left: 0 !important;
+  width: calc(100% - 110px) !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Container principal de l'application */
+.nxl-container,
+.main-container,
+.app-container {
+  margin-left: 110px !important;
+  width: calc(100% - 110px) !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+}
+
+/* S'assurer que le header ne soit pas caché sous la sidebar */
+.nxl-header,
+.header,
+.top-header {
+  margin-left: 110px !important;
+  width: calc(100% - 110px) !important;
+  position: fixed !important;
+  top: 0 !important;
+  z-index: 999 !important;
+}
+
 /* REGLES SUPPLEMENTAIRES pour garantir la disposition en colonne */
 .nxl-item .nxl-link {
   display: flex !important;
@@ -168,6 +246,31 @@
   .sidebar,
   .navigation {
     width: 250px !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease !important;
+  }
+  
+  .nxl-navigation .nxl-sidebar.show,
+  .sidebar.show,
+  .navigation.show {
+    transform: translateX(0) !important;
+  }
+  
+  .nxl-body,
+  .main-content,
+  .content-area,
+  .nxl-container,
+  .main-container,
+  .app-container {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  .nxl-header,
+  .header,
+  .top-header {
+    margin-left: 0 !important;
+    width: 100% !important;
   }
   
   .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link,
@@ -199,4 +302,18 @@
     max-width: none !important;
     white-space: normal !important;
   }
+}
+
+/* Style supplémentaire pour éviter les conflits de scroll */
+html, body {
+  overflow-x: hidden !important;
+  height: 100% !important;
+}
+
+/* Container principal de l'app */
+#root,
+.app,
+.nxl-app {
+  height: 100vh !important;
+  overflow: hidden !important;
 }
