@@ -268,4 +268,4 @@ const FraisKilometriques = ({ onCalculationChange }) => {
   );
 };
 
-export default MapRouteCalculator;
+export default FraisKilometriques;
