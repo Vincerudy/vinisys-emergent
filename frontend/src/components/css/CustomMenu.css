@@ -253,13 +253,13 @@ body:not(.nxl-sidebar-compact) .nxl-body {
   padding-left: 0 !important;
 }
 
-/* Styles pour éléments SVG et icônes */
+/* Styles pour éléments SVG et icônes - RÉDUITS */
 .nxl-micon svg,
 .nxl-micon i,
 .nxl-micon span {
   font-size: inherit !important;
-  width: 28px !important;
-  height: 28px !important;
+  width: 18px !important;
+  height: 18px !important;
 }
 
 /* Responsive - Mobile */
