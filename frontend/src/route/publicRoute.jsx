@@ -483,6 +483,10 @@ export const publicRoute = createHashRouter([
                 element: <ProtectedRoute element={<ListeAchatsPage />} />,
             },
             {
+                path: "/achats/validation",
+                element: <ProtectedRoute element={<ValidationAchats />} />,
+            },
+            {
                 path: "/achats/fournisseurs",
                 element: <ProtectedRoute element={<FournisseursPage />} />,
             },
