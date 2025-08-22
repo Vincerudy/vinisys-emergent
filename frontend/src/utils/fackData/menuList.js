@@ -159,7 +159,7 @@ export const menuList = [
             {
                 id: 3,
                 name: "Créer une note",
-                path: "/notes-frais/nouvelle",
+                path: "/notes-frais/note",
                 subdropdownMenu: false,
                 permission: 'view_quotes',
             },
