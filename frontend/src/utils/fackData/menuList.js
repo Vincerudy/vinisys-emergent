@@ -70,7 +70,7 @@ export const menuList = [
                 name: "Dépenses à valider",
                 path: "/achats/validation",
                 subdropdownMenu: false,
-                permission: 'validate_expenses',
+                permission: 'view_quotes',
             },
             {
                 id: 3,
