@@ -1,27 +1,35 @@
-const mysql = require('mysql2');
+const mongoose = require('mongoose');
 
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST || 'localhost',
-  port: process.env.MYSQL_PORT || 3306,
-  user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || '',
-  database: process.env.MYSQL_DATABASE || 'mjupgupviniprod',
-  multipleStatements: true, // 👉 autorise plusieurs requêtes
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
-// Test de connexion au démarrage
-const testConnection = async () => {
+// Configuration MongoDB avec options recommandées
+const connectDB = async () => {
   try {
-    await pool.promise().execute('SELECT 1');
-    console.log(`✅ Connexion MySQL réussie à ${process.env.MYSQL_DATABASE || 'mjupgupviniprod'}`);
+    const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/vinisys';
+    
+    await mongoose.connect(mongoUrl, {
+      // Options recommandées pour mongoose
+    });
+    
+    console.log(`✅ Connexion MongoDB réussie à ${mongoUrl}`);
   } catch (error) {
-    console.error('❌ Erreur connexion MySQL:', error);
+    console.error('❌ Erreur connexion MongoDB:', error);
+    process.exit(1);
   }
 };
 
-testConnection();
+// Gestion des événements de connexion
+mongoose.connection.on('connected', () => {
+  console.log('📡 MongoDB connecté');
+});
 
-module.exports = pool.promise();
+mongoose.connection.on('error', (err) => {
+  console.error('❌ Erreur MongoDB:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('📡 MongoDB déconnecté');
+});
+
+// Connexion au démarrage
+connectDB();
+
+module.exports = mongoose;
