@@ -102,16 +102,16 @@
 }
 
 .menu-item-icon {
-  width: 45px;
-  height: 45px;
+  width: 35px; /* Réduit la taille */
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border-radius: 50%;
-  margin-bottom: 8px;
+  margin-bottom: 6px; /* Réduit la marge */
   color: #6c757d;
-  font-size: 22px;
+  font-size: 18px; /* Réduit la taille */
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
@@ -127,13 +127,13 @@
 
 .menu-item-content {
   width: 100%;
-  max-width: 160px; /* Largeur max pour le contenu */
+  max-width: 140px; /* Réduit pour la nouvelle largeur */
 }
 
 .menu-item-text {
-  font-size: 12px;
+  font-size: 11px; /* Réduit la taille */
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.2; /* Réduit l'espacement */
   display: block;
   text-align: center;
   white-space: normal; /* Permet le retour à la ligne */
@@ -141,7 +141,7 @@
   word-break: break-word;
   hyphens: auto;
   max-width: 100%;
-  padding: 0 5px;
+  padding: 0 2px; /* Réduit le padding */
 }
 
 .menu-item.active .menu-item-text {
