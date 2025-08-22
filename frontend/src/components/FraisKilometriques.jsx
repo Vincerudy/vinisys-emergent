@@ -165,7 +165,13 @@ const FraisKilometriques = ({ onCalculationChange }) => {
 
       <LoadScript
         googleMapsApiKey="AIzaSyCYKDWRjBPotRjX-AgWnL5Y7-iKAbsu2KA"
-        libraries={['places']}
+        libraries={['places', 'geometry']}
+        onLoad={() => console.log('✅ Google Maps LoadScript chargé')}
+        onError={(e) => {
+          console.error('❌ Erreur LoadScript:', e);
+          setError('Erreur de chargement Google Maps. Vérifiez votre connexion internet.');
+        }}
+        loadingElement={<div>Chargement Google Maps...</div>}
       >
         <div className="route-inputs">
           <div className="input-group">
