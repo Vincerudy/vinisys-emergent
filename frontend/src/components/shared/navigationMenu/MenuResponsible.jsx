@@ -57,7 +57,18 @@ const MenuResponsible = () => {
       <div className="menu-responsible-desktop">
         <div className="menu-container">
           <div className="menu-header">
-            <h3 className="menu-title">Modules</h3>
+            <div className="menu-logo">
+              <img 
+                src="/logo-vinisys.png" 
+                alt="Vinisys" 
+                className="logo-image"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <h3 className="logo-fallback">Vinisys</h3>
+            </div>
           </div>
           <div className="menu-items">
             {menuItems.map((item) => (
