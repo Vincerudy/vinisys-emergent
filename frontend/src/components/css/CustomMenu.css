@@ -178,14 +178,14 @@
   color: white !important;
 }
 
-/* CONTENU PRINCIPAL - Ajustement pour compenser la sidebar fixe */
+/* CONTENU PRINCIPAL - Ajustement pour la nouvelle sidebar réduite */
 .nxl-body,
 .main-content,
 .content-area,
 body:not(.nxl-sidebar-compact) .nxl-body {
-  margin-left: 120px !important;
+  margin-left: 70px !important;
   padding-left: 10px !important;
-  width: calc(100% - 130px) !important;
+  width: calc(100% - 80px) !important;
   height: 100vh !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -195,20 +195,20 @@ body:not(.nxl-sidebar-compact) .nxl-body {
 .nxl-container,
 .main-container,
 .app-container {
-  margin-left: 120px !important;
+  margin-left: 70px !important;
   padding-left: 10px !important;
-  width: calc(100% - 130px) !important;
+  width: calc(100% - 80px) !important;
   height: 100vh !important;
   overflow-y: auto !important;
 }
 
-/* S'assurer que le header ne soit pas caché sous la sidebar */
+/* S'assurer que le header ne soit pas caché sous la sidebar - CENTRÉ */
 .nxl-header,
 .header,
 .top-header {
-  margin-left: 120px !important;
+  margin-left: 70px !important;
   padding-left: 10px !important;
-  width: calc(100% - 130px) !important;
+  width: calc(100% - 80px) !important;
   position: fixed !important;
   top: 0 !important;
   z-index: 999 !important;
@@ -218,9 +218,9 @@ body:not(.nxl-sidebar-compact) .nxl-body {
 .nxl-content,
 .page-content,
 .main-wrapper {
-  margin-left: 120px !important;
+  margin-left: 70px !important;
   padding-left: 10px !important;
-  width: calc(100% - 130px) !important;
+  width: calc(100% - 80px) !important;
   min-height: 100vh !important;
   overflow-y: auto !important;
 }
