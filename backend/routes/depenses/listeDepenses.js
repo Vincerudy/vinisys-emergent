@@ -39,6 +39,11 @@ router.get('/depenses/all', async (req, res) => {
       whereClause += ' AND (a.description LIKE ? OR a.fournisseur_nom LIKE ?)';
       queryParams.push(`%${search}%`, `%${search}%`);
     }
+    
+    if (categorie_id) {
+      whereClause += ' AND a.categorie_achat_id = ?';
+      queryParams.push(categorie_id);
+    }
 
     // Requête principale avec JOIN pour les informations utilisateur et catégorie
     const query = `
