@@ -74,7 +74,7 @@
   margin: 0 !important;
 }
 
-/* FORCER la structure verticale pour TOUS les liens de navigation - RÉDUITE */
+/* LIENS MENU - Mode MINI avec icônes uniquement */
 .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link,
 .nxl-menu .nxl-item .nxl-link,
 .sidebar .nxl-item .nxl-link,
@@ -88,9 +88,22 @@
   border-radius: 6px !important;
   margin: 2px 0 !important;
   transition: all 0.3s ease !important;
-  min-height: 50px !important;
-  max-width: 50px !important;
+  min-height: 45px !important;
+  max-width: 45px !important;
   position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Mode étendu au survol du menu */
+.nxl-navigation .nxl-sidebar:hover .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link,
+.nxl-menu .nxl-item .nxl-link:hover,
+.sidebar:hover .nxl-item .nxl-link,
+.navigation:hover .nxl-item .nxl-link {
+  max-width: 170px !important;
+  padding: 8px 12px !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
 }
 
 /* ICONES - Positionnement au-dessus du texte - PLUS PETITES */
