@@ -206,6 +206,10 @@ const TableauBordDepenses = () => {
         </div>
         <div className="page-header-right ms-auto">
           <div className="page-header-right-items">
+            <Link to="/depenses/parametres-tva" className="btn btn-outline-secondary me-2">
+              <FiSettings className="me-2" />
+              Paramètres TVA
+            </Link>
             <Link to="/depenses/nouveau" className="btn btn-primary">
               <FiPlus className="me-2" />
               Ajouter une dépense
