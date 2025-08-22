@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiFilter, FiDownload, FiEye, FiEdit2, FiTrash2, FiFileText, FiSearch, FiX } from 'react-icons/fi';
+import { FiPlus, FiFilter, FiDownload, FiEye, FiEdit2, FiTrash2, FiFileText, FiSearch, FiX, FiSettings } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import api from '../contexte/Api';
 import { useAuth } from '../contexte/AuthContext';
