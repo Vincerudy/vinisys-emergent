@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Notes de Frais & Justificatifs Testing
-Tests the specific endpoints requested by user:
-1. Test des montants dans la liste des notes de frais
-2. Test du système de pièces jointes 
-3. Test de création de frais avec justificatif
+Backend API Testing Script for Vinisys Application - Google Maps Mileage Functionality Testing
+Tests the specific APIs for Google Maps mileage functionality:
+1. Authentication: POST /api/login with idnovation2014@gmail.com / Cinema12
+2. Types de frais: GET /api/types-frais (must contain "Transport - Kilomètres" ID: 14)
+3. Barèmes kilométriques: GET /api/baremes-kilometriques (must contain 5 URSSAF 2025 rates)
+4. Création note de frais: POST /api/frais (test saving mileage data)
 """
 
 import requests
@@ -18,19 +19,19 @@ from datetime import datetime, date
 with open('/app/frontend/.env', 'r') as f:
     env_content = f.read()
     for line in env_content.split('\n'):
-        if line.startswith('REACT_APP_BACKEND_URL='):
+        if line.startswith('VITE_API_URL='):
             api_url = line.split('=')[1]
             break
     else:
-        api_url = "http://localhost:8001/api"
+        api_url = "/api"
 
-# Use the production URL from environment
-BASE_URL = api_url.replace('/api', '') if '/api' in api_url else api_url
-API_BASE = f"{BASE_URL}/api" if not api_url.endswith('/api') else api_url
+# Use localhost:8001 as specified in the request
+BASE_URL = "http://localhost:8001"
+API_BASE = f"{BASE_URL}/api"
 
-# Test credentials from user request
+# Test credentials from user request - UPDATED PASSWORD
 TEST_EMAIL = "idnovation2014@gmail.com"
-TEST_PASSWORD = "123456"
+TEST_PASSWORD = "Cinema12"  # Updated password as specified
 USER_ID = 4  # User specified UserID = 4
 SOCIETE_ID = 2  # User specified societe_id = 2
 AUTH_TOKEN = None  # Will be set after login
