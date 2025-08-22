@@ -1,173 +1,209 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexte/AuthContext';
-import './css/AccueilPage.css';
+import React from "react";
+import { Link } from "react-router-dom"; // ✅ Import pour les redirections internes
+import "./css/AccueilPage.css";
+import facturation from "../assets/facturation.png";
+import depense from "../assets/depense.png";
+import note from "../assets/note.png";
+import stock from "../assets/stock.png";
+import hr from "../assets/hr.png";
 
 const AccueilPage = () => {
-  const { firstName, lastName, societe_nom } = useAuth();
-
   return (
-    <div className="accueil-page">
-      <div className="page-wrapper">
-        {/* Header avec titre */}
-        <div className="page-header">
-          <div className="page-header-left d-flex align-items-center">
-            <div className="page-header-title">
-              <h5 className="page-title">
-                Tableau de bord - Accueil
-              </h5>
-              <p className="page-subtitle">
-                Bienvenue {firstName} {lastName}
-              </p>
+    <div className="dashboard">
+      {/* Colonne gauche */}
+      <div className="sidebar">
+        <div className="card communications">
+          <h3 className="TitreModule titreModuleMarginLeft">Communications</h3>
+          <ul className="ulCommeAlerte">
+            <li>
+              <span className="icon orange">⚠️</span> Opération de Maintenance
+              le 20 août 2025 de 20h30 …
+            </li>
+            <li>
+              <span className="icon blue">ℹ️</span> Désactivation nouvelle
+              ergonomie : module…
+            </li>
+            <li>
+              <span className="icon orange">⚠️</span> RGPD - Sécurisation des
+              données par mail
+            </li>
+          </ul>
+          <a href="/" titreModuleMarginLeft>Voir plus</a>
+        </div>
+
+        <div className="card alerts">
+          <h3 className="TitreModule titreModuleMarginLeft">Alertes</h3>
+          <ul className="ulCommeAlerte">
+            <li>
+              <strong>Visite médicale</strong>
+              <br />
+              AUBERTIN Christopher
+            </li>
+            <li>
+              <strong>Fin de contrat</strong>
+              <br />
+              Valois Julie
+            </li>
+            <li>
+              <strong>Visite médicale</strong>
+              <br />
+              ARNAULT Shaheen
+            </li>
+            <li>
+              <strong>Visite médicale</strong>
+              <br />
+              ARNAULT Shaheen
+            </li>
+            <li>
+              <strong>Visite médicale</strong>
+              <br />
+              ARNAULT V2 Shaheen
+            </li>
+          </ul>
+          <a href="/" titreModuleMarginLeft>Voir plus</a>
+        </div>
+      </div>
+
+      {/* Contenu principal */}
+      <div className="main">
+        <div className="top-grid">
+          <div className="card core-rh">
+            <h3 className="TitreModule">RH</h3>
+            <ul className="submenu">
+              <p>Le module RH sera bientôt disponible. </p>
+            </ul>
+            <div className="illustration">
+              <img className="imgRh" src={hr} alt="Core RH" />
+              <p>Retrouvez l'ensemble de votre gestion administrative</p>
+            </div>
+          </div>
+
+          <div className="card gta">
+            <h3 className="TitreModule">Facturation</h3>
+            <ul className="submenu">
+              <li>
+                <Link to="/facturation/factures">Gestion des factures</Link>
+              </li>
+              <li>
+                <Link to="/facturation/devis">Gestion des devis</Link>
+              </li>
+              <li>
+                <Link to="/facturation/clients">Gestion des clients</Link>
+              </li>
+              <li>
+                <Link to="/facturation/cahier-recette">Cahier de recette</Link>
+              </li>
+              <li>
+                <Link to="/facturation/parametrage">
+                  Paramétrage facturation
+                </Link>
+              </li>
+            </ul>
+            <div className="illustration">
+              <img src={facturation} alt="Facturation" />
+              <p>Gérez vos devis et factures</p>
+            </div>
+          </div>
+
+          <div className="card pilotage">
+            <h3 className="TitreModule">Dépenses</h3>
+            <ul className="submenu">
+              <li>
+                <Link to="/depenses/dashboard">Tableau de bord</Link>
+              </li>
+              <li>
+                <Link to="/depenses/liste">Liste des dépenses</Link>
+              </li>
+              <li>
+                <Link to="/depenses/creer">Créer une dépense</Link>
+              </li>
+              <li>
+                <Link to="/depenses/validation">Dépenses à Valider</Link>
+              </li>
+              <li>
+                <Link to="/depenses/parametrage">Paramétrage</Link>
+              </li>
+            </ul>
+            <div className="illustration">
+              <img src={depense} alt="Dépense" />
+              <p>Enrégistrez et catégorisez vos dépenses facilement</p>
+            </div>
+          </div>
+
+          <div className="card selfservice">
+            <h3 className="TitreModule">Note de frais</h3>
+            <ul className="submenu">
+              <li>
+                <Link to="/notes/dashboard">Tableau de bord</Link>
+              </li>
+              <li>
+                <Link to="/notes/liste">Liste des notes</Link>
+              </li>
+              <li>
+                <Link to="/notes/creer">Créer une note</Link>
+              </li>
+              <li>
+                <Link to="/notes/parametrage">Paramétrage</Link>
+              </li>
+              <li>
+                <Link to="/notes/validation">Validation notes</Link>
+              </li>
+            </ul>
+            <div className="illustration">
+              <img src={note} alt="Selfservice" />
+              <p>Décentraliser les saisies</p>
+            </div>
+          </div>
+
+          <div className="card talents">
+            <h3 className="TitreModule">Gestion de stock</h3>
+            <ul className="submenu">
+              <li>
+                <Link to="/stock/liste">Liste des produits</Link>
+              </li>
+              <li>
+                <Link to="/stock/ajout">Ajout de produit</Link>
+              </li>
+              <li>
+                <Link to="/stock/import">Import de produit</Link>
+              </li>
+              <li>
+                <Link to="/stock/mouvement">Mouvement de stock</Link>
+              </li>
+              <li>
+                <Link to="/stock/inventaire-auto">Inventaire automatisé</Link>
+              </li>
+              <li>
+                <Link to="/stock/inventaire-manuel">Inventaire manuel</Link>
+              </li>
+            </ul>
+            <div className="illustration">
+              <img src={stock} alt="Gestion de stock" />
+              <p>Suivez votre stock en temps réel</p>
             </div>
           </div>
         </div>
 
-        {/* Grille principale comme dans l'image */}
-        <div className="main-dashboard-grid">
-          
-          {/* Section Communications - Gauche */}
-          <div className="communications-section">
-            <h3 className="section-title">Communications</h3>
-            
-            {/* Alertes de maintenance */}
-            <div className="alert-item maintenance">
-              <div className="alert-icon">⚠️</div>
-              <div className="alert-content">
-                <h4>Opération de Maintenance</h4>
-                <p>le 20 août 2025 de 20h30...</p>
-              </div>
-            </div>
-
-            <div className="alert-item new-feature">
-              <div className="alert-icon">🔵</div>
-              <div className="alert-content">
-                <h4>Désactivation nouvelle</h4>
-                <p>ergonomie module...</p>
-              </div>
-            </div>
-
-            <div className="alert-item security">
-              <div className="alert-icon">⚠️</div>
-              <div className="alert-content">
-                <h4>RGPD - Sécurisation des</h4>
-                <p>données par mail</p>
-              </div>
-            </div>
-
-            <div className="voir-plus">
-              <Link to="/communications">→ Voir plus</Link>
+        <div className="bottom-grid">
+          <div className="card imports">
+            <h3 className="TitreModule titreModuleMarginLeft">Mes imports</h3>
+            <div className="icons">
+              <img src="/icons/import1.svg" alt="import1" />
+              <img src="/icons/import2.svg" alt="import2" />
+              <img src="/icons/import3.svg" alt="import3" />
+              <img src="/icons/import4.svg" alt="import4" />
             </div>
           </div>
 
-          {/* Section Core RH - Centre haut */}
-          <div className="core-rh-section">
-            <h2 className="module-title">Core RH</h2>
-            <div className="module-illustration">
-              <img src="https://images.unsplash.com/photo-1755541516453-201559bec161?w=400&h=200&fit=crop" alt="Core RH" />
+          <div className="card params">
+            <h3 className="TitreModule titreModuleMarginLeft">Mes paramètres</h3>
+            <div className="icons">
+              <img src="/icons/param1.svg" alt="param1" />
+              <img src="/icons/param2.svg" alt="param2" />
+              <img src="/icons/param3.svg" alt="param3" />
+              <img src="/icons/param4.svg" alt="param4" />
             </div>
           </div>
-
-          {/* Section GTA - Droite haut */}
-          <div className="gta-section">
-            <h2 className="module-title">GTA</h2>
-            <div className="module-illustration">
-              <img src="https://images.unsplash.com/photo-1513530534585-c7b1394c6d51?w=400&h=200&fit=crop" alt="GTA" />
-            </div>
-            <p className="module-subtitle">Piloter les absences, présence et activités</p>
-          </div>
-
-          {/* Section Pilotage - Extrême droite */}
-          <div className="pilotage-section">
-            <h2 className="module-title">Pilotage</h2>
-            <div className="module-illustration">
-              <img src="https://images.unsplash.com/photo-1462556791646-c201b8241a94?w=400&h=200&fit=crop" alt="Pilotage" />
-            </div>
-            <p className="module-subtitle">Générer vos tableaux de bord</p>
-          </div>
-
-          {/* Section centrale - Retrouvez l'ensemble */}
-          <div className="central-message">
-            <h3>Retrouvez l'ensemble de votre gestion administrative</h3>
-          </div>
-
-          {/* Section Alertes - Bas gauche */}
-          <div className="alertes-section">
-            <h3 className="section-title">Alertes</h3>
-            
-            <div className="alert-medical">
-              <h4>Visite médicale</h4>
-              <p>AUBERTIN Christopher</p>
-            </div>
-
-            <div className="alert-medical">
-              <h4>Fin de contrat</h4>
-              <p>Valois Julie</p>
-            </div>
-
-            <div className="alert-medical">
-              <h4>Visite médicale</h4>
-              <p>ARNAULT Shaheen</p>
-            </div>
-
-            <div className="alert-medical">
-              <h4>Visite médicale</h4>
-              <p>ARNAULT Shaheen</p>
-            </div>
-
-            <div className="alert-medical">
-              <h4>Visite médicale</h4>
-              <p>ARNAULT T2 Shaheen</p>
-            </div>
-
-            <div className="voir-plus">
-              <Link to="/alertes">→ Voir plus</Link>
-            </div>
-          </div>
-
-          {/* Section Talents - Centre bas */}
-          <div className="talents-section">
-            <h2 className="module-title">Talents</h2>
-            <div className="module-illustration">
-              <img src="https://images.pexels.com/photos/7616608/pexels-photo-7616608.jpeg?w=400&h=200&fit=crop" alt="Talents" />
-            </div>
-            <p className="module-subtitle">Attirer, fidéliser et développer</p>
-          </div>
-
-          {/* Section Self-service - Droite bas */}
-          <div className="self-service-section">
-            <h2 className="module-title">Self-service RH & Démat'</h2>
-            <div className="module-illustration">
-              <img src="https://images.unsplash.com/photo-1469002372271-3406b43e1f27?w=400&h=200&fit=crop" alt="Self-service" />
-            </div>
-            <p className="module-subtitle">Décentraliser les saisies</p>
-          </div>
-
-          {/* Section Mes imports - Bas gauche */}
-          <div className="imports-section">
-            <h3 className="section-title">Mes imports</h3>
-            <div className="imports-icons">
-              <div className="import-icon">📊</div>
-              <div className="import-icon">👥</div>
-              <div className="import-icon">📋</div>
-              <div className="import-icon">🔒</div>
-              <div className="import-icon">🏢</div>
-              <div className="import-icon">⭐</div>
-              <div className="import-icon">🏢</div>
-            </div>
-          </div>
-
-          {/* Section Mes paramètres - Bas droite */}
-          <div className="parametres-section">
-            <h3 className="section-title">Mes paramètres</h3>
-            <div className="parametres-icons">
-              <div className="param-icon">🏢</div>
-              <div className="param-icon">🏢</div>
-              <div className="param-icon">📊</div>
-              <div className="param-icon">⚙️</div>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>

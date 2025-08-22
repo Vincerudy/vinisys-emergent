@@ -48,9 +48,10 @@ const Menus = () => {
       <li>
         <Link to="/" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-cast")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Accueil
           </span>
+ 
         </Link>
       </li>
 
@@ -58,65 +59,82 @@ const Menus = () => {
       <li>
         <Link to="/alertes" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-alert-circle")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Alertes
           </span>
+ 
         </Link>
       </li>
       <li>
         <Link to="/facturation/dashboard" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-file-text")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Facturation
           </span>
+ 
         </Link>
       </li>
       <li>
         <Link to="/achats" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-shopping-cart")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Dépenses
           </span>
+ 
         </Link>
       </li>
       <li>
         <Link to="/notes-frais" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-briefcase")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Notes de frais
           </span>
+ 
         </Link>
       </li>
       <li>
         <Link to="/liste-produits" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-archive")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Gestion de stocks
           </span>
+ 
         </Link>
       </li>
       <li>
         <Link to="/rapport" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-bar-chart-2")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Rapport financier
           </span>
+ 
         </Link>
       </li>
       <li>
         <Link to="/parametrage" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-settings")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Paramétrage
           </span>
+ 
         </Link>
       </li>
       <li>
         <Link to="/abonnement/plans" className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon("feather-tag")} </span>
-          <span className="nxl-mtext">
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
             Abonnements
           </span>
+ 
+        </Link>
+      </li>
+      <li>
+        <Link to="/listes/tickets" className="nxl-link text-capitalize">
+          <span className="nxl-micon"> {getIcon("feather-help-circle")} </span>
+          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
+            Assistance
+          </span>
+ 
         </Link>
       </li>
 
@@ -142,7 +160,7 @@ const Menus = () => {
           >
             <Link to={path} className="nxl-link text-capitalize">
               <span className="nxl-micon"> {getIcon(icon)} </span>
-              <span className="nxl-mtext">
+              <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
                 {name}
               </span>
               <span className="nxl-arrow fs-16">
