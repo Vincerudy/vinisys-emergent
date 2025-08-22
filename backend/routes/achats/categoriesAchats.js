@@ -60,7 +60,9 @@ router.post('/', async (req, res) => {
                 nom, code, description, actif, tva_deductible, societe_id
             ) VALUES (?, ?, ?, ?, ?, ?)
         `, [
-            nom, code, description || null, actif, tva_deductible ? 1 : 0, societe_id
+            nom, code, description || null, actif, 
+            tva_deductible === 'Oui' || tva_deductible === true || tva_deductible === 1 ? 1 : 0, 
+            societe_id
         ]);
 
         res.status(201).json({
