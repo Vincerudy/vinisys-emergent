@@ -90,6 +90,7 @@ import AjoutDepense from "../pages/AjoutDepense";
 import DetailsDepense from "../pages/DetailsDepense";
 import ParametresDepenses from "../pages/ParametresDepenses";
 import ValidationDepenses from "../pages/ValidationDepenses";
+import ParametresTVA from "../pages/ParametresTVA";
 
 // Nouveaux modules refondus
 import AchatsPage from "../pages/AchatsPage";
@@ -465,6 +466,10 @@ export const publicRoute = createHashRouter([
             {
                 path: "/depenses/parametres",
                 element: <ProtectedRoute element={<ParametresDepenses />} />,
+            },
+            {
+                path: "/depenses/parametres-tva",
+                element: <ProtectedRoute element={<ParametresTVA />} />,
             },
             
             // Nouveaux modules refondus

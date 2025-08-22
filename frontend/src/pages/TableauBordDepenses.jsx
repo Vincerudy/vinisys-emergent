@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiFilter, FiDownload, FiEye, FiEdit2, FiTrash2, FiFileText, FiSearch, FiX } from 'react-icons/fi';
+import { FiPlus, FiFilter, FiDownload, FiEye, FiEdit2, FiTrash2, FiFileText, FiSearch, FiX, FiSettings } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import api from '../contexte/Api';
 import { useAuth } from '../contexte/AuthContext';
@@ -206,6 +206,10 @@ const TableauBordDepenses = () => {
         </div>
         <div className="page-header-right ms-auto">
           <div className="page-header-right-items">
+            <Link to="/depenses/parametres-tva" className="btn btn-outline-secondary me-2">
+              <FiSettings className="me-2" />
+              Paramètres TVA
+            </Link>
             <Link to="/depenses/nouveau" className="btn btn-primary">
               <FiPlus className="me-2" />
               Ajouter une dépense

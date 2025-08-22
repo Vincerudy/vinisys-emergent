@@ -38,7 +38,7 @@ router.get('/:societeId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const {
-            nom, code, description, actif = 1, tva_deductible = 'Oui', societe_id
+            nom, code, description, actif = 1, tva_deductible = 0, societe_id
         } = req.body;
 
         if (!nom || !code || !societe_id) {
@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
                 nom, code, description, actif, tva_deductible, societe_id
             ) VALUES (?, ?, ?, ?, ?, ?)
         `, [
-            nom, code, description || null, actif, tva_deductible, societe_id
+            nom, code, description || null, actif, tva_deductible ? 1 : 0, societe_id
         ]);
 
         res.status(201).json({
@@ -110,7 +110,7 @@ router.put('/:id', async (req, res) => {
             code || existing[0].code,
             description !== undefined ? description : existing[0].description,
             actif !== undefined ? actif : existing[0].actif,
-            tva_deductible || existing[0].tva_deductible,
+            tva_deductible !== undefined ? (tva_deductible ? 1 : 0) : existing[0].tva_deductible,
             id
         ]);
 
