@@ -65,8 +65,20 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
         const montantTTC = montantHT + montantTVA;
 
         // Validation
-        if (!fournisseur_id || !date_achat || !montant_ht || !societe_id) {
+        if (!date_achat || !montant_ht || !societe_id) {
             throw new Error('Champs obligatoires manquants');
+        }
+
+        // Récupérer la configuration TVA de la catégorie
+        let tvaDeductibleCategorie = false;
+        if (categorie_achat_id) {
+            const [categorieResult] = await connection.execute(
+                'SELECT tva_deductible FROM categories_achats WHERE id = ?',
+                [categorie_achat_id]
+            );
+            if (categorieResult.length > 0) {
+                tvaDeductibleCategorie = categorieResult[0].tva_deductible === 1;
+            }
         }
 
         // Insertion de l'achat
@@ -86,7 +98,7 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
             montantTVA, 
             montantTTC, 
             tauxTVA, 
-            tva_deductible ? 'Oui' : 'Non',
+            tvaDeductibleCategorie ? 1 : 0, // Utiliser la configuration de la catégorie
             categorie_achat_id || 1, // categorie_id (obligatoire)
             categorie_achat_id || 1, // categorie_achat_id
             description || null, 

@@ -296,6 +296,52 @@ const TableauBordDepenses = () => {
         </div>
       </div>
 
+      {/* Statistiques TVA */}
+      <div className="row mb-4">
+        <div className="col-md-12">
+          <h6 className="mb-3">
+            <i className="fas fa-percent me-2"></i>
+            Répartition TVA
+          </h6>
+        </div>
+        <div className="col-lg-6">
+          <div className="card border-0 bg-primary bg-opacity-10">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <div className="flex-grow-1">
+                  <h6 className="text-primary mb-1">TVA Déductible</h6>
+                  <h4 className="mb-0">{formatMontant(stats.tva_deductible || 0)}</h4>
+                  <small className="text-muted">Récupérable</small>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="avtar avtar-s bg-primary-subtle">
+                    <i className="fas fa-arrow-down text-primary"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-6">
+          <div className="card border-0 bg-secondary bg-opacity-10">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <div className="flex-grow-1">
+                  <h6 className="text-secondary mb-1">TVA Non Déductible</h6>
+                  <h4 className="mb-0">{formatMontant(stats.tva_non_deductible || 0)}</h4>
+                  <small className="text-muted">Non récupérable</small>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="avtar avtar-s bg-secondary-subtle">
+                    <i className="fas fa-ban text-secondary"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Vue regroupée par catégorie */}
       <div className="row mb-4">
         <div className="col-12">

@@ -148,7 +148,7 @@ router.get('/depenses/all', async (req, res) => {
   }
 });
 
-// Lister les dépenses avec filtres et pagination
+// Lister les dépenses (achats) avec filtres et pagination - Tableau de bord
 router.get('/depenses/:userId', async (req, res) => {
   const userId = req.params.userId;
   const { 
@@ -174,75 +174,70 @@ router.get('/depenses/:userId', async (req, res) => {
     
     const societeId = societeRows[0].societe_id;
     
-    // Construction de la requête dynamique
-    let whereClause = 'WHERE d.societe_id = ?';
+    // Construction de la requête dynamique pour les achats
+    let whereClause = 'WHERE a.societe_id = ?';
     let queryParams = [societeId];
     
-    // Filtres
-    if (type) {
-      whereClause += ' AND d.type = ?';
-      queryParams.push(type);
-    }
-    
+    // Filtres - conversion des statuts
     if (statut) {
-      whereClause += ' AND d.statut = ?';
-      queryParams.push(statut);
+      if (statut === 'en_attente') {
+        whereClause += ' AND a.statut = ?';
+        queryParams.push('brouillon');
+      } else if (statut === 'validee') {
+        whereClause += ' AND a.statut = ?';
+        queryParams.push('valide');
+      } else if (statut === 'refusee') {
+        whereClause += ' AND a.statut = ?';
+        queryParams.push('refuse');
+      } else {
+        whereClause += ' AND a.statut = ?';
+        queryParams.push(statut);
+      }
     }
     
     if (dateDebut) {
-      whereClause += ' AND d.date_depense >= ?';
+      whereClause += ' AND a.date_achat >= ?';
       queryParams.push(dateDebut);
     }
     
     if (dateFin) {
-      whereClause += ' AND d.date_depense <= ?';
+      whereClause += ' AND a.date_achat <= ?';
       queryParams.push(dateFin);
     }
-    
+
     if (search) {
-      whereClause += ' AND (d.description LIKE ? OR u.firstName LIKE ? OR u.lastName LIKE ?)';
-      queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
+      whereClause += ' AND (a.description LIKE ? OR a.fournisseur_nom LIKE ?)';
+      queryParams.push(`%${search}%`, `%${search}%`);
     }
 
-    // Requête principale avec JOIN pour les informations utilisateur et catégorie
+    // Requête principale avec JOIN pour les informations de catégorie
     const query = `
       SELECT 
-        d.id,
-        d.type,
-        d.date_depense,
-        d.description,
-        d.montant_ttc,
-        d.montant_ht,
-        d.montant_tva,
-        d.taux_tva,
-        d.statut,
-        d.justificatif_url,
-        d.justificatif_filename,
-        d.created_at,
-        u.firstName,
-        u.lastName,
-        u.email,
-        c.nom as categorie_nom,
+        a.id,
+        'achat' as type,
+        a.date_achat as date_depense,
+        a.description,
+        a.montant_ttc,
+        a.montant_ht,
+        a.montant_tva,
+        a.taux_tva,
+        a.tva_deductible,
         CASE 
-          WHEN d.type = 'kilometrique' THEN dk.lieu_depart
-          WHEN d.type = 'repas' THEN dr.lieu
-          ELSE NULL
-        END as lieu,
-        CASE 
-          WHEN d.type = 'kilometrique' THEN dk.lieu_arrivee
-          ELSE NULL
-        END as lieu_arrivee,
-        CASE 
-          WHEN d.type = 'kilometrique' THEN dk.distance_km
-          ELSE NULL
-        END as distance_km
-      FROM depenses d
-      LEFT JOIN users u ON d.user_id = u.id
-      LEFT JOIN categories_depenses c ON d.categorie_id = c.id
-      LEFT JOIN depenses_kilometriques dk ON d.id = dk.depense_id
-      LEFT JOIN depenses_repas dr ON d.id = dr.depense_id
+          WHEN a.statut = 'brouillon' THEN 'en_attente'
+          WHEN a.statut = 'valide' THEN 'validee'
+          WHEN a.statut = 'refuse' THEN 'refusee'
+          ELSE a.statut
+        END as statut,
+        a.justificatif_path,
+        a.created_at,
+        'Système' as firstName,
+        'Vinisys' as lastName,
+        ca.nom as categorie_nom,
+        a.fournisseur_nom as lieu
+      FROM achats a
+      LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id
       ${whereClause}
-      ORDER BY d.date_depense DESC, d.created_at DESC
+      ORDER BY a.date_achat DESC, a.created_at DESC
       LIMIT ? OFFSET ?
     `;
     
@@ -253,40 +248,59 @@ router.get('/depenses/:userId', async (req, res) => {
     
     // Requête pour le total des enregistrements
     const countQuery = `
-      SELECT COUNT(DISTINCT d.id) as total
-      FROM depenses d
-      LEFT JOIN users u ON d.user_id = u.id
+      SELECT COUNT(*) as total
+      FROM achats a
+      LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id
       ${whereClause}
     `;
     
     const [countResult] = await db.query(countQuery, queryParams.slice(0, -2));
     const totalRecords = countResult[0].total;
     
-    // Calcul des totaux par statut
+    // Calcul des totaux par statut avec conversion des statuts
     const statsQuery = `
       SELECT 
-        statut,
+        CASE 
+          WHEN statut = 'brouillon' THEN 'en_attente'
+          WHEN statut = 'valide' THEN 'validee'
+          WHEN statut = 'refuse' THEN 'refusee'
+          ELSE statut
+        END as statut_convertit,
         COUNT(*) as count,
         SUM(montant_ttc) as total_montant
-      FROM depenses d
+      FROM achats a
       ${whereClause}
-      GROUP BY statut
+      GROUP BY statut_convertit
     `;
     
     const [statsRows] = await db.query(statsQuery, queryParams.slice(0, -2));
+    
+    // Calculer les statistiques TVA pour toutes les dépenses validées de la société
+    const tvaStatsQuery = `
+      SELECT 
+        SUM(CASE WHEN a.tva_deductible = 1 AND a.statut = 'valide' THEN a.montant_tva ELSE 0 END) as tva_deductible,
+        SUM(CASE WHEN a.tva_deductible = 0 AND a.statut = 'valide' THEN a.montant_tva ELSE 0 END) as tva_non_deductible
+      FROM achats a
+      WHERE a.societe_id = ?
+    `;
+    
+    const [tvaStats] = await db.query(tvaStatsQuery, [societeId]);
     
     const stats = {
       en_attente: { count: 0, montant: 0 },
       validee: { count: 0, montant: 0 },
       refusee: { count: 0, montant: 0 },
-      remboursee: { count: 0, montant: 0 }
+      tva_deductible: parseFloat(tvaStats[0]?.tva_deductible || 0),
+      tva_non_deductible: parseFloat(tvaStats[0]?.tva_non_deductible || 0)
     };
     
     statsRows.forEach(row => {
-      stats[row.statut] = {
-        count: row.count,
-        montant: parseFloat(row.total_montant || 0)
-      };
+      if (stats[row.statut_convertit]) {
+        stats[row.statut_convertit] = {
+          count: row.count,
+          montant: parseFloat(row.total_montant || 0)
+        };
+      }
     });
 
     res.json({
@@ -295,8 +309,7 @@ router.get('/depenses/:userId', async (req, res) => {
         montant_ttc: parseFloat(row.montant_ttc),
         montant_ht: parseFloat(row.montant_ht),
         montant_tva: parseFloat(row.montant_tva),
-        taux_tva: parseFloat(row.taux_tva),
-        distance_km: row.distance_km ? parseInt(row.distance_km) : null
+        taux_tva: parseFloat(row.taux_tva)
       })),
       pagination: {
         currentPage: parseInt(page),
