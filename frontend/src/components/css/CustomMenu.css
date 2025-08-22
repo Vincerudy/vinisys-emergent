@@ -84,13 +84,13 @@
   position: relative !important;
 }
 
-/* ICONES - Positionnement au-dessus du texte */
+/* ICONES - Positionnement au-dessus du texte - PLUS PETITES */
 .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-micon,
 .nxl-menu .nxl-item .nxl-link .nxl-micon,
 .sidebar .nxl-item .nxl-link .nxl-micon,
 .navigation .nxl-item .nxl-link .nxl-micon {
-  font-size: 28px !important;
-  margin: 0 0 8px 0 !important;
+  font-size: 18px !important;
+  margin: 0 0 4px 0 !important;
   color: #6c7293 !important;
   transition: all 0.3s ease !important;
   order: 1 !important;
