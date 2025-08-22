@@ -7,6 +7,81 @@
   display: none !important;
 }
 
+/* Ajuster le contenu principal pour le nouveau menu */
+.page-wrapper,
+.nxl-body,
+.main-content,
+.content-area,
+body:not(.nxl-sidebar-compact) .nxl-body {
+  margin-left: 270px !important;
+  padding-left: 10px !important;
+  width: calc(100% - 280px) !important;
+  min-height: 100vh !important;
+  transition: all 0.3s ease !important;
+}
+
+.nxl-container,
+.main-container,
+.app-container {
+  margin-left: 270px !important;
+  padding-left: 10px !important;
+  width: calc(100% - 280px) !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+}
+
+.nxl-header,
+.header,
+.top-header {
+  margin-left: 270px !important;
+  padding-left: 10px !important;
+  width: calc(100% - 280px) !important;
+  position: relative !important;
+  top: 0 !important;
+  z-index: 999 !important;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .page-wrapper,
+  .nxl-body,
+  .main-content,
+  .content-area,
+  body:not(.nxl-sidebar-compact) .nxl-body {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding-bottom: 80px !important;
+  }
+
+  .nxl-container,
+  .main-container,
+  .app-container {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding-bottom: 80px !important;
+  }
+
+  .nxl-header,
+  .header,
+  .top-header {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Style général pour toutes les pages */
+html, body {
+  overflow-x: hidden !important;
+  height: 100% !important;
+}
+
+#root,
+.app,
+.nxl-app {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
 /* CONTENU PRINCIPAL - Ajustement pour le menu MINI (50px) */
 .nxl-body,
 .main-content,
