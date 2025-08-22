@@ -189,6 +189,65 @@ const NotesfraisPage = () => {
  
       </div>
 
+      {/* Liens rapides */}
+      <div className="quick-links-section">
+        <h3 className="quick-links-title">
+          <FiMap />
+          Accès rapide
+        </h3>
+        <div className="quick-links-grid">
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/notes-frais'}
+          >
+            <div className="quick-link-icon">
+              <FiPieChart />
+            </div>
+            <div className="quick-link-text">Tableau de bord</div>
+          </div>
+          
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/notes-frais/liste'}
+          >
+            <div className="quick-link-icon">
+              <FiFileText />
+            </div>
+            <div className="quick-link-text">Liste des notes</div>
+          </div>
+          
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/notes-frais/note'}
+          >
+            <div className="quick-link-icon">
+              <FiPlus />
+            </div>
+            <div className="quick-link-text">Créer une note</div>
+          </div>
+          
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/notes-frais/parametrage'}
+          >
+            <div className="quick-link-icon">
+              <FiCalendar />
+            </div>
+            <div className="quick-link-text">Paramétrage</div>
+          </div>
+          
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/notes-frais/validation'}
+          >
+            <div className="quick-link-icon">
+              <FiCheckCircle />
+            </div>
+            <div className="quick-link-text">Validation notes</div>
+          </div>
+        </div>
+      </div>
+
       {/* Indicateurs KPI */}
       <div className="notes-kpis">
         {/* Carte Notes soumises - Cliquable vers validation */}
