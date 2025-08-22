@@ -7,9 +7,9 @@
 
 .page-wrapper {
   padding: 0;
-  margin-left: 120px;
+  margin-left: 270px;
+  width: calc(100% - 270px);
   padding-left: 10px;
-  width: calc(100% - 130px);
 }
 
 .page-header {
@@ -19,6 +19,7 @@
   margin-bottom: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  text-align: center;
 }
 
 .page-title {
@@ -42,6 +43,9 @@
   gap: 20px;
   padding: 0 20px;
   min-height: calc(100vh - 200px);
+  margin: 0;
+  width: 100%;
+  max-width: none;
 }
 
 /* Section Communications - Colonne gauche */
@@ -432,7 +436,7 @@
   .page-wrapper {
     margin-left: 0;
     width: 100%;
-    padding-left: 0;
+    padding-bottom: 80px;
   }
   
   .main-dashboard-grid {
