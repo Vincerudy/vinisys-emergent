@@ -49,35 +49,35 @@ export const menuList = [
         name: "Achats & Dépenses",
         path: "#",
         icon: 'feather-shopping-cart',
-        permission: 'view_depenses',
+        permission: 'view_quotes',
         dropdownMenu: [
             {
                 id: 1,
                 name: "Tableau de bord",
                 path: "/achats",
                 subdropdownMenu: false,
-                permission: 'view_depenses',
+                permission: 'view_quotes',
             },
             {
                 id: 2,
                 name: "Liste des dépenses",
                 path: "/achats/liste",
                 subdropdownMenu: false,
-                permission: 'view_depenses',
+                permission: 'view_quotes',
             },
             {
                 id: 3,
                 name: "Fournisseurs",
                 path: "/achats/fournisseurs",
                 subdropdownMenu: false,
-                permission: 'view_depenses',
+                permission: 'view_quotes',
             },
             {
                 id: 4,
                 name: "Paramétrage",
                 path: "/achats/parametrage",
                 subdropdownMenu: false,
-                permission: 'view_depenses',
+                permission: 'view_quotes',
             }
         ]
     },
@@ -140,42 +140,42 @@ export const menuList = [
         name: "Notes de frais",
         path: "#",
         icon: 'feather-file-text',
-        permission: 'view_notes_frais',
+        permission: 'view_quotes',
         dropdownMenu: [
             {
                 id: 1,
                 name: "Tableau de bord",
                 path: "/notes-frais",
                 subdropdownMenu: false,
-                permission: 'view_notes_frais',
+                permission: 'view_quotes',
             },
             {
                 id: 2,
                 name: "Liste des notes",
                 path: "/notes-frais/liste",
                 subdropdownMenu: false,
-                permission: 'view_notes_frais',
+                permission: 'view_quotes',
             },
             {
                 id: 3,
                 name: "Créer une note",
                 path: "/notes-frais/nouvelle",
                 subdropdownMenu: false,
-                permission: 'create_expense',
+                permission: 'view_quotes',
             },
             {
                 id: 6,
                 name: "Paramétrage",
                 path: "/notes-frais/parametrage",
                 subdropdownMenu: false,
-                permission: 'manage_expense_categories',
+                permission: 'view_quotes',
             },
             {
                 id: 4,
                 name: "Validation notes",
                 path: "/notes-frais/validation",
                 subdropdownMenu: false,
-                permission: 'validate_expenses',
+                permission: 'view_quotes',
             },
             {
                 id: 5,
@@ -193,7 +193,7 @@ export const menuList = [
         name: "Rapport",
         path: "/rapport",
         icon: 'feather-bar-chart-2',
-        permission: 'access_reports',
+        permission: 'view_quotes',
         dropdownMenu: [], // Tableau vide au lieu de false
     },
     
