@@ -1,136 +1,202 @@
-/* Styles personnalisés pour le menu lateral - Icônes AU-DESSUS du texte */
+/* 🎯 MENU LATERAL - ICONES AU-DESSUS DU TEXTE (Design exact de l'image) */
 
-/* FORCER la disposition en colonne pour TOUS les liens du menu */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link {
+/* FORCER la structure verticale pour TOUS les liens de navigation */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link,
+.nxl-menu .nxl-item .nxl-link,
+.sidebar .nxl-item .nxl-link,
+.navigation .nxl-item .nxl-link {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 1rem 0.75rem !important;
+  padding: 12px 8px !important;
   text-align: center !important;
-  border-radius: 8px;
-  margin: 0.25rem 0;
-  transition: all 0.3s ease;
-  min-height: 80px;
+  border-radius: 8px !important;
+  margin: 4px 0 !important;
+  transition: all 0.3s ease !important;
+  min-height: 75px !important;
+  max-width: 100px !important;
+  position: relative !important;
 }
 
-/* Icônes plus grandes (50px minimum) - FORCER la position */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-micon {
-  font-size: 3.125rem !important; /* 50px */
-  margin-bottom: 0.5rem !important;
-  margin-right: 0 !important;
-  margin-left: 0 !important;
-  margin-top: 0 !important;
-  color: #6c7293;
-  transition: all 0.3s ease;
-  order: 1 !important; /* Icône en premier */
+/* ICONES - Positionnement au-dessus du texte */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-micon,
+.nxl-menu .nxl-item .nxl-link .nxl-micon,
+.sidebar .nxl-item .nxl-link .nxl-micon,
+.navigation .nxl-item .nxl-link .nxl-micon {
+  font-size: 28px !important;
+  margin: 0 0 8px 0 !important;
+  color: #6c7293 !important;
+  transition: all 0.3s ease !important;
+  order: 1 !important;
   display: block !important;
+  width: 100% !important;
+  text-align: center !important;
 }
 
-/* Texte en gras et bleu pâle - FORCER la position */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext {
-  font-weight: 700 !important;
-  font-size: 0.875rem !important;
+/* TEXTE - Positionnement sous l'icône */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext,
+.nxl-menu .nxl-item .nxl-link .nxl-mtext,
+.sidebar .nxl-item .nxl-link .nxl-mtext,
+.navigation .nxl-item .nxl-link .nxl-mtext {
+  font-weight: 600 !important;
+  font-size: 11px !important;
   color: #5a9bd4 !important;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  text-transform: none !important;
+  letter-spacing: 0px !important;
+  padding: 0 !important;
   margin: 0 !important;
-  line-height: 1.2;
-  order: 2 !important; /* Texte en second */
+  line-height: 1.2 !important;
+  order: 2 !important;
   display: block !important;
   text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 90px !important;
 }
 
 /* SUPPRIMER COMPLETEMENT les flèches */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-arrow {
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-arrow,
+.nxl-menu .nxl-item .nxl-link .nxl-arrow,
+.sidebar .nxl-item .nxl-link .nxl-arrow,
+.navigation .nxl-item .nxl-link .nxl-arrow {
   display: none !important;
 }
 
-/* Forcer la largeur de la sidebar pour accommoder la nouvelle disposition */
-.nxl-navigation .nxl-sidebar {
-  width: 120px !important;
-  min-width: 120px !important;
-  transition: width 0.3s ease;
+/* Largeur de la sidebar - comme dans l'image */
+.nxl-navigation .nxl-sidebar,
+.sidebar,
+.navigation {
+  width: 110px !important;
+  min-width: 110px !important;
+  max-width: 110px !important;
+  transition: width 0.3s ease !important;
+  background: #f8f9fa !important;
+  border-right: 1px solid #e9ecef !important;
 }
 
-/* Hover effects */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover {
-  background: linear-gradient(135deg, #f8f9fc 0%, #e8f0fe 100%) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(90, 155, 212, 0.15);
+/* Menu container */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu,
+.nxl-menu,
+.sidebar .menu,
+.navigation .menu {
+  padding: 10px 5px !important;
 }
 
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover .nxl-micon {
+/* Hover effects - comme dans l'image */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover,
+.nxl-menu .nxl-item .nxl-link:hover,
+.sidebar .nxl-item .nxl-link:hover,
+.navigation .nxl-item .nxl-link:hover {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(90, 155, 212, 0.15) !important;
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover .nxl-micon,
+.nxl-menu .nxl-item .nxl-link:hover .nxl-micon,
+.sidebar .nxl-item .nxl-link:hover .nxl-micon,
+.navigation .nxl-item .nxl-link:hover .nxl-micon {
   color: #5a9bd4 !important;
-  transform: scale(1.1);
+  transform: scale(1.05) !important;
 }
 
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover .nxl-mtext {
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover .nxl-mtext,
+.nxl-menu .nxl-item .nxl-link:hover .nxl-mtext,
+.sidebar .nxl-item .nxl-link:hover .nxl-mtext,
+.navigation .nxl-item .nxl-link:hover .nxl-mtext {
   color: #4a86c7 !important;
 }
 
-/* Menu actif */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link {
+/* Menu actif - état sélectionné */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link,
+.nxl-menu .nxl-item.active .nxl-link,
+.sidebar .nxl-item.active .nxl-link,
+.navigation .nxl-item.active .nxl-link {
   background: linear-gradient(135deg, #5a9bd4 0%, #4a86c7 100%) !important;
   color: white !important;
-  box-shadow: 0 6px 20px rgba(90, 155, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(90, 155, 212, 0.3) !important;
 }
 
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link .nxl-micon {
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link .nxl-micon,
+.nxl-menu .nxl-item.active .nxl-link .nxl-micon,
+.sidebar .nxl-item.active .nxl-link .nxl-micon,
+.navigation .nxl-item.active .nxl-link .nxl-micon {
   color: white !important;
 }
 
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link .nxl-mtext {
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link .nxl-mtext,
+.nxl-menu .nxl-item.active .nxl-link .nxl-mtext,
+.sidebar .nxl-item.active .nxl-link .nxl-mtext,
+.navigation .nxl-item.active .nxl-link .nxl-mtext {
   color: white !important;
 }
 
-/* REGLES SUPPLEMENTAIRES pour s'assurer que TOUS les menus utilisent la disposition colonne */
-.nxl-menu .nxl-item .nxl-link {
+/* REGLES SUPPLEMENTAIRES pour garantir la disposition en colonne */
+.nxl-item .nxl-link {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
+  text-decoration: none !important;
 }
 
-.nxl-menu .nxl-item .nxl-link .nxl-micon {
+.nxl-item .nxl-link .nxl-micon {
   margin-right: 0 !important;
-  margin-bottom: 0.5rem !important;
+  margin-bottom: 8px !important;
   order: 1 !important;
 }
 
-.nxl-menu .nxl-item .nxl-link .nxl-mtext {
+.nxl-item .nxl-link .nxl-mtext {
   order: 2 !important;
   text-align: center !important;
   padding-left: 0 !important;
 }
 
-/* Responsive - Sur mobile, garder un menu horizontal compact */
+/* Styles pour éléments SVG et icônes */
+.nxl-micon svg,
+.nxl-micon i,
+.nxl-micon span {
+  font-size: inherit !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/* Responsive - Mobile */
 @media (max-width: 992px) {
-  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link {
-    flex-direction: row !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-    text-align: left !important;
-    padding: 0.75rem 1rem !important;
+  .nxl-navigation .nxl-sidebar,
+  .sidebar,
+  .navigation {
+    width: 250px !important;
   }
   
-  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-micon {
-    font-size: 1.5rem !important;
-    margin-bottom: 0 !important;
-    margin-right: 0.75rem !important;
+  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link,
+  .nxl-menu .nxl-item .nxl-link,
+  .sidebar .nxl-item .nxl-link,
+  .navigation .nxl-item .nxl-link {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding: 12px 16px !important;
+    max-width: none !important;
+  }
+  
+  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-micon,
+  .nxl-menu .nxl-item .nxl-link .nxl-micon,
+  .sidebar .nxl-item .nxl-link .nxl-micon,
+  .navigation .nxl-item .nxl-link .nxl-micon {
+    margin: 0 12px 0 0 !important;
     order: 1 !important;
   }
   
-  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext {
-    font-size: 0.9rem !important;
+  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext,
+  .nxl-menu .nxl-item .nxl-link .nxl-mtext,
+  .sidebar .nxl-item .nxl-link .nxl-mtext,
+  .navigation .nxl-item .nxl-link .nxl-mtext {
     order: 2 !important;
     text-align: left !important;
-  }
-  
-  .nxl-navigation .nxl-sidebar {
-    width: 250px !important;
+    font-size: 14px !important;
+    max-width: none !important;
+    white-space: normal !important;
   }
 }
