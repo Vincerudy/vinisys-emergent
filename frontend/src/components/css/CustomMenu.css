@@ -1,0 +1,126 @@
+/* Styles personnalisés pour le menu lateral */
+
+/* Override des styles par défaut pour avoir icône au-dessus du texte */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  border-radius: 8px;
+  margin: 0.25rem 0;
+  transition: all 0.3s ease;
+}
+
+/* Icônes plus grandes (50px minimum) */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-micon {
+  font-size: 3.125rem; /* 50px */
+  margin-bottom: 0.5rem;
+  margin-right: 0;
+  color: #6c7293;
+  transition: all 0.3s ease;
+}
+
+/* Texte en gras et bleu pâle */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #5a9bd4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-left: 0 !important;
+  line-height: 1.2;
+}
+
+/* Cacher la flèche pour les menus directs */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-arrow {
+  display: none;
+}
+
+/* Hover effects */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover {
+  background: linear-gradient(135deg, #f8f9fc 0%, #e8f0fe 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(90, 155, 212, 0.15);
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover .nxl-micon {
+  color: #5a9bd4;
+  transform: scale(1.1);
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link:hover .nxl-mtext {
+  color: #4a86c7;
+}
+
+/* Menu actif */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link {
+  background: linear-gradient(135deg, #5a9bd4 0%, #4a86c7 100%);
+  color: white;
+  box-shadow: 0 6px 20px rgba(90, 155, 212, 0.3);
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link .nxl-micon {
+  color: white;
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item.active .nxl-link .nxl-mtext {
+  color: white;
+}
+
+/* Ajustements pour la sidebar */
+.nxl-navigation .nxl-sidebar {
+  width: 120px;
+  transition: width 0.3s ease;
+}
+
+/* Responsive - Sur mobile, garder un menu horizontal compact */
+@media (max-width: 992px) {
+  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: left;
+    padding: 0.75rem 1rem;
+  }
+  
+  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-micon {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+  }
+  
+  .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext {
+    font-size: 0.9rem;
+  }
+}
+
+/* Style spécial pour les premiers liens fixes (Accueil, Alertes) */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu > li:first-child .nxl-link,
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu > li:nth-child(2) .nxl-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu > li:first-child .nxl-link .nxl-micon,
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu > li:nth-child(2) .nxl-link .nxl-micon {
+  font-size: 3.125rem;
+  margin-bottom: 0.5rem;
+  margin-right: 0;
+}
+
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu > li:first-child .nxl-link .nxl-mtext,
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu > li:nth-child(2) .nxl-link .nxl-mtext {
+  font-weight: 700;
+  color: #5a9bd4;
+  padding-left: 0 !important;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+/* Masquer les flèches pour tous les menus directs */
+.nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu > li .nxl-link .nxl-arrow {
+  display: none;
+}
