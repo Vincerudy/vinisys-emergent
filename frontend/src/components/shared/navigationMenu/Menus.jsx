@@ -142,7 +142,7 @@ const Menus = () => {
       <li key={id} className={`nxl-item ${pathName === path ? "active" : ""}`}>
         <Link to={path} className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon(icon)} </span>
-          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
+          <span className="nxl-mtext">
             {name}
           </span>
         </Link>
