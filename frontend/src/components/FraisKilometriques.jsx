@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { GoogleMap, LoadScript, Autocomplete, DirectionsRenderer } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, DirectionsRenderer } from '@react-google-maps/api';
 import axios from 'axios';
 import './css/FraisKilometriques.css';
 
@@ -21,8 +21,6 @@ const FraisKilometriques = ({ onCalculationChange }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const originRef = useRef(null);
-  const destinationRef = useRef(null);
   const originInputRef = useRef(null);
   const destinationInputRef = useRef(null);
 
@@ -75,14 +73,6 @@ const FraisKilometriques = ({ onCalculationChange }) => {
 
     }
   }, [distanceKm, selectedBareme, baremes, onCalculationChange]);
-
-  const handleOriginLoad = (autocomplete) => {
-    originRef.current = autocomplete;
-  };
-
-  const handleDestinationLoad = (autocomplete) => {
-    destinationRef.current = autocomplete;
-  };
 
   const handleCalculate = () => {
     if (!originInputRef.current || !destinationInputRef.current) return;
@@ -169,7 +159,13 @@ const FraisKilometriques = ({ onCalculationChange }) => {
 
       <LoadScript
         googleMapsApiKey="AIzaSyCYKDWRjBPotRjX-AgWnL5Y7-iKAbsu2KA"
-        libraries={['places']}
+        libraries={['places', 'geometry']}
+        onLoad={() => console.log('✅ Google Maps LoadScript chargé')}
+        onError={(e) => {
+          console.error('❌ Erreur LoadScript:', e);
+          setError('Erreur de chargement Google Maps. Vérifiez votre connexion internet.');
+        }}
+        loadingElement={<div>Chargement Google Maps...</div>}
       >
         <div className="route-inputs">
           <div className="input-group">
@@ -177,21 +173,12 @@ const FraisKilometriques = ({ onCalculationChange }) => {
               <i className="fas fa-map-marker-alt start-marker"></i>
               Point de départ
             </label>
-            <Autocomplete
-              onLoad={handleOriginLoad}
-              options={{
-                componentRestrictions: { country: 'fr' },
-                fields: ['formatted_address', 'geometry'],
-                types: ['address']
-              }}
-            >
-              <input
-                ref={originInputRef}
-                type="text"
-                placeholder="Saisir l'adresse de départ"
-                className="route-input"
-              />
-            </Autocomplete>
+            <input
+              ref={originInputRef}
+              type="text"
+              placeholder="Saisir l'adresse de départ (ex: Paris, France)"
+              className="route-input"
+            />
           </div>
 
           <div className="input-group">
@@ -199,21 +186,12 @@ const FraisKilometriques = ({ onCalculationChange }) => {
               <i className="fas fa-map-marker-alt end-marker"></i>
               Point d'arrivée
             </label>
-            <Autocomplete
-              onLoad={handleDestinationLoad}
-              options={{
-                componentRestrictions: { country: 'fr' },
-                fields: ['formatted_address', 'geometry'],
-                types: ['address']
-              }}
-            >
-              <input
-                ref={destinationInputRef}
-                type="text"
-                placeholder="Saisir l'adresse d'arrivée"
-                className="route-input"
-              />
-            </Autocomplete>
+            <input
+              ref={destinationInputRef}
+              type="text"
+              placeholder="Saisir l'adresse d'arrivée (ex: Lyon, France)"
+              className="route-input"
+            />
           </div>
 
           <div className="input-group">
