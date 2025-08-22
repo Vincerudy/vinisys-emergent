@@ -249,26 +249,26 @@
 /* Responsive Design - Tablette */
 @media (min-width: 769px) and (max-width: 1024px) {
   .menu-responsible-desktop {
-    width: 200px; /* Garde la même largeur sur tablette */
+    width: 160px; /* Garde la même largeur réduite sur tablette */
   }
 
   .menu-item {
-    padding: 12px 8px;
+    padding: 10px 4px; /* Encore plus réduit sur tablette */
   }
 
   .menu-item-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    margin-bottom: 6px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    margin-bottom: 5px;
   }
 
   .menu-item-text {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .menu-item-content {
-    max-width: 140px;
+    max-width: 120px;
   }
 }
 
