@@ -22,10 +22,10 @@ const TableauBordDepenses = () => {
     limit: 20
   });
   
-  // Filtres avancés
+  // Filtres avancés - Exclut les dépenses en attente par défaut
   const [filters, setFilters] = useState({
     type: '',
-    statut: '',
+    statut: 'valide', // Par défaut, afficher seulement les dépenses validées
     dateDebut: '',
     dateFin: '',
     search: '',
