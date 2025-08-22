@@ -467,6 +467,10 @@ export const publicRoute = createHashRouter([
                 path: "/depenses/parametres",
                 element: <ProtectedRoute element={<ParametresDepenses />} />,
             },
+            {
+                path: "/depenses/parametres-tva",
+                element: <ProtectedRoute element={<ParametresTVA />} />,
+            },
             
             // Nouveaux modules refondus
             {
