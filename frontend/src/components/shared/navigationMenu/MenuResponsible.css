@@ -235,7 +235,7 @@
 /* Responsive Design - Tablette */
 @media (min-width: 769px) and (max-width: 1024px) {
   .menu-responsible-desktop {
-    width: 220px;
+    width: 200px; /* Garde la même largeur sur tablette */
   }
 
   .menu-item {
@@ -251,6 +251,10 @@
 
   .menu-item-text {
     font-size: 11px;
+  }
+
+  .menu-item-content {
+    max-width: 140px;
   }
 }
 
