@@ -1,0 +1,259 @@
+/* Page d'accueil Vinisys */
+.accueil-page {
+  background-color: #f8f9fc;
+  min-height: 100vh;
+}
+
+.page-wrapper {
+  padding: 0;
+}
+
+.page-header {
+  background: #fff;
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid #e3e6f0;
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #5a5c69;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: #858796;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.main-content {
+  padding: 0 2rem;
+}
+
+.modules-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Module RH - Grand module à gauche */
+.module-rh {
+  grid-row: span 2;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.module-rh::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+}
+
+.coming-soon-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.module-rh:hover .coming-soon-overlay {
+  opacity: 1;
+}
+
+/* Grid des 4 modules à droite */
+.modules-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Styles communs pour tous les modules */
+.module-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 3rem 2rem;
+  text-align: center;
+  border: none;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  position: relative;
+}
+
+.module-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.25rem 2rem 0 rgba(58, 59, 69, 0.25);
+  text-decoration: none;
+}
+
+.module-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.module-card:hover .module-icon {
+  transform: scale(1.1);
+}
+
+.module-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #5a9bd4;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Couleurs spécifiques pour chaque module */
+.module-facturation .module-icon {
+  color: #1cc88a;
+}
+
+.module-facturation:hover {
+  border-left: 4px solid #1cc88a;
+}
+
+.module-depenses .module-icon {
+  color: #36b9cc;
+}
+
+.module-depenses:hover {
+  border-left: 4px solid #36b9cc;
+}
+
+.module-notes-frais .module-icon {
+  color: #f6c23e;
+}
+
+.module-notes-frais:hover {
+  border-left: 4px solid #f6c23e;
+}
+
+.module-rapport .module-icon {
+  color: #e74a3b;
+}
+
+.module-rapport:hover {
+  border-left: 4px solid #e74a3b;
+}
+
+.module-rh .module-icon {
+  color: #fff;
+  font-size: 5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.module-rh .module-title {
+  color: #fff;
+  font-size: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .modules-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .module-rh {
+    grid-row: span 1;
+    min-height: 200px;
+  }
+  
+  .modules-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0 1rem;
+  }
+  
+  .page-header {
+    padding: 1.5rem 1rem 1rem;
+  }
+  
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .module-card {
+    padding: 2rem 1.5rem;
+    min-height: 160px;
+  }
+  
+  .module-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .module-title {
+    font-size: 1.1rem;
+  }
+  
+  .module-rh .module-icon {
+    font-size: 4rem;
+  }
+  
+  .module-rh .module-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .modules-container {
+    gap: 1rem;
+  }
+  
+  .module-card {
+    padding: 1.5rem 1rem;
+    min-height: 140px;
+  }
+  
+  .module-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .module-title {
+    font-size: 1rem;
+  }
+  
+  .module-rh .module-icon {
+    font-size: 3.5rem;
+  }
+  
+  .module-rh .module-title {
+    font-size: 1.2rem;
+  }
+}

@@ -6,6 +6,7 @@ import getIcon from "@/utils/getIcon";
 import { hasPermission } from '../../../contexte/permissions';
 import { useSubscription } from '../../../hooks/useSubscription';
 import { filterMenuBySubscription, SUBSCRIPTION_FEATURES_MAP } from '../../../utils/subscriptionFilter';
+import '../../css/CustomMenu.css';
 
 const Menus = () => {
     const [openDropdown, setOpenDropdown] = useState(null);
