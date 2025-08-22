@@ -302,21 +302,3 @@
 .menu-responsible-mobile {
   animation: slideInUp 0.3s ease-out;
 }
-
-/* Scroll personnalisé pour le menu desktop */
-.menu-responsible-desktop::-webkit-scrollbar {
-  width: 6px;
-}
-
-.menu-responsible-desktop::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.menu-responsible-desktop::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-.menu-responsible-desktop::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
