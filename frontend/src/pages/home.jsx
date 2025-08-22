@@ -17,6 +17,7 @@ import PageHeader from '@/components/shared/pageHeader/PageHeader'
 import Footer from '@/components/shared/Footer'
 import { projectsDataTwo } from '@/utils/fackData/projectsDataTwo'
 import ModaleFactureVisualization from '@/components/composantsFacture/ModaleFactureVisualization'
+import '../components/css/QuickLinks.css';
 
 const fetchDataFactures = async (vale) => {
 
@@ -237,6 +238,67 @@ const Home = () => {
             </PageHeader>
         */}
             <div className='main-content'>
+                {/* Liens rapides */}
+                <div className="quick-links-section">
+                    <h6 className="mb-3">
+                        <i className="fas fa-rocket me-2"></i>
+                        Accès rapide
+                    </h6>
+                    <div className="row">
+                        <div className="col-lg-3 col-md-6 col-6 mb-3">
+                            <div 
+                                className="quick-link-card"
+                                onClick={() => navigate('/facturation/devis')}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <div className="quick-link-icon bg-info">
+                                    <i className="fas fa-file-alt"></i>
+                                </div>
+                                <div className="quick-link-text">Devis</div>
+                            </div>
+                        </div>
+                        
+                        <div className="col-lg-3 col-md-6 col-6 mb-3">
+                            <div 
+                                className="quick-link-card"
+                                onClick={() => navigate('/facturation/factures')}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <div className="quick-link-icon bg-success">
+                                    <i className="fas fa-file-invoice-dollar"></i>
+                                </div>
+                                <div className="quick-link-text">Factures</div>
+                            </div>
+                        </div>
+                        
+                        <div className="col-lg-3 col-md-6 col-6 mb-3">
+                            <div 
+                                className="quick-link-card"
+                                onClick={() => navigate('/facturation/clients')}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <div className="quick-link-icon bg-primary">
+                                    <i className="fas fa-users"></i>
+                                </div>
+                                <div className="quick-link-text">Clients</div>
+                            </div>
+                        </div>
+                        
+                        <div className="col-lg-3 col-md-6 col-6 mb-3">
+                            <div 
+                                className="quick-link-card"
+                                onClick={() => navigate('/facturation/parametrage')}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <div className="quick-link-icon bg-secondary">
+                                    <i className="fas fa-cog"></i>
+                                </div>
+                                <div className="quick-link-text">Paramétrage facturation</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className='row'>
                     <SiteOverviewStatistics parametrage={parametrage} />
                     <PaymentRecordChart salesDataGraph={salesDataGraph} />
