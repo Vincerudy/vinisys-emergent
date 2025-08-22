@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import api from '../contexte/Api';
 import { useAuth } from '../contexte/AuthContext';
 import Swal from 'sweetalert2';
+import '../components/css/QuickLinks.css';
 
 const TableauBordDepenses = () => {
   const { id: userId } = useAuth();
