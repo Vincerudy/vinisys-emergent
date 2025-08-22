@@ -182,9 +182,9 @@
 .main-content,
 .content-area,
 body:not(.nxl-sidebar-compact) .nxl-body {
-  margin-left: 110px !important;
-  padding-left: 0 !important;
-  width: calc(100% - 110px) !important;
+  margin-left: 120px !important;
+  padding-left: 10px !important;
+  width: calc(100% - 130px) !important;
   height: 100vh !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -194,8 +194,9 @@ body:not(.nxl-sidebar-compact) .nxl-body {
 .nxl-container,
 .main-container,
 .app-container {
-  margin-left: 110px !important;
-  width: calc(100% - 110px) !important;
+  margin-left: 120px !important;
+  padding-left: 10px !important;
+  width: calc(100% - 130px) !important;
   height: 100vh !important;
   overflow-y: auto !important;
 }
@@ -204,11 +205,31 @@ body:not(.nxl-sidebar-compact) .nxl-body {
 .nxl-header,
 .header,
 .top-header {
-  margin-left: 110px !important;
-  width: calc(100% - 110px) !important;
+  margin-left: 120px !important;
+  padding-left: 10px !important;
+  width: calc(100% - 130px) !important;
   position: fixed !important;
   top: 0 !important;
   z-index: 999 !important;
+}
+
+/* Contenu de page spécifique */
+.nxl-content,
+.page-content,
+.main-wrapper {
+  margin-left: 120px !important;
+  padding-left: 10px !important;
+  width: calc(100% - 130px) !important;
+  min-height: 100vh !important;
+  overflow-y: auto !important;
+}
+
+/* Ajustement pour les cards et conteneurs internes */
+.nxl-body .card,
+.nxl-body .container-fluid,
+.nxl-body .row {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
 }
 
 /* REGLES SUPPLEMENTAIRES pour garantir la disposition en colonne */
