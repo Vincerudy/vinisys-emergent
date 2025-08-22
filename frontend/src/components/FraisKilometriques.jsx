@@ -179,21 +179,12 @@ const FraisKilometriques = ({ onCalculationChange }) => {
               <i className="fas fa-map-marker-alt start-marker"></i>
               Point de départ
             </label>
-            <Autocomplete
-              onLoad={handleOriginLoad}
-              options={{
-                componentRestrictions: { country: 'fr' },
-                fields: ['formatted_address', 'geometry'],
-                types: ['address']
-              }}
-            >
-              <input
-                ref={originInputRef}
-                type="text"
-                placeholder="Saisir l'adresse de départ"
-                className="route-input"
-              />
-            </Autocomplete>
+            <input
+              ref={originInputRef}
+              type="text"
+              placeholder="Saisir l'adresse de départ (ex: Paris, France)"
+              className="route-input"
+            />
           </div>
 
           <div className="input-group">
@@ -201,21 +192,12 @@ const FraisKilometriques = ({ onCalculationChange }) => {
               <i className="fas fa-map-marker-alt end-marker"></i>
               Point d'arrivée
             </label>
-            <Autocomplete
-              onLoad={handleDestinationLoad}
-              options={{
-                componentRestrictions: { country: 'fr' },
-                fields: ['formatted_address', 'geometry'],
-                types: ['address']
-              }}
-            >
-              <input
-                ref={destinationInputRef}
-                type="text"
-                placeholder="Saisir l'adresse d'arrivée"
-                className="route-input"
-              />
-            </Autocomplete>
+            <input
+              ref={destinationInputRef}
+              type="text"
+              placeholder="Saisir l'adresse d'arrivée (ex: Lyon, France)"
+              className="route-input"
+            />
           </div>
 
           <div className="input-group">
