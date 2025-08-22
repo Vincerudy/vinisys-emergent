@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleMap, LoadScript, DirectionsRenderer } from '@react-google-maps/api';
 import axios from 'axios';
@@ -65,9 +66,11 @@ const FraisKilometriques = ({ onCalculationChange }) => {
             point_depart: originInputRef.current?.value || '',
             point_arrivee: destinationInputRef.current?.value || ''
           });
+
         }
         console.log('💰 Montant calculé:', montant, '€ pour', distanceKm, 'km à', bareme.tarif_km, '€/km');
       }
+
     }
   }, [distanceKm, selectedBareme, baremes, onCalculationChange]);
 
@@ -120,8 +123,9 @@ const FraisKilometriques = ({ onCalculationChange }) => {
           <p>Chargement des barèmes kilométriques...</p>
         </div>
       </div>
+
     );
-  }
+  };
 
   if (error) {
     return (
@@ -222,10 +226,12 @@ const FraisKilometriques = ({ onCalculationChange }) => {
         )}
 
         <div className="map-container">
+
           <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={6}>
             {directions && <DirectionsRenderer directions={directions} />}
           </GoogleMap>
         </div>
+
 
         {(distanceKm > 0 && montantCalcule > 0) && (
           <div className="calculation-result">
@@ -258,6 +264,7 @@ const FraisKilometriques = ({ onCalculationChange }) => {
         )}
       </LoadScript>
     </div>
+
   );
 };
 
