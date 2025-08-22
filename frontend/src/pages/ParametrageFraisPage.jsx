@@ -34,6 +34,52 @@ const ParametrageFraisPage = () => {
     fetchCategoriesAchats();
   }, [societe_id]);
 
+  const fetchCategoriesAchats = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories-achats/${societe_id}`);
+      if (response.data.success) {
+        setCategoriesAchats(response.data.categories);
+      }
+    } catch (error) {
+      console.error('Erreur chargement catégories achats:', error);
+    }
+  };
+
+  const handleToggleTVADeductible = async (categorieId, currentValue) => {
+    try {
+      setSaving(true);
+      
+      const newValue = !currentValue;
+      
+      await axios.put(`${import.meta.env.VITE_API_URL}/categories-achats/${categorieId}`, {
+        tva_deductible: newValue
+      });
+
+      // Mettre à jour l'état local
+      setCategoriesAchats(prev => prev.map(cat => 
+        cat.id === categorieId 
+          ? { ...cat, tva_deductibile: newValue ? 1 : 0 }
+          : cat
+      ));
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Paramètre mis à jour',
+        text: `TVA ${newValue ? 'déductible' : 'non déductible'} pour ${categoriesAchats.find(c => c.id === categorieId)?.nom}`,
+        timer: 2000,
+        showConfirmButton: false,
+        position: 'top-end',
+        toast: true
+      });
+
+    } catch (error) {
+      console.error('❌ Erreur mise à jour TVA:', error);
+      Swal.fire('Erreur', 'Impossible de mettre à jour le paramètre TVA', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const fetchTypesFrais = async () => {
     try {
       setLoading(true);
