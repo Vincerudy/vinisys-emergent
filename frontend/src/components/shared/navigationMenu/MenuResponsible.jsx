@@ -59,7 +59,7 @@ const MenuResponsible = () => {
           <div className="menu-header">
             <div className="menu-logo">
               <img 
-                src="/logo-vinisys.png" 
+                src="/images/logo-full.png" 
                 alt="Vinisys" 
                 className="logo-image"
                 onError={(e) => {
