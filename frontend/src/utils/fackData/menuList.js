@@ -10,11 +10,13 @@ export const menuList = [
     },
     {
         id: 2,
+
         name: "Facturation",
         path: "/facturation/dashboard",
         icon: 'feather-file-text',
         permission: 'view_facturation',
         dropdownMenu: false
+
     },
     {
         id: 3,
@@ -27,18 +29,22 @@ export const menuList = [
     {
         id: 4,
         name: "Notes de frais",
+
         path: "/notes-frais",
         icon: 'feather-credit-card',
         permission: 'view_notes_frais',
         dropdownMenu: false
+
     },
     {
         id: 5,
         name: "Rapport",
         path: "/rapport",
         icon: 'feather-bar-chart-2',
+
         permission: 'view_rapport',
         dropdownMenu: false
+
     },
     {
         id: 6,
