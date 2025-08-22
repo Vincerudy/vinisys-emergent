@@ -249,7 +249,7 @@ router.get('/:societeId', async (req, res) => {
                 ca_encaisse: ca_encaisse,  // CA réellement encaissé (comme dashboard)
                 moins_avoirs: total_avoirs,
                 moins_depenses_ttc: depenses_ttc,
-                plus_tva_recuperable: tva_recuperable,
+                plus_tva_deductible: tva_deductible,
                 moins_notes_frais: notes_frais_rembourse,
                 resultat: benefice_net
             },
