@@ -5,7 +5,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 260px;
+  width: 200px; /* Largeur fixe à 200px */
   height: 100vh;
   background: #f8f9fc;
   border-right: 1px solid #e3e6f0;
@@ -22,6 +22,31 @@
   padding: 0 25px 20px;
   border-bottom: 1px solid #e3e6f0;
   margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-logo {
+  text-align: center;
+}
+
+.logo-image {
+  max-width: 120px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.logo-fallback {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #4e73df;
+  margin: 0;
+  text-align: center;
+  display: none;
+  font-family: 'Arial', sans-serif;
 }
 
 .menu-title {
@@ -48,6 +73,8 @@
   transition: all 0.3s ease;
   background: transparent;
   text-align: center;
+  width: calc(100% - 20px); /* Ajustement pour le padding */
+  box-sizing: border-box;
 }
 
 .menu-item:hover {
