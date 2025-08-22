@@ -146,7 +146,8 @@
 }
 
 .input-group input,
-.input-group select {
+.input-group select,
+.route-input {
   width: 100%;
   padding: 8px 10px; /* Réduire le padding */
   border: 1px solid #e9ecef;
