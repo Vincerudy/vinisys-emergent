@@ -34,7 +34,7 @@ const NavigationManu = () => {
 
 
 
-                                <Link to="/listes/tickets" className="btn btn-primary text-dark w-100">Centre d'Assistance</Link>
+
                             </div>
                         </div>
                         <div style={{ height: "18px" }}></div>
