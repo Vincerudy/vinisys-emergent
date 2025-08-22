@@ -2,6 +2,8 @@ import { createHashRouter, useNavigate, Navigate } from "react-router-dom";
 import RootLayout from "../layout/root";
 import Home from "../pages/AccueilPage";
 import FacturationDashboard from "../pages/FacturationDashboard";
+import ParametragePage from "../pages/ParametragePage";
+import PlansPage from "../pages/PlansPage";
 import Analytics from "../pages/analytics";
 import ReportsSales from "../pages/reports-sales";
 import ReportsLeads from "../pages/reports-leads";
