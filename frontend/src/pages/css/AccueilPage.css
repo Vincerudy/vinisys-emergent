@@ -429,12 +429,6 @@
 }
 
 @media (max-width: 992px) {
-  .page-wrapper {
-    margin-left: 0;
-    width: 100%;
-    padding-left: 0;
-  }
-  
   .main-dashboard-grid {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto auto auto auto;
