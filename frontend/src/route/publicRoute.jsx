@@ -90,6 +90,7 @@ import AjoutDepense from "../pages/AjoutDepense";
 import DetailsDepense from "../pages/DetailsDepense";
 import ParametresDepenses from "../pages/ParametresDepenses";
 import ValidationDepenses from "../pages/ValidationDepenses";
+import ParametresTVA from "../pages/ParametresTVA";
 
 // Nouveaux modules refondus
 import AchatsPage from "../pages/AchatsPage";
