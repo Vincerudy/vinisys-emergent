@@ -7,9 +7,6 @@
 
 .page-wrapper {
   padding: 0;
-  margin-left: 120px;
-  padding-left: 10px;
-  width: calc(100% - 130px);
 }
 
 .page-header {
