@@ -31,6 +31,7 @@ const ParametrageFraisPage = () => {
 
   useEffect(() => {
     fetchTypesFrais();
+    fetchCategoriesAchats();
   }, [societe_id]);
 
   const fetchTypesFrais = async () => {
