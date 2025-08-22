@@ -1,63 +1,6 @@
 /* DESACTIVER L'ANCIEN MENU - REMPLACÉ PAR MenuResponsible */
 
-/* SIDEBAR FIXE avec scroll indépendant */
-.nxl-navigation .nxl-sidebar,
-.sidebar,
-.navigation {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 110px !important;
-  min-width: 110px !important;
-  max-width: 110px !important;
-  height: 100vh !important;
-  background: #f8f9fa !important;
-  border-right: 1px solid #e9ecef !important;
-  z-index: 900 !important;
-  overflow: hidden !important;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1) !important;
-}
-
-
-/* Container du menu avec scroll indépendant */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body,
-.sidebar .sidebar-body,
-.navigation .sidebar-body {
-  height: 100vh !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding: 10px 5px !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: #cbd5e0 transparent !important;
-}
-
-/* Style de la scrollbar pour webkit (Chrome, Safari) */
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body::-webkit-scrollbar,
-.sidebar .sidebar-body::-webkit-scrollbar,
-.navigation .sidebar-body::-webkit-scrollbar {
-  width: 4px !important;
-}
-
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body::-webkit-scrollbar-track,
-.sidebar .sidebar-body::-webkit-scrollbar-track,
-.navigation .sidebar-body::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body::-webkit-scrollbar-thumb,
-.sidebar .sidebar-body::-webkit-scrollbar-thumb,
-.navigation .sidebar-body::-webkit-scrollbar-thumb {
-  background: #cbd5e0 !important;
-  border-radius: 2px !important;
-}
-
-.nxl-navigation .nxl-sidebar .nxl-sidebar-body::-webkit-scrollbar-thumb:hover,
-.sidebar .sidebar-body::-webkit-scrollbar-thumb:hover,
-.navigation .sidebar-body::-webkit-scrollbar-thumb:hover {
-  background: #a0aec0 !important;
-}
-
-/* Menu container */
+/* Cacher complètement l'ancien système de menu */
 .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu,
 .nxl-menu,
 .menu-container .nxl-menu {

@@ -2,71 +2,15 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  margin-left: 270px;
-  width: calc(100% - 270px);
-  padding-left: 10px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f7f9fc;
 }
 
-.page-header {
-  background: #fff;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #e3e6f0;
-  margin-bottom: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  text-align: center;
+#root {
+  height: 100%;
 }
 
-.page-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 0.3rem;
-}
-
-.page-subtitle {
-  color: #6c757d;
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-/* Grille principale comme dans l'image */
-.main-dashboard-grid {
-  display: grid;
-  grid-template-columns: 280px 1fr 320px 250px;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 20px;
-  padding: 0 20px;
-  min-height: calc(100vh - 200px);
-  margin: 0;
-  width: 100%;
-  max-width: none;
-}
-
-/* Section Communications - Colonne gauche */
-.communications-section {
-  grid-row: 1 / 3;
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border-left: 4px solid #3498db;
-}
-
-.communications-section .section-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #ecf0f1;
-}
-
-.alert-item {
-  background: #f8f9fa;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
+.dashboard {
   display: flex;
   gap: 16px;
   padding: 16px;
@@ -187,11 +131,72 @@ html, body {
   min-height: 100%;     /* ✅ occupe toute la hauteur dispo */
 }
 
-@media (max-width: 992px) {
-  .page-wrapper {
-    margin-left: 0;
-    width: 100%;
-    padding-bottom: 80px;
+.top-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 16px;
+  flex: 1;              /* ✅ prend tout l’espace restant */
+}
+
+.top-grid .core-rh {
+  grid-row: span 2;
+  background: #eaf2fc;
+  text-align: center;
+}
+
+.top-grid .gta { background: #e8f7f6; text-align: center; }
+.top-grid .pilotage { background: #fff3e1; text-align: center; }
+.top-grid .talents { background: #e8f5ff; text-align: center; }
+.top-grid .selfservice { background: #ffeef2; text-align: center; }
+
+img{
+  max-width: 100px;
+}
+.imgRh{
+  max-width: 160px;
+}
+
+.illustration {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  margin: 12px auto;
+}
+
+.illustration p {
+  font-weight: 600;
+  font-size: 14px;
+  color: #002b5c;
+}
+
+/* Bottom grid */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.bottom-grid .icons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.bottom-grid .icons img {
+  width: 20px;
+  height: 20px;
+}
+.ulCommeAlerte{
+  height: 100%;
+}
+/* Tablette */
+@media (max-width: 1024px) {
+  .dashboard {
+    flex-direction: column;
   }
 
   .sidebar {
