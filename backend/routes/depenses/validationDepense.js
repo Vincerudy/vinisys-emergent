@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/db');
 
-// Valider une dépense
+// Valider un achat (dépense)
 router.post('/depense/:depenseId/valider', async (req, res) => {
   const depenseId = req.params.depenseId;
   const { userId, commentaire } = req.body;
@@ -12,35 +12,26 @@ router.post('/depense/:depenseId/valider', async (req, res) => {
   try {
     await connection.beginTransaction();
     
-    // Vérifier que la dépense existe et est en attente
-    const [depenseRows] = await connection.query(
-      'SELECT * FROM depenses WHERE id = ? AND statut = ?', 
-      [depenseId, 'en_attente']
+    // Vérifier que l'achat existe et est en brouillon (équivalent à "en attente")
+    const [achatRows] = await connection.query(
+      'SELECT * FROM achats WHERE id = ? AND statut = ?', 
+      [depenseId, 'brouillon']
     );
     
-    if (depenseRows.length === 0) {
+    if (achatRows.length === 0) {
       await connection.rollback();
       return res.status(404).json({ 
         message: 'Dépense non trouvée ou déjà traitée' 
       });
     }
     
-    // Mettre à jour le statut de la dépense
+    // Mettre à jour le statut de l'achat
     await connection.query(`
-      UPDATE depenses SET 
-        statut = 'validee', 
-        validee_par = ?, 
-        validee_le = CURRENT_TIMESTAMP,
+      UPDATE achats SET 
+        statut = 'valide', 
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `, [userId, depenseId]);
-    
-    // Insérer l'historique
-    await connection.query(`
-      INSERT INTO historique_depenses (
-        depense_id, user_id, action, statut_ancien, statut_nouveau, commentaire
-      ) VALUES (?, ?, 'validation', 'en_attente', 'validee', ?)
-    `, [depenseId, userId, commentaire || 'Dépense validée']);
+    `, [depenseId]);
     
     await connection.commit();
     
@@ -58,7 +49,7 @@ router.post('/depense/:depenseId/valider', async (req, res) => {
   }
 });
 
-// Refuser une dépense
+// Refuser un achat (dépense)
 router.post('/depense/:depenseId/refuser', async (req, res) => {
   const depenseId = req.params.depenseId;
   const { userId, motifRefus } = req.body;
@@ -68,13 +59,13 @@ router.post('/depense/:depenseId/refuser', async (req, res) => {
   try {
     await connection.beginTransaction();
     
-    // Vérifier que la dépense existe et est en attente
-    const [depenseRows] = await connection.query(
-      'SELECT * FROM depenses WHERE id = ? AND statut = ?', 
-      [depenseId, 'en_attente']
+    // Vérifier que l'achat existe et est en brouillon
+    const [achatRows] = await connection.query(
+      'SELECT * FROM achats WHERE id = ? AND statut = ?', 
+      [depenseId, 'brouillon']
     );
     
-    if (depenseRows.length === 0) {
+    if (achatRows.length === 0) {
       await connection.rollback();
       return res.status(404).json({ 
         message: 'Dépense non trouvée ou déjà traitée' 
@@ -88,23 +79,13 @@ router.post('/depense/:depenseId/refuser', async (req, res) => {
       });
     }
     
-    // Mettre à jour le statut de la dépense
+    // Mettre à jour le statut de l'achat
     await connection.query(`
-      UPDATE depenses SET 
-        statut = 'refusee', 
-        motif_refus = ?,
-        validee_par = ?, 
-        validee_le = CURRENT_TIMESTAMP,
+      UPDATE achats SET 
+        statut = 'refuse',
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `, [motifRefus, userId, depenseId]);
-    
-    // Insérer l'historique
-    await connection.query(`
-      INSERT INTO historique_depenses (
-        depense_id, user_id, action, statut_ancien, statut_nouveau, commentaire
-      ) VALUES (?, ?, 'refus', 'en_attente', 'refusee', ?)
-    `, [depenseId, userId, motifRefus]);
+    `, [depenseId]);
     
     await connection.commit();
     

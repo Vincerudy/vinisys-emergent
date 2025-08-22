@@ -99,6 +99,7 @@ import NouvelAchatPage from "../pages/NouvelAchatPage";
 import ListeAchatsPage from "../pages/ListeAchatsPage";
 import ListeNotesfraisPage from "../pages/ListeNotesfraisPage";
 import NouvelleNoteFraisPage from "../pages/NouvelleNoteFraisPage";
+import ValidationAchats from "../pages/ValidationAchats";
 import NoteDetailPage from "../pages/NoteDetailPage";
 import ParametrageFraisPage from "../pages/ParametrageFraisPage";
 import TestNoteFraisPage from "../pages/TestNoteFraisPage";
@@ -480,6 +481,10 @@ export const publicRoute = createHashRouter([
             {
                 path: "/achats/liste",
                 element: <ProtectedRoute element={<ListeAchatsPage />} />,
+            },
+            {
+                path: "/achats/validation",
+                element: <ProtectedRoute element={<ValidationAchats />} />,
             },
             {
                 path: "/achats/fournisseurs",

@@ -66,6 +66,13 @@ export const menuList = [
                 permission: 'view_quotes',
             },
             {
+                id: 5,
+                name: "Dépenses à valider",
+                path: "/achats/validation",
+                subdropdownMenu: false,
+                permission: 'validate_expenses',
+            },
+            {
                 id: 3,
                 name: "Fournisseurs",
                 path: "/achats/fournisseurs",

@@ -22,10 +22,10 @@ const TableauBordDepenses = () => {
     limit: 20
   });
   
-  // Filtres avancés
+  // Filtres avancés - Exclut les dépenses en attente par défaut
   const [filters, setFilters] = useState({
     type: '',
-    statut: '',
+    statut: 'valide', // Par défaut, afficher seulement les dépenses validées
     dateDebut: '',
     dateFin: '',
     search: '',
@@ -221,22 +221,24 @@ const TableauBordDepenses = () => {
       {/* Statistiques en temps réel */}
       <div className="row mb-4">
         <div className="col-lg-3 col-md-6">
-          <div className="card border-0 bg-warning bg-opacity-10">
-            <div className="card-body">
-              <div className="d-flex align-items-center">
-                <div className="flex-grow-1">
-                  <h6 className="text-warning mb-1">En attente</h6>
-                  <h4 className="mb-0">{stats.en_attente.count}</h4>
-                  <small className="text-muted">{formatMontant(stats.en_attente.montant)}</small>
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="avtar avtar-s bg-warning-subtle">
-                    <i className="fas fa-clock text-warning"></i>
+          <Link to="/achats/validation" className="text-decoration-none">
+            <div className="card border-0 bg-warning bg-opacity-10 h-100">
+              <div className="card-body">
+                <div className="d-flex align-items-center">
+                  <div className="flex-grow-1">
+                    <h6 className="text-warning mb-1">À valider</h6>
+                    <h4 className="mb-0">{stats.en_attente.count}</h4>
+                    <small className="text-muted">Gérer les validations →</small>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <div className="avtar avtar-s bg-warning-subtle">
+                      <i className="fas fa-clock text-warning"></i>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
         <div className="col-lg-3 col-md-6">
           <div className="card border-0 bg-success bg-opacity-10">
