@@ -65,7 +65,7 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
         const montantTTC = montantHT + montantTVA;
 
         // Validation
-        if (!fournisseur_id || !date_achat || !montant_ht || !societe_id) {
+        if (!date_achat || !montant_ht || !societe_id) {
             throw new Error('Champs obligatoires manquants');
         }
 
