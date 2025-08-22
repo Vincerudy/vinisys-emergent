@@ -63,7 +63,7 @@ const DetailCategorieAchatPage = () => {
           code: foundCategory.code || '',
           description: foundCategory.description || '',
           actif: foundCategory.actif === 1,
-          tva_deductible: foundCategory.tva_deductible || 'Oui'
+          tva_deductible: foundCategory.tva_deductible === 1 ? 'Oui' : 'Non'
         });
       } else {
         navigate('/achats/parametrage');
