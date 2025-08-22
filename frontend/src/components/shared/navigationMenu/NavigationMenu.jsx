@@ -8,14 +8,7 @@ const NavigationMenu = () => {
 
     return (
         <nav className={`nxl-navigation ${navigationOpen ? "nxl-navigation-toggle" : ""}`}>
-            <div className="nxl-sidebar">
-                <div className="nxl-sidebar-body">
-                    <PerfectScrollbar>
-                        <MenuResponsible />
-                    </PerfectScrollbar>
-                </div>
-                <div className={`${navigationOpen ? "nxl-menu-overlay" : ""}`}></div>
-            </div>
+            <MenuResponsible />
         </nav>
     )
 }
