@@ -129,26 +129,34 @@
   order: 1 !important;
 }
 
-/* TEXTE - Positionnement sous l'icône - PLUS PETIT */
+/* TEXTE - CACHÉ par défaut en mode MINI, visible au survol */
 .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext,
 .nxl-menu .nxl-item .nxl-link .nxl-mtext,
 .sidebar .nxl-item .nxl-link .nxl-mtext,
 .navigation .nxl-item .nxl-link .nxl-mtext {
+  display: none !important;
   font-weight: 600 !important;
-  font-size: 8px !important;
+  font-size: 13px !important;
   color: #5a9bd4 !important;
   text-transform: none !important;
   letter-spacing: 0px !important;
   padding: 0 !important;
   margin: 0 !important;
-  line-height: 1.1 !important;
+  line-height: 1.2 !important;
   order: 2 !important;
-  display: block !important;
-  text-align: center !important;
+  text-align: left !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
-  max-width: 50px !important;
+  transition: all 0.3s ease !important;
+}
+
+/* TEXTE visible en mode étendu (au survol) */
+.nxl-navigation .nxl-sidebar:hover .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link .nxl-mtext,
+.sidebar:hover .nxl-item .nxl-link .nxl-mtext,
+.navigation:hover .nxl-item .nxl-link .nxl-mtext {
+  display: block !important;
+  opacity: 1 !important;
 }
 
 /* SUPPRIMER COMPLETEMENT les flèches */
