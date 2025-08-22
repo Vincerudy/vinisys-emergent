@@ -21,11 +21,13 @@ const ParametrageFraisPage = () => {
   const { societe_id } = useAuth();
   
   const [typesFrais, setTypesFrais] = useState([]);
+  const [categoriesAchats, setCategoriesAchats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingType, setEditingType] = useState(null);
   const [newType, setNewType] = useState({ nom: '', libelle: '' });
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState('types-frais'); // 'types-frais' ou 'tva-categories'
 
   useEffect(() => {
     fetchTypesFrais();
