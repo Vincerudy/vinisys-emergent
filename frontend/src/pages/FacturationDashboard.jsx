@@ -99,7 +99,7 @@ const fetchDataGraph = async (vale) => {
   
 
 
-const Home = () => {
+const FacturationDashboard = () => {
     const { id, societe_id, token, logout  } = useAuth(); 
     const navigate = useNavigate(); 
  
