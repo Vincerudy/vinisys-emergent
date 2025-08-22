@@ -1,0 +1,275 @@
+/* Menu Responsible - Design identique à l'image de référence */
+
+/* ===== MENU DESKTOP - SIDEBAR ===== */
+.menu-responsible-desktop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background: #f8f9fc;
+  border-right: 1px solid #e3e6f0;
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.menu-container {
+  padding: 20px 0;
+}
+
+.menu-header {
+  padding: 0 25px 20px;
+  border-bottom: 1px solid #e3e6f0;
+  margin-bottom: 20px;
+}
+
+.menu-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #5a5c69;
+  margin: 0;
+  text-align: center;
+}
+
+.menu-items {
+  padding: 0 15px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 15px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #5a5c69;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  border: 1px solid #e3e6f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(45deg, #4e73df, #224abe);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.menu-item:hover::before,
+.menu-item.active::before {
+  transform: translateX(0);
+}
+
+.menu-item:hover {
+  background: linear-gradient(135deg, #f8f9fc 0%, #e8f0fe 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(78, 115, 223, 0.15);
+  border-color: #4e73df;
+}
+
+.menu-item.active {
+  background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+  color: white;
+  border-color: #4e73df;
+  box-shadow: 0 6px 20px rgba(78, 115, 223, 0.3);
+}
+
+.menu-item-icon {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+  border-radius: 50%;
+  margin-right: 15px;
+  color: white;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.menu-item:hover .menu-item-icon {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(78, 115, 223, 0.4);
+}
+
+.menu-item.active .menu-item-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.menu-item-content {
+  flex: 1;
+}
+
+.menu-item-text {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  display: block;
+}
+
+.menu-item.active .menu-item-text {
+  color: white;
+}
+
+/* ===== MENU MOBILE - BOTTOM TAB ===== */
+.menu-responsible-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Cacher le menu desktop sur mobile */
+  .menu-responsible-desktop {
+    display: none;
+  }
+
+  /* Afficher le bottom tab sur mobile */
+  .menu-responsible-mobile {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: #ffffff;
+    border-top: 1px solid #e3e6f0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .bottom-tab-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    max-width: 100%;
+  }
+
+  .bottom-tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    min-width: 0;
+    flex: 1;
+    text-decoration: none;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+
+  .bottom-tab-item:hover,
+  .bottom-tab-item.active {
+    color: #4e73df;
+    background: rgba(78, 115, 223, 0.1);
+  }
+
+  .bottom-tab-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .bottom-tab-text {
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+  }
+
+  /* Ajuster le contenu principal pour le bottom tab */
+  .page-wrapper,
+  .nxl-body,
+  .main-content {
+    padding-bottom: 70px !important;
+  }
+}
+
+/* Responsive Design - Tablette */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .menu-responsible-desktop {
+    width: 220px;
+  }
+
+  .menu-item {
+    padding: 12px 12px;
+  }
+
+  .menu-item-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    margin-right: 12px;
+  }
+
+  .menu-item-text {
+    font-size: 13px;
+  }
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.menu-responsible-desktop {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.menu-responsible-mobile {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* Scroll personnalisé pour le menu desktop */
+.menu-responsible-desktop::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-responsible-desktop::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.menu-responsible-desktop::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.menu-responsible-desktop::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
