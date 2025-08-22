@@ -39,6 +39,9 @@
   gap: 20px;
   padding: 0 20px;
   min-height: calc(100vh - 200px);
+  margin: 0;
+  width: 100%;
+  max-width: none;
 }
 
 /* Section Communications - Colonne gauche */
