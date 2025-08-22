@@ -81,7 +81,7 @@ const MenuResponsible = () => {
       {/* Menu Mobile - Bottom Tab */}
       <div className="menu-responsible-mobile">
         <div className="bottom-tab-container">
-          {menuItems.slice(0, 5).map((item) => (
+          {menuItems.map((item) => (
             <Link
               key={item.id}
               to={item.path}
