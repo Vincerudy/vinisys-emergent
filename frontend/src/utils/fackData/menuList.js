@@ -55,13 +55,5 @@ export const menuList = [
         icon: 'feather-package',
         permission: 'view_plans',
         dropdownMenu: false
-    },
-    {
-        id: 8,
-        name: "Assistance",
-        path: "/listes/tickets",
-        icon: 'feather-help-circle',
-        permission: 'view_assistance',
-        dropdownMenu: false
     }
 ]
