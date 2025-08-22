@@ -328,8 +328,8 @@ const DetailCategorieAchatPage = () => {
                     <span className={`status-badge ${category.actif ? 'active' : 'inactive'}`}>
                       {category.actif ? 'Actif' : 'Inactif'}
                     </span>
-                    <span className={`tva-badge ${category.tva_deductible === 'Oui' ? 'deductible' : 'non-deductible'}`}>
-                      TVA {category.tva_deductible === 'Oui' ? 'déductible' : 'non déductible'}
+                    <span className={`tva-badge ${category.tva_deductible === 1 ? 'deductible' : 'non-deductible'}`}>
+                      TVA {category.tva_deductible === 1 ? 'déductible' : 'non déductible'}
                     </span>
                   </div>
                 </div>
