@@ -71,14 +71,6 @@ const FraisKilometriques = ({ onCalculationChange }) => {
     }
   }, [distanceKm, selectedBareme, baremes, onCalculationChange]);
 
-  const handleOriginLoad = (autocomplete) => {
-    originRef.current = autocomplete;
-  };
-
-  const handleDestinationLoad = (autocomplete) => {
-    destinationRef.current = autocomplete;
-  };
-
   const handleCalculate = () => {
     if (!originInputRef.current || !destinationInputRef.current) return;
 
