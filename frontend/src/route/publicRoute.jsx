@@ -1,6 +1,7 @@
 import { createHashRouter, useNavigate, Navigate } from "react-router-dom";
 import RootLayout from "../layout/root";
-import Home from "../pages/home";
+import Home from "../pages/AccueilPage";
+import FacturationDashboard from "../pages/FacturationDashboard";
 import Analytics from "../pages/analytics";
 import ReportsSales from "../pages/reports-sales";
 import ReportsLeads from "../pages/reports-leads";
