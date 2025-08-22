@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import getIcon from "@/utils/getIcon";
+import getIcon from "../../../utils/getIcon";
 import './MenuResponsible.css';
 
 const MenuResponsible = () => {
