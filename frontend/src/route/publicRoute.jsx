@@ -202,7 +202,7 @@ export const publicRoute = createHashRouter([
             },
             {
                 path: "/facturation/dashboard",
-                element: <ProtectedRoute element={<FacturationDashboard />} requiredPermissions="view_facturation" />,
+                element: <ProtectedRoute element={<FacturationDashboard />} requiredPermissions="view_invoices" />,
             },
             {
                 path: "/facturation/factures",
