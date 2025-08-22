@@ -47,7 +47,11 @@ const ListeNotesfraisPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
+
+
+
   useEffect(() => {
+
     fetchNotesfrais();
   }, [societe_id, filters, currentPage]);
 
@@ -186,13 +190,13 @@ const ListeNotesfraisPage = () => {
   const handleViewNote = (noteId) => {
     console.log('Voir la note:', noteId);
     // TODO: Implémenter la navigation vers la page de détail
-    window.location.href = `/#/notes-frais/detail/${noteId}`;
+    window.location.href = `/#/notes-frais/note/${noteId}`;
   };
 
   const handleEditNote = (noteId) => {
     console.log('Modifier la note:', noteId);
     // TODO: Implémenter la navigation vers la page d'édition
-    window.location.href = `/#/notes-frais/modifier/${noteId}`;
+    window.location.href = `/#/notes-frais/note/${noteId}`;
   };
 
   const handleValidateNote = async (noteId) => {
@@ -237,7 +241,7 @@ const ListeNotesfraisPage = () => {
         </div>
         <div className="header-actions">
           <button 
-            onClick={() => window.location.href = '/#/notes-frais/nouvelle'}
+            onClick={() => window.location.href = '/#/notes-frais/note'}
             className="btn-primary"
           >
             <FiPlus size={18} />
@@ -449,7 +453,7 @@ const ListeNotesfraisPage = () => {
                     <div className="note-number">
                       <strong>{note.numero}</strong>
                       {note.nb_lignes_frais && (
-                        <span className="lines-count">{note.nb_lignes_frais} ligne(s)</span>
+                        <span className="lines-count">{note.nb_lignes_frais} frais</span>
                       )}
                     </div>
                   </td>
