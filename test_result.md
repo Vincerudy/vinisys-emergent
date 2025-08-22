@@ -883,7 +883,7 @@ resolve: {
 #### 1. VÉRIFICATION NOTE CORRECTE
 - **Vérifier l'ID de la note** : La note 73 n'existe pas
 - **Utiliser note 34** : Cette note contient effectivement un justificatif
-- **URL correcte** : `https://mileage-calc-2.preview.emergentagent.com/#/notes-frais/note/34`
+- **URL correcte** : `https://vinisys-expense-1.preview.emergentagent.com/#/notes-frais/note/34`
 
 #### 2. TEST DE LA FONCTIONNALITÉ
 Pour tester les justificatifs :

@@ -71,25 +71,19 @@ const Menus = () => {
 
     return (
         <>   
-                <li>
-                                    <Link to="/" className="nxl-link text-capitalize">
-                                        <span className="nxl-micon"> {getIcon('feather-cast')} </span>
-                                        <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
-                                            Accueil
-                                        </span>
-                                        <span className="nxl-arrow fs-16">
-                                            <FiChevronRight />
-                                        </span>
-                                    </Link>
+                <li className="nxl-item">
+                    <Link to="/" className="nxl-link text-capitalize">
+                        <span className="nxl-micon"> {getIcon('feather-cast')} </span>
+                        <span className="nxl-mtext">
+                            Accueil
+                        </span>
+                    </Link>
                 </li>
-                <li>
+                <li className="nxl-item">
                     <Link to="/alertes" className="nxl-link text-capitalize">
                         <span className="nxl-micon"> {getIcon('feather-alert-circle')} </span>
-                        <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
+                        <span className="nxl-mtext">
                             Alertes
-                        </span>
-                        <span className="nxl-arrow fs-16">
-                            <FiChevronRight />
                         </span>
                     </Link>
                 </li>
@@ -148,7 +142,7 @@ const Menus = () => {
       <li key={id} className={`nxl-item ${pathName === path ? "active" : ""}`}>
         <Link to={path} className="nxl-link text-capitalize">
           <span className="nxl-micon"> {getIcon(icon)} </span>
-          <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
+          <span className="nxl-mtext">
             {name}
           </span>
         </Link>
@@ -164,11 +158,8 @@ const Menus = () => {
     >
       <Link to={path} className="nxl-link text-capitalize">
         <span className="nxl-micon"> {getIcon(icon)} </span>
-        <span className="nxl-mtext" style={{ paddingLeft: "2.5px" }}>
+        <span className="nxl-mtext">
           {name}
-        </span>
-        <span className="nxl-arrow fs-16">
-          <FiChevronRight />
         </span>
       </Link>
       <ul
