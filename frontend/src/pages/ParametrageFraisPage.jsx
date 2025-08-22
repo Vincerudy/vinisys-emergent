@@ -8,10 +8,13 @@ import {
   FiCheck,
   FiSettings,
   FiToggleLeft,
-  FiToggleRight
+  FiToggleRight,
+  FiDollarSign,
+  FiInfo
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
+import Swal from 'sweetalert2';
 import './css/ParametrageFraisPage.css';
 
 const ParametrageFraisPage = () => {
