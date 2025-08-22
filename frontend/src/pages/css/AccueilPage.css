@@ -436,6 +436,7 @@
   .page-wrapper {
     margin-left: 0;
     width: 100%;
+    padding-bottom: 80px;
   }
   
   .main-dashboard-grid {
