@@ -178,49 +178,49 @@
   color: white !important;
 }
 
-/* CONTENU PRINCIPAL - Ajustement pour la nouvelle sidebar réduite */
+/* CONTENU PRINCIPAL - Ajustement pour la nouvelle sidebar réduite - CORRIGÉ */
 .nxl-body,
 .main-content,
 .content-area,
 body:not(.nxl-sidebar-compact) .nxl-body {
-  margin-left: 70px !important;
-  padding-left: 10px !important;
-  width: calc(100% - 80px) !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  width: 100% !important;
   height: 100vh !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
 
-/* Container principal de l'application */
+/* Container principal de l'application - CORRIGÉ */
 .nxl-container,
 .main-container,
 .app-container {
-  margin-left: 70px !important;
-  padding-left: 10px !important;
-  width: calc(100% - 80px) !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  width: 100% !important;
   height: 100vh !important;
   overflow-y: auto !important;
 }
 
-/* S'assurer que le header ne soit pas caché sous la sidebar - CENTRÉ */
+/* S'assurer que le header ne soit pas caché sous la sidebar - CORRIGÉ */
 .nxl-header,
 .header,
 .top-header {
-  margin-left: 70px !important;
-  padding-left: 10px !important;
-  width: calc(100% - 80px) !important;
-  position: fixed !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  width: 100% !important;
+  position: relative !important;
   top: 0 !important;
   z-index: 999 !important;
 }
 
-/* Contenu de page spécifique */
+/* Contenu de page spécifique - CORRIGÉ */
 .nxl-content,
 .page-content,
 .main-wrapper {
-  margin-left: 70px !important;
-  padding-left: 10px !important;
-  width: calc(100% - 80px) !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  width: 100% !important;
   min-height: 100vh !important;
   overflow-y: auto !important;
 }
