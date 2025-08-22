@@ -20,8 +20,6 @@ const FraisKilometriques = ({ onCalculationChange }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const originRef = useRef(null);
-  const destinationRef = useRef(null);
   const originInputRef = useRef(null);
   const destinationInputRef = useRef(null);
 
