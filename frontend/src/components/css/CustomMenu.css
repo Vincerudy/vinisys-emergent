@@ -216,7 +216,7 @@
   color: white !important;
 }
 
-/* CONTENU PRINCIPAL - Ajustement pour la nouvelle sidebar réduite - CORRIGÉ */
+/* CONTENU PRINCIPAL - Ajustement pour le menu MINI (50px) */
 .nxl-body,
 .main-content,
 .content-area,
@@ -229,7 +229,7 @@ body:not(.nxl-sidebar-compact) .nxl-body {
   overflow-x: hidden !important;
 }
 
-/* Container principal de l'application - CORRIGÉ */
+/* Container principal de l'application */
 .nxl-container,
 .main-container,
 .app-container {
@@ -240,7 +240,7 @@ body:not(.nxl-sidebar-compact) .nxl-body {
   overflow-y: auto !important;
 }
 
-/* S'assurer que le header ne soit pas caché sous la sidebar - CORRIGÉ */
+/* Header */
 .nxl-header,
 .header,
 .top-header {
@@ -252,7 +252,7 @@ body:not(.nxl-sidebar-compact) .nxl-body {
   z-index: 999 !important;
 }
 
-/* Contenu de page spécifique - CORRIGÉ */
+/* Contenu de page spécifique */
 .nxl-content,
 .page-content,
 .main-wrapper {
