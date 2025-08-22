@@ -65,7 +65,7 @@
   margin: 0 !important;
 }
 
-/* FORCER la structure verticale pour TOUS les liens de navigation */
+/* FORCER la structure verticale pour TOUS les liens de navigation - RÉDUITE */
 .nxl-navigation .nxl-sidebar .nxl-sidebar-body .nxl-menu .nxl-item .nxl-link,
 .nxl-menu .nxl-item .nxl-link,
 .sidebar .nxl-item .nxl-link,
@@ -74,13 +74,13 @@
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 12px 8px !important;
+  padding: 8px 4px !important;
   text-align: center !important;
-  border-radius: 8px !important;
-  margin: 4px 0 !important;
+  border-radius: 6px !important;
+  margin: 2px 0 !important;
   transition: all 0.3s ease !important;
-  min-height: 75px !important;
-  max-width: 100px !important;
+  min-height: 50px !important;
+  max-width: 50px !important;
   position: relative !important;
 }
 
