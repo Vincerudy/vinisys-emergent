@@ -296,6 +296,75 @@ const TableauBordDepenses = () => {
         </div>
       </div>
 
+      {/* Liens rapides */}
+      <div className="quick-links-section">
+        <h6 className="mb-3">
+          <i className="fas fa-bolt me-2"></i>
+          Accès rapide
+        </h6>
+        <div className="row">
+          <div className="col-lg-2 col-md-4 col-6 mb-3">
+            <Link 
+              to="/achats" 
+              className="quick-link-card text-decoration-none"
+            >
+              <div className="quick-link-icon bg-primary">
+                <i className="fas fa-chart-pie"></i>
+              </div>
+              <div className="quick-link-text">Tableau de bord</div>
+            </Link>
+          </div>
+          
+          <div className="col-lg-2 col-md-4 col-6 mb-3">
+            <Link 
+              to="/achats/liste" 
+              className="quick-link-card text-decoration-none"
+            >
+              <div className="quick-link-icon bg-info">
+                <i className="fas fa-list-ul"></i>
+              </div>
+              <div className="quick-link-text">Liste des dépenses</div>
+            </Link>
+          </div>
+          
+          <div className="col-lg-2 col-md-4 col-6 mb-3">
+            <Link 
+              to="/achats/validation" 
+              className="quick-link-card text-decoration-none"
+            >
+              <div className="quick-link-icon bg-warning">
+                <i className="fas fa-check-circle"></i>
+              </div>
+              <div className="quick-link-text">Dépenses à valider</div>
+            </Link>
+          </div>
+          
+          <div className="col-lg-2 col-md-4 col-6 mb-3">
+            <Link 
+              to="/achats/fournisseurs" 
+              className="quick-link-card text-decoration-none"
+            >
+              <div className="quick-link-icon bg-success">
+                <i className="fas fa-users"></i>
+              </div>
+              <div className="quick-link-text">Fournisseurs</div>
+            </Link>
+          </div>
+          
+          <div className="col-lg-2 col-md-4 col-6 mb-3">
+            <Link 
+              to="/achats/parametrage" 
+              className="quick-link-card text-decoration-none"
+            >
+              <div className="quick-link-icon bg-secondary">
+                <i className="fas fa-cog"></i>
+              </div>
+              <div className="quick-link-text">Paramétrage</div>
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Statistiques TVA */}
       <div className="row mb-4">
         <div className="col-md-12">
