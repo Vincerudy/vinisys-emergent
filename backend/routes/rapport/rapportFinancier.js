@@ -112,16 +112,19 @@ router.get('/:societeId', async (req, res) => {
         // SECTION 2: DÉPENSES ET ACHATS
         // =====================================================
 
-        // Montant total des dépenses sur la période
+        // Montant total des dépenses sur la période avec distinction TVA déductible/non déductible
         const [depensesTotal] = await connection.execute(`
             SELECT 
-                COALESCE(SUM(montant_ht), 0) as total_ht,
-                COALESCE(SUM(montant_tva), 0) as total_tva,
-                COALESCE(SUM(montant_ttc), 0) as total_ttc
-            FROM achats 
-            WHERE societe_id = ? 
-                AND date_achat BETWEEN ? AND ?
-                AND statut = 'valide'
+                COALESCE(SUM(a.montant_ht), 0) as total_ht,
+                COALESCE(SUM(a.montant_tva), 0) as total_tva,
+                COALESCE(SUM(a.montant_ttc), 0) as total_ttc,
+                COALESCE(SUM(CASE WHEN ca.tva_deductible = 1 THEN a.montant_tva ELSE 0 END), 0) as tva_deductible,
+                COALESCE(SUM(CASE WHEN ca.tva_deductible = 0 OR ca.tva_deductible IS NULL THEN a.montant_tva ELSE 0 END), 0) as tva_non_deductible
+            FROM achats a
+            LEFT JOIN categories_achats ca ON a.categorie_id = ca.id 
+            WHERE a.societe_id = ? 
+                AND a.date_achat BETWEEN ? AND ?
+                AND a.statut = 'valide'
         `, [societeId, date_debut, date_fin]);
 
         // Répartition des dépenses par catégorie
