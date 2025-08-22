@@ -31,7 +31,7 @@ const NavigationManu = () => {
                             <Menus />
                         </ul>
 
-                            <div className="card-body">
+
                                 <i className="fs-4 text-dark"><FiSunrise /></i>
                                 <h6 className="mt-4 text-dark fw-bolder">Assistance</h6>
                                 <Link to="/listes/tickets" className="btn btn-primary text-dark w-100">Centre d'Assistance</Link>
