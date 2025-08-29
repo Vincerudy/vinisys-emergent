@@ -310,10 +310,7 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
         }
 
         // Sinon, renvoyer la liste existante
-        res.json({ 
-            success: true,
-            types_frais: typesFraisExistants
-        });
+
 
     } catch (error) {
         console.error('Erreur gestion types de frais:', error);
