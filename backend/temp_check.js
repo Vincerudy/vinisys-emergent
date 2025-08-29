@@ -310,3 +310,41 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
 
 
 // PUT /api/types-frais/:typeId - Modifier un type de frais
+app.put('/api/types-frais/:typeId', async (req, res) => {
+    try {
+// PUT /api/types-frais/:typeId - Modifier un type de frais
+app.put('/api/types-frais/:typeId', async (req, res) => {
+    try {
+        const { typeId } = req.params;
+        const { libelle, actif, societeId } = req.body;
+
+        // Vérifier si c'est un type système ou personnalisé
+        const [typeInfo] = await db.execute(`
+            SELECT is_system, societe_id FROM types_frais WHERE id = ?
+        `, [typeId]);
+
+        if (typeInfo.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Type de frais non trouvé' 
+            });
+        }
+
+        const isSystemType = typeInfo[0].is_system;
+
+        if (isSystemType) {
+            // Pour les types système : gérer via la table types_frais_societe
+            if (typeof actif !== 'undefined') {
+                // Vérifier s'il existe déjà une configuration pour cette société
+                const [existingConfig] = await db.execute(`
+                    SELECT id FROM types_frais_societe 
+                    WHERE societe_id = ? AND type_frais_id = ?
+                `, [societeId, typeId]);
+
+                if (existingConfig.length > 0) {
+                    // Mettre à jour la configuration existante
+                    await db.execute(`
+                        UPDATE types_frais_societe 
+                        SET actif = ?, updated_at = NOW()
+                        WHERE societe_id = ? AND type_frais_id = ?
+                    `, [actif, societeId, typeId]);
