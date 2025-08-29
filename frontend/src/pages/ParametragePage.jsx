@@ -5,27 +5,15 @@ import '../components/css/QuickLinks.css';
 const ParametragePage = () => {
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <div className="page-header-left d-flex align-items-center">
-          <div className="page-header-title">
-            <h5 className="m-b-10">
-              <i className="fas fa-cog me-2"></i>
-              Paramétrage
-            </h5>
-            <p className="fs-13 text-muted m-b-0">
-              Configuration générale de l'application
-            </p>
-          </div>
-        </div>
-      </div>
+ 
 
       <div className="main-content">
         {/* Liens rapides paramétrage */}
         <div className="quick-links-section">
-          <h6 className="mb-4">
-            <i className="fas fa-tools me-2"></i>
-            Configuration système
-          </h6>
+            <h5 className="m-b-10" style={{fontSize: 25, color: '#144675'}}>
+              <i className="fas fa-cog me-2"></i>
+              Paramétrages société
+            </h5>
           <div className="row">
             <div className="col-lg-4 col-md-6 col-12 mb-4">
               <Link to="/societe/configuration" className="quick-link-card text-decoration-none">
@@ -69,7 +57,7 @@ const ParametragePage = () => {
                   <i className="fas fa-file-invoice"></i>
                 </div>
                 <div className="quick-link-text">
-                  <strong>Paramètres facturation</strong>
+                  <strong>Facturation</strong>
                   <small className="d-block text-muted">Configuration factures</small>
                 </div>
               </Link>
@@ -81,19 +69,19 @@ const ParametragePage = () => {
                   <i className="fas fa-shopping-cart"></i>
                 </div>
                 <div className="quick-link-text">
-                  <strong>Catégories d'achats</strong>
-                  <small className="d-block text-muted">Configuration dépenses</small>
+                  <strong>Dépenses</strong>
+                  <small className="d-block text-muted">Configuration des dépenses</small>
                 </div>
               </Link>
             </div>
             
             <div className="col-lg-4 col-md-6 col-12 mb-4">
-              <Link to="/notes-frais/parametrage" className="quick-link-card text-decoration-none">
+              <Link to="/depenses/parametres" className="quick-link-card text-decoration-none">
                 <div className="quick-link-icon bg-danger">
                   <i className="fas fa-credit-card"></i>
                 </div>
                 <div className="quick-link-text">
-                  <strong>Types de frais</strong>
+                  <strong>Note de frais</strong>
                   <small className="d-block text-muted">Configuration notes de frais</small>
                 </div>
               </Link>

@@ -1,7 +1,11 @@
+ 
 @media (max-width: 768px) {
     .page-title {
+      
       font-size: 20px;
+      color: rgb(8, 8, 41);
       text-align: center;
+      box-shadow: none;
     }
   
     .ant-btn {

@@ -131,6 +131,7 @@ import TicketDetailMaintenance from "../pages/pilotage/TicketDetailMaintenance";
 import Ticketchat from "../pages/Ticketchat";
 
 import TestPage from "../pages/TestPage";
+import CahierRecettesPage from "../components/composantsFacture/CahierRecettesPage";
 
 const testToken = async (value, logout) =>{
     console.log('MOI MOUKO', value)
@@ -222,7 +223,7 @@ export const publicRoute = createHashRouter([
             },
             {
                 path: "/facturation/recette",
-                element: <ProtectedRoute element={<CahierRecettePage />} requiredPermissions="view_recette_page" />,
+                element: <ProtectedRoute element={<CahierRecettesPage />} requiredPermissions="view_recette_page" />,
             },
             {
                 path: "/societe/configuration",
@@ -508,10 +509,6 @@ export const publicRoute = createHashRouter([
             {
                 path: "/notes-frais",
                 element: <ProtectedRoute element={<NotesfraisPage />} />,
-            },
-            {
-                path: "/notes-frais/nouvelle",
-                element: <ProtectedRoute element={<NouvelleNoteFraisPage />} />,
             },
             {
                 path: "/notes-frais/liste",

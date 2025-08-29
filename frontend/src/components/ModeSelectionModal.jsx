@@ -75,7 +75,7 @@ const ModeSelectionModal = ({ isOpen, onClose, onModeSelected }) => {
       
       <div className="mode-selection-modal">
         <div className="modal-header">
-          <h3>Mode de saisie</h3>
+ 
           <button onClick={onClose} className="close-button">
             <FiX size={20} />
           </button>
@@ -89,9 +89,7 @@ const ModeSelectionModal = ({ isOpen, onClose, onModeSelected }) => {
           </div>
         ) : (
           <div className="modal-content">
-            <p className="modal-description">
-              Choisissez votre mode de saisie pour cette dépense
-            </p>
+ 
 
             <div className="mode-options">
               {/* Saisie manuelle */}
@@ -122,7 +120,7 @@ const ModeSelectionModal = ({ isOpen, onClose, onModeSelected }) => {
                 </div>
               </button>
 
-              {/* OCR - Choisir fichier */}
+              {/* OCR - Choisir fichier  
               <button 
                 onClick={handleFileUpload}
                 className="mode-option upload"
@@ -130,18 +128,16 @@ const ModeSelectionModal = ({ isOpen, onClose, onModeSelected }) => {
                 <div className="option-icon">
                   <FiUpload size={32} />
                 </div>
+                
                 <div className="option-content">
                   <h4>Choisir un fichier</h4>
                   <p>Sélectionner une image ou PDF depuis l'appareil</p>
                 </div>
               </button>
+              */}
             </div>
 
-            <div className="modal-footer">
-              <small className="ocr-note">
-                💡 L'OCR analyse automatiquement vos documents pour extraire les données
-              </small>
-            </div>
+ 
           </div>
         )}
       </div>

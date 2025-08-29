@@ -27,7 +27,6 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
     if (fournisseur) {
       setFormData(fournisseur);
     } else {
-      // Reset form for new supplier
       setFormData({
         nom: '',
         email: '',
@@ -54,7 +53,7 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.nom.trim()) {
       alert('Le nom du fournisseur est obligatoire');
       return;
@@ -62,7 +61,7 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
 
     try {
       setSaving(true);
-      
+
       const payload = {
         ...formData,
         societe_id: societe_id
@@ -83,7 +82,7 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
 
       if (response.status === 201 || response.status === 200) {
         alert(isEditMode ? 'Fournisseur modifié avec succès' : 'Fournisseur créé avec succès');
-        onSaved(); // Callback to refresh the list
+        onSaved();
         onClose();
       }
     } catch (error) {
@@ -98,136 +97,97 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
 
   return (
     <div className="fournisseur-sidebar-overlay">
-      {/* Backdrop */}
-      <div 
-        className="fournisseur-sidebar-backdrop" 
-        onClick={onClose}
-      ></div>
-      
-      {/* Sidebar Panel */}
+      <div className="fournisseur-sidebar-backdrop" onClick={onClose}></div>
+
       <div className={`fournisseur-sidebar-panel ${isOpen ? 'open' : ''}`}>
         <div className="fournisseur-sidebar-content">
           {/* Header */}
           <div className="fournisseur-sidebar-header">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {isEditMode ? 'Modifier le fournisseur' : 'Nouveau fournisseur'}
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-200 rounded-full transition-colors"
-            >
+            <h2>{isEditMode ? 'Modifier le fournisseur' : 'Nouveau fournisseur'}</h2>
+            <button onClick={onClose} className="close-btn">
               <FiX size={20} />
             </button>
           </div>
 
-          {/* Form Body */}
+          {/* Body */}
           <div className="fournisseur-sidebar-body">
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit}>
               {/* Nom */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiUser className="inline mr-2" />
-                  Nom du fournisseur *
+              <div className="form-group">
+                <label>
+                  <FiUser className="icon" /> Nom du fournisseur *
                 </label>
                 <input
                   type="text"
                   name="nom"
                   value={formData.nom}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Nom du fournisseur"
                   required
                 />
               </div>
 
               {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiMail className="inline mr-2" />
-                  Email
-                </label>
+              <div className="form-group">
+                <label><FiMail className="icon" /> Email</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="contact@fournisseur.com"
                 />
               </div>
 
               {/* Téléphone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiPhone className="inline mr-2" />
-                  Téléphone
-                </label>
+              <div className="form-group">
+                <label><FiPhone className="icon" /> Téléphone</label>
                 <input
                   type="tel"
                   name="telephone"
                   value={formData.telephone}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="01 23 45 67 89"
                 />
               </div>
 
               {/* Adresse */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiMapPin className="inline mr-2" />
-                  Adresse
-                </label>
+              <div className="form-group">
+                <label><FiMapPin className="icon" /> Adresse</label>
                 <input
                   type="text"
                   name="adresse"
                   value={formData.adresse}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="123 Rue de la République"
                 />
               </div>
 
-              {/* Ville et Code postal */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ville
-                  </label>
+              {/* Ville + CP */}
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Ville</label>
                   <input
                     type="text"
                     name="ville"
                     value={formData.ville}
                     onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Paris"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Code postal
-                  </label>
+                <div className="form-group">
+                  <label>Code postal</label>
                   <input
                     type="text"
                     name="code_postal"
                     value={formData.code_postal}
                     onChange={handleInputChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="75001"
                   />
                 </div>
               </div>
 
               {/* Pays */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Pays
-                </label>
+              <div className="form-group">
+                <label>Pays</label>
                 <select
                   name="pays"
                   value={formData.pays}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="France">France</option>
                   <option value="Belgique">Belgique</option>
@@ -238,46 +198,34 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
               </div>
 
               {/* SIRET */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  SIRET
-                </label>
+              <div className="form-group">
+                <label>SIRET</label>
                 <input
                   type="text"
                   name="siret"
                   value={formData.siret}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="12345678901234"
                 />
               </div>
 
-              {/* TVA Intracom */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  N° TVA Intracommunautaire
-                </label>
+              {/* TVA */}
+              <div className="form-group">
+                <label>N° TVA Intracommunautaire</label>
                 <input
                   type="text"
                   name="numero_tva"
                   value={formData.numero_tva}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="FR12345678901"
                 />
               </div>
 
-              {/* Conditions de paiement */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiDollarSign className="inline mr-2" />
-                  Conditions de paiement (jours)
-                </label>
+              {/* Conditions paiement */}
+              <div className="form-group">
+                <label><FiDollarSign className="icon" /> Conditions de paiement (jours)</label>
                 <select
                   name="conditions_paiement"
                   value={formData.conditions_paiement}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="0">Comptant</option>
                   <option value="15">15 jours</option>
@@ -288,17 +236,13 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
               </div>
 
               {/* Compte comptable */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Compte comptable
-                </label>
+              <div className="form-group">
+                <label>Compte comptable</label>
                 <input
                   type="text"
                   name="compte_comptable"
                   value={formData.compte_comptable}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="401000"
                 />
               </div>
             </form>
@@ -306,26 +250,15 @@ const FournisseurSidebar = ({ isOpen, onClose, fournisseur, onSaved }) => {
 
           {/* Footer */}
           <div className="fournisseur-sidebar-footer">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-            >
+            <button type="button" onClick={onClose} className="btn-cancel">
               Annuler
             </button>
             <button
               onClick={handleSubmit}
               disabled={saving}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="btn-save"
             >
-              {saving ? (
-                <span className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Enregistrement...
-                </span>
-              ) : (
-                isEditMode ? 'Modifier' : 'Créer'
-              )}
+              {saving ? "Enregistrement..." : isEditMode ? "Modifier" : "Créer"}
             </button>
           </div>
         </div>

@@ -2,8 +2,28 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Input, Select, Row, Col, Tag, Empty, Spin, Button } from 'antd';
 import { SearchOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+
  
 import { useAuth } from '../contexte/AuthContext';
+ 
+import { 
+  FiPlus, 
+  FiFilter, 
+  FiDownload, 
+  FiCreditCard, 
+  FiTrendingUp, 
+  FiCheckCircle,
+  FiXCircle,
+  FiClock,
+  FiUsers,
+  FiMap,
+  FiFileText,
+  FiCalendar,
+  FiDollarSign,
+  FiCheck,
+  FiX,
+  FiPieChart
+} from 'react-icons/fi';
 
 const { Option } = Select;
 
@@ -75,16 +95,69 @@ const ListeProduits = () => {
 
   return (
     <div className="modern-container">
-      <h2 className="modern-title">Produits</h2>
-
-      <div className="modern-filters-row">
+      <div style={{background: 'linear-gradient(180deg, rgba(92, 19, 151, 0.101), rgba(73, 5, 29, 0.06))', padding: '20px', borderRadius: '10px', marginBottom: '20px'}}>
+        <h3 className="quick-links-title">
+          <FiMap />
+          Accès rapide
+        </h3>
+        <div className="quick-links-grid">
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/produit'}
+          >
+            <div className="quick-link-icon">
+              <FiFileText />
+            </div>
+            <div className="quick-link-text">Créer un produit</div>
+          </div>
+          
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/Import-produit'}
+          >
+            <div className="quick-link-icon">
+              <FiPlus />
+            </div>
+            <div className="quick-link-text">Importer des produits</div>
+          </div>
+          
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/mouvements'}
+          >
+            <div className="quick-link-icon">
+              <FiCheckCircle />
+            </div>
+            <div className="quick-link-text">Mouvement de stock</div>
+          </div>
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/inventaire-manuel'}
+          >
+            <div className="quick-link-icon">
+              <FiCalendar />
+            </div>
+            <div className="quick-link-text">Inventaire manuel</div>
+          </div>
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/Inventaire-auto'}
+          >
+            <div className="quick-link-icon">
+              <FiCalendar />
+            </div>
+            <div className="quick-link-text">Inventaire automatique</div>
+          </div>
+          
+        </div>
+        <div style={{width:'100%'}} className="modern-filters-row">
         <Input
           placeholder="🔍 Rechercher un produit"
           prefix={<SearchOutlined />}
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           allowClear
-          style={{ width: 250 }}
+          style={{ width: '45%', height: '50px' }}
         />
         <Select
           placeholder="Catégorie"
@@ -94,7 +167,7 @@ const ListeProduits = () => {
             setSelectedSousCategorie('');
           }}
           allowClear
-          style={{ width: 180 }}
+          style={{ width: '45%', height: '50px', border: 'none' }}
         >
           {categorieOptions.map(cat => (
             <Option key={cat} value={cat}>{cat}</Option>
@@ -106,7 +179,7 @@ const ListeProduits = () => {
             value={selectedSousCategorie}
             onChange={setSelectedSousCategorie}
             allowClear
-            style={{ width: 180 }}
+            style={{ width: '45%', height: '50px', border: 'none' }}
           >
             {sousCategorieMap[selectedCategorie].map(sc => (
               <Option key={sc} value={sc}>{sc}</Option>
@@ -114,6 +187,9 @@ const ListeProduits = () => {
           </Select>
         )}
       </div>
+      </div>
+
+ 
 
       {loading ? (
         <Spin size="large" style={{ display: 'block', margin: '4rem auto' }} />

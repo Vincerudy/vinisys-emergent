@@ -25,7 +25,7 @@ const NotesfraisPage = () => {
   const { societe_id, id: user_id } = useAuth();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
-  const [viewMode, setViewMode] = useState('dashboard'); // 'dashboard', 'validation', 'historique'
+  const [viewMode, setViewMode] = useState('dashboard');
   const [selectedPeriod, setSelectedPeriod] = useState({
     mois: new Date().getMonth() + 1,
     annee: new Date().getFullYear()
@@ -33,7 +33,6 @@ const NotesfraisPage = () => {
   const [showExportModal, setShowExportModal] = useState(false);
   const [selectedExportType, setSelectedExportType] = useState('sage');
 
-  // Chargement des données du dashboard
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
@@ -129,7 +128,6 @@ const NotesfraisPage = () => {
 
   return (
     <div className="notes-frais-page">
-      {/* Header */}
       <div className="notes-frais-header">
         <div>
           <h1>
@@ -140,7 +138,7 @@ const NotesfraisPage = () => {
             Gestion des notes de frais employés avec validation et remboursements
           </p>
         </div>
-        <div className="filter-actions">
+        <div className="filter-actions btn-notefraismargin">
           <button 
             className="action-btn"
             onClick={() => window.location.hash = '#/notes-frais/note'}
@@ -148,15 +146,8 @@ const NotesfraisPage = () => {
             <FiPlus className="action-icon" />
             Nouvelle note
           </button>
-          <button className="action-btn info">
-            <FiDownload className="action-icon" />
-            Export
-          </button>
         </div>
-      </div>
-
-      {/* Contrôles */}
-      <div className="view-modes">
+ 
         <div className="view-modes-title">
           <FiCalendar />
           Période & Mode d'affichage
@@ -187,25 +178,11 @@ const NotesfraisPage = () => {
           </div>
         </div>
  
-      </div>
-
-      {/* Liens rapides */}
-      <div className="quick-links-section">
         <h3 className="quick-links-title">
           <FiMap />
           Accès rapide
         </h3>
         <div className="quick-links-grid">
-          <div 
-            className="quick-link-card"
-            onClick={() => window.location.hash = '#/notes-frais'}
-          >
-            <div className="quick-link-icon">
-              <FiPieChart />
-            </div>
-            <div className="quick-link-text">Tableau de bord</div>
-          </div>
-          
           <div 
             className="quick-link-card"
             onClick={() => window.location.hash = '#/notes-frais/liste'}
@@ -228,16 +205,6 @@ const NotesfraisPage = () => {
           
           <div 
             className="quick-link-card"
-            onClick={() => window.location.hash = '#/notes-frais/parametrage'}
-          >
-            <div className="quick-link-icon">
-              <FiCalendar />
-            </div>
-            <div className="quick-link-text">Paramétrage</div>
-          </div>
-          
-          <div 
-            className="quick-link-card"
             onClick={() => window.location.hash = '#/notes-frais/validation'}
           >
             <div className="quick-link-icon">
@@ -245,12 +212,19 @@ const NotesfraisPage = () => {
             </div>
             <div className="quick-link-text">Validation notes</div>
           </div>
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/depenses/parametres'}
+          >
+            <div className="quick-link-icon">
+              <FiCalendar />
+            </div>
+            <div className="quick-link-text">Paramétrage</div>
+          </div>
         </div>
       </div>
 
-      {/* Indicateurs KPI */}
       <div className="notes-kpis">
-        {/* Carte Notes soumises - Cliquable vers validation */}
         <div 
           className="kpi-card submitted clickable" 
           onClick={() => window.location.hash = '#/notes-frais/validation'}
@@ -275,7 +249,6 @@ const NotesfraisPage = () => {
           </div>
         </div>
 
-        {/* Carte Notes validées - Cliquable vers historique avec filtre validé */}
         <div 
           className="kpi-card validated clickable"
           onClick={() => window.location.hash = '#/notes-frais/historique?statut=validee'}
@@ -300,7 +273,6 @@ const NotesfraisPage = () => {
           </div>
         </div>
 
-        {/* Carte Notes remboursées/payées */}
         <div 
           className="kpi-card paid clickable"
           onClick={() => window.location.hash = '#/notes-frais/historique?statut=payee'}
@@ -325,7 +297,6 @@ const NotesfraisPage = () => {
           </div>
         </div>
 
-        {/* Carte Total notes ce mois - Cliquable vers liste */}
         <div 
           className="kpi-card total clickable"
           onClick={() => window.location.hash = '#/notes-frais/liste'}
@@ -351,25 +322,6 @@ const NotesfraisPage = () => {
         </div>
       </div>
 
-      {/* Alertes et statut avancé */}
-      {indicateurs.nb_notes_en_attente > 0 && (
-        <div className="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-lg">
-          <div className="flex items-center gap-3">
-            <FiClock className="text-orange-600" size={20} />
-            <div className="flex-1">
-              <p className="font-medium text-orange-800">
-                🔍 {indicateurs.nb_notes_en_attente} note(s) en attente de validation managériale
-              </p>
-              <p className="text-orange-600 text-sm">Action requise par les managers pour déblocage remboursement</p>
-            </div>
-            <button className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700">
-              Voir les notes
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Taux de refus élevé - Alerte critique */}
       {indicateurs.taux_refus > 15 && (
         <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
           <div className="flex items-center gap-3">
@@ -389,7 +341,6 @@ const NotesfraisPage = () => {
         </div>
       )}
 
-      {/* Rappel remboursements en attente */}
       {indicateurs.montant_valide > indicateurs.montant_rembourse && (
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
           <div className="flex items-center gap-3">
@@ -407,56 +358,45 @@ const NotesfraisPage = () => {
         </div>
       )}
 
-      {/* Graphiques et données */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
- 
+        <div className="action-history">
+          <h3 className="history-title">
+            <FiFileText />
+            Historique des actions
+          </h3>
+          <div className="timeline">
+            <div className="timeline-item created">
+              <div className="timeline-header">
+                <span className="timeline-action">Note créée</span>
+                <span className="timeline-date">Il y a 2h</span>
+              </div>
+              <div className="timeline-details">
+                Note de frais #NF2025-001 créée par Jean Dupont (Repas client - 45.50€)
+              </div>
+            </div>
 
-      {/* Historique des actions */}
-      <div className="action-history">
-        <h3 className="history-title">
-          <FiFileText />
-          Historique des actions
-        </h3>
-        <div className="timeline">
-          <div className="timeline-item created">
-            <div className="timeline-header">
-              <span className="timeline-action">Note créée</span>
-              <span className="timeline-date">Il y a 2h</span>
+            <div className="timeline-item submitted">
+              <div className="timeline-header">
+                <span className="timeline-action">Note soumise</span>
+                <span className="timeline-date">Il y a 1h</span>
+              </div>
+              <div className="timeline-details">
+                Soumission pour validation avec justificatifs (2 fichiers)
+              </div>
             </div>
-            <div className="timeline-details">
-              Note de frais #NF2025-001 créée par Jean Dupont (Repas client - 45.50€)
-            </div>
-          </div>
 
-          <div className="timeline-item submitted">
-            <div className="timeline-header">
-              <span className="timeline-action">Note soumise</span>
-              <span className="timeline-date">Il y a 1h</span>
-            </div>
-            <div className="timeline-details">
-              Soumission pour validation avec justificatifs (2 fichiers)
-            </div>
-          </div>
-
-          <div className="timeline-item validated">
-            <div className="timeline-header">
-              <span className="timeline-action">Note validée</span>
-              <span className="timeline-date">Il y a 30min</span>
-            </div>
-            <div className="timeline-details">
-              Validée par Marie Martin - Remboursement autorisé
+            <div className="timeline-item validated">
+              <div className="timeline-header">
+                <span className="timeline-action">Note validée</span>
+                <span className="timeline-date">Il y a 30min</span>
+              </div>
+              <div className="timeline-details">
+                Validée par Marie Martin - Remboursement autorisé
+              </div>
             </div>
           </div>
         </div>
       </div>
-
- 
-
- 
-
-      </div>
-
- 
     </div>
   );
 };

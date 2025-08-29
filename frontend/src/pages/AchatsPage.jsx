@@ -1,22 +1,18 @@
+// src/pages/AchatsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexte/AuthContext';
 import axios from 'axios';
 import { 
+  FiCalendar,
   FiPlus, 
   FiFilter, 
   FiDownload, 
-  FiShoppingCart, 
   FiTrendingUp, 
   FiDollarSign,
-  FiFileText,
-  FiPercent,
   FiCheckCircle,
-  FiBarChart2,
+  FiFileText,
   FiPieChart,
-  FiCalendar,
-  FiUser,
-  FiSettings,
-  FiX
+  FiMap
 } from 'react-icons/fi';
 import './css/AchatsPage.css';
 
@@ -34,7 +30,6 @@ const AchatsPage = () => {
     statut: '',
     type_depense: ''
   });
-  const [selectedExportType, setSelectedExportType] = useState('sage');
 
   // Chargement des données du dashboard
   useEffect(() => {
@@ -111,8 +106,8 @@ const AchatsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="achats-spinner">
+        <div className="spin"></div>
       </div>
     );
   }
@@ -138,30 +133,11 @@ const AchatsPage = () => {
             className="action-btn"
           >
             <FiPlus className="action-icon" />
-            Nouvel achat
+            Nouvelle dépense 
           </button>
-          <div className="export-dropdown">
-            <button className="action-btn success">
-              <FiDownload className="action-icon" />
-              Export
-            </button>
-            <div className="export-menu">
-              <button onClick={() => exportComptable('sage')}>
-                Export Sage (.txt)
-              </button>
-              <button onClick={() => exportComptable('ciel')}>
-                Export Ciel (.csv)
-              </button>
-              <button onClick={() => exportComptable('cegid')}>
-                Export Cégid (.csv)
-              </button>
-            </div>
-          </div>
+ 
         </div>
-      </div>
-
-      {/* Filtres */}
-      <div className="filters-container">
+ 
         <h3 className="filters-title">
           <FiFilter />
           Filtres & Options
@@ -169,7 +145,7 @@ const AchatsPage = () => {
         <div className="filters-grid">
           <div className="filter-group">
             <label>Période</label>
-            <div style={{display: 'flex', gap: '10px'}}>
+            <div className="period-row">
               <select 
                 value={selectedPeriod.mois}
                 onChange={(e) => setSelectedPeriod({...selectedPeriod, mois: parseInt(e.target.value)})}
@@ -250,6 +226,51 @@ const AchatsPage = () => {
             Reset
           </button>
         </div>
+        <div>
+        <h3 className="quick-links-title">
+          <FiMap />
+          Accès rapide
+        </h3>
+        <div className="quick-links-grid">
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/achats/liste'}
+          >
+            <div className="quick-link-icon">
+              <FiFileText />
+            </div>
+            <div className="quick-link-text">Liste des dépenses</div>
+          </div>
+          
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/achats/validation'}
+          >
+            <div className="quick-link-icon">
+              <FiCheckCircle />
+            </div>
+            <div className="quick-link-text">Dépenses à valider</div>
+          </div>
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/achats/fournisseurs'}
+          >
+            <div className="quick-link-icon">
+              <FiPlus />
+            </div>
+            <div className="quick-link-text">Fournisseur</div>
+          </div>
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/achats/parametrage'}
+          >
+            <div className="quick-link-icon">
+              <FiCalendar />
+            </div>
+            <div className="quick-link-text">Paramétrage</div>
+          </div>
+        </div>
+        </div>
       </div>
 
       {/* Indicateurs financiers */}
@@ -303,9 +324,9 @@ const AchatsPage = () => {
           <div className="indicator-header">
             <div>
               <div className="indicator-value">
-                {Math.round(indicateurs.pourcentage_ocr || 0)}%
+              {dashboardData.validation.nb_achats_brouillon}
               </div>
-              <div className="indicator-label">Utilisation OCR</div>
+              <div className="indicator-label">dépense à valider</div>
               <div className="indicator-change positive">Automatisation</div>
             </div>
             <div className="indicator-icon">
@@ -315,91 +336,63 @@ const AchatsPage = () => {
         </div>
       </div>
 
-      {/* Alertes - Dépenses à valider */}
-      {dashboardData?.validation?.nb_achats_brouillon > 0 && (
-        <div className="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-lg">
-          <div className="flex items-center gap-3">
-            <FiCheckCircle className="text-orange-600" size={20} />
-            <div>
-              <p className="font-medium text-orange-800">
-                🔍 {dashboardData.validation.nb_achats_brouillon} dépense(s) à valider pour export
-              </p>
-              <p className="text-orange-600 text-sm">
-                Montant total : {formatCurrency(dashboardData.validation.montant_brouillon)} - Justificatifs requis
-              </p>
-            </div>
-            <button className="ml-auto bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700">
-              Valider maintenant
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Graphiques et analyses */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+      <div className="cards-grid">
         {/* Top fournisseurs */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <FiBarChart2 size={20} />
+        <div className="card">
+          <div className="card-head">
+            <h3 className="card-title">
               Dépenses par fournisseur
             </h3>
-            <span className="text-sm text-gray-500">Top 5</span>
+            <span className="card-sub">Top 5</span>
           </div>
           {dashboardData?.fournisseurs?.length > 0 ? (
-            <div className="space-y-3">
+            <div className="list-v">
               {dashboardData.fournisseurs.slice(0, 5).map((fournisseur, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      index === 0 ? 'bg-blue-500' :
-                      index === 1 ? 'bg-green-500' :
-                      index === 2 ? 'bg-yellow-500' :
-                      index === 3 ? 'bg-purple-500' : 'bg-gray-400'
-                    }`}></div>
-                    <span className="text-gray-700">{fournisseur.fournisseur || 'Fournisseur inconnu'}</span>
+                <div key={index} className="row-between">
+                  <div className="row gap-8">
+                    <div className={`dot dot-${index}`}></div>
+                    <span className="muted-900">{fournisseur.fournisseur || 'Fournisseur inconnu'}</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-medium text-blue-600">
+                    <span className="strong primary-600">
                       {formatCurrency(fournisseur.montant_total)}
                     </span>
-                    <p className="text-xs text-gray-500">{fournisseur.nb_achats} achat(s)</p>
+                    <p className="caption">{fournisseur.nb_achats} achat(s)</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-8">Aucun achat ce mois</p>
+            <p className="placeholder">Aucun achat ce mois</p>
           )}
         </div>
 
         {/* Répartition par catégorie */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <FiPieChart size={20} />
+        <div className="card">
+          <div className="card-head">
+            <h3 className="card-title">
               Dépenses par catégorie
             </h3>
-            <span className="text-sm text-gray-500">Répartition</span>
+            <span className="card-sub">Répartition</span>
           </div>
           {dashboardData?.categories?.length > 0 ? (
-            <div className="space-y-3">
+            <div className="list-v">
               {dashboardData.categories.slice(0, 5).map((categorie, index) => {
                 const total = dashboardData.categories.reduce((sum, cat) => sum + parseFloat(cat.montant_total), 0);
                 const percentage = total > 0 ? ((parseFloat(categorie.montant_total) / total) * 100).toFixed(1) : 0;
                 
                 return (
                   <div key={index} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-700">{categorie.categorie || 'Non catégorisé'}</span>
-                      <span className="font-medium text-green-600">
+                    <div className="row-between sm">
+                      <span className="muted-900">{categorie.categorie || 'Non catégorisé'}</span>
+                      <span className="strong success-600">
                         {formatCurrency(categorie.montant_total)} ({percentage}%)
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bar">
                       <div 
-                        className="bg-green-500 h-2 rounded-full" 
+                        className="bar-fill"
                         style={{width: `${percentage}%`}}
                       ></div>
                     </div>
@@ -408,110 +401,66 @@ const AchatsPage = () => {
               })}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-8">Aucune catégorie</p>
+            <p className="placeholder">Aucune catégorie</p>
           )}
         </div>
 
         {/* Évolution temporelle */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <FiTrendingUp size={20} />
+        <div className="card">
+          <div className="card-head">
+            <h3 className="card-title">
               Évolution mensuelle
             </h3>
-            <span className="text-sm text-gray-500">12 derniers mois</span>
+            <span className="card-sub">12 derniers mois</span>
           </div>
           {dashboardData?.evolution?.length > 0 ? (
-            <div className="space-y-2">
+            <div className="list-v">
               {dashboardData.evolution.slice(0, 6).map((month, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">
+                <div key={index} className="row-between sm">
+                  <span className="muted-700">
                     {month.mois.toString().padStart(2, '0')}/{month.annee}
                   </span>
                   <div className="text-right">
-                    <span className="font-medium">{formatCurrency(month.montant_total)}</span>
-                    <span className="text-gray-500 ml-2">({month.nb_achats})</span>
+                    <span className="strong">{formatCurrency(month.montant_total)}</span>
+                    <span className="muted-600 ml-8">({month.nb_achats})</span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-8">Pas de données historiques</p>
+            <p className="placeholder">Pas de données historiques</p>
           )}
         </div>
 
         {/* Répartition par statut */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <FiCheckCircle size={20} />
+        <div className="card">
+          <div className="card-head">
+            <h3 className="card-title">
               Statuts des dépenses
             </h3>
-            <span className="text-sm text-gray-500">Workflow</span>
+            <span className="card-sub">Workflow</span>
           </div>
           {dashboardData?.statuts?.length > 0 ? (
-            <div className="space-y-3">
+            <div className="list-v">
               {dashboardData.statuts.map((statut, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      statut.statut === 'brouillon' ? 'bg-orange-400' :
-                      statut.statut === 'valide' ? 'bg-blue-400' :
-                      statut.statut === 'paye' ? 'bg-green-400' : 'bg-red-400'
+                <div key={index} className="row-between">
+                  <div className="row gap-8">
+                    <div className={`dot ${
+                      statut.statut === 'brouillon' ? 'bg-orange' :
+                      statut.statut === 'valide' ? 'bg-blue' :
+                      statut.statut === 'paye' ? 'bg-green' : 'bg-red'
                     }`}></div>
-                    <span className="text-gray-700 capitalize">{statut.statut}</span>
+                    <span className="muted-900 capitalize">{statut.statut}</span>
                   </div>
-                  <span className="font-medium">
+                  <span className="strong">
                     {statut.nb_achats} ({formatCurrency(statut.montant_total)})
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-8">Aucun statut</p>
+            <p className="placeholder">Aucun statut</p>
           )}
-        </div>
-      </div>
-
-      {/* Actions rapides étendues */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Actions rapides</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <button 
-            onClick={() => window.location.href = '/#/achats/liste?sidebar=open'}
-            className="border border-gray-300 hover:border-blue-500 rounded-lg p-4 text-center transition-colors group"
-          >
-            <FiPlus className="mx-auto mb-2 text-blue-600 group-hover:scale-110 transition-transform" size={24} />
-            <p className="font-medium">Nouvel achat</p>
-            <p className="text-sm text-gray-600">Saisir une dépense</p>
-          </button>
-          
-          <button 
-            onClick={() => window.location.href = '/#/achats/ocr'}
-            className="border border-gray-300 hover:border-purple-500 rounded-lg p-4 text-center transition-colors group"
-          >
-            <FiFileText className="mx-auto mb-2 text-purple-600 group-hover:scale-110 transition-transform" size={24} />
-            <p className="font-medium">OCR Justificatif</p>
-            <p className="text-sm text-gray-600">Scanner un document</p>
-          </button>
-          
-          <button 
-            onClick={() => exportComptable('sage')}
-            className="border border-gray-300 hover:border-green-500 rounded-lg p-4 text-center transition-colors group"
-          >
-            <FiDownload className="mx-auto mb-2 text-green-600 group-hover:scale-110 transition-transform" size={24} />
-            <p className="font-medium">Export comptable</p>
-            <p className="text-sm text-gray-600">Sage/Ciel/Cegid</p>
-          </button>
-          
-          <button 
-            onClick={() => window.location.href = '/#/achats/liste'}
-            className="border border-gray-300 hover:border-indigo-500 rounded-lg p-4 text-center transition-colors group"
-          >
-            <FiFilter className="mx-auto mb-2 text-indigo-600 group-hover:scale-110 transition-transform" size={24} />
-            <p className="font-medium">Liste détaillée</p>
-            <p className="text-sm text-gray-600">Voir tous les achats</p>
-          </button>
         </div>
       </div>
     </div>

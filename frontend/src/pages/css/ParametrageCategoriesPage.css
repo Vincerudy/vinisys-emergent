@@ -104,7 +104,7 @@
 .search-input:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+ 
 }
 
 /* Categories table */
@@ -116,7 +116,7 @@
   background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+ 
 }
 
 .categories-table {

@@ -18,7 +18,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+ 
   }
   
   /* Style pour le badge */
@@ -93,7 +93,7 @@
     width: 35%;
     background-color: white;
     border-left: 2px solid #ddd;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+ 
     padding: 20px;
     transform: translateX(0);
     transition: transform 0.3s ease-in-out;

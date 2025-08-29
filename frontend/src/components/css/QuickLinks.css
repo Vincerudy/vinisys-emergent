@@ -1,6 +1,6 @@
 /* Styles pour les liens rapides */
 .quick-links-section {
-  background: #fff;
+  background:linear-gradient(180deg, #c0f9c079, rgba(2, 69, 5, 0.06));
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;

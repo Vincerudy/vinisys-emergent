@@ -134,7 +134,7 @@
 .btn-danger:hover {
   background: #dc2626;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+ 
 }
 
 .btn-spinner {
@@ -150,7 +150,7 @@
 .page-content {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+ 
   overflow: hidden;
 }
 
@@ -222,7 +222,7 @@
 .form-textarea:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+ 
 }
 
 .form-textarea {

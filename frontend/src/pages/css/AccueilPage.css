@@ -16,7 +16,7 @@ html, body {
   display: flex;
   gap: 16px;
   padding: 16px;
-  height: 90vh;        /* ✅ occupe toute la hauteur */
+  height: 94vh;        /* ✅ occupe toute la hauteur */
   box-sizing: border-box;
 }
 
@@ -79,9 +79,13 @@ html, body {
   transition: opacity 0.4s ease;
   z-index: 2;
 }
-
+.p{
+   
+  font-weight: bold;
+ 
+}
 .TitreModule{
-  font-size: 16px;
+  font-size: 18px;
   margin-top: 10px;
 }
 

@@ -6,235 +6,235 @@ import { FiActivity, FiAirplay, FiAlertCircle, FiArchive, FiArrowDown, FiArrowUp
 const getIcon = (name) => {
     switch (name) {
         case "feather-moon":
-            return <FiMoon />
+            return <FiMoon style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-sunrise":
-            return <FiSunrise />
+            return <FiSunrise style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-sun":
-            return <FiSun />
+            return <FiSun style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-users":
-            return <FiUsers />
+            return <FiUsers style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-user":
-            return <FiUser />
+            return <FiUser style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-user-check":
-            return <FiUserCheck />
+            return <FiUserCheck style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-user-plus":
-            return <FiUserPlus />
+            return <FiUserPlus style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-user-minus":
-            return <FiUserMinus />
+            return <FiUserMinus style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-arrow-up":
-            return <FiArrowUp />
+            return <FiArrowUp style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-arrow-down":
-            return <FiArrowDown />
+            return <FiArrowDown style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-at-sign":
-            return <FiAtSign />
+            return <FiAtSign style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-globe":
-            return <FiGlobe />
+            return <FiGlobe style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-lock":
-            return <FiLock />
+            return <FiLock style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-settings":
-            return <FiSettings />
+            return <FiSettings style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-smart-phone":
-            return <FiSmartphone />
+            return <FiSmartphone style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-bell":
-            return <FiBell />
+            return <FiBell style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-mail":
-            return <FiMail />
+            return <FiMail style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-repeat":
-            return <FiRepeat />
+            return <FiRepeat style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-bell-off":
-            return <FiBellOff />
+            return <FiBellOff style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-link-2":
-            return <FiLink2 />
+            return <FiLink2 style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-phone":
-            return <FiPhone />
+            return <FiPhone style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-compass":
-            return <FiCompass />
+            return <FiCompass style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-briefcase":
-            return <FiBriefcase />
+            return <FiBriefcase style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-link":
-            return <FiLink />
+            return <FiLink style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-map-pin":
-            return <FiMapPin />
+            return <FiMapPin style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-type":
-            return <FiType />
+            return <FiType style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-dollar-sign":
-            return <FiDollarSign />
+            return <FiDollarSign style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-eye":
-            return <FiEye />
+            return <FiEye style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-tag":
-            return <FiTag />
+            return <FiTag style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-message-square":
-            return <FiMessageSquare />
+            return <FiMessageSquare style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-search":
-            return <FiSearch />
+            return <FiSearch style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-linkedin":
-            return <FiLinkedin />
+            return <FiLinkedin style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-instagram":
-            return <FiInstagram />
+            return <FiInstagram style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-twitter":
-            return <FiTwitter />
+            return <FiTwitter style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-facebook":
-            return <FiFacebook />
+            return <FiFacebook style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-github":
-            return <FiGithub />
+            return <FiGithub style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-shield":
-            return <FiShield />
+            return <FiShield style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-log-in":
-            return <FiLogIn />
+            return <FiLogIn style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-clipboard":
-            return <FiClipboard />
+            return <FiClipboard style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-check":
-            return <FiCheck />
+            return <FiCheck style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-x":
-            return <FiX />
+            return <FiX style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-cast":
-            return <FiCast />
+            return <FiCast  style={{height: '25px', color: '#3870a7', width: '25px'}}style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-activity":
-            return <FiActivity />
+            return <FiActivity style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-check-circle":
-            return <FiCheckCircle />
+            return <FiCheckCircle style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-pie-chart":
-            return <FiPieChart />
+            return <FiPieChart style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-plus-square":
-            return <FiPlusSquare />
+            return <FiPlusSquare style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-sunset":
-            return <FiSunset />
+            return <FiSunset style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-power":
-            return <FiPower />
+            return <FiPower style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-alert-circle":
-            return <FiAlertCircle />
+            return <FiAlertCircle style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-layout":
-            return <FiLayout />
+            return <FiLayout style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-send":
-            return <FiSend />
+            return <FiSend style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-grid":
-            return <FiGrid />
+            return <FiGrid style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-youtube":
-            return <FiYoutube />
+            return <FiYoutube style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-copy":
-            return <FiCopy />
+            return <FiCopy style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-edit":
-            return <FiEdit />
+            return <FiEdit style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-pause":
-            return <FiPause />
+            return <FiPause style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-star":
-            return <FiStar />
+            return <FiStar style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-delete":
-            return <FiDelete />
+            return <FiDelete style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-trash-2":
-            return <FiTrash2 />
+            return <FiTrash2 style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-git-commit":
-            return <FiGitCommit />
+            return <FiGitCommit style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-airplay":
-            return <FiAirplay />
+            return <FiAirplay style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-clock":
-            return <FiClock />
+            return <FiClock style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-crosshair":
-            return <FiCrosshair />
+            return <FiCrosshair style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-life-buoy":
-            return <FiLifeBuoy />
+            return <FiLifeBuoy style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-git-branch":
-            return <FiGitBranch />
+            return <FiGitBranch style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-help-circle":
-            return <FiHelpCircle />
+            return <FiHelpCircle style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-archive":
-            return <FiArchive />
+            return <FiArchive style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-award":
-            return <FiAward />
+            return <FiAward style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-bar-chart-2":
-            return <FiBarChart2 />
+            return <FiBarChart2 style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-shopping-bag":
-            return <FiShoppingBag />
+            return <FiShoppingBag style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-shopping-cart":
-            return <FiShoppingCart />
+            return <FiShoppingCart style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-figma":
-            return <FiFigma />
+            return <FiFigma style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-gitlab":
-            return <FiGitlab />
+            return <FiGitlab style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-bluetooth":
-            return <FiBluetooth />
+            return <FiBluetooth style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-file-text":
-            return <FiFileText />
+            return <FiFileText style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-monitor":
-            return <FiMonitor />
+            return <FiMonitor style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-smartphone":
-            return <FiSmartphone />
+            return <FiSmartphone style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-tablet":
-            return <FiTablet />
+            return <FiTablet style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-layers":
-            return <FiLayers />
+            return <FiLayers style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-list":
-            return <FiList />
+            return <FiList style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-umbrella":
-            return <FiUmbrella />
+            return <FiUmbrella style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-sliders":
-            return <FiSliders />
+            return <FiSliders style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "feather-framer":
-            return <FiFramer />
+            return <FiFramer style={{height: '25px', color: '#3870a7', width: '25px'}} />
 
 
 
 
 
         case "fa-chrome":
-            return <FaChrome />
+            return <FaChrome style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-firefox-browser":
-            return <FaFirefoxBrowser />
+            return <FaFirefoxBrowser style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-safari":
-            return <FaSafari />
+            return <FaSafari style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-edge":
-            return <FaEdge />
+            return <FaEdge style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-opera":
-            return <FaOpera />
+            return <FaOpera style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-internet-explorer":
-            return <FaInternetExplorer />
+            return <FaInternetExplorer style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-octopus-deploy":
-            return <FaOctopusDeploy />
+            return <FaOctopusDeploy style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-cc-visa":
-            return <FaCcVisa />
+            return <FaCcVisa style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-cc-mastercard":
-            return <FaCcMastercard />
+            return <FaCcMastercard style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-cc-paypal":
-            return <FaCcPaypal />
+            return <FaCcPaypal style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-facebook":
-            return <FaFacebook />
+            return <FaFacebook style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-twitter":
-            return <FaTwitter />
+            return <FaTwitter style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-youtube":
-            return <FaYoutube />
+            return <FaYoutube style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-linkedin":
-            return <FaLinkedin />
+            return <FaLinkedin style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-briefcase":
-            return <FaBriefcase />
+            return <FaBriefcase style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-home":
-            return <FaHouse />
+            return <FaHouse style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-users":
-            return <FaUsers />
+            return <FaUsers style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-plane":
-            return <FaPlane />
+            return <FaPlane style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-lock":
-            return <FaLock />
+            return <FaLock style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-umbrella-beach":
-            return <FaUmbrellaBeach />
+            return <FaUmbrellaBeach style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-building":
-            return <FaBuilding/>
+            return <FaBuilding style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "fa-birthday-cake":
-            return <FaCakeCandles />
+            return <FaCakeCandles  style={{height: '25px', color: '#3870a7', width: '25px'}} />
 
 
 
         case "bi-envelope":
-            return <BsEnvelope />
+            return <BsEnvelope  style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "bi-envelope-plus":
-            return <BsEnvelopePlus />
+            return <BsEnvelopePlus  style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "bi-envelope-check":
-            return <BsEnvelopeCheck />
+            return <BsEnvelopeCheck  style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "bi-envelope-open":
-            return <BsEnvelopeOpen />
+            return <BsEnvelopeOpen  style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "bi-envelope-heart":
-            return <BsEnvelopeHeart />
+            return <BsEnvelopeHeart  style={{height: '25px', color: '#3870a7', width: '25px'}} />
         case "bi-envelope-slash":
-            return <BsEnvelopeSlash />
+            return <BsEnvelopeSlash  style={{height: '25px', color: '#3870a7', width: '25px'}} />
 
 
         default:

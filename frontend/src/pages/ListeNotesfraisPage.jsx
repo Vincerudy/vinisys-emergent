@@ -47,11 +47,7 @@ const ListeNotesfraisPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
-
-
-
   useEffect(() => {
-
     fetchNotesfrais();
   }, [societe_id, filters, currentPage]);
 
@@ -323,6 +319,7 @@ const ListeNotesfraisPage = () => {
           <div className="filter-group">
             <label>Statut</label>
             <select 
+              style={{flex: 1, color: '#3e3e3e'}}
               value={filters.statut}
               onChange={(e) => setFilters({...filters, statut: e.target.value})}
             >
@@ -338,6 +335,7 @@ const ListeNotesfraisPage = () => {
           <div className="filter-group">
             <label>Période</label>
             <select 
+              style={{flex: 1, color: '#3e3e3e'}}
               value={filters.periode}
               onChange={(e) => setFilters({...filters, periode: e.target.value})}
             >
@@ -353,6 +351,7 @@ const ListeNotesfraisPage = () => {
           <div className="filter-group">
             <label>Type de frais</label>
             <select 
+              style={{flex: 1, color: '#3e3e3e'}}
               value={filters.type_frais}
               onChange={(e) => setFilters({...filters, type_frais: e.target.value})}
             >
@@ -583,6 +582,7 @@ const ListeNotesfraisPage = () => {
               <div className="comment-group">
                 <label>Commentaire de validation (optionnel)</label>
                 <textarea
+                  style={{color: 'black'}}
                   placeholder="Ajouter un commentaire..."
                   value={validationComment}
                   onChange={(e) => setValidationComment(e.target.value)}

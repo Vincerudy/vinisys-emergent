@@ -12,6 +12,7 @@ import {
   FiMapPin,
   FiDollarSign
 } from 'react-icons/fi';
+import './css/FournisseursPage.css';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
 import FournisseurSidebar from '../components/FournisseurSidebar';
@@ -101,14 +102,14 @@ const fetchFournisseurs = async () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div  className="p-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div className="bg-white-header rounded-lg shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
               <FiUser className="text-blue-600" />
-              Gestion des Fournisseurs
+              Fournisseurs
             </h1>
             <p className="text-gray-600 mt-2">
               {filteredFournisseurs.length} fournisseur(s) dans votre base
@@ -116,20 +117,18 @@ const fetchFournisseurs = async () => {
           </div>
           <button
             onClick={openCreateSidebar}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            className="color-btn-nouveau-fornisseur bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
             <FiPlus size={16} />
             Nouveau fournisseur
           </button>
         </div>
-      </div>
 
-      {/* Barre de recherche */}
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
-            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+
             <input
+              style={{width: '50%', height: '50px'}}
               type="text"
               placeholder="Rechercher par nom, email ou ville..."
               value={searchTerm}

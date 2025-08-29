@@ -128,7 +128,7 @@ export default function ImportProduitsPage() {
 
   return (
     <div style={{ width: '100%', maxWidth: 1000, margin: 'auto', padding: '20px' }}>
-      <h1 className="page-title">Import des produits et services</h1>
+      <h1 style={{color:'#3454d1'}} className="page-title">Import des produits et services</h1>
 
       <Alert
         type="info"

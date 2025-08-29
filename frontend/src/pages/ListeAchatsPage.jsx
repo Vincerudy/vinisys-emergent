@@ -169,10 +169,7 @@ const ListeAchatsPage = () => {
             <FiPlus size={18} />
             Nouvelle dépense
           </button>
-          <button className="btn-secondary">
-            <FiDownload size={18} />
-            Exporter
-          </button>
+ 
         </div>
       </div>
 
@@ -202,6 +199,7 @@ const ListeAchatsPage = () => {
           <div className="filter-group">
             <label>Période</label>
             <select 
+              style={{flex: 1, color: '#3e3e3e'}}
               value={filters.periode}
               onChange={(e) => setFilters({...filters, periode: e.target.value})}
             >
@@ -217,6 +215,7 @@ const ListeAchatsPage = () => {
           <div className="filter-group">
             <label>Statut</label>
             <select 
+              style={{flex: 1, color: '#3e3e3e'}}
               value={filters.statut}
               onChange={(e) => setFilters({...filters, statut: e.target.value})}
             >
@@ -232,6 +231,7 @@ const ListeAchatsPage = () => {
             <label>Montant (€)</label>
             <div className="range-inputs">
               <input
+                style={{height: '70px', backgroundColor: '#e5e5e5', color: '#3e3e3e'}}
                 type="number"
                 placeholder="Min"
                 value={filters.montant_min}
@@ -239,6 +239,7 @@ const ListeAchatsPage = () => {
               />
               <span>à</span>
               <input
+               style={{height: '70px', backgroundColor: '#e5e5e5', color: '#3e3e3e'}}
                 type="number"
                 placeholder="Max"
                 value={filters.montant_max}

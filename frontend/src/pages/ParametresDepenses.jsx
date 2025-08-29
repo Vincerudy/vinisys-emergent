@@ -202,6 +202,14 @@ const ParametresDepenses = () => {
           <ul className="nav nav-tabs card-header-tabs" role="tablist">
             <li className="nav-item">
               <button 
+                className={`nav-link ${activeTab === 'general' ? 'active' : ''}`}
+                onClick={() => setActiveTab('general')}
+              >
+                ⚙️ Général
+              </button>
+            </li>
+            <li className="nav-item">
+              <button 
                 className={`nav-link ${activeTab === 'categories' ? 'active' : ''}`}
                 onClick={() => setActiveTab('categories')}
               >
@@ -223,14 +231,6 @@ const ParametresDepenses = () => {
                 onClick={() => setActiveTab('tva')}
               >
                 💰 Taux TVA
-              </button>
-            </li>
-            <li className="nav-item">
-              <button 
-                className={`nav-link ${activeTab === 'general' ? 'active' : ''}`}
-                onClick={() => setActiveTab('general')}
-              >
-                ⚙️ Général
               </button>
             </li>
           </ul>

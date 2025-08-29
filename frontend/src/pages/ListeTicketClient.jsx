@@ -30,7 +30,7 @@ const ListeTicketClient = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/affichage/tickets`,
+        `${import.meta.env.VITE_API_URL}/liste/tickets`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
