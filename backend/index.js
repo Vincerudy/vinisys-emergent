@@ -294,7 +294,7 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
 
 
             // Exécuter l’insertion avec societeId pour chaque ligne
-            await db.execute(insertQuery, Array(8).fill(societeId));
+
 
             // Récupérer à nouveau la liste après insertion
             const [typesFraisInserts] = await db.execute(
