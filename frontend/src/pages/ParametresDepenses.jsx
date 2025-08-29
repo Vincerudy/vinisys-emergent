@@ -545,68 +545,186 @@ const ParametresDepenses = () => {
             </div>
           )}
 
-          {/* Onglet Taux TVA */}
-          {activeTab === 'tva' && (
+          {/* Onglet Types de frais */}
+          {activeTab === 'types-frais' && (
             <div>
               <div className="row mb-4">
                 <div className="col-md-8">
-                  <h6>Gestion des taux de TVA</h6>
+                  <h6>Gestion des types de frais</h6>
                   <p className="text-muted small">
-                    Configurez les taux de TVA disponibles pour les différentes catégories de dépenses
+                    Gérez les types de frais disponibles pour la saisie des notes de frais
                   </p>
+                </div>
+                <div className="col-md-4 text-md-end">
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => setShowAddForm(!showAddForm)}
+                  >
+                    <FiPlus className="me-2" />
+                    Ajouter un type
+                  </button>
                 </div>
               </div>
 
-              <div className="table-responsive">
-                <table className="table table-hover">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Nom</th>
-                      <th>Taux</th>
-                      <th>Utilisation recommandée</th>
-                      <th>Statut</th>
-                      <th className="text-end">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tauxTVA.map(taux => (
-                      <tr key={taux.id}>
-                        <td><strong>{taux.nom}</strong></td>
-                        <td>
-                          <span className="badge bg-primary-subtle text-primary">
-                            {taux.taux}%
-                          </span>
-                        </td>
-                        <td>
-                          <small className="text-muted">
-                            {taux.taux === 0 ? 'Frais kilométriques, formations' :
-                             taux.taux === 5.5 ? 'Livres, médicaments, transports' :
-                             taux.taux === 10 ? 'Restauration, hébergement' :
-                             taux.taux === 20 ? 'Biens et services standard' : ''}
-                          </small>
-                        </td>
-                        <td>
-                          <span className={`badge ${taux.actif ? 'bg-success' : 'bg-secondary'}`}>
-                            {taux.actif ? 'Actif' : 'Inactif'}
-                          </span>
-                        </td>
-                        <td className="text-end">
-                          <button 
-                            className="btn btn-outline-primary btn-sm"
-                            onClick={() => {
-                              const newTaux = [...tauxTVA];
-                              const index = newTaux.findIndex(t => t.id === taux.id);
-                              newTaux[index].actif = !newTaux[index].actif;
-                              setTauxTVA(newTaux);
-                            }}
-                          >
-                            {taux.actif ? 'Désactiver' : 'Activer'}
-                          </button>
-                        </td>
+              {/* Formulaire d'ajout */}
+              {showAddForm && (
+                <div className="card mb-4">
+                  <div className="card-header">
+                    <h6 className="card-title mb-0">Ajouter un nouveau type de frais</h6>
+                  </div>
+                  <div className="card-body">
+                    <div className="row">
+                      <div className="col-md-6 mb-3">
+                        <label className="form-label">Nom technique (sans espaces)</label>
+                        <input
+                          type="text"
+                          value={newType.nom}
+                          onChange={(e) => setNewType({ ...newType, nom: e.target.value })}
+                          className="form-control"
+                          placeholder="Ex: transport_commun"
+                        />
+                      </div>
+                      <div className="col-md-6 mb-3">
+                        <label className="form-label">Libellé affiché</label>
+                        <input
+                          type="text"
+                          value={newType.libelle}
+                          onChange={(e) => setNewType({ ...newType, libelle: e.target.value })}
+                          className="form-control"
+                          placeholder="Ex: Transport en commun"
+                        />
+                      </div>
+                    </div>
+                    <div className="d-flex gap-2">
+                      <button 
+                        className="btn btn-secondary"
+                        onClick={() => {
+                          setShowAddForm(false);
+                          setNewType({ nom: '', libelle: '' });
+                        }}
+                      >
+                        <FiX className="me-2" />
+                        Annuler
+                      </button>
+                      <button 
+                        className="btn btn-primary"
+                        onClick={handleAddNewType}
+                        disabled={saving}
+                      >
+                        <FiSave className="me-2" />
+                        {saving ? 'Ajout...' : 'Ajouter'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {loading ? (
+                <div className="text-center py-4">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Chargement...</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table table-hover">
+                    <thead className="table-light">
+                      <tr>
+                        <th>Libellé</th>
+                        <th>Nom technique</th>
+                        <th>Statut</th>
+                        <th className="text-end">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {typesFrais.map((type) => (
+                        <tr key={type.id} className={!type.actif ? 'table-secondary' : ''}>
+                          <td>
+                            {editingType && editingType.id === type.id ? (
+                              <input
+                                type="text"
+                                value={editingType.libelle}
+                                onChange={(e) => setEditingType({ ...editingType, libelle: e.target.value })}
+                                className="form-control form-control-sm"
+                              />
+                            ) : (
+                              <strong>{type.libelle}</strong>
+                            )}
+                          </td>
+                          <td>
+                            <code className="text-muted">{type.nom}</code>
+                          </td>
+                          <td>
+                            <button
+                              className={`btn btn-sm ${type.actif ? 'btn-success' : 'btn-secondary'}`}
+                              onClick={() => handleToggleActif(type.id, type.actif)}
+                              disabled={saving}
+                            >
+                              {type.actif ? (
+                                <>
+                                  <FiToggleRight className="me-1" />
+                                  Actif
+                                </>
+                              ) : (
+                                <>
+                                  <FiToggleLeft className="me-1" />
+                                  Inactif
+                                </>
+                              )}
+                            </button>
+                          </td>
+                          <td className="text-end">
+                            {editingType && editingType.id === type.id ? (
+                              <div className="btn-group btn-group-sm">
+                                <button
+                                  className="btn btn-success"
+                                  onClick={handleSaveEdit}
+                                  disabled={saving}
+                                >
+                                  <FiCheck />
+                                </button>
+                                <button
+                                  className="btn btn-secondary"
+                                  onClick={handleCancelEdit}
+                                >
+                                  <FiX />
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={() => handleEditType(type)}
+                                title="Modifier"
+                              >
+                                <FiEdit />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                      {typesFrais.length === 0 && (
+                        <tr>
+                          <td colSpan="4" className="text-center py-4">
+                            <div className="text-muted">
+                              <i className="fas fa-list fa-2x mb-3 opacity-25"></i>
+                              <p>Aucun type de frais configuré</p>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <div className="alert alert-info mt-4">
+                <h6 className="alert-heading">Information</h6>
+                <ul className="mb-0">
+                  <li>Les types <strong>actifs</strong> sont disponibles lors de la création de frais</li>
+                  <li>Les types <strong>inactifs</strong> ne sont plus proposés mais conservent les données existantes</li>
+                  <li>Vous pouvez modifier le libellé affiché à tout moment</li>
+                  <li>Le nom technique ne peut pas être modifié une fois créé</li>
+                </ul>
               </div>
             </div>
           )}
