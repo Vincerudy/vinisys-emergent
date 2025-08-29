@@ -678,64 +678,63 @@ const ParametresDepenses = () => {
                             <code className="text-muted">{type.nom}</code>
                           </td>
                           <td>
-                            <button
-                              className={`btn btn-sm ${type.actif ? 'btn-success' : 'btn-secondary'}`}
-                              onClick={() => handleToggleActif(type.id, type.actif, type.source_type === 'system')}
-                              disabled={saving}
-                            >
-                              {type.actif ? (
-                                <>
-                                  <FiToggleRight className="me-1" />
-                                  Actif
-                                </>
-                              ) : (
-                                <>
-                                  <FiToggleLeft className="me-1" />
-                                  Inactif
-                                </>
-                              )}
-                            </button>
+                            <div className="form-check form-switch">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={`switch-${type.id}`}
+                                checked={type.actif}
+                                onChange={() => handleToggleActif(type.id, type.actif, type.source_type === 'system')}
+                                disabled={saving}
+                              />
+                              <label className="form-check-label" htmlFor={`switch-${type.id}`}>
+                                <span className={`badge ${type.actif ? 'bg-success' : 'bg-secondary'}`}>
+                                  {type.actif ? 'Actif' : 'Inactif'}
+                                </span>
+                              </label>
+                            </div>
                           </td>
                           <td className="text-end">
-                            {editingType && editingType.id === type.id ? (
-                              <div className="btn-group btn-group-sm">
-                                {type.source_type !== 'system' && (
-                                  <button
-                                    className="btn btn-success"
-                                    onClick={handleSaveEdit}
-                                    disabled={saving}
-                                  >
-                                    <FiCheck />
-                                  </button>
-                                )}
-                                <button
-                                  className="btn btn-secondary"
-                                  onClick={handleCancelEdit}
-                                >
-                                  <FiX />
-                                </button>
-                              </div>
-                            ) : (
-                              <div>
-                                {type.source_type !== 'system' && (
-                                  <button
-                                    className="btn btn-outline-primary btn-sm"
-                                    onClick={() => handleEditType(type)}
-                                    title="Modifier"
-                                  >
-                                    <FiEdit />
-                                  </button>
-                                )}
-                                {type.source_type === 'system' && (
-                                  <span className="text-muted small">
-                                    <i className="fas fa-lock"></i> Système
-                                  </span>
-                                )}
-                              </div>
-                            )}
+                            <Link 
+                              to={`/depenses/types-frais/detail/${type.id}`}
+                              className="btn btn-outline-primary btn-sm"
+                              title="Configurer ce type de frais"
+                            >
+                              <FiSettings className="me-1" />
+                              Configurer
+                            </Link>
                           </td>
                         </tr>
                       ))}
+                      {typesFrais.map((type) => (
+                        <tr 
+                          key={`${type.source_type}-${type.id}`} 
+                          className={`${!type.actif ? 'table-secondary' : ''} cursor-pointer`}
+                          onClick={() => window.location.href = `/#/depenses/types-frais/detail/${type.id}`}
+                          style={{cursor: 'pointer'}}
+                        >
+                          <td>
+                            {type.source_type === 'system' ? (
+                              <span className="badge bg-info-subtle text-info">
+                                <i className="fas fa-cog me-1"></i>
+                                Système
+                              </span>
+                            ) : (
+                              <span className="badge bg-primary-subtle text-primary">
+                                <i className="fas fa-user me-1"></i>
+                                Personnalisé
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            <strong>{type.libelle}</strong>
+                            {type.source_type === 'system' && (
+                              <small className="text-muted d-block">Non modifiable</small>
+                            )}
+                          </td>
+                          <td>
+                            <code className="text-muted">{type.nom}</code>
+                          </td>
                       {typesFrais.length === 0 && (
                         <tr>
                           <td colSpan="4" className="text-center py-4">
