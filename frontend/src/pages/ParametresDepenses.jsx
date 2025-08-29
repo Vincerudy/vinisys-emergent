@@ -7,7 +7,7 @@ import { useAuth } from '../contexte/AuthContext';
 import Swal from 'sweetalert2';
 
 const ParametresDepenses = () => {
-  const { id: userId } = useAuth();
+  const { id: userId, societe_id } = useAuth();
   const [activeTab, setActiveTab] = useState('categories');
   const [loading, setLoading] = useState(false);
   
@@ -27,13 +27,12 @@ const ParametresDepenses = () => {
   });
   const [editingBareme, setEditingBareme] = useState(null);
 
-  // États pour les taux TVA
-  const [tauxTVA, setTauxTVA] = useState([
-    { id: 1, taux: 0, nom: 'Exonéré', actif: true },
-    { id: 2, taux: 5.5, nom: 'Taux réduit', actif: true },
-    { id: 3, taux: 10, nom: 'Restauration', actif: true },
-    { id: 4, taux: 20, nom: 'Taux normal', actif: true }
-  ]);
+  // États pour les types de frais
+  const [typesFrais, setTypesFrais] = useState([]);
+  const [editingType, setEditingType] = useState(null);
+  const [newType, setNewType] = useState({ nom: '', libelle: '' });
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadData();
