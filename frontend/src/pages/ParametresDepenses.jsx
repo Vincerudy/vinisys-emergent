@@ -72,6 +72,22 @@ const ParametresDepenses = () => {
     }
   };
 
+  const loadTypesFrais = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/types-frais/manage/${societe_id}`);
+      
+      if (response.data.success) {
+        setTypesFrais(response.data.types_frais);
+      }
+    } catch (error) {
+      console.error('Erreur chargement types de frais:', error);
+      Swal.fire('Erreur', 'Erreur lors du chargement des types de frais', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Gestion des catégories
   const handleCreateCategory = async (e) => {
     e.preventDefault();
