@@ -677,40 +677,16 @@ const ParametresDepenses = () => {
                           <td>
                             <code className="text-muted">{type.nom}</code>
                           </td>
-                          <td>
-                            <div className="form-check form-switch">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id={`switch-${type.id}`}
-                                checked={type.actif}
-                                onChange={() => handleToggleActif(type.id, type.actif, type.source_type === 'system')}
-                                disabled={saving}
-                              />
-                              <label className="form-check-label" htmlFor={`switch-${type.id}`}>
-                                <span className={`badge ${type.actif ? 'bg-success' : 'bg-secondary'}`}>
-                                  {type.actif ? 'Actif' : 'Inactif'}
-                                </span>
-                              </label>
-                            </div>
-                          </td>
-                          <td className="text-end">
-                            <Link 
-                              to={`/depenses/types-frais/detail/${type.id}`}
-                              className="btn btn-outline-primary btn-sm"
-                              title="Configurer ce type de frais"
-                            >
-                              <FiSettings className="me-1" />
-                              Configurer
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
                       {typesFrais.map((type) => (
                         <tr 
                           key={`${type.source_type}-${type.id}`} 
                           className={`${!type.actif ? 'table-secondary' : ''} cursor-pointer`}
-                          onClick={() => window.location.href = `/#/depenses/types-frais/detail/${type.id}`}
+                          onClick={(e) => {
+                            // Éviter le clic si on clique sur le switch
+                            if (e.target.type !== 'checkbox') {
+                              window.location.href = `/#/depenses/types-frais/detail/${type.id}`;
+                            }
+                          }}
                           style={{cursor: 'pointer'}}
                         >
                           <td>
@@ -735,6 +711,39 @@ const ParametresDepenses = () => {
                           <td>
                             <code className="text-muted">{type.nom}</code>
                           </td>
+                          <td>
+                            <div className="form-check form-switch">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={`switch-${type.id}-${type.source_type}`}
+                                checked={type.actif}
+                                onChange={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleActif(type.id, type.actif, type.source_type === 'system');
+                                }}
+                                disabled={saving}
+                              />
+                              <label className="form-check-label" htmlFor={`switch-${type.id}-${type.source_type}`}>
+                                <span className={`badge ${type.actif ? 'bg-success' : 'bg-secondary'} ms-2`}>
+                                  {type.actif ? 'Actif' : 'Inactif'}
+                                </span>
+                              </label>
+                            </div>
+                          </td>
+                          <td className="text-end">
+                            <Link 
+                              to={`/depenses/types-frais/detail/${type.id}`}
+                              className="btn btn-outline-primary btn-sm"
+                              title="Configurer ce type de frais"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FiSettings className="me-1" />
+                              Configurer
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
                       {typesFrais.length === 0 && (
                         <tr>
                           <td colSpan="4" className="text-center py-4">
