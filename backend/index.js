@@ -296,20 +296,7 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
             // Exécuter l’insertion avec societeId pour chaque ligne
 
 
-            // Récupérer à nouveau la liste après insertion
-            const [typesFraisInserts] = await db.execute(
-                'SELECT * FROM types_frais WHERE societe_id = ? ORDER BY libelle ASC',
-                [societeId]
-            );
 
-            return res.json({ 
-                success: true,
-                types_frais: typesFraisInserts,
-                message: "Types de frais par défaut insérés"
-            });
-        }
-
-        // Sinon, renvoyer la liste existante
 
 
     } catch (error) {
