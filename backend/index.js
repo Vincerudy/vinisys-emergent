@@ -253,6 +253,29 @@ app.get('/api/types-frais', async (req, res) => {
     }
 });
 
+// API pour les comptes fournisseur
+app.get('/api/comptes-fournisseur', async (req, res) => {
+    try {
+        const [comptes] = await db.execute(`
+            SELECT id, numero, libelle, description, actif, is_system
+            FROM comptes_fournisseur 
+            WHERE actif = TRUE 
+            ORDER BY numero ASC
+        `);
+
+        res.json({
+            success: true,
+            comptes: comptes
+        });
+    } catch (error) {
+        console.error('Erreur chargement comptes fournisseur:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors du chargement des comptes fournisseur'
+        });
+    }
+});
+
 // ENDPOINTS POUR LA GESTION DES TYPES DE FRAIS
 // GET /api/types-frais/manage/:societeId - Tous les types (système + personnalisés)
 app.get('/api/types-frais/manage/:societeId', async (req, res) => {
