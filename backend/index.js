@@ -292,7 +292,7 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
             return res.json({ 
                 success: true,
                 types_frais: typesFraisInserts,
-                message: "Types de frais par défaut insérés"
+                message: "Types de frais système et personnalisés récupérés"
             });
         }
 
