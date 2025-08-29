@@ -281,18 +281,7 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
 
         // 3. Combiner les deux listes
         const allTypes = [...typesSysteme, ...typesPersonnalises];
-            const insertQuery = `
-                INSERT INTO types_frais 
-                (nom, code, description, actif, created_at, updated_at, societe_id, libelle) VALUES
-                ('Transport - Kilomètres','KM','Frais kilométriques pour véhicule personnel',1,NOW(),NOW(),?, 'Kilomètres'),
-                ('Transport - Taxi/VTC','TAXI','Frais de taxi, VTC, ou transport à la demande',1,NOW(),NOW(),?, 'Taxi/VTC'),
-                ('Transport - Train/Bus','TRANSPORT_PUBLIC','Transport en commun : train, bus, métro',1,NOW(),NOW(),?, 'Train/Bus'),
-                ('Transport - Avion','AVION','Billets d''avion pour déplacements professionnels',1,NOW(),NOW(),?, 'Avion'),
-                ('Hébergement - Hôtel','HOTEL','Nuitées d''hôtel lors de déplacements',1,NOW(),NOW(),?, 'Hôtel'),
-                ('Hébergement - Autre','HEBERGEMENT_AUTRE','Autres types d''hébergement (AirBnB, etc.)',1,NOW(),NOW(),?, 'Autre hébergement'),
-                ('Repas - Client','REPAS_CLIENT','Repas avec clients ou prospects',1,NOW(),NOW(),?, 'Repas client'),
-                ('Repas - Déplacement','REPAS_DEPLACEMENT','Repas lors de déplacements professionnels',1,NOW(),NOW(),?, 'Repas déplacement')
-            `;
+
 
             // Exécuter l’insertion avec societeId pour chaque ligne
             await db.execute(insertQuery, Array(8).fill(societeId));
