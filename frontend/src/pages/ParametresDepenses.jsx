@@ -644,46 +644,12 @@ const ParametresDepenses = () => {
                     </thead>
                     <tbody>
                       {typesFrais.map((type) => (
-                        <tr key={`${type.source_type}-${type.id}`} className={!type.actif ? 'table-secondary' : ''}>
-                          <td>
-                            {type.source_type === 'system' ? (
-                              <span className="badge bg-info-subtle text-info">
-                                <i className="fas fa-cog me-1"></i>
-                                Système
-                              </span>
-                            ) : (
-                              <span className="badge bg-primary-subtle text-primary">
-                                <i className="fas fa-user me-1"></i>
-                                Personnalisé
-                              </span>
-                            )}
-                          </td>
-                          <td>
-                            {editingType && editingType.id === type.id ? (
-                              type.source_type === 'system' ? (
-                                <span className="text-muted">{type.libelle} <small>(non modifiable)</small></span>
-                              ) : (
-                                <input
-                                  type="text"
-                                  value={editingType.libelle}
-                                  onChange={(e) => setEditingType({ ...editingType, libelle: e.target.value })}
-                                  className="form-control form-control-sm"
-                                />
-                              )
-                            ) : (
-                              <strong>{type.libelle}</strong>
-                            )}
-                          </td>
-                          <td>
-                            <code className="text-muted">{type.nom}</code>
-                          </td>
-                      {typesFrais.map((type) => (
                         <tr 
                           key={`${type.source_type}-${type.id}`} 
                           className={`${!type.actif ? 'table-secondary' : ''} cursor-pointer`}
                           onClick={(e) => {
-                            // Éviter le clic si on clique sur le switch
-                            if (e.target.type !== 'checkbox') {
+                            // Éviter le clic si on clique sur le switch ou le bouton
+                            if (e.target.type !== 'checkbox' && !e.target.closest('.btn')) {
                               window.location.href = `/#/depenses/types-frais/detail/${type.id}`;
                             }
                           }}
