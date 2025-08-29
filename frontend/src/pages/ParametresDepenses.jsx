@@ -181,14 +181,13 @@ const ParametresDepenses = () => {
   };
 
   // Gestion des types de frais
-  const handleToggleActif = async (typeId, currentActif) => {
+  const handleToggleActif = async (typeId, currentActif, isSystemType = false) => {
     try {
       setSaving(true);
-      const typeToUpdate = typesFrais.find(t => t.id === typeId);
       
       await axios.put(`${import.meta.env.VITE_API_URL}/types-frais/${typeId}`, {
-        libelle: typeToUpdate.libelle,
-        actif: !currentActif
+        actif: !currentActif,
+        societeId: societe_id // Ajouter societeId pour les types système
       });
 
       // Mettre à jour l'état local
