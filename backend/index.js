@@ -259,11 +259,25 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
 
-        // Vérifier si la société a déjà des types de frais
-        const [typesFraisExistants] = await db.execute(
-            'SELECT * FROM types_frais WHERE societe_id = ? ORDER BY libelle ASC',
-            [societeId]
-        );
+        // 1. Récupérer tous les types système
+        const [typesSysteme] = await db.execute(`
+            SELECT tf.*, 
+                   COALESCE(tfs.actif, TRUE) as actif,
+                   tfs.id as societe_config_id,
+                   'system' as source_type
+            FROM types_frais tf 
+            LEFT JOIN types_frais_societe tfs ON tf.id = tfs.type_frais_id AND tfs.societe_id = ?
+            WHERE tf.is_system = TRUE 
+            ORDER BY tf.libelle ASC
+        `, [societeId]);
+
+        // 2. Récupérer les types personnalisés de la société
+        const [typesPersonnalises] = await db.execute(`
+            SELECT *, 'custom' as source_type, NULL as societe_config_id
+            FROM types_frais 
+            WHERE societe_id = ? AND is_system = FALSE 
+            ORDER BY libelle ASC
+        `, [societeId]);
 
         // Si aucun type trouvé, insérer les valeurs par défaut
         if (typesFraisExistants.length === 0) {
