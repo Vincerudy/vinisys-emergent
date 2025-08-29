@@ -343,10 +343,10 @@ const ParametresDepenses = () => {
             </li>
             <li className="nav-item">
               <button 
-                className={`nav-link ${activeTab === 'tva' ? 'active' : ''}`}
-                onClick={() => setActiveTab('tva')}
+                className={`nav-link ${activeTab === 'types-frais' ? 'active' : ''}`}
+                onClick={() => setActiveTab('types-frais')}
               >
-                💰 Taux TVA
+                💼 Types de frais
               </button>
             </li>
           </ul>
