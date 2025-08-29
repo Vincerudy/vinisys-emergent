@@ -332,11 +332,10 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
 });
 
 
-// PUT /api/types-frais/:typeId - Modifier un type de frais
 app.put('/api/types-frais/:typeId', async (req, res) => {
     try {
         const { typeId } = req.params;
-        const { libelle, actif, societeId } = req.body;
+        const { libelle, actif, societeId, tva_deductible, taux_deduction_tva, compte_fournisseur_id, description } = req.body;
 
         // Vérifier si c'est un type système ou personnalisé
         const [typeInfo] = await db.execute(`
@@ -377,6 +376,41 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
                 }
             }
 
+            // Mettre à jour les autres champs pour les types système (TVA, compte, etc.)
+            const updates = [];
+            const values = [];
+
+            if (tva_deductible) {
+                updates.push('tva_deductible = ?');
+                values.push(tva_deductible);
+            }
+
+            if (typeof taux_deduction_tva !== 'undefined') {
+                updates.push('taux_deduction_tva = ?');
+                values.push(taux_deduction_tva);
+            }
+
+            if (typeof compte_fournisseur_id !== 'undefined') {
+                updates.push('compte_fournisseur_id = ?');
+                values.push(compte_fournisseur_id);
+            }
+
+            if (description !== undefined) {
+                updates.push('description = ?');
+                values.push(description);
+            }
+
+            if (updates.length > 0) {
+                updates.push('updated_at = NOW()');
+                values.push(typeId);
+
+                await db.execute(`
+                    UPDATE types_frais 
+                    SET ${updates.join(', ')} 
+                    WHERE id = ?
+                `, values);
+            }
+
             // On ne peut pas modifier le libellé des types système
             if (libelle) {
                 return res.status(403).json({ 
@@ -398,6 +432,26 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
             if (typeof actif !== 'undefined') {
                 updates.push('actif = ?');
                 values.push(actif ? 1 : 0);
+            }
+
+            if (tva_deductible) {
+                updates.push('tva_deductible = ?');
+                values.push(tva_deductible);
+            }
+
+            if (typeof taux_deduction_tva !== 'undefined') {
+                updates.push('taux_deduction_tva = ?');
+                values.push(taux_deduction_tva);
+            }
+
+            if (typeof compte_fournisseur_id !== 'undefined') {
+                updates.push('compte_fournisseur_id = ?');
+                values.push(compte_fournisseur_id);
+            }
+
+            if (description !== undefined) {
+                updates.push('description = ?');
+                values.push(description);
             }
 
             if (updates.length > 0) {
