@@ -635,6 +635,7 @@ const ParametresDepenses = () => {
                   <table className="table table-hover">
                     <thead className="table-light">
                       <tr>
+                        <th>Type</th>
                         <th>Libellé</th>
                         <th>Nom technique</th>
                         <th>Statut</th>
@@ -643,15 +644,32 @@ const ParametresDepenses = () => {
                     </thead>
                     <tbody>
                       {typesFrais.map((type) => (
-                        <tr key={type.id} className={!type.actif ? 'table-secondary' : ''}>
+                        <tr key={`${type.source_type}-${type.id}`} className={!type.actif ? 'table-secondary' : ''}>
+                          <td>
+                            {type.source_type === 'system' ? (
+                              <span className="badge bg-info-subtle text-info">
+                                <i className="fas fa-cog me-1"></i>
+                                Système
+                              </span>
+                            ) : (
+                              <span className="badge bg-primary-subtle text-primary">
+                                <i className="fas fa-user me-1"></i>
+                                Personnalisé
+                              </span>
+                            )}
+                          </td>
                           <td>
                             {editingType && editingType.id === type.id ? (
-                              <input
-                                type="text"
-                                value={editingType.libelle}
-                                onChange={(e) => setEditingType({ ...editingType, libelle: e.target.value })}
-                                className="form-control form-control-sm"
-                              />
+                              type.source_type === 'system' ? (
+                                <span className="text-muted">{type.libelle} <small>(non modifiable)</small></span>
+                              ) : (
+                                <input
+                                  type="text"
+                                  value={editingType.libelle}
+                                  onChange={(e) => setEditingType({ ...editingType, libelle: e.target.value })}
+                                  className="form-control form-control-sm"
+                                />
+                              )
                             ) : (
                               <strong>{type.libelle}</strong>
                             )}
@@ -662,7 +680,7 @@ const ParametresDepenses = () => {
                           <td>
                             <button
                               className={`btn btn-sm ${type.actif ? 'btn-success' : 'btn-secondary'}`}
-                              onClick={() => handleToggleActif(type.id, type.actif)}
+                              onClick={() => handleToggleActif(type.id, type.actif, type.source_type === 'system')}
                               disabled={saving}
                             >
                               {type.actif ? (
@@ -681,13 +699,15 @@ const ParametresDepenses = () => {
                           <td className="text-end">
                             {editingType && editingType.id === type.id ? (
                               <div className="btn-group btn-group-sm">
-                                <button
-                                  className="btn btn-success"
-                                  onClick={handleSaveEdit}
-                                  disabled={saving}
-                                >
-                                  <FiCheck />
-                                </button>
+                                {type.source_type !== 'system' && (
+                                  <button
+                                    className="btn btn-success"
+                                    onClick={handleSaveEdit}
+                                    disabled={saving}
+                                  >
+                                    <FiCheck />
+                                  </button>
+                                )}
                                 <button
                                   className="btn btn-secondary"
                                   onClick={handleCancelEdit}
@@ -696,13 +716,22 @@ const ParametresDepenses = () => {
                                 </button>
                               </div>
                             ) : (
-                              <button
-                                className="btn btn-outline-primary btn-sm"
-                                onClick={() => handleEditType(type)}
-                                title="Modifier"
-                              >
-                                <FiEdit />
-                              </button>
+                              <div>
+                                {type.source_type !== 'system' && (
+                                  <button
+                                    className="btn btn-outline-primary btn-sm"
+                                    onClick={() => handleEditType(type)}
+                                    title="Modifier"
+                                  >
+                                    <FiEdit />
+                                  </button>
+                                )}
+                                {type.source_type === 'system' && (
+                                  <span className="text-muted small">
+                                    <i className="fas fa-lock"></i> Système
+                                  </span>
+                                )}
+                              </div>
                             )}
                           </td>
                         </tr>
