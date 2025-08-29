@@ -282,6 +282,16 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
         // 3. Combiner les deux listes
         const allTypes = [...typesSysteme, ...typesPersonnalises];
 
+        res.json({ 
+            success: true,
+            types_frais: allTypes,
+            summary: {
+                system_types: typesSysteme.length,
+                custom_types: typesPersonnalises.length,
+                total: allTypes.length
+            }
+        });
+
 
             // Exécuter l’insertion avec societeId pour chaque ligne
             await db.execute(insertQuery, Array(8).fill(societeId));
