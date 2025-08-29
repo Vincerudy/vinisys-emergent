@@ -254,7 +254,7 @@ app.get('/api/types-frais', async (req, res) => {
 });
 
 // ENDPOINTS POUR LA GESTION DES TYPES DE FRAIS
-// GET /api/types-frais/manage/:societeId - Tous les types (pour paramétrage)
+// GET /api/types-frais/manage/:societeId - Tous les types (système + personnalisés)
 app.get('/api/types-frais/manage/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
