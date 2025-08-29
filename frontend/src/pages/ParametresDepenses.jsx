@@ -180,6 +180,104 @@ const ParametresDepenses = () => {
     }
   };
 
+  // Gestion des types de frais
+  const handleToggleActif = async (typeId, currentActif) => {
+    try {
+      setSaving(true);
+      const typeToUpdate = typesFrais.find(t => t.id === typeId);
+      
+      await axios.put(`${import.meta.env.VITE_API_URL}/types-frais/${typeId}`, {
+        libelle: typeToUpdate.libelle,
+        actif: !currentActif
+      });
+
+      // Mettre à jour l'état local
+      setTypesFrais(prev => prev.map(type => 
+        type.id === typeId ? { ...type, actif: !currentActif } : type
+      ));
+
+      Swal.fire({
+        icon: 'success',
+        title: `Type ${!currentActif ? 'activé' : 'désactivé'}`,
+        timer: 2000,
+        showConfirmButton: false,
+        position: 'top-end',
+        toast: true
+      });
+    } catch (error) {
+      console.error('Erreur toggle actif:', error);
+      Swal.fire('Erreur', 'Erreur lors de la modification', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEditType = (type) => {
+    setEditingType({ ...type });
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      setSaving(true);
+      
+      if (!editingType.libelle.trim()) {
+        Swal.fire('Erreur', 'Veuillez remplir le libellé', 'error');
+        return;
+      }
+
+      await axios.put(`${import.meta.env.VITE_API_URL}/types-frais/${editingType.id}`, {
+        libelle: editingType.libelle.trim(),
+        actif: editingType.actif
+      });
+
+      // Mettre à jour l'état local
+      setTypesFrais(prev => prev.map(type => 
+        type.id === editingType.id ? editingType : type
+      ));
+
+      setEditingType(null);
+      Swal.fire('Succès', 'Type de frais modifié avec succès', 'success');
+    } catch (error) {
+      console.error('Erreur sauvegarde:', error);
+      Swal.fire('Erreur', 'Erreur lors de la sauvegarde', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingType(null);
+  };
+
+  const handleAddNewType = async () => {
+    try {
+      setSaving(true);
+      
+      if (!newType.nom.trim() || !newType.libelle.trim()) {
+        Swal.fire('Erreur', 'Veuillez remplir le nom et le libellé', 'error');
+        return;
+      }
+
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/types-frais`, {
+        nom: newType.nom.trim().toLowerCase().replace(/\s+/g, '_'),
+        libelle: newType.libelle.trim(),
+        societe_id: societe_id
+      });
+
+      if (response.data.success) {
+        await loadTypesFrais(); // Recharger la liste
+        setNewType({ nom: '', libelle: '' });
+        setShowAddForm(false);
+        Swal.fire('Succès', 'Type de frais ajouté avec succès', 'success');
+      }
+    } catch (error) {
+      console.error('Erreur ajout type:', error);
+      Swal.fire('Erreur', 'Erreur lors de l\'ajout du type de frais', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const getTypeIcon = (type) => {
     const icons = {
       kilometrique: '🚗',
