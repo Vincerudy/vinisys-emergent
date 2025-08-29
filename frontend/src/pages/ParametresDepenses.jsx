@@ -43,6 +43,8 @@ const ParametresDepenses = () => {
       await loadCategories();
     } else if (activeTab === 'baremes') {
       await loadBaremes();
+    } else if (activeTab === 'types-frais') {
+      await loadTypesFrais();
     }
   };
 
