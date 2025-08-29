@@ -1,13 +1,12 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-
-  host: 'localhost',
-  port: 8889,  // Port MySQL de MAMP
-  user: 'root',
-  password: 'root',
-  database: 'vinisys',
- 
+  host: process.env.MYSQL_HOST || 'localhost',
+  port: process.env.MYSQL_PORT || 3306,
+  user: process.env.MYSQL_USER || 'vinisys',
+  password: process.env.MYSQL_PASSWORD || 'password123',
+  database: process.env.MYSQL_DATABASE || 'vinisys',
+  
   multipleStatements: true, // 👉 autorise plusieurs requêtes
   waitForConnections: true,
   connectionLimit: 10,
