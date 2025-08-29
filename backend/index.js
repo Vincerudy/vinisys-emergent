@@ -312,9 +312,6 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
 // PUT /api/types-frais/:typeId - Modifier un type de frais
 app.put('/api/types-frais/:typeId', async (req, res) => {
     try {
-// PUT /api/types-frais/:typeId - Modifier un type de frais
-app.put('/api/types-frais/:typeId', async (req, res) => {
-    try {
         const { typeId } = req.params;
         const { libelle, actif, societeId } = req.body;
 
