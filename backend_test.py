@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - MySQL Database Restoration Testing
-Tests the specific APIs after MySQL database restoration:
-1. Authentication: POST /api/login with idnovation2014@gmail.com / 123456
-2. Verify API responds on http://localhost:8001/api/login
-3. Test main endpoints like dashboard, factures, clients
-4. Verify MySQL database is connected and contains data (users, societes, factures)
-5. Test JWT authentication and user permissions
+Backend API Testing Script for Vinisys Application - Types de Frais API Testing
+Tests the expense types APIs integrated in ParametresDepenses:
+1. GET /api/types-frais/manage/{societe_id} - Get expense types list
+2. PUT /api/types-frais/{id} - Modify expense type (label and active/inactive status)  
+3. POST /api/types-frais - Create new expense type
+4. Expected response structure with success boolean and types_frais array
+Societe_id to use: 2 (based on previous tests)
 """
 
 import requests
@@ -15,8 +15,9 @@ import sys
 import os
 from datetime import datetime
 
-# Backend URL configuration - Using localhost:8001 as specified in request
-BASE_URL = "http://localhost:8001"
+# Backend URL configuration - Using production URL from frontend/.env
+REACT_APP_BACKEND_URL = "https://finance-app-ui.preview.emergentagent.com"
+BASE_URL = REACT_APP_BACKEND_URL
 API_BASE = f"{BASE_URL}/api"
 
 # Test credentials from user request
