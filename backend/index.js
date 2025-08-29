@@ -279,8 +279,8 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
             ORDER BY libelle ASC
         `, [societeId]);
 
-        // Si aucun type trouvé, insérer les valeurs par défaut
-        if (typesFraisExistants.length === 0) {
+        // 3. Combiner les deux listes
+        const allTypes = [...typesSysteme, ...typesPersonnalises];
             const insertQuery = `
                 INSERT INTO types_frais 
                 (nom, code, description, actif, created_at, updated_at, societe_id, libelle) VALUES
