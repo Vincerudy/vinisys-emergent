@@ -312,18 +312,93 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
 // PUT /api/types-frais/:typeId - Modifier un type de frais
 app.put('/api/types-frais/:typeId', async (req, res) => {
     try {
+// PUT /api/types-frais/:typeId - Modifier un type de frais
+app.put('/api/types-frais/:typeId', async (req, res) => {
+    try {
         const { typeId } = req.params;
-        const { libelle, actif } = req.body;
+        const { libelle, actif, societeId } = req.body;
 
-        await db.execute(
-            'UPDATE types_frais SET libelle = ?, actif = ? WHERE id = ?',
-            [libelle, actif ? 1 : 0, typeId]
-        );
+        // Vérifier si c'est un type système ou personnalisé
+        const [typeInfo] = await db.execute(`
+            SELECT is_system, societe_id FROM types_frais WHERE id = ?
+        `, [typeId]);
 
-        res.json({
+        if (typeInfo.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Type de frais non trouvé' 
+            });
+        }
+
+        const isSystemType = typeInfo[0].is_system;
+
+        if (isSystemType) {
+            // Pour les types système : gérer via la table types_frais_societe
+            if (typeof actif !== 'undefined') {
+                // Vérifier s'il existe déjà une configuration pour cette société
+                const [existingConfig] = await db.execute(`
+                    SELECT id FROM types_frais_societe 
+                    WHERE societe_id = ? AND type_frais_id = ?
+                `, [societeId, typeId]);
+
+                if (existingConfig.length > 0) {
+                    // Mettre à jour la configuration existante
+                    await db.execute(`
+                        UPDATE types_frais_societe 
+                        SET actif = ?, updated_at = NOW()
+                        WHERE societe_id = ? AND type_frais_id = ?
+                    `, [actif, societeId, typeId]);
+                } else {
+                    // Créer une nouvelle configuration
+                    await db.execute(`
+                        INSERT INTO types_frais_societe (societe_id, type_frais_id, actif, created_at, updated_at)
+                        VALUES (?, ?, ?, NOW(), NOW())
+                    `, [societeId, typeId, actif]);
+                }
+            }
+
+            // On ne peut pas modifier le libellé des types système
+            if (libelle) {
+                return res.status(403).json({ 
+                    success: false, 
+                    message: 'Impossible de modifier le libellé d\'un type système' 
+                });
+            }
+
+        } else {
+            // Pour les types personnalisés : modification directe
+            const updates = [];
+            const values = [];
+
+            if (libelle) {
+                updates.push('libelle = ?');
+                values.push(libelle);
+            }
+
+            if (typeof actif !== 'undefined') {
+                updates.push('actif = ?');
+                values.push(actif ? 1 : 0);
+            }
+
+            if (updates.length > 0) {
+                updates.push('updated_at = NOW()');
+                values.push(typeId);
+                values.push(typeInfo[0].societe_id);
+
+                await db.execute(`
+                    UPDATE types_frais 
+                    SET ${updates.join(', ')} 
+                    WHERE id = ? AND societe_id = ?
+                `, values);
+            }
+        }
+
+        res.json({ 
             success: true,
-            message: 'Type de frais modifié avec succès'
+            message: 'Type de frais mis à jour avec succès',
+            type: isSystemType ? 'system' : 'custom'
         });
+
     } catch (error) {
         console.error('Erreur modification type de frais:', error);
         res.status(500).json({
@@ -333,7 +408,7 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
     }
 });
 
-// POST /api/types-frais - Créer un nouveau type de frais
+// POST /api/types-frais - Créer un nouveau type de frais personnalisé
 app.post('/api/types-frais', async (req, res) => {
     try {
         const { nom, libelle, societe_id } = req.body;
@@ -345,14 +420,15 @@ app.post('/api/types-frais', async (req, res) => {
             });
         }
 
+        // Créer uniquement des types personnalisés (is_system = FALSE)
         const [result] = await db.execute(
-            'INSERT INTO types_frais (nom, libelle, societe_id, actif) VALUES (?, ?, ?, 1)',
+            'INSERT INTO types_frais (nom, libelle, societe_id, actif, is_system, created_at, updated_at) VALUES (?, ?, ?, 1, FALSE, NOW(), NOW())',
             [nom, libelle, societe_id]
         );
 
         res.status(201).json({
             success: true,
-            message: 'Type de frais créé avec succès',
+            message: 'Type de frais personnalisé créé avec succès',
             data: { typeId: result.insertId }
         });
     } catch (error) {
