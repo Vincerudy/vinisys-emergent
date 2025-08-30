@@ -705,8 +705,11 @@ app.post('/api/types-frais', async (req, res) => {
             });
         }
 
-        // Générer un code unique à partir du nom
-        const code = nom.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+        // Générer un code unique à partir du nom (limité à 20 caractères)
+        const code = nom.toLowerCase()
+            .replace(/\s+/g, '_')
+            .replace(/[^a-z0-9_]/g, '')
+            .substring(0, 20);
 
         // Créer un nouveau type entièrement personnalisé directement dans types_frais
         const [result] = await db.execute(`
