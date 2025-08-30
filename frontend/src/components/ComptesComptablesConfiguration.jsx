@@ -135,8 +135,8 @@ const ComptesComptablesConfiguration = () => {
     },
     {
       title: 'Numéro',
-      dataIndex: 'numero',
-      key: 'numero',
+      dataIndex: 'numero_compte',
+      key: 'numero_compte',
       width: 120,
       render: (text) => <code style={{ backgroundColor: '#f5f5f5', padding: '2px 6px', borderRadius: '3px' }}>{text}</code>
     },
