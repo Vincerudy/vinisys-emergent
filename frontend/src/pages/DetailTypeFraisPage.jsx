@@ -354,16 +354,16 @@ const DetailTypeFraisPage = () => {
             </div>
             <div className="card-body">
               <div className="mb-4">
-                <label className="form-label">Compte fournisseur</label>
+                <label className="form-label">Compte comptable</label>
                 <select
                   className="form-select"
-                  value={formData.compte_fournisseur_id || ''}
-                  onChange={(e) => handleInputChange('compte_fournisseur_id', e.target.value || null)}
+                  value={formData.compte_comptable_id || ''}
+                  onChange={(e) => handleInputChange('compte_comptable_id', e.target.value || null)}
                 >
                   <option value="">-- Sélectionner un compte --</option>
-                  {comptesFournisseur.map(compte => (
+                  {comptesComptables.map(compte => (
                     <option key={compte.id} value={compte.id}>
-                      {compte.numero} - {compte.libelle}
+                      {compte.numero_compte} - {compte.libelle}
                       {compte.is_personalized && ' (Personnalisé)'}
                       {!compte.is_system && !compte.is_personalized && ' (Ajouté)'}
                     </option>
@@ -372,7 +372,7 @@ const DetailTypeFraisPage = () => {
                 <div className="form-text">
                   Compte comptable utilisé pour l'imputation de ce type de frais.
                   <Link to="/societe/configuration" className="ms-2" target="_blank">
-                    Gérer les comptes fournisseur
+                    Gérer les comptes comptables
                   </Link>
                 </div>
               </div>
