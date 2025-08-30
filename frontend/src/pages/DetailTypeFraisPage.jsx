@@ -356,6 +356,8 @@ const DetailTypeFraisPage = () => {
                   {comptesFournisseur.map(compte => (
                     <option key={compte.id} value={compte.id}>
                       {compte.numero} - {compte.libelle}
+                      {compte.is_personalized && ' (Personnalisé)'}
+                      {!compte.is_system && !compte.is_personalized && ' (Ajouté)'}
                     </option>
                   ))}
                 </select>
