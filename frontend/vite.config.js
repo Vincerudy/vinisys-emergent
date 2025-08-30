@@ -16,6 +16,14 @@ export default defineConfig({
     port: 3000,
     host: '0.0.0.0',
     strictPort: true,
+    watch: {
+      ignored: [
+        '**/node_modules/**',
+        '**/public/images/**',
+        '**/*.{png,jpg,jpeg,gif,svg,ico,webp}'
+      ],
+      usePolling: false,
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:8001',
