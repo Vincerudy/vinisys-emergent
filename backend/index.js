@@ -696,7 +696,7 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
 // POST /api/types-frais - Créer un nouveau type de frais personnalisé
 app.post('/api/types-frais', async (req, res) => {
     try {
-        const { nom, libelle, societe_id, description, tva_deductible, taux_deduction_tva, compte_fournisseur_id } = req.body;
+        const { nom, libelle, societe_id, description, tva_deductible, taux_deduction_tva, compte_comptable_id } = req.body;
 
         if (!nom || !libelle || !societe_id) {
             return res.status(400).json({
@@ -705,31 +705,41 @@ app.post('/api/types-frais', async (req, res) => {
             });
         }
 
-        // Créer un nouveau type entièrement personnalisé
+        // Générer un code unique à partir du nom
+        const code = nom.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+
+        // Créer un nouveau type entièrement personnalisé directement dans types_frais
         const [result] = await db.execute(`
-            INSERT INTO types_frais_personnalises 
-            (societe_id, type_frais_id, nom, libelle, description, actif, tva_deductible, taux_deduction_tva, compte_fournisseur_id, created_at, updated_at)
-            VALUES (?, NULL, ?, ?, ?, TRUE, ?, ?, ?, NOW(), NOW())
+            INSERT INTO types_frais 
+            (nom, code, libelle, description, societe_id, actif, is_system, tva_deductible, taux_deduction_tva, compte_comptable_id, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, 1, 0, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         `, [
-            societe_id,
-            nom.toLowerCase().replace(/\s+/g, '_'),
+            nom.trim(),
+            code,
             libelle.trim(),
             description || null,
-            tva_deductible || 'oui',
-            taux_deduction_tva || 100,
-            compte_fournisseur_id || null
+            societe_id,
+            tva_deductible || 1,
+            taux_deduction_tva || 20.00,
+            compte_comptable_id || null
         ]);
 
         res.status(201).json({
             success: true,
             message: 'Type de frais personnalisé créé avec succès',
-            data: { typeId: result.insertId }
+            data: { 
+                typeId: result.insertId,
+                nom: nom.trim(),
+                libelle: libelle.trim(),
+                code: code
+            }
         });
     } catch (error) {
         console.error('Erreur création type de frais:', error);
         res.status(500).json({
             success: false,
-            message: 'Erreur lors de la création du type de frais'
+            message: 'Erreur lors de la création du type de frais',
+            details: error.message
         });
     }
 });
