@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiArrowLeft, FiPlus, FiEdit2, FiTrash2, FiSave, FiSettings, FiEdit, FiX, FiCheck, FiToggleLeft, FiToggleRight } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import api from '../contexte/Api';
 import { useAuth } from '../contexte/AuthContext';
