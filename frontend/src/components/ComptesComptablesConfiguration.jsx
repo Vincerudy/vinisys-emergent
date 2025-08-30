@@ -41,7 +41,7 @@ const ComptesComptablesConfiguration = () => {
   const handleEdit = (compte) => {
     setEditingCompte(compte);
     form.setFieldsValue({
-      numero: compte.numero,
+      numero: compte.numero_compte,
       libelle: compte.libelle,
       description: compte.description,
       actif: compte.actif
@@ -53,7 +53,7 @@ const ComptesComptablesConfiguration = () => {
     // Personnaliser un compte système
     setEditingCompte({ ...compte, is_personalization: true });
     form.setFieldsValue({
-      numero: compte.numero,
+      numero: compte.numero_compte,
       libelle: compte.libelle,
       description: compte.description,
       actif: true
