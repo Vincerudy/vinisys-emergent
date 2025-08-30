@@ -766,7 +766,7 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
 // POST /api/types-frais - Créer un nouveau type de frais personnalisé
 app.post('/api/types-frais', async (req, res) => {
     try {
-        const { nom, libelle, societe_id } = req.body;
+        const { nom, libelle, societe_id, description, tva_deductible, taux_deduction_tva, compte_fournisseur_id } = req.body;
 
         if (!nom || !libelle || !societe_id) {
             return res.status(400).json({
@@ -775,11 +775,20 @@ app.post('/api/types-frais', async (req, res) => {
             });
         }
 
-        // Créer uniquement des types personnalisés (is_system = FALSE)
-        const [result] = await db.execute(
-            'INSERT INTO types_frais (nom, libelle, societe_id, actif, is_system, created_at, updated_at) VALUES (?, ?, ?, 1, FALSE, NOW(), NOW())',
-            [nom, libelle, societe_id]
-        );
+        // Créer un nouveau type entièrement personnalisé
+        const [result] = await db.execute(`
+            INSERT INTO types_frais_personnalises 
+            (societe_id, type_frais_id, nom, libelle, description, actif, tva_deductible, taux_deduction_tva, compte_fournisseur_id, created_at, updated_at)
+            VALUES (?, NULL, ?, ?, ?, TRUE, ?, ?, ?, NOW(), NOW())
+        `, [
+            societe_id,
+            nom.toLowerCase().replace(/\s+/g, '_'),
+            libelle.trim(),
+            description || null,
+            tva_deductible || 'oui',
+            taux_deduction_tva || 100,
+            compte_fournisseur_id || null
+        ]);
 
         res.status(201).json({
             success: true,
