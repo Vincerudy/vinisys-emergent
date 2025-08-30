@@ -477,31 +477,31 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
         // 1. Récupérer tous les types système avec leurs personnalisations
         const [typesSysteme] = await db.execute(`
             SELECT tf.id, tf.nom, tf.libelle, tf.description, tf.actif, tf.is_system,
-                   tf.tva_deductible, tf.taux_deduction_tva, tf.compte_fournisseur_id,
+                   tf.tva_deductible, tf.taux_deduction_tva, tf.compte_comptable_id,
                    tfs.actif as societe_actif,
-                   tfp.id as pers_id, tfp.nom as pers_nom, tfp.libelle as pers_libelle,
-                   tfp.description as pers_description, tfp.actif as pers_actif,
-                   tfp.tva_deductible as pers_tva_deductible, 
-                   tfp.taux_deduction_tva as pers_taux_deduction_tva,
-                   tfp.compte_fournisseur_id as pers_compte_fournisseur_id,
+                   tfsp.id as pers_id, tfsp.libelle_personnalise as pers_libelle,
+                   tfsp.description_personnalisee as pers_description,
+                   tfsp.tva_deductible as pers_tva_deductible, 
+                   tfsp.taux_deduction_tva as pers_taux_deduction_tva,
+                   tfsp.compte_comptable_id as pers_compte_comptable_id,
                    CASE 
-                     WHEN tfp.id IS NOT NULL THEN TRUE 
+                     WHEN tfsp.id IS NOT NULL THEN TRUE 
                      ELSE FALSE 
                    END as is_personalized
             FROM types_frais tf 
             LEFT JOIN types_frais_societe tfs ON tf.id = tfs.type_frais_id AND tfs.societe_id = ?
-            LEFT JOIN types_frais_personnalises tfp ON tf.id = tfp.type_frais_id AND tfp.societe_id = ?
-            WHERE tf.is_system = TRUE 
+            LEFT JOIN types_frais_societe_personnalisation tfsp ON tf.id = tfsp.type_frais_id AND tfsp.societe_id = ?
+            WHERE tf.is_system = 1 
             ORDER BY tf.libelle ASC
         `, [societeId, societeId]);
 
-        // 2. Récupérer les types entièrement nouveaux de la société
-        const [typesNouveaux] = await db.execute(`
+        // 2. Récupérer les types personnalisés de la société (non-système créés par la société)
+        const [typesCustom] = await db.execute(`
             SELECT id, nom, libelle, description, actif, 
-                   tva_deductible, taux_deduction_tva, compte_fournisseur_id,
-                   FALSE as is_system, FALSE as is_personalized, 'custom' as source_type
-            FROM types_frais_personnalises
-            WHERE societe_id = ? AND type_frais_id IS NULL
+                   tva_deductible, taux_deduction_tva, compte_comptable_id,
+                   0 as is_system, 0 as is_personalized, 'custom' as source_type
+            FROM types_frais
+            WHERE societe_id = ? AND is_system = 0
             ORDER BY libelle ASC
         `, [societeId]);
 
@@ -511,20 +511,21 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
         // Ajouter les types système (personnalisés ou non)
         typesSysteme.forEach(type => {
             if (type.is_personalized) {
-                // Type personnalisé
+                // Type système personnalisé
                 allTypes.push({
-                    id: type.pers_id,
-                    nom: type.pers_nom,
-                    libelle: type.pers_libelle,
-                    description: type.pers_description,
-                    actif: type.pers_actif,
-                    tva_deductible: type.pers_tva_deductible,
-                    taux_deduction_tva: type.pers_taux_deduction_tva,
-                    compte_fournisseur_id: type.pers_compte_fournisseur_id,
+                    id: type.id,
+                    nom: type.nom,
+                    libelle: type.pers_libelle || type.libelle,
+                    description: type.pers_description || type.description,
+                    actif: type.societe_actif !== null ? type.societe_actif : type.actif,
+                    tva_deductible: type.pers_tva_deductible !== null ? type.pers_tva_deductible : type.tva_deductible,
+                    taux_deduction_tva: type.pers_taux_deduction_tva !== null ? type.pers_taux_deduction_tva : type.taux_deduction_tva,
+                    compte_comptable_id: type.pers_compte_comptable_id !== null ? type.pers_compte_comptable_id : type.compte_comptable_id,
                     source_type: 'personalized',
                     original_id: type.id,
-                    is_system: false,
-                    is_personalized: true
+                    is_system: true,
+                    is_personalized: true,
+                    personnalisation_id: type.pers_id
                 });
             } else {
                 // Type système non personnalisé
@@ -537,7 +538,7 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
                     actif: actifStatus,
                     tva_deductible: type.tva_deductible,
                     taux_deduction_tva: type.taux_deduction_tva,
-                    compte_fournisseur_id: type.compte_fournisseur_id,
+                    compte_comptable_id: type.compte_comptable_id,
                     source_type: 'system',
                     is_system: true,
                     is_personalized: false
@@ -545,11 +546,13 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
             }
         });
 
-        // Ajouter les types entièrement nouveaux
-        typesNouveaux.forEach(type => {
+        // Ajouter les types entièrement nouveaux créés par la société
+        typesCustom.forEach(type => {
             allTypes.push({
                 ...type,
-                source_type: 'custom'
+                source_type: 'custom',
+                is_system: false,
+                is_personalized: false
             });
         });
 
@@ -559,7 +562,7 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
             summary: {
                 system_types: typesSysteme.filter(t => !t.is_personalized).length,
                 personalized_types: typesSysteme.filter(t => t.is_personalized).length,
-                custom_types: typesNouveaux.length,
+                custom_types: typesCustom.length,
                 total: allTypes.length
             }
         });
