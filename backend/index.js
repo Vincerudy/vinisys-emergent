@@ -1148,7 +1148,7 @@ app.post('/api/baremes-kilometriques', async (req, res) => {
 app.put('/api/baremes-kilometriques/:baremeId', async (req, res) => {
     try {
         const { baremeId } = req.params;
-        const { nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, societeId } = req.body;
+        const { nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, actif, societeId } = req.body;
 
         // Vérifier si le barème existe et s'il est système
         const [baremeInfo] = await db.execute(`
