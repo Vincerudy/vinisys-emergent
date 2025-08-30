@@ -505,8 +505,53 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
             ORDER BY libelle ASC
         `, [societeId]);
 
-        // 3. Combiner les deux listes
-        const allTypes = [...typesSysteme, ...typesPersonnalises];
+        // 3. Formater les résultats
+        const allTypes = [];
+
+        // Ajouter les types système (personnalisés ou non)
+        typesSysteme.forEach(type => {
+            if (type.is_personalized) {
+                // Type personnalisé
+                allTypes.push({
+                    id: type.pers_id,
+                    nom: type.pers_nom,
+                    libelle: type.pers_libelle,
+                    description: type.pers_description,
+                    actif: type.pers_actif,
+                    tva_deductible: type.pers_tva_deductible,
+                    taux_deduction_tva: type.pers_taux_deduction_tva,
+                    compte_fournisseur_id: type.pers_compte_fournisseur_id,
+                    source_type: 'personalized',
+                    original_id: type.id,
+                    is_system: false,
+                    is_personalized: true
+                });
+            } else {
+                // Type système non personnalisé
+                const actifStatus = type.societe_actif !== null ? type.societe_actif : type.actif;
+                allTypes.push({
+                    id: type.id,
+                    nom: type.nom,
+                    libelle: type.libelle,
+                    description: type.description,
+                    actif: actifStatus,
+                    tva_deductible: type.tva_deductible,
+                    taux_deduction_tva: type.taux_deduction_tva,
+                    compte_fournisseur_id: type.compte_fournisseur_id,
+                    source_type: 'system',
+                    is_system: true,
+                    is_personalized: false
+                });
+            }
+        });
+
+        // Ajouter les types entièrement nouveaux
+        typesNouveaux.forEach(type => {
+            allTypes.push({
+                ...type,
+                source_type: 'custom'
+            });
+        });
 
         res.json({ 
             success: true,
