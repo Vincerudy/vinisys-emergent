@@ -65,9 +65,12 @@ const DetailTypeFraisPage = () => {
 
   const loadComptesFournisseur = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/comptes-fournisseur`);
+      // Charger les comptes disponibles pour cette société (système + personnalisés)
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/comptes-fournisseur/societe/${societe_id}`);
       if (response.data.success) {
-        setComptesFournisseur(response.data.comptes);
+        // Filtrer uniquement les comptes actifs
+        const comptesActifs = response.data.comptes.filter(compte => compte.actif);
+        setComptesFournisseur(comptesActifs);
       }
     } catch (error) {
       console.error('Erreur chargement comptes fournisseur:', error);
