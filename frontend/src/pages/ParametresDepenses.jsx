@@ -224,11 +224,8 @@ const ParametresDepenses = () => {
         return;
       }
 
-      // Vérifier si c'est un type système
-      if (editingType.source_type === 'system') {
-        Swal.fire('Erreur', 'Impossible de modifier le libellé d\'un type système', 'error');
-        return;
-      }
+      // Maintenant tous les types peuvent être modifiés (personnalisation complète)
+      // Aucune restriction sur les types système
 
       await axios.put(`${import.meta.env.VITE_API_URL}/types-frais/${editingType.id}`, {
         libelle: editingType.libelle.trim(),
