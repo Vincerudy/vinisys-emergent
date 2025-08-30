@@ -61,10 +61,13 @@ const ParametresDepenses = () => {
   const loadBaremes = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/baremes/${userId}`);
-      setBaremes(response.data);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/baremes-kilometriques/societe/${societe_id}`);
+      if (response.data.success) {
+        setBaremes(response.data.baremes_kilometriques);
+      }
     } catch (error) {
-      console.error('Erreur lors du chargement des barèmes:', error);
+      console.error('Erreur chargement barèmes:', error);
+      Swal.fire('Erreur', 'Impossible de charger les barèmes kilométriques', 'error');
     } finally {
       setLoading(false);
     }
