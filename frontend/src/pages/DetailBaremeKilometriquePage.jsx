@@ -89,6 +89,7 @@ const DetailBaremeKilometriquePage = () => {
         puissance_fiscale_min: parseInt(formData.puissance_fiscale_min) || 0,
         puissance_fiscale_max: parseInt(formData.puissance_fiscale_max) || 0,
         tarif_par_km: parseFloat(formData.tarif_par_km),
+        actif: formData.actif ? 1 : 0,
         societeId: societe_id
       };
 
