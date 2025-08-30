@@ -492,6 +492,100 @@ const DetailTypeFraisPage = () => {
             </div>
           </div>
 
+          {/* Configuration des champs pour ce type de frais */}
+          <div className="card mt-4">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h6 className="card-title mb-0">Configuration des champs de saisie</h6>
+              <button 
+                className="btn btn-sm btn-primary"
+                onClick={saveChampsConfig}
+              >
+                <FiSave className="me-1" />
+                Sauvegarder config
+              </button>
+            </div>
+            <div className="card-body">
+              <p className="text-muted mb-4">
+                Configurez quels champs sont visibles lors de la création d'un frais de ce type.
+              </p>
+              
+              <div className="row">
+                {champsConfig.map((champ, index) => (
+                  <div key={champ.nom_champ} className="col-md-6 mb-3">
+                    <div className="d-flex justify-content-between align-items-center p-3 border rounded">
+                      <div>
+                        <strong>{getChampLabel(champ.nom_champ)}</strong>
+                        <br />
+                        <small className="text-muted">{champ.nom_champ}</small>
+                      </div>
+                      <div className="btn-group btn-group-sm" role="group">
+                        <input
+                          type="radio"
+                          className="btn-check"
+                          name={`config-${champ.nom_champ}`}
+                          id={`non-visible-${champ.nom_champ}`}
+                          checked={champ.visibilite === 'non_visible'}
+                          onChange={() => handleChampConfigChange(champ.nom_champ, 'non_visible')}
+                        />
+                        <label 
+                          className="btn btn-outline-secondary" 
+                          htmlFor={`non-visible-${champ.nom_champ}`}
+                          title="Non visible"
+                        >
+                          👁️‍🗨️
+                        </label>
+
+                        <input
+                          type="radio"
+                          className="btn-check"
+                          name={`config-${champ.nom_champ}`}
+                          id={`facultatif-${champ.nom_champ}`}
+                          checked={champ.visibilite === 'facultatif'}
+                          onChange={() => handleChampConfigChange(champ.nom_champ, 'facultatif')}
+                        />
+                        <label 
+                          className="btn btn-outline-primary" 
+                          htmlFor={`facultatif-${champ.nom_champ}`}
+                          title="Saisie facultative"
+                        >
+                          📝
+                        </label>
+
+                        <input
+                          type="radio"
+                          className="btn-check"
+                          name={`config-${champ.nom_champ}`}
+                          id={`obligatoire-${champ.nom_champ}`}
+                          checked={champ.visibilite === 'obligatoire'}
+                          onChange={() => handleChampConfigChange(champ.nom_champ, 'obligatoire')}
+                        />
+                        <label 
+                          className="btn btn-outline-danger" 
+                          htmlFor={`obligatoire-${champ.nom_champ}`}
+                          title="Saisie obligatoire"
+                        >
+                          ❗
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4">
+                <div className="alert alert-info">
+                  <strong>Légende :</strong>
+                  <br />
+                  👁️‍🗨️ <strong>Non visible</strong> : Le champ n'apparaît pas dans le formulaire
+                  <br />
+                  📝 <strong>Facultatif</strong> : Le champ peut être laissé vide
+                  <br />
+                  ❗ <strong>Obligatoire</strong> : Le champ doit être rempli
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="card mt-4">
             <div className="card-header">
               <h6 className="card-title mb-0">Actions</h6>
