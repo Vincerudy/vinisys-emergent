@@ -276,6 +276,198 @@ app.get('/api/comptes-fournisseur', async (req, res) => {
     }
 });
 
+// API pour les comptes fournisseur d'une société (système + personnalisés)
+app.get('/api/comptes-fournisseur/societe/:societeId', async (req, res) => {
+    try {
+        const { societeId } = req.params;
+
+        // 1. Récupérer les comptes système avec leurs personnalisations
+        const [comptesSysteme] = await db.execute(`
+            SELECT cf.id, cf.numero, cf.libelle, cf.description, cf.actif, cf.is_system,
+                   cfs.id as personalized_id, cfs.numero as pers_numero, 
+                   cfs.libelle as pers_libelle, cfs.description as pers_description,
+                   cfs.actif as pers_actif,
+                   CASE 
+                     WHEN cfs.id IS NOT NULL THEN TRUE 
+                     ELSE FALSE 
+                   END as is_personalized
+            FROM comptes_fournisseur cf
+            LEFT JOIN comptes_fournisseur_societe cfs ON cf.id = cfs.compte_fournisseur_id AND cfs.societe_id = ?
+            WHERE cf.is_system = TRUE
+            ORDER BY cf.numero ASC
+        `, [societeId]);
+
+        // 2. Récupérer les comptes entièrement nouveaux de la société
+        const [comptesNouveaux] = await db.execute(`
+            SELECT id, numero, libelle, description, actif, 
+                   FALSE as is_system, FALSE as is_personalized
+            FROM comptes_fournisseur_societe
+            WHERE societe_id = ? AND compte_fournisseur_id IS NULL
+            ORDER BY numero ASC
+        `, [societeId]);
+
+        // 3. Formater les résultats
+        const comptes = [];
+
+        // Ajouter les comptes système (personnalisés ou non)
+        comptesSysteme.forEach(compte => {
+            if (compte.is_personalized) {
+                // Compte personnalisé
+                comptes.push({
+                    id: compte.personalized_id,
+                    numero: compte.pers_numero,
+                    libelle: compte.pers_libelle,
+                    description: compte.pers_description,
+                    actif: compte.pers_actif,
+                    is_system: false,
+                    is_personalized: true,
+                    original_id: compte.id
+                });
+            } else {
+                // Compte système non personnalisé
+                comptes.push({
+                    id: compte.id,
+                    numero: compte.numero,
+                    libelle: compte.libelle,
+                    description: compte.description,
+                    actif: compte.actif,
+                    is_system: true,
+                    is_personalized: false
+                });
+            }
+        });
+
+        // Ajouter les comptes entièrement nouveaux
+        comptesNouveaux.forEach(compte => {
+            comptes.push({
+                ...compte,
+                is_system: false,
+                is_personalized: false
+            });
+        });
+
+        res.json({
+            success: true,
+            comptes: comptes
+        });
+
+    } catch (error) {
+        console.error('Erreur chargement comptes société:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors du chargement des comptes'
+        });
+    }
+});
+
+// POST - Créer/Personnaliser un compte pour une société
+app.post('/api/comptes-fournisseur/societe', async (req, res) => {
+    try {
+        const { societe_id, compte_fournisseur_id, numero, libelle, description, actif } = req.body;
+
+        if (!societe_id || !numero || !libelle) {
+            return res.status(400).json({
+                success: false,
+                message: 'Société ID, numéro et libellé sont requis'
+            });
+        }
+
+        const [result] = await db.execute(`
+            INSERT INTO comptes_fournisseur_societe 
+            (societe_id, compte_fournisseur_id, numero, libelle, description, actif, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+        `, [societe_id, compte_fournisseur_id || null, numero, libelle, description || null, actif !== false]);
+
+        res.status(201).json({
+            success: true,
+            message: compte_fournisseur_id ? 'Compte personnalisé avec succès' : 'Compte créé avec succès',
+            data: { compteId: result.insertId }
+        });
+
+    } catch (error) {
+        console.error('Erreur création compte société:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la création du compte'
+        });
+    }
+});
+
+// PUT - Modifier un compte personnalisé
+app.put('/api/comptes-fournisseur/societe/:compteId', async (req, res) => {
+    try {
+        const { compteId } = req.params;
+        const { numero, libelle, description, actif } = req.body;
+
+        const updates = [];
+        const values = [];
+
+        if (numero) {
+            updates.push('numero = ?');
+            values.push(numero);
+        }
+        if (libelle) {
+            updates.push('libelle = ?');
+            values.push(libelle);
+        }
+        if (description !== undefined) {
+            updates.push('description = ?');
+            values.push(description);
+        }
+        if (typeof actif !== 'undefined') {
+            updates.push('actif = ?');
+            values.push(actif);
+        }
+
+        if (updates.length > 0) {
+            updates.push('updated_at = NOW()');
+            values.push(compteId);
+
+            await db.execute(`
+                UPDATE comptes_fournisseur_societe 
+                SET ${updates.join(', ')} 
+                WHERE id = ?
+            `, values);
+        }
+
+        res.json({
+            success: true,
+            message: 'Compte modifié avec succès'
+        });
+
+    } catch (error) {
+        console.error('Erreur modification compte:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la modification'
+        });
+    }
+});
+
+// DELETE - Supprimer un compte personnalisé
+app.delete('/api/comptes-fournisseur/societe/:compteId', async (req, res) => {
+    try {
+        const { compteId } = req.params;
+
+        await db.execute(`
+            DELETE FROM comptes_fournisseur_societe 
+            WHERE id = ?
+        `, [compteId]);
+
+        res.json({
+            success: true,
+            message: 'Compte supprimé avec succès'
+        });
+
+    } catch (error) {
+        console.error('Erreur suppression compte:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la suppression'
+        });
+    }
+});
+
 // ENDPOINTS POUR LA GESTION DES TYPES DE FRAIS
 // GET /api/types-frais/manage/:societeId - Tous les types (système + personnalisés)
 app.get('/api/types-frais/manage/:societeId', async (req, res) => {
