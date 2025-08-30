@@ -168,7 +168,7 @@ const FraisKilometriques = ({ onCalculationChange }) => {
 
       <LoadScript
         googleMapsApiKey="AIzaSyCYKDWRjBPotRjX-AgWnL5Y7-iKAbsu2KA"
-        libraries={['places', 'geometry']}
+        libraries={libraries}
         onLoad={() => console.log('✅ Google Maps LoadScript chargé')}
         onError={(e) => {
           console.error('❌ Erreur LoadScript:', e);
@@ -182,12 +182,26 @@ const FraisKilometriques = ({ onCalculationChange }) => {
               <i className="fas fa-map-marker-alt start-marker"></i>
               Point de départ
             </label>
-            <input
-              ref={originInputRef}
-              type="text"
-              placeholder="Saisir l'adresse de départ (ex: Paris, France)"
-              className="route-input"
-            />
+            <Autocomplete
+              onLoad={(autocomplete) => {
+                originAutocompleteRef.current = autocomplete;
+              }}
+              onPlaceChanged={() => {
+                if (originAutocompleteRef.current) {
+                  const place = originAutocompleteRef.current.getPlace();
+                  if (place && place.formatted_address) {
+                    console.log('📍 Lieu sélectionné (départ):', place.formatted_address);
+                  }
+                }
+              }}
+            >
+              <input
+                ref={originInputRef}
+                type="text"
+                placeholder="Saisir l'adresse de départ (ex: Paris, France)"
+                className="route-input"
+              />
+            </Autocomplete>
           </div>
 
           <div className="input-group">
@@ -195,12 +209,26 @@ const FraisKilometriques = ({ onCalculationChange }) => {
               <i className="fas fa-map-marker-alt end-marker"></i>
               Point d'arrivée
             </label>
-            <input
-              ref={destinationInputRef}
-              type="text"
-              placeholder="Saisir l'adresse d'arrivée (ex: Lyon, France)"
-              className="route-input"
-            />
+            <Autocomplete
+              onLoad={(autocomplete) => {
+                destinationAutocompleteRef.current = autocomplete;
+              }}
+              onPlaceChanged={() => {
+                if (destinationAutocompleteRef.current) {
+                  const place = destinationAutocompleteRef.current.getPlace();
+                  if (place && place.formatted_address) {
+                    console.log('📍 Lieu sélectionné (arrivée):', place.formatted_address);
+                  }
+                }
+              }}
+            >
+              <input
+                ref={destinationInputRef}
+                type="text"
+                placeholder="Saisir l'adresse d'arrivée (ex: Lyon, France)"
+                className="route-input"
+              />
+            </Autocomplete>
           </div>
 
           <div className="input-group">
@@ -216,7 +244,9 @@ const FraisKilometriques = ({ onCalculationChange }) => {
               <option value="">Sélectionner la puissance</option>
               {baremes.map(bareme => (
                 <option key={bareme.id} value={bareme.id}>
-                  {bareme.puissance_fiscale} - {bareme.tarif_km}€/km
+                  {bareme.nom} ({bareme.puissance_fiscale}) - {parseFloat(bareme.tarif_km).toFixed(3)}€/km
+                  {bareme.is_personalized && ' (Personnalisé)'}
+                </option>
                 </option>
               ))}
             </select>
