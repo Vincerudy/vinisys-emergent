@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Types de Frais API Testing
-Tests the expense types APIs integrated in ParametresDepenses:
-1. GET /api/types-frais/manage/{societe_id} - Get expense types list
-2. PUT /api/types-frais/{id} - Modify expense type (label and active/inactive status)  
-3. POST /api/types-frais - Create new expense type
-4. Expected response structure with success boolean and types_frais array
-Societe_id to use: 2 (based on previous tests)
+Backend API Testing Script for Vinisys Application - Complete System Expense Types Customization
+Tests the new APIs for complete customization of system expense types:
+1. GET /api/types-frais/manage/2 - Get all expense types for company ID 2 (system + personalized)
+2. PUT /api/types-frais/{typeId} - Customize system expense type (label, description, VAT, accounting account)
+3. POST /api/types-frais - Create new personalized expense type for a company
+Expected: System types with customization possibility, no more "Cannot modify system type label" message
+Database: MySQL local connection with tables types_frais, types_frais_societe_personnalisation, types_frais_societe
+System types IDs: 14-21 (Transport, Hébergement, Repas, etc.)
+Company ID: 2
 """
 
 import requests
