@@ -106,6 +106,28 @@ const DetailTypeFraisPage = () => {
     }
   };
 
+  const loadComptesComptables = async () => {
+    try {
+      // Charger les comptes disponibles pour cette société (système + personnalisés)
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/comptes-comptables/societe/${societe_id}`);
+      if (response.data.success) {
+        // Filtrer uniquement les comptes actifs et trier par personnalisés en premier
+        const comptesActifs = response.data.comptes_comptables.filter(compte => compte.actif);
+        
+        // Trier pour mettre les comptes personnalisés en premier
+        const comptesTries = comptesActifs.sort((a, b) => {
+          if (a.is_personalized && !b.is_personalized) return -1;
+          if (!a.is_personalized && b.is_personalized) return 1;
+          return a.numero_compte.localeCompare(b.numero_compte);
+        });
+        
+        setComptesComptables(comptesTries);
+      }
+    } catch (error) {
+      console.error('Erreur chargement comptes comptables:', error);
+    }
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
