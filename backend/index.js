@@ -557,8 +557,9 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
             success: true,
             types_frais: allTypes,
             summary: {
-                system_types: typesSysteme.length,
-                custom_types: typesPersonnalises.length,
+                system_types: typesSysteme.filter(t => !t.is_personalized).length,
+                personalized_types: typesSysteme.filter(t => t.is_personalized).length,
+                custom_types: typesNouveaux.length,
                 total: allTypes.length
             }
         });
