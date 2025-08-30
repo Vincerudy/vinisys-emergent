@@ -1177,16 +1177,16 @@ app.put('/api/baremes-kilometriques/:baremeId', async (req, res) => {
                 await db.execute(`
                     UPDATE baremes_kilometriques_societe 
                     SET nom = ?, description = ?, puissance_fiscale_min = ?, puissance_fiscale_max = ?, 
-                        tarif_par_km = ?, is_personnalise = 1, date_modification = CURRENT_TIMESTAMP
+                        tarif_par_km = ?, actif = ?, is_personnalise = 1, date_modification = CURRENT_TIMESTAMP
                     WHERE bareme_kilometrique_id = ? AND societe_id = ?
-                `, [nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, baremeId, societeId]);
+                `, [nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, actif ? 1 : 0, baremeId, societeId]);
             } else {
                 // Créer une nouvelle personnalisation
                 await db.execute(`
                     INSERT INTO baremes_kilometriques_societe 
                     (bareme_kilometrique_id, societe_id, nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, is_personnalise, actif)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, 1, 1)
-                `, [baremeId, societeId, nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km]);
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
+                `, [baremeId, societeId, nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, actif ? 1 : 0]);
             }
 
             return res.json({
