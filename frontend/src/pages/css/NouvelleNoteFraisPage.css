@@ -387,3 +387,56 @@
     justify-content: center;
   }
 }
+
+/* Champs configurables */
+.champs-configurables {
+  margin-top: 1.5rem;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0 1rem 0;
+  text-align: center;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.separator span {
+  padding: 0 1rem;
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tva-section,
+.tva-libre-section {
+  margin-top: 1rem;
+}
+
+.tva-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.form-input[required] {
+  border-left: 3px solid #ef4444;
+}
+
+.form-input[required]:focus {
+  border-left-color: #dc2626;
+  box-shadow: 0 0 0 1px #ef4444;
+}
+
+.text-danger {
+  color: #ef4444;
+}
