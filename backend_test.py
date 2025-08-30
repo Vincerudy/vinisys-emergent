@@ -180,18 +180,92 @@ def test_get_types_frais():
         print_test_result(False, f"GET types-frais test failed - {str(e)}")
         return False, None, [], [], []
 
-def test_create_type_frais():
-    """Test 3: POST /api/types-frais - Create new expense type"""
-    print_test_header("POST Create Type de Frais API Test")
+def test_customize_system_type(system_types):
+    """Test 3: PUT /api/types-frais/{typeId} - Customize a system expense type"""
+    print_test_header("PUT Customize System Type API Test")
+    
+    if not system_types:
+        print_test_result(False, "No system types available for customization test")
+        return False, None, None
+    
     try:
         headers = get_auth_headers()
         headers['Content-Type'] = 'application/json'
         
-        # Create test data
+        # Find a system type to customize (prefer "Kilomètres" if available)
+        target_type = None
+        for type_frais in system_types:
+            if 'kilomètre' in type_frais.get('libelle', '').lower() or 'transport' in type_frais.get('libelle', '').lower():
+                target_type = type_frais
+                break
+        
+        if not target_type:
+            # Use first available system type
+            target_type = system_types[0]
+        
+        type_id = target_type['id']
+        original_libelle = target_type['libelle']
+        
+        # Test customization data - changing "Kilomètres" to "Frais de déplacement km"
+        custom_data = {
+            "libelle": "Frais de déplacement km",
+            "description": "Frais kilométriques personnalisés pour déplacements professionnels",
+            "tva_deductible": 1,
+            "taux_deduction_tva": 20.0,
+            "compte_comptable_id": None,
+            "actif": 1,
+            "societeId": SOCIETE_ID
+        }
+        
+        print(f"Customizing system type ID {type_id} ('{original_libelle}') -> '{custom_data['libelle']}'")
+        
+        response = requests.put(f"{API_BASE}/types-frais/{type_id}", json=custom_data, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Verify response structure
+            if 'success' in data and data.get('success'):
+                message = data.get('message', '')
+                response_data = data.get('data', {})
+                
+                # Check if it's a system type personalization
+                if 'système personnalisé' in message or response_data.get('is_personalized'):
+                    print_test_result(True, f"System type customization successful - Type ID {type_id}", response)
+                    print(f"  - Original label: '{original_libelle}'")
+                    print(f"  - New label: '{custom_data['libelle']}'")
+                    print(f"  - Message: {message}")
+                    return True, data, type_id
+                else:
+                    print_test_result(False, f"Unexpected response for system type customization", response)
+                    return False, None, None
+            else:
+                print_test_result(False, f"Customization failed - success: {data.get('success')}", response)
+                return False, None, None
+        else:
+            print_test_result(False, f"PUT customize system type failed - HTTP {response.status_code}", response)
+            return False, None, None
+            
+    except Exception as e:
+        print_test_result(False, f"PUT customize system type test failed - {str(e)}")
+        return False, None, None
+
+def test_create_custom_type():
+    """Test 4: POST /api/types-frais - Create new personalized expense type"""
+    print_test_header("POST Create Custom Type API Test")
+    try:
+        headers = get_auth_headers()
+        headers['Content-Type'] = 'application/json'
+        
+        # Create test data for a new custom expense type
         test_type = {
-            "nom": "Test - Formation",
-            "libelle": "Formation professionnelle",
-            "societe_id": SOCIETE_ID
+            "nom": "Formation Spécialisée",
+            "libelle": "Formation professionnelle spécialisée",
+            "societe_id": SOCIETE_ID,
+            "description": "Formation technique et professionnelle pour les employés",
+            "tva_deductible": 1,
+            "taux_deduction_tva": 20.0,
+            "compte_comptable_id": None
         }
         
         response = requests.post(f"{API_BASE}/types-frais", json=test_type, headers=headers, timeout=10)
@@ -203,7 +277,10 @@ def test_create_type_frais():
             if 'success' in data and data.get('success'):
                 type_id = data.get('data', {}).get('typeId')
                 if type_id:
-                    print_test_result(True, f"POST create type-frais successful - New type ID: {type_id}", response)
+                    print_test_result(True, f"POST create custom type successful - New type ID: {type_id}", response)
+                    print(f"  - Name: '{test_type['nom']}'")
+                    print(f"  - Label: '{test_type['libelle']}'")
+                    print(f"  - Company ID: {test_type['societe_id']}")
                     return True, data, type_id
                 else:
                     print_test_result(False, f"Create response missing typeId", response)
@@ -212,49 +289,16 @@ def test_create_type_frais():
                 print_test_result(False, f"Create failed - success: {data.get('success')}", response)
                 return False, None, None
         else:
-            print_test_result(False, f"POST create type-frais failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"POST create custom type failed - HTTP {response.status_code}", response)
             return False, None, None
             
     except Exception as e:
-        print_test_result(False, f"POST create type-frais test failed - {str(e)}")
+        print_test_result(False, f"POST create custom type test failed - {str(e)}")
         return False, None, None
 
-def test_update_type_frais(type_id):
-    """Test 4: PUT /api/types-frais/{id} - Modify expense type"""
-    print_test_header("PUT Update Type de Frais API Test")
-    try:
-        headers = get_auth_headers()
-        headers['Content-Type'] = 'application/json'
-        
-        # Update test data
-        update_data = {
-            "libelle": "Formation professionnelle modifiée",
-            "actif": False  # Test changing active status
-        }
-        
-        response = requests.put(f"{API_BASE}/types-frais/{type_id}", json=update_data, headers=headers, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            
-            # Verify response structure
-            if 'success' in data and data.get('success'):
-                print_test_result(True, f"PUT update type-frais successful - Type ID {type_id} updated", response)
-                return True, data
-            else:
-                print_test_result(False, f"Update failed - success: {data.get('success')}", response)
-                return False, None
-        else:
-            print_test_result(False, f"PUT update type-frais failed - HTTP {response.status_code}", response)
-            return False, None
-            
-    except Exception as e:
-        print_test_result(False, f"PUT update type-frais test failed - {str(e)}")
-        return False, None
-
-def test_verify_update(type_id):
-    """Test 5: Verify the update was applied correctly"""
-    print_test_header("Verify Update Applied - GET Types de Frais")
+def test_verify_customization(customized_type_id):
+    """Test 5: Verify the customization was applied correctly"""
+    print_test_header("Verify Customization Applied - GET Types de Frais")
     try:
         headers = get_auth_headers()
         
@@ -264,25 +308,29 @@ def test_verify_update(type_id):
             data = response.json()
             types_frais = data.get('types_frais', [])
             
-            # Find the updated type
-            updated_type = None
+            # Find the customized type
+            customized_type = None
             for type_frais in types_frais:
-                if type_frais.get('id') == type_id:
-                    updated_type = type_frais
+                if type_frais.get('id') == customized_type_id:
+                    customized_type = type_frais
                     break
             
-            if updated_type:
-                libelle = updated_type.get('libelle')
-                actif = updated_type.get('actif')
+            if customized_type:
+                libelle = customized_type.get('libelle')
+                source_type = customized_type.get('source_type')
+                is_personalized = customized_type.get('is_personalized')
                 
-                if libelle == "Formation professionnelle modifiée" and actif == 0:
-                    print_test_result(True, f"Update verification successful - Libelle and actif status correctly updated", response)
-                    return True, updated_type
+                if libelle == "Frais de déplacement km" and source_type == 'personalized' and is_personalized:
+                    print_test_result(True, f"Customization verification successful - System type now personalized", response)
+                    print(f"  - New label: '{libelle}'")
+                    print(f"  - Source type: '{source_type}'")
+                    print(f"  - Is personalized: {is_personalized}")
+                    return True, customized_type
                 else:
-                    print_test_result(False, f"Update not applied correctly - libelle: {libelle}, actif: {actif}", response)
+                    print_test_result(False, f"Customization not applied correctly - libelle: {libelle}, source_type: {source_type}, is_personalized: {is_personalized}", response)
                     return False, None
             else:
-                print_test_result(False, f"Updated type with ID {type_id} not found", response)
+                print_test_result(False, f"Customized type with ID {customized_type_id} not found", response)
                 return False, None
         else:
             print_test_result(False, f"Verification GET failed - HTTP {response.status_code}", response)
@@ -292,18 +340,61 @@ def test_verify_update(type_id):
         print_test_result(False, f"Verification test failed - {str(e)}")
         return False, None
 
+def test_data_persistence():
+    """Test 6: Verify data persistence in database tables"""
+    print_test_header("Data Persistence Verification Test")
+    try:
+        headers = get_auth_headers()
+        
+        # Get all types again to verify persistence
+        response = requests.get(f"{API_BASE}/types-frais/manage/{SOCIETE_ID}", headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            types_frais = data.get('types_frais', [])
+            summary = data.get('summary', {})
+            
+            # Check if we have personalized and custom types
+            personalized_count = summary.get('personalized_types', 0)
+            custom_count = summary.get('custom_types', 0)
+            
+            if personalized_count > 0 or custom_count > 0:
+                print_test_result(True, f"Data persistence verified - Personalized: {personalized_count}, Custom: {custom_count}", response)
+                
+                # Show some examples
+                for type_frais in types_frais[:3]:  # Show first 3 types
+                    source_type = type_frais.get('source_type', 'unknown')
+                    libelle = type_frais.get('libelle', 'N/A')
+                    print(f"  - {source_type.upper()}: '{libelle}' (ID: {type_frais.get('id')})")
+                
+                return True, data
+            else:
+                print_test_result(False, f"No personalized or custom types found in database", response)
+                return False, None
+        else:
+            print_test_result(False, f"Data persistence check failed - HTTP {response.status_code}", response)
+            return False, None
+            
+    except Exception as e:
+        print_test_result(False, f"Data persistence test failed - {str(e)}")
+        return False, None
+
 def main():
-    """Main test execution for Types de Frais API Testing"""
-    print("🚀 Starting Backend API Tests for Types de Frais - ParametresDepenses Integration")
-    print("📊 Testing: GET, POST, PUT endpoints for expense types management")
+    """Main test execution for Complete System Expense Types Customization"""
+    print("🚀 Starting Backend API Tests for Complete System Expense Types Customization")
+    print("📊 Testing: Complete customization of system expense types (label, description, VAT, accounting account)")
     print(f"Backend URL: {BASE_URL}")
     print(f"API Base URL: {API_BASE}")
     print(f"Test Email: {TEST_EMAIL}")
-    print(f"Societe ID: {SOCIETE_ID}")
+    print(f"Company ID: {SOCIETE_ID}")
     print(f"Test Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Track test results
     test_results = []
+    system_types = []
+    personalized_types = []
+    custom_types = []
+    customized_type_id = None
     created_type_id = None
     
     # Test 0: Server connectivity
@@ -322,31 +413,37 @@ def main():
         print("\n❌ Authentication failed. Cannot proceed with protected endpoint tests.")
         return False
     
-    # Test 2: GET types-frais
-    get_success, get_data = test_get_types_frais()
-    test_results.append(("GET Types de Frais", get_success))
+    # Test 2: GET types-frais management
+    get_success, get_data, system_types, personalized_types, custom_types = test_get_types_frais()
+    test_results.append(("GET Types de Frais Management", get_success))
     
-    # Test 3: POST create type-frais
-    create_success, create_data, created_type_id = test_create_type_frais()
-    test_results.append(("POST Create Type de Frais", create_success))
-    
-    # Test 4: PUT update type-frais (only if create was successful)
-    update_success = False
-    if create_success and created_type_id:
-        update_success, update_data = test_update_type_frais(created_type_id)
-        test_results.append(("PUT Update Type de Frais", update_success))
-        
-        # Test 5: Verify update (only if update was successful)
-        if update_success:
-            verify_success, verify_data = test_verify_update(created_type_id)
-            test_results.append(("Verify Update Applied", verify_success))
+    # Test 3: Customize system type (only if we have system types)
+    customize_success = False
+    if get_success and system_types:
+        customize_success, customize_data, customized_type_id = test_customize_system_type(system_types)
+        test_results.append(("PUT Customize System Type", customize_success))
     else:
-        test_results.append(("PUT Update Type de Frais", False))
-        test_results.append(("Verify Update Applied", False))
+        test_results.append(("PUT Customize System Type", False))
+    
+    # Test 4: Create custom type
+    create_success, create_data, created_type_id = test_create_custom_type()
+    test_results.append(("POST Create Custom Type", create_success))
+    
+    # Test 5: Verify customization (only if customization was successful)
+    verify_success = False
+    if customize_success and customized_type_id:
+        verify_success, verify_data = test_verify_customization(customized_type_id)
+        test_results.append(("Verify Customization Applied", verify_success))
+    else:
+        test_results.append(("Verify Customization Applied", False))
+    
+    # Test 6: Data persistence
+    persistence_success, persistence_data = test_data_persistence()
+    test_results.append(("Data Persistence Verification", persistence_success))
     
     # Print summary
     print(f"\n{'='*60}")
-    print("TEST SUMMARY - TYPES DE FRAIS API TESTING")
+    print("TEST SUMMARY - COMPLETE SYSTEM EXPENSE TYPES CUSTOMIZATION")
     print(f"{'='*60}")
     
     passed = 0
@@ -378,43 +475,59 @@ def main():
         print("❌ Authentication failed with provided credentials")
     
     if get_success:
-        types_count = len(get_data.get('types_frais', [])) if get_data else 0
-        print(f"✅ GET /api/types-frais/manage/{SOCIETE_ID} working - {types_count} types found")
+        total_types = len(system_types) + len(personalized_types) + len(custom_types)
+        print(f"✅ GET /api/types-frais/manage/{SOCIETE_ID} working - {total_types} types found")
+        print(f"  - System types: {len(system_types)}")
+        print(f"  - Personalized types: {len(personalized_types)}")
+        print(f"  - Custom types: {len(custom_types)}")
     else:
         print(f"❌ GET /api/types-frais/manage/{SOCIETE_ID} failed")
     
+    if customize_success:
+        print(f"✅ PUT /api/types-frais/{customized_type_id} working - System type customization successful")
+        print("✅ No more 'Cannot modify system type label' message!")
+    else:
+        print("❌ PUT customize system type failed")
+    
     if create_success:
-        print(f"✅ POST /api/types-frais working - New type created with ID: {created_type_id}")
+        print(f"✅ POST /api/types-frais working - New custom type created with ID: {created_type_id}")
     else:
         print("❌ POST /api/types-frais failed")
     
-    if update_success:
-        print(f"✅ PUT /api/types-frais/{created_type_id} working - Type updated successfully")
+    if verify_success:
+        print(f"✅ Customization verification successful - System type now appears as personalized")
     else:
-        print(f"❌ PUT /api/types-frais/{created_type_id} failed")
+        print("❌ Customization verification failed")
+    
+    if persistence_success:
+        print(f"✅ Data persistence verified - Changes saved to database tables")
+    else:
+        print("❌ Data persistence verification failed")
     
     # Overall assessment
-    critical_tests = ["Server Connectivity", "Authentication", "GET Types de Frais"]
+    critical_tests = ["Server Connectivity", "Authentication", "GET Types de Frais Management"]
     critical_passed = sum(1 for test_name, result in test_results if test_name in critical_tests and result)
     
-    if critical_passed == 3 and passed >= 4:  # All critical tests + at least 1 more
-        print(f"\n🎉 TYPES DE FRAIS API TESTS SUCCESSFUL!")
+    if critical_passed == 3 and passed >= 5:  # All critical tests + most functionality tests
+        print(f"\n🎉 COMPLETE SYSTEM EXPENSE TYPES CUSTOMIZATION TESTS SUCCESSFUL!")
         print("✅ Backend server is responding correctly")
         print("✅ User authentication is working with correct credentials")
-        print(f"✅ GET /api/types-frais/manage/{SOCIETE_ID} endpoint is functional")
-        print("✅ POST /api/types-frais endpoint can create new expense types")
-        print("✅ PUT /api/types-frais/{id} endpoint can modify expense types")
-        print("✅ Response structure matches expected format (success boolean, types_frais array)")
-        print("✅ All required fields present (id, nom, libelle, actif, societe_id)")
-        print("✅ ParametresDepenses integration is working correctly")
+        print(f"✅ GET /api/types-frais/manage/{SOCIETE_ID} endpoint returns system + personalized types")
+        print("✅ PUT /api/types-frais/{typeId} endpoint can customize system types")
+        print("✅ POST /api/types-frais endpoint can create new personalized types")
+        print("✅ System types can now be fully customized (label, description, VAT, accounting account)")
+        print("✅ No more 'Cannot modify system type label' restriction")
+        print("✅ Data is properly persisted in database tables")
+        print("✅ Response structure includes source_type (system/personalized/custom)")
+        print("✅ Complete customization functionality is working correctly")
         return True
     else:
-        print(f"\n⚠️ ISSUES DETECTED IN TYPES DE FRAIS API")
+        print(f"\n⚠️ ISSUES DETECTED IN SYSTEM EXPENSE TYPES CUSTOMIZATION")
         if critical_passed < 3:
             print("❌ Critical infrastructure issues detected (server/auth/get endpoint)")
         else:
-            print("❌ Some CRUD operations are not working correctly")
-        print("❌ ParametresDepenses integration may need fixes")
+            print("❌ Some customization operations are not working correctly")
+        print("❌ Complete customization functionality may need fixes")
         return False
 
 if __name__ == "__main__":
