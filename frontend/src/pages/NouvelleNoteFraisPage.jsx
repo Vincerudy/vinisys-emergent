@@ -93,16 +93,16 @@ const NouvelleNoteFraisPage = () => {
     try {
       const [projetsRes, typesFraisRes] = await Promise.all([
         axios.get(`${import.meta.env.VITE_API_URL}/projets/${societe_id}`),
-        axios.get(`${import.meta.env.VITE_API_URL}/types-frais`)
+        axios.get(`${import.meta.env.VITE_API_URL}/types-frais/manage/${societe_id}`)
       ]);
       
       setProjets(projetsRes.data.projets || []);
-      setTypesFrais(typesFraisRes.data.types || []);
+      setTypesFrais(typesFraisRes.data.types_frais || []);
       
       // Définir un type par défaut si disponible
-      if (typesFraisRes.data.types && typesFraisRes.data.types.length > 0) {
-        const defaultType = typesFraisRes.data.types.find(t => t.nom.includes('divers')) || 
-                           typesFraisRes.data.types[0];
+      if (typesFraisRes.data.types_frais && typesFraisRes.data.types_frais.length > 0) {
+        const defaultType = typesFraisRes.data.types_frais.find(t => t.nom.includes('divers')) || 
+                           typesFraisRes.data.types_frais[0];
         setFormData(prev => ({ ...prev, type_frais_id: defaultType.id.toString() }));
       }
     } catch (error) {
