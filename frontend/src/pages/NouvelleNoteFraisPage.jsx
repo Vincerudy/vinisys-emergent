@@ -682,6 +682,227 @@ const NouvelleNoteFraisPage = () => {
                   rows={3}
                 />
               </div>
+
+              {/* Champs configurables selon le type de frais sélectionné */}
+              {champsConfig.length > 0 && (
+                <div className="champs-configurables">
+                  <div className="separator">
+                    <span>Champs spécifiques à ce type</span>
+                  </div>
+
+                  {/* Champs généraux configurables */}
+                  {isChampVisible('lieu') && (
+                    <div className="form-group">
+                      {getChampLabel('lieu', 'Lieu')}
+                      <input
+                        type="text"
+                        placeholder="Ex: Restaurant, Ville, Adresse..."
+                        value={formData.lieu || ''}
+                        onChange={(e) => handleInputChange('lieu', e.target.value)}
+                        className="form-input"
+                        required={isChampObligatoire('lieu')}
+                      />
+                    </div>
+                  )}
+
+                  {isChampVisible('nom_restaurant') && (
+                    <div className="form-group">
+                      {getChampLabel('nom_restaurant', 'Nom du restaurant')}
+                      <input
+                        type="text"
+                        placeholder="Nom de l'établissement"
+                        value={formData.nom_restaurant || ''}
+                        onChange={(e) => handleInputChange('nom_restaurant', e.target.value)}
+                        className="form-input"
+                        required={isChampObligatoire('nom_restaurant')}
+                      />
+                    </div>
+                  )}
+
+                  {isChampVisible('client') && (
+                    <div className="form-group">
+                      {getChampLabel('client', 'Client')}
+                      <input
+                        type="text"
+                        placeholder="Nom du client"
+                        value={formData.client || ''}
+                        onChange={(e) => handleInputChange('client', e.target.value)}
+                        className="form-input"
+                        required={isChampObligatoire('client')}
+                      />
+                    </div>
+                  )}
+
+                  {isChampVisible('fournisseurs') && (
+                    <div className="form-group">
+                      {getChampLabel('fournisseurs', 'Fournisseur')}
+                      <input
+                        type="text"
+                        placeholder="Nom du fournisseur"
+                        value={formData.fournisseurs || ''}
+                        onChange={(e) => handleInputChange('fournisseurs', e.target.value)}
+                        className="form-input"
+                        required={isChampObligatoire('fournisseurs')}
+                      />
+                    </div>
+                  )}
+
+                  {/* Section TVA */}
+                  {(isChampVisible('tva_20') || isChampVisible('tva_10') || isChampVisible('tva_5_5')) && (
+                    <div className="tva-section">
+                      <div className="separator">
+                        <span>Détail TVA</span>
+                      </div>
+
+                      <div className="tva-grid">
+                        {isChampVisible('tva_20') && (
+                          <div className="form-group">
+                            {getChampLabel('tva_20', 'TVA 20%')}
+                            <input
+                              type="number"
+                              step="0.01"
+                              placeholder="0,00"
+                              value={formData.tva_20 || ''}
+                              onChange={(e) => handleInputChange('tva_20', e.target.value)}
+                              className="form-input"
+                              required={isChampObligatoire('tva_20')}
+                            />
+                          </div>
+                        )}
+
+                        {isChampVisible('tva_10') && (
+                          <div className="form-group">
+                            {getChampLabel('tva_10', 'TVA 10%')}
+                            <input
+                              type="number"
+                              step="0.01"
+                              placeholder="0,00"
+                              value={formData.tva_10 || ''}
+                              onChange={(e) => handleInputChange('tva_10', e.target.value)}
+                              className="form-input"
+                              required={isChampObligatoire('tva_10')}
+                            />
+                          </div>
+                        )}
+
+                        {isChampVisible('tva_5_5') && (
+                          <div className="form-group">
+                            {getChampLabel('tva_5_5', 'TVA 5.5%')}
+                            <input
+                              type="number"
+                              step="0.01"
+                              placeholder="0,00"
+                              value={formData.tva_5_5 || ''}
+                              onChange={(e) => handleInputChange('tva_5_5', e.target.value)}
+                              className="form-input"
+                              required={isChampObligatoire('tva_5_5')}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TVA libres (généralement masquées par défaut) */}
+                  {(isChampVisible('tva_libre_1') || isChampVisible('tva_libre_2') || isChampVisible('tva_libre_3')) && (
+                    <div className="tva-libre-section">
+                      <div className="separator">
+                        <span>TVA personnalisées</span>
+                      </div>
+
+                      <div className="tva-grid">
+                        {isChampVisible('tva_libre_1') && (
+                          <div className="form-group">
+                            {getChampLabel('tva_libre_1', 'TVA libre 1')}
+                            <input
+                              type="number"
+                              step="0.01"
+                              placeholder="0,00"
+                              value={formData.tva_libre_1 || ''}
+                              onChange={(e) => handleInputChange('tva_libre_1', e.target.value)}
+                              className="form-input"
+                              required={isChampObligatoire('tva_libre_1')}
+                            />
+                          </div>
+                        )}
+
+                        {isChampVisible('tva_libre_2') && (
+                          <div className="form-group">
+                            {getChampLabel('tva_libre_2', 'TVA libre 2')}
+                            <input
+                              type="number"
+                              step="0.01"
+                              placeholder="0,00"
+                              value={formData.tva_libre_2 || ''}
+                              onChange={(e) => handleInputChange('tva_libre_2', e.target.value)}
+                              className="form-input"
+                              required={isChampObligatoire('tva_libre_2')}
+                            />
+                          </div>
+                        )}
+
+                        {isChampVisible('tva_libre_3') && (
+                          <div className="form-group">
+                            {getChampLabel('tva_libre_3', 'TVA libre 3')}
+                            <input
+                              type="number"
+                              step="0.01"
+                              placeholder="0,00"
+                              value={formData.tva_libre_3 || ''}
+                              onChange={(e) => handleInputChange('tva_libre_3', e.target.value)}
+                              className="form-input"
+                              required={isChampObligatoire('tva_libre_3')}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Autres champs configurables */}
+                  {isChampVisible('nom') && (
+                    <div className="form-group">
+                      {getChampLabel('nom', 'Nom')}
+                      <input
+                        type="text"
+                        placeholder="Nom"
+                        value={formData.nom || ''}
+                        onChange={(e) => handleInputChange('nom', e.target.value)}
+                        className="form-input"
+                        required={isChampObligatoire('nom')}
+                      />
+                    </div>
+                  )}
+
+                  {isChampVisible('prenom') && (
+                    <div className="form-group">
+                      {getChampLabel('prenom', 'Prénom')}
+                      <input
+                        type="text"
+                        placeholder="Prénom"
+                        value={formData.prenom || ''}
+                        onChange={(e) => handleInputChange('prenom', e.target.value)}
+                        className="form-input"
+                        required={isChampObligatoire('prenom')}
+                      />
+                    </div>
+                  )}
+
+                  {isChampVisible('contact_1') && (
+                    <div className="form-group">
+                      {getChampLabel('contact_1', 'Contact')}
+                      <input
+                        type="text"
+                        placeholder="Numéro de téléphone ou email"
+                        value={formData.contact_1 || ''}
+                        onChange={(e) => handleInputChange('contact_1', e.target.value)}
+                        className="form-input"
+                        required={isChampObligatoire('contact_1')}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="form-actions">
