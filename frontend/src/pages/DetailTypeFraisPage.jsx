@@ -394,10 +394,14 @@ const DetailTypeFraisPage = () => {
               <dl className="row mb-0">
                 <dt className="col-5">Type :</dt>
                 <dd className="col-7">
-                  {isSystemType ? (
-                    <span className="badge bg-info">Système</span>
+                  {typeFrais.is_system ? (
+                    typeFrais.is_personalized ? (
+                      <span className="badge bg-warning">Système personnalisé</span>
+                    ) : (
+                      <span className="badge bg-info">Système</span>
+                    )
                   ) : (
-                    <span className="badge bg-primary">Personnalisé</span>
+                    <span className="badge bg-primary">Entièrement personnalisé</span>
                   )}
                 </dd>
 
