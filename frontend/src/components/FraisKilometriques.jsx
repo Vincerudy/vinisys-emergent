@@ -275,12 +275,20 @@ const FraisKilometriques = ({ onCalculationChange }) => {
       <LoadScript
         googleMapsApiKey={GOOGLE_MAPS_API_KEY}
         libraries={libraries}
-        onLoad={() => console.log('✅ Google Maps LoadScript chargé')}
+        onLoad={() => {
+          console.log('✅ Google Maps LoadScript chargé avec clé:', GOOGLE_MAPS_API_KEY?.substring(0, 10) + '...');
+          console.log('✅ Bibliothèques chargées:', libraries);
+        }}
         onError={(e) => {
           console.error('❌ Erreur LoadScript:', e);
-          setError('Erreur de chargement Google Maps. Vérifiez la clé API et votre connexion internet.');
+          setError('Erreur de chargement Google Maps. Vérifiez la clé API et les permissions.');
         }}
-        loadingElement={<div>Chargement Google Maps...</div>}
+        loadingElement={
+          <div className="loading-maps">
+            <i className="fas fa-spinner fa-spin"></i>
+            <p>Chargement Google Maps...</p>
+          </div>
+        }
       >
         <div className="route-inputs">
           <div className="input-group">
