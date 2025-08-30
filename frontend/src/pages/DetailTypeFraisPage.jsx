@@ -175,10 +175,16 @@ const DetailTypeFraisPage = () => {
               <div>
                 <h2 className="mb-1">
                   Configuration - {typeFrais.libelle}
-                  {isSystemType && (
+                  {typeFrais.is_system && (
                     <span className="badge bg-info-subtle text-info ms-2">
                       <i className="fas fa-cog me-1"></i>
-                      Système
+                      {typeFrais.is_personalized ? 'Système personnalisé' : 'Système'}
+                    </span>
+                  )}
+                  {!typeFrais.is_system && (
+                    <span className="badge bg-success-subtle text-success ms-2">
+                      <i className="fas fa-plus me-1"></i>
+                      Personnalisé
                     </span>
                   )}
                 </h2>
