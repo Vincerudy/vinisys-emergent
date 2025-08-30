@@ -1230,6 +1230,128 @@ app.put('/api/baremes-kilometriques/:baremeId', async (req, res) => {
     }
 });
 
+// ========== CONFIGURATION CHAMPS TYPES DE FRAIS APIs ==========
+
+// GET /api/types-frais/:typeId/champs-config/:societeId - Configuration des champs pour un type de frais
+app.get('/api/types-frais/:typeId/champs-config/:societeId', async (req, res) => {
+    try {
+        const { typeId, societeId } = req.params;
+
+        const [champs] = await db.execute(`
+            SELECT nom_champ, visibilite, ordre_affichage
+            FROM types_frais_champs_config 
+            WHERE type_frais_id = ? AND societe_id = ?
+            ORDER BY ordre_affichage ASC
+        `, [typeId, societeId]);
+
+        // Si aucune configuration, créer la configuration par défaut
+        if (champs.length === 0) {
+            const champsDefaut = [
+                { nom_champ: 'type_repas', visibilite: 'facultatif', ordre: 1 },
+                { nom_champ: 'lieu', visibilite: 'facultatif', ordre: 2 },
+                { nom_champ: 'nom_restaurant', visibilite: 'facultatif', ordre: 3 },
+                { nom_champ: 'date', visibilite: 'obligatoire', ordre: 4 },
+                { nom_champ: 'refacturable', visibilite: 'facultatif', ordre: 5 },
+                { nom_champ: 'client', visibilite: 'facultatif', ordre: 6 },
+                { nom_champ: 'dossier', visibilite: 'facultatif', ordre: 7 },
+                { nom_champ: 'fournisseurs', visibilite: 'facultatif', ordre: 8 },
+                { nom_champ: 'motif', visibilite: 'obligatoire', ordre: 9 },
+                { nom_champ: 'commentaire', visibilite: 'facultatif', ordre: 10 },
+                { nom_champ: 'justificatif', visibilite: 'obligatoire', ordre: 11 },
+                { nom_champ: 'numero_justificatif', visibilite: 'facultatif', ordre: 12 },
+                { nom_champ: 'piece_jointe', visibilite: 'facultatif', ordre: 13 },
+                { nom_champ: 'nom', visibilite: 'facultatif', ordre: 14 },
+                { nom_champ: 'prenom', visibilite: 'facultatif', ordre: 15 },
+                { nom_champ: 'tva_20', visibilite: 'facultatif', ordre: 16 },
+                { nom_champ: 'tva_10', visibilite: 'facultatif', ordre: 17 },
+                { nom_champ: 'tva_5_5', visibilite: 'facultatif', ordre: 18 },
+                { nom_champ: 'tva_libre_1', visibilite: 'non_visible', ordre: 19 },
+                { nom_champ: 'tva_libre_2', visibilite: 'non_visible', ordre: 20 },
+                { nom_champ: 'tva_libre_3', visibilite: 'non_visible', ordre: 21 },
+                { nom_champ: 'total_tva', visibilite: 'obligatoire', ordre: 22 },
+                { nom_champ: 'contact_1', visibilite: 'facultatif', ordre: 23 }
+            ];
+
+            // Insérer la configuration par défaut
+            for (const champ of champsDefaut) {
+                await db.execute(`
+                    INSERT IGNORE INTO types_frais_champs_config 
+                    (type_frais_id, societe_id, nom_champ, visibilite, ordre_affichage)
+                    VALUES (?, ?, ?, ?, ?)
+                `, [typeId, societeId, champ.nom_champ, champ.visibilite, champ.ordre]);
+            }
+
+            // Récupérer la configuration créée
+            const [nouvelleConfig] = await db.execute(`
+                SELECT nom_champ, visibilite, ordre_affichage
+                FROM types_frais_champs_config 
+                WHERE type_frais_id = ? AND societe_id = ?
+                ORDER BY ordre_affichage ASC
+            `, [typeId, societeId]);
+
+            return res.json({ 
+                success: true,
+                champs_config: nouvelleConfig
+            });
+        }
+
+        res.json({ 
+            success: true,
+            champs_config: champs
+        });
+    } catch (error) {
+        console.error('Erreur récupération configuration champs:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la récupération de la configuration des champs' 
+        });
+    }
+});
+
+// PUT /api/types-frais/:typeId/champs-config/:societeId - Mise à jour de la configuration des champs
+app.put('/api/types-frais/:typeId/champs-config/:societeId', async (req, res) => {
+    try {
+        const { typeId, societeId } = req.params;
+        const { champs_config } = req.body;
+
+        if (!champs_config || !Array.isArray(champs_config)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Configuration des champs invalide'
+            });
+        }
+
+        // Supprimer l'ancienne configuration
+        await db.execute(`
+            DELETE FROM types_frais_champs_config 
+            WHERE type_frais_id = ? AND societe_id = ?
+        `, [typeId, societeId]);
+
+        // Insérer la nouvelle configuration
+        for (let i = 0; i < champs_config.length; i++) {
+            const champ = champs_config[i];
+            await db.execute(`
+                INSERT INTO types_frais_champs_config 
+                (type_frais_id, societe_id, nom_champ, visibilite, ordre_affichage)
+                VALUES (?, ?, ?, ?, ?)
+            `, [typeId, societeId, champ.nom_champ, champ.visibilite, i + 1]);
+        }
+
+        res.json({
+            success: true,
+            message: 'Configuration des champs mise à jour avec succès',
+            champs_updated: champs_config.length
+        });
+    } catch (error) {
+        console.error('Erreur mise à jour configuration champs:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la mise à jour de la configuration des champs',
+            details: error.message 
+        });
+    }
+});
+
 // Notes de frais - Routes simplifiées
 app.post('/api/note-frais/simple', async (req, res) => {
     try {
