@@ -155,7 +155,8 @@ const DetailTypeFraisPage = () => {
     );
   }
 
-  const isSystemType = typeFrais.source_type === 'system';
+  // Tous les types peuvent maintenant être personnalisés
+  const canPersonalize = true;
 
   return (
     <div className="container-fluid mt-4">
