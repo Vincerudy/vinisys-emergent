@@ -394,31 +394,50 @@ const ParametresDepenses = () => {
                     </thead>
                     <tbody>
                       {baremes.map(bareme => (
-                        <tr key={bareme.id}>
-                          <td><strong>{bareme.nom}</strong></td>
+                        <tr 
+                          key={bareme.id} 
+                          className="cursor-pointer"
+                          onClick={() => handleEditBareme(bareme)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <td>
+                            <div className="d-flex align-items-center">
+                              <strong>{bareme.nom}</strong>
+                              {bareme.is_personalized && (
+                                <span className="badge bg-warning-subtle text-warning ms-2">Personnalisé</span>
+                              )}
+                              {bareme.source_type === 'custom' && (
+                                <span className="badge bg-success-subtle text-success ms-2">Ajouté</span>
+                              )}
+                            </div>
+                            {bareme.description && (
+                              <small className="text-muted d-block">{bareme.description}</small>
+                            )}
+                          </td>
                           <td>
                             <span className="badge bg-info-subtle text-info">
-                              {bareme.puissance_fiscale_min} - {bareme.puissance_fiscale_max} CV
+                              {bareme.puissance_fiscale}
                             </span>
                           </td>
                           <td>
                             <strong className="text-primary">
-                              {parseFloat(bareme.tarif_par_km).toFixed(3)}€
+                              {parseFloat(bareme.tarif_km).toFixed(3)}€
                             </strong>
                           </td>
-                          <td>{bareme.annee}</td>
+                          <td>2025</td>
                           <td>
                             <span className={`badge ${bareme.actif ? 'bg-success' : 'bg-secondary'}`}>
                               {bareme.actif ? 'Actif' : 'Inactif'}
                             </span>
                           </td>
-                          <td className="text-end">
+                          <td className="text-end" onClick={(e) => e.stopPropagation()}>
                             <div className="btn-group btn-group-sm">
                               <button 
                                 className="btn btn-outline-primary"
-                                onClick={() => setEditingBareme(bareme)}
+                                onClick={() => handleEditBareme(bareme)}
+                                title="Modifier le barème"
                               >
-                                <FiEdit2 />
+                                <FiEdit />
                               </button>
                             </div>
                           </td>
@@ -429,7 +448,7 @@ const ParametresDepenses = () => {
                           <td colSpan="6" className="text-center py-4">
                             <div className="text-muted">
                               <i className="fas fa-car fa-2x mb-3 opacity-25"></i>
-                              <p>Aucun barème configuré</p>
+                              <p>Aucun barème kilométrique trouvé</p>
                             </div>
                           </td>
                         </tr>
