@@ -77,11 +77,9 @@ const FraisKilometriques = ({ onCalculationChange }) => {
             point_depart: originInputRef.current?.value || '',
             point_arrivee: destinationInputRef.current?.value || ''
           });
-
         }
         console.log('💰 Montant calculé:', montant, '€ pour', distanceKm, 'km à', bareme.tarif_km, '€/km');
       }
-
     }
   }, [distanceKm, selectedBareme, baremes, onCalculationChange]);
 
