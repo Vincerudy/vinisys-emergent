@@ -557,11 +557,11 @@ const DetailTypeFraisPage = () => {
                           onChange={() => handleChampConfigChange(champ.nom_champ, 'non_visible')}
                         />
                         <label 
-                          className="btn btn-outline-secondary" 
+                          className="btn btn-outline-secondary btn-sm" 
                           htmlFor={`non-visible-${champ.nom_champ}`}
-                          title="Non visible"
+                          title="Champ non visible dans le formulaire"
                         >
-                          👁️‍🗨️
+                          Non visible
                         </label>
 
                         <input
@@ -573,11 +573,11 @@ const DetailTypeFraisPage = () => {
                           onChange={() => handleChampConfigChange(champ.nom_champ, 'facultatif')}
                         />
                         <label 
-                          className="btn btn-outline-primary" 
+                          className="btn btn-outline-primary btn-sm" 
                           htmlFor={`facultatif-${champ.nom_champ}`}
                           title="Saisie facultative"
                         >
-                          📝
+                          Saisie facultative
                         </label>
 
                         <input
@@ -589,11 +589,11 @@ const DetailTypeFraisPage = () => {
                           onChange={() => handleChampConfigChange(champ.nom_champ, 'obligatoire')}
                         />
                         <label 
-                          className="btn btn-outline-danger" 
+                          className="btn btn-outline-danger btn-sm" 
                           htmlFor={`obligatoire-${champ.nom_champ}`}
                           title="Saisie obligatoire"
                         >
-                          ❗
+                          Saisie obligatoire
                         </label>
                       </div>
                     </div>
