@@ -181,6 +181,10 @@ const ParametresDepenses = () => {
     }
   };
 
+  const handleEditBareme = (bareme) => {
+    setEditingBareme(bareme);
+  };
+
   // Gestion des types de frais
   const handleToggleActif = async (typeId, currentActif, isSystemType = false) => {
     try {
