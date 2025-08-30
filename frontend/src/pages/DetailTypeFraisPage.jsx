@@ -605,11 +605,11 @@ const DetailTypeFraisPage = () => {
                 <div className="alert alert-info">
                   <strong>Légende :</strong>
                   <br />
-                  👁️‍🗨️ <strong>Non visible</strong> : Le champ n'apparaît pas dans le formulaire
+                  <span className="badge bg-secondary me-2">Non visible</span> Le champ n'apparaît pas dans le formulaire
                   <br />
-                  📝 <strong>Facultatif</strong> : Le champ peut être laissé vide
+                  <span className="badge bg-primary me-2">Saisie facultative</span> Le champ peut être laissé vide
                   <br />
-                  ❗ <strong>Obligatoire</strong> : Le champ doit être rempli
+                  <span className="badge bg-danger me-2">Saisie obligatoire</span> Le champ doit être rempli
                 </div>
               </div>
             </div>
