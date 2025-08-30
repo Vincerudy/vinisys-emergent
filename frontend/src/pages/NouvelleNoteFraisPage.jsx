@@ -73,6 +73,33 @@ const NouvelleNoteFraisPage = () => {
     }
   }, [societe_id, noteId, isEditMode]);
 
+  // Fonctions utilitaires pour la configuration des champs
+  const isChampVisible = (nomChamp) => {
+    const champ = champsConfig.find(c => c.nom_champ === nomChamp);
+    return !champ || champ.visibilite !== 'non_visible';
+  };
+
+  const isChampObligatoire = (nomChamp) => {
+    const champ = champsConfig.find(c => c.nom_champ === nomChamp);
+    return champ && champ.visibilite === 'obligatoire';
+  };
+
+  const isChampFacultatif = (nomChamp) => {
+    const champ = champsConfig.find(c => c.nom_champ === nomChamp);
+    return !champ || champ.visibilite === 'facultatif';
+  };
+
+  const getChampLabel = (nomChamp, baseLabel) => {
+    if (isChampObligatoire(nomChamp)) {
+      return (
+        <>
+          {baseLabel} <span className="text-danger">*</span>
+        </>
+      );
+    }
+    return baseLabel;
+  };
+
   // Charger la configuration des champs pour un type de frais
   const loadChampsConfig = async (typeId) => {
     if (!typeId) {
