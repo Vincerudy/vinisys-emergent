@@ -19,10 +19,10 @@ const ComptesComptablesConfiguration = () => {
   const loadComptes = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/comptes-fournisseur/societe/${societe_id}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/comptes-comptables/societe/${societe_id}`);
       
       if (response.data.success) {
-        setComptes(response.data.comptes);
+        setComptes(response.data.comptes_comptables);
       }
     } catch (error) {
       console.error('Erreur chargement comptes:', error);
