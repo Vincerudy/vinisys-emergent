@@ -328,15 +328,6 @@ const ParametresDepenses = () => {
             </li>
             <li className="nav-item">
               <button 
-                className={`nav-link ${activeTab === 'categories' ? 'active' : ''}`}
-                onClick={() => setActiveTab('categories')}
-              >
-                <FiSettings className="me-2" />
-                Catégories
-              </button>
-            </li>
-            <li className="nav-item">
-              <button 
                 className={`nav-link ${activeTab === 'baremes' ? 'active' : ''}`}
                 onClick={() => setActiveTab('baremes')}
               >
