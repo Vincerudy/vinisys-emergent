@@ -79,6 +79,7 @@ import Connexion from "../pages/Connexion";
 import FacturationPage from "../pages/FacturationPage";
 import DevisPage from "../pages/DevisPage";
 import DetailTypeFraisPage from "../pages/DetailTypeFraisPage";
+import DetailBaremeKilometriquePage from "../pages/DetailBaremeKilometriquePage";
 import ParametrageFacturationPage from "../pages/ParametrageFacturationPage";
 import ClientParamétragePage from "../pages/ClientParamétragePage";
 import CahierRecettePage from "../pages/CahierRecettePage";
