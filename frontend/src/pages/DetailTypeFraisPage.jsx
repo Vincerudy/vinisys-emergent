@@ -218,14 +218,11 @@ const DetailTypeFraisPage = () => {
                   value={formData.libelle}
                   onChange={(e) => handleInputChange('libelle', e.target.value)}
                   placeholder="Ex: Transport en commun"
-                  disabled={isSystemType}
                 />
-                {isSystemType && (
-                  <div className="form-text text-info">
-                    <i className="fas fa-info-circle me-1"></i>
-                    Le libellé des types système ne peut pas être modifié
-                  </div>
-                )}
+                <div className="form-text">
+                  <i className="fas fa-info-circle me-1"></i>
+                  Tous les types peuvent être personnalisés selon vos besoins
+                </div>
               </div>
 
               {/* Description */}
