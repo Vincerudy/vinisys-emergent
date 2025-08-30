@@ -79,25 +79,27 @@ const ComptesComptablesConfiguration = () => {
       const values = await form.validateFields();
       
       if (editingCompte && !editingCompte.is_personalization) {
-        // Modification d'un compte existant
-        await axios.put(`${import.meta.env.VITE_API_URL}/comptes-fournisseur/societe/${editingCompte.id}`, {
-          ...values,
-          societe_id
+        // Modification d'un compte existant (personnalisé)
+        await axios.put(`${import.meta.env.VITE_API_URL}/comptes-comptables/${editingCompte.id}`, {
+          numero_compte: values.numero,
+          libelle: values.libelle,
+          societeId: societe_id
         });
         message.success('Compte modifié avec succès');
       } else if (editingCompte && editingCompte.is_personalization) {
         // Personnalisation d'un compte système
-        await axios.post(`${import.meta.env.VITE_API_URL}/comptes-fournisseur/societe`, {
-          ...values,
-          societe_id,
-          compte_fournisseur_id: editingCompte.id
+        await axios.put(`${import.meta.env.VITE_API_URL}/comptes-comptables/${editingCompte.id}`, {
+          numero_compte: values.numero,
+          libelle: values.libelle,
+          societeId: societe_id
         });
         message.success('Compte personnalisé avec succès');
       } else {
         // Nouveau compte
-        await axios.post(`${import.meta.env.VITE_API_URL}/comptes-fournisseur/societe`, {
-          ...values,
-          societe_id
+        await axios.post(`${import.meta.env.VITE_API_URL}/comptes-comptables`, {
+          numero_compte: values.numero,
+          libelle: values.libelle,
+          societe_id: societe_id
         });
         message.success('Compte créé avec succès');
       }
