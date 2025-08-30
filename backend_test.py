@@ -104,8 +104,8 @@ def test_authentication():
         return False, None
 
 def test_get_types_frais():
-    """Test 2: GET /api/types-frais/manage/{societe_id} - Get expense types list"""
-    print_test_header("GET Types de Frais API Test")
+    """Test 2: GET /api/types-frais/manage/2 - Get all expense types for company ID 2"""
+    print_test_header("GET Types de Frais Management API Test")
     try:
         headers = get_auth_headers()
         
@@ -118,39 +118,67 @@ def test_get_types_frais():
             if 'success' in data and 'types_frais' in data:
                 success = data.get('success')
                 types_frais = data.get('types_frais', [])
+                summary = data.get('summary', {})
                 
                 if success and isinstance(types_frais, list):
-                    # Verify each type has required fields
-                    required_fields = ['id', 'nom', 'libelle', 'actif', 'societe_id']
+                    # Verify each type has required fields for customization
+                    required_fields = ['id', 'nom', 'libelle', 'actif', 'source_type', 'is_system', 'is_personalized']
                     all_valid = True
+                    system_types = []
+                    personalized_types = []
+                    custom_types = []
                     
                     for type_frais in types_frais:
+                        # Check required fields
                         for field in required_fields:
                             if field not in type_frais:
                                 all_valid = False
+                                print(f"Missing field '{field}' in type: {type_frais}")
                                 break
+                        
                         if not all_valid:
                             break
+                            
+                        # Categorize types
+                        source_type = type_frais.get('source_type')
+                        if source_type == 'system':
+                            system_types.append(type_frais)
+                        elif source_type == 'personalized':
+                            personalized_types.append(type_frais)
+                        elif source_type == 'custom':
+                            custom_types.append(type_frais)
                     
                     if all_valid:
-                        print_test_result(True, f"GET types-frais successful - {len(types_frais)} types found with correct structure", response)
-                        return True, data
+                        print_test_result(True, f"GET types-frais successful - {len(types_frais)} types found", response)
+                        print(f"  - System types: {len(system_types)}")
+                        print(f"  - Personalized types: {len(personalized_types)}")
+                        print(f"  - Custom types: {len(custom_types)}")
+                        print(f"  - Summary from API: {summary}")
+                        
+                        # Verify system types can be customized (should have is_personalized field)
+                        system_customizable = all(t.get('is_personalized') is not None for t in system_types)
+                        if system_customizable:
+                            print("  ✅ System types have customization capability")
+                        else:
+                            print("  ⚠️ Some system types missing customization info")
+                        
+                        return True, data, system_types, personalized_types, custom_types
                     else:
                         print_test_result(False, f"Types de frais missing required fields", response)
-                        return False, None
+                        return False, None, [], [], []
                 else:
                     print_test_result(False, f"Invalid response structure - success: {success}, types_frais type: {type(types_frais)}", response)
-                    return False, None
+                    return False, None, [], [], []
             else:
                 print_test_result(False, f"Response missing 'success' or 'types_frais' fields", response)
-                return False, None
+                return False, None, [], [], []
         else:
             print_test_result(False, f"GET types-frais failed - HTTP {response.status_code}", response)
-            return False, None
+            return False, None, [], [], []
             
     except Exception as e:
         print_test_result(False, f"GET types-frais test failed - {str(e)}")
-        return False, None
+        return False, None, [], [], []
 
 def test_create_type_frais():
     """Test 3: POST /api/types-frais - Create new expense type"""
