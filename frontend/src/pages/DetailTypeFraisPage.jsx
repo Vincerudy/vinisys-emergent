@@ -29,6 +29,7 @@ const DetailTypeFraisPage = () => {
   useEffect(() => {
     loadTypeFrais();
     loadComptesComptables();
+    loadChampsConfig();
   }, [typeId]);
 
   const loadTypeFrais = async () => {
