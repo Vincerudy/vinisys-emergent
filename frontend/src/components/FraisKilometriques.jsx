@@ -157,6 +157,112 @@ const FraisKilometriques = ({ onCalculationChange }) => {
     );
   }
 
+  const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+  // Si pas de clé Google Maps, afficher un composant simplifié
+  if (!GOOGLE_MAPS_API_KEY) {
+    return (
+      <div className="frais-kilometriques">
+        <div className="frais-km-header">
+          <h3>
+            <i className="fas fa-route"></i>
+            Calcul d'indemnité kilométrique
+          </h3>
+        </div>
+
+        <div className="no-maps-notice">
+          <div className="alert alert-warning mb-4">
+            <i className="fas fa-exclamation-triangle me-2"></i>
+            <strong>Configuration requise :</strong> Une clé API Google Maps est nécessaire pour l'autocomplétion d'adresses.
+            <br />
+            <small>En attendant, vous pouvez saisir manuellement les adresses et la distance.</small>
+          </div>
+        </div>
+
+        <div className="route-inputs">
+          <div className="input-group">
+            <label>
+              <i className="fas fa-map-marker-alt start-marker"></i>
+              Point de départ
+            </label>
+            <input
+              ref={originInputRef}
+              type="text"
+              placeholder="Saisir l'adresse de départ (ex: Paris, France)"
+              className="route-input"
+            />
+          </div>
+
+          <div className="input-group">
+            <label>
+              <i className="fas fa-map-marker-alt end-marker"></i>
+              Point d'arrivée
+            </label>
+            <input
+              ref={destinationInputRef}
+              type="text"
+              placeholder="Saisir l'adresse d'arrivée (ex: Lyon, France)"
+              className="route-input"
+            />
+          </div>
+
+          <div className="input-group">
+            <label>
+              <i className="fas fa-ruler-horizontal"></i>
+              Distance (km) <span className="text-danger">*</span>
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              min="0"
+              value={distanceKm}
+              onChange={(e) => setDistanceKm(parseFloat(e.target.value) || 0)}
+              placeholder="Saisir la distance en kilomètres"
+              className="route-input"
+            />
+          </div>
+
+          <div className="input-group">
+            <label>
+              <i className="fas fa-car"></i>
+              Puissance fiscale du véhicule
+            </label>
+            <select
+              value={selectedBareme}
+              onChange={(e) => setSelectedBareme(e.target.value)}
+              className="route-input"
+            >
+              <option value="">Sélectionner la puissance</option>
+              {baremes.map(bareme => (
+                <option key={bareme.id} value={bareme.id}>
+                  {bareme.nom} ({bareme.puissance_fiscale}) - {parseFloat(bareme.tarif_km).toFixed(3)}€/km
+                  {bareme.is_personalized && ' (Personnalisé)'}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {montantCalcule > 0 && (
+          <div className="calculation-result">
+            <div className="result-card">
+              <div className="result-header">
+                <i className="fas fa-calculator"></i>
+                Montant calculé
+              </div>
+              <div className="result-amount">
+                {montantCalcule.toFixed(2)}€
+              </div>
+              <div className="result-details">
+                {distanceKm}km × {baremes.find(b => b.id.toString() === selectedBareme)?.tarif_km}€/km
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="frais-kilometriques">
       <div className="frais-km-header">
@@ -167,7 +273,7 @@ const FraisKilometriques = ({ onCalculationChange }) => {
       </div>
 
       <LoadScript
-        googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyCYKDWRjBPotRjX-AgWnL5Y7-iKAbsu2KA"}
+        googleMapsApiKey={GOOGLE_MAPS_API_KEY}
         libraries={libraries}
         onLoad={() => console.log('✅ Google Maps LoadScript chargé')}
         onError={(e) => {
