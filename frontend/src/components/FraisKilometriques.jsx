@@ -247,7 +247,6 @@ const FraisKilometriques = ({ onCalculationChange }) => {
                   {bareme.nom} ({bareme.puissance_fiscale}) - {parseFloat(bareme.tarif_km).toFixed(3)}€/km
                   {bareme.is_personalized && ' (Personnalisé)'}
                 </option>
-                </option>
               ))}
             </select>
           </div>
