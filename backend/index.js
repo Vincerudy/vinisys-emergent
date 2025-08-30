@@ -744,6 +744,244 @@ app.post('/api/types-frais', async (req, res) => {
     }
 });
 
+// ========== COMPTES COMPTABLES APIs ==========
+
+// GET /api/comptes-comptables - Récupérer tous les comptes comptables système
+app.get('/api/comptes-comptables', async (req, res) => {
+    try {
+        const [comptes] = await db.execute(`
+            SELECT id, numero_compte, libelle, is_system, actif
+            FROM comptes_comptables 
+            WHERE actif = 1 
+            ORDER BY numero_compte ASC
+        `);
+
+        res.json({ 
+            success: true,
+            comptes_comptables: comptes
+        });
+    } catch (error) {
+        console.error('Erreur récupération comptes comptables:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la récupération des comptes comptables' 
+        });
+    }
+});
+
+// GET /api/comptes-comptables/societe/:societeId - Comptes comptables pour une société (système + personnalisés)
+app.get('/api/comptes-comptables/societe/:societeId', async (req, res) => {
+    try {
+        const { societeId } = req.params;
+
+        // 1. Récupérer les comptes système et leurs personnalisations
+        const [comptesSysteme] = await db.execute(`
+            SELECT cc.id, cc.numero_compte, cc.libelle, cc.is_system, cc.actif,
+                   ccs.id as societe_id, ccs.numero_compte as societe_numero, 
+                   ccs.libelle as societe_libelle, ccs.is_personnalise, ccs.actif as societe_actif,
+                   CASE 
+                     WHEN ccs.id IS NOT NULL AND ccs.is_personnalise = 1 THEN TRUE 
+                     ELSE FALSE 
+                   END as is_personalized
+            FROM comptes_comptables cc
+            LEFT JOIN comptes_comptables_societe ccs ON cc.id = ccs.compte_comptable_id AND ccs.societe_id = ?
+            WHERE cc.is_system = 1 AND cc.actif = 1
+            ORDER BY cc.numero_compte ASC
+        `, [societeId]);
+
+        // 2. Récupérer les comptes entièrement nouveaux de la société
+        const [comptesCustom] = await db.execute(`
+            SELECT id, numero_compte, libelle, 0 as is_system, actif, 1 as is_custom
+            FROM comptes_comptables_societe
+            WHERE societe_id = ? AND compte_comptable_id IS NULL AND actif = 1
+            ORDER BY numero_compte ASC
+        `, [societeId]);
+
+        // 3. Formater les résultats
+        const allComptes = [];
+
+        // Ajouter les comptes système (personnalisés ou non)
+        comptesSysteme.forEach(compte => {
+            if (compte.is_personalized) {
+                // Compte système personnalisé
+                allComptes.push({
+                    id: compte.id,
+                    numero_compte: compte.societe_numero || compte.numero_compte,
+                    libelle: compte.societe_libelle || compte.libelle,
+                    actif: compte.societe_actif !== null ? compte.societe_actif : compte.actif,
+                    source_type: 'personalized',
+                    original_id: compte.id,
+                    is_system: true,
+                    is_personalized: true,
+                    societe_compte_id: compte.societe_id
+                });
+            } else {
+                // Compte système non personnalisé
+                allComptes.push({
+                    id: compte.id,
+                    numero_compte: compte.numero_compte,
+                    libelle: compte.libelle,
+                    actif: compte.actif,
+                    source_type: 'system',
+                    is_system: true,
+                    is_personalized: false
+                });
+            }
+        });
+
+        // Ajouter les comptes entièrement nouveaux créés par la société
+        comptesCustom.forEach(compte => {
+            allComptes.push({
+                ...compte,
+                source_type: 'custom',
+                is_system: false,
+                is_personalized: false
+            });
+        });
+
+        res.json({ 
+            success: true,
+            comptes_comptables: allComptes,
+            summary: {
+                system_comptes: comptesSysteme.filter(c => !c.is_personalized).length,
+                personalized_comptes: comptesSysteme.filter(c => c.is_personalized).length,
+                custom_comptes: comptesCustom.length,
+                total: allComptes.length
+            }
+        });
+    } catch (error) {
+        console.error('Erreur gestion comptes comptables société:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la récupération des comptes comptables de la société' 
+        });
+    }
+});
+
+// POST /api/comptes-comptables - Créer un nouveau compte comptable personnalisé
+app.post('/api/comptes-comptables', async (req, res) => {
+    try {
+        const { numero_compte, libelle, societe_id } = req.body;
+
+        if (!numero_compte || !libelle || !societe_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Numéro de compte, libellé et société ID sont requis'
+            });
+        }
+
+        // Créer un nouveau compte personnalisé pour la société
+        const [result] = await db.execute(`
+            INSERT INTO comptes_comptables_societe 
+            (societe_id, numero_compte, libelle, is_custom, actif)
+            VALUES (?, ?, ?, 1, 1)
+        `, [societe_id, numero_compte.trim(), libelle.trim()]);
+
+        res.status(201).json({
+            success: true,
+            message: 'Compte comptable personnalisé créé avec succès',
+            data: { 
+                compteId: result.insertId,
+                numero_compte: numero_compte.trim(),
+                libelle: libelle.trim()
+            }
+        });
+    } catch (error) {
+        console.error('Erreur création compte comptable:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la création du compte comptable',
+            details: error.message
+        });
+    }
+});
+
+// PUT /api/comptes-comptables/:compteId - Personnaliser un compte comptable système
+app.put('/api/comptes-comptables/:compteId', async (req, res) => {
+    try {
+        const { compteId } = req.params;
+        const { numero_compte, libelle, societeId } = req.body;
+
+        // Vérifier si le compte existe et s'il est système
+        const [compteInfo] = await db.execute(`
+            SELECT id, numero_compte, libelle, is_system FROM comptes_comptables WHERE id = ?
+        `, [compteId]);
+
+        if (compteInfo.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Compte comptable non trouvé' 
+            });
+        }
+
+        const compte = compteInfo[0];
+
+        if (compte.is_system === 1) {
+            // C'est un compte système, créer ou mettre à jour une personnalisation
+            
+            const [existingPersonalization] = await db.execute(`
+                SELECT id FROM comptes_comptables_societe 
+                WHERE compte_comptable_id = ? AND societe_id = ?
+            `, [compteId, societeId]);
+
+            if (existingPersonalization.length > 0) {
+                // Mettre à jour la personnalisation existante
+                await db.execute(`
+                    UPDATE comptes_comptables_societe 
+                    SET numero_compte = ?, libelle = ?, is_personnalise = 1,
+                        date_modification = CURRENT_TIMESTAMP
+                    WHERE compte_comptable_id = ? AND societe_id = ?
+                `, [numero_compte, libelle, compteId, societeId]);
+            } else {
+                // Créer une nouvelle personnalisation
+                await db.execute(`
+                    INSERT INTO comptes_comptables_societe 
+                    (compte_comptable_id, societe_id, numero_compte, libelle, is_personnalise, actif)
+                    VALUES (?, ?, ?, ?, 1, 1)
+                `, [compteId, societeId, numero_compte, libelle]);
+            }
+
+            return res.json({
+                success: true,
+                message: 'Compte comptable système personnalisé avec succès',
+                data: { 
+                    compteId: compteId,
+                    numero_compte: numero_compte,
+                    libelle: libelle,
+                    is_personalized: true
+                }
+            });
+
+        } else {
+            // C'est un compte personnalisé, modification directe dans comptes_comptables_societe
+            await db.execute(`
+                UPDATE comptes_comptables_societe 
+                SET numero_compte = ?, libelle = ?, 
+                    date_modification = CURRENT_TIMESTAMP
+                WHERE id = ? AND societe_id = ?
+            `, [numero_compte, libelle, compteId, societeId]);
+
+            return res.json({
+                success: true,
+                message: 'Compte comptable personnalisé modifié avec succès',
+                data: { 
+                    compteId: compteId,
+                    numero_compte: numero_compte,
+                    libelle: libelle
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('Erreur modification compte comptable:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la modification du compte comptable',
+            details: error.message 
+        });
+    }
+});
+
 // Notes de frais - Routes simplifiées
 app.post('/api/note-frais/simple', async (req, res) => {
     try {
