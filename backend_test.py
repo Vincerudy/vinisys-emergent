@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Complete System Expense Types Customization
-Tests the new APIs for complete customization of system expense types:
-1. GET /api/types-frais/manage/2 - Get all expense types for company ID 2 (system + personalized)
-2. PUT /api/types-frais/{typeId} - Customize system expense type (label, description, VAT, accounting account)
-3. POST /api/types-frais - Create new personalized expense type for a company
-Expected: System types with customization possibility, no more "Cannot modify system type label" message
-Database: MySQL local connection with tables types_frais, types_frais_societe_personnalisation, types_frais_societe
-System types IDs: 14-21 (Transport, Hébergement, Repas, etc.)
+Backend API Testing Script for Vinisys Application - Barèmes Kilométriques APIs
+Tests the new APIs for barèmes kilométriques management:
+1. GET /api/baremes-kilometriques/societe/2 - Get all barèmes for company ID 2 (system + personalized + custom)
+Expected: 6 system barèmes by default, 1 personalized barème (ID 6 "Véhicule économique personnalisé" with 0.55€ tariff)
+Structure: summary with system_baremes, personalized_baremes, custom_baremes
+Barèmes with source_type: 'system', 'personalized', or 'custom'
+Database: MySQL local connection with tables baremes_kilometriques, baremes_kilometriques_societe
 Company ID: 2
 """
 
