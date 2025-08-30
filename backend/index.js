@@ -576,24 +576,116 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
 app.put('/api/types-frais/:typeId', async (req, res) => {
     try {
         const { typeId } = req.params;
-        const { libelle, actif, societeId, tva_deductible, taux_deduction_tva, compte_fournisseur_id, description } = req.body;
+        const { libelle, actif, societeId, tva_deductible, taux_deduction_tva, compte_fournisseur_id, description, is_personalization } = req.body;
 
-        // Vérifier si c'est un type système ou personnalisé
-        const [typeInfo] = await db.execute(`
-            SELECT is_system, societe_id FROM types_frais WHERE id = ?
-        `, [typeId]);
+        // Si c'est une personnalisation d'un type système
+        if (is_personalization) {
+            // Vérifier que le type système existe
+            const [typeSysteme] = await db.execute(`
+                SELECT nom, libelle FROM types_frais WHERE id = ? AND is_system = TRUE
+            `, [typeId]);
 
-        if (typeInfo.length === 0) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Type de frais non trouvé' 
+            if (typeSysteme.length === 0) {
+                return res.status(404).json({ 
+                    success: false, 
+                    message: 'Type système non trouvé' 
+                });
+            }
+
+            // Créer la personnalisation
+            const [result] = await db.execute(`
+                INSERT INTO types_frais_personnalises 
+                (societe_id, type_frais_id, nom, libelle, description, actif, tva_deductible, taux_deduction_tva, compte_fournisseur_id, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            `, [
+                societeId, 
+                typeId, 
+                typeSysteme[0].nom, // Garder le même nom technique
+                libelle || typeSysteme[0].libelle,
+                description || null,
+                actif !== false,
+                tva_deductible || 'oui',
+                taux_deduction_tva || 100,
+                compte_fournisseur_id || null
+            ]);
+
+            return res.json({
+                success: true,
+                message: 'Type de frais personnalisé avec succès',
+                data: { personalizedId: result.insertId }
             });
         }
 
-        const isSystemType = typeInfo[0].is_system;
+        // Vérifier si c'est un type personnalisé ou un type système
+        let isPersonalizedType = false;
+        let isSystemType = false;
 
-        if (isSystemType) {
-            // Pour les types système : gérer via la table types_frais_societe
+        // D'abord vérifier dans les types personnalisés
+        const [personalizedType] = await db.execute(`
+            SELECT id FROM types_frais_personnalises WHERE id = ?
+        `, [typeId]);
+
+        if (personalizedType.length > 0) {
+            isPersonalizedType = true;
+        } else {
+            // Vérifier dans les types système
+            const [systemType] = await db.execute(`
+                SELECT is_system FROM types_frais WHERE id = ?
+            `, [typeId]);
+
+            if (systemType.length > 0) {
+                isSystemType = systemType[0].is_system;
+            }
+        }
+
+        if (isPersonalizedType) {
+            // Modification d'un type personnalisé
+            const updates = [];
+            const values = [];
+
+            if (libelle) {
+                updates.push('libelle = ?');
+                values.push(libelle);
+            }
+            if (typeof actif !== 'undefined') {
+                updates.push('actif = ?');
+                values.push(actif);
+            }
+            if (tva_deductible) {
+                updates.push('tva_deductible = ?');
+                values.push(tva_deductible);
+            }
+            if (typeof taux_deduction_tva !== 'undefined') {
+                updates.push('taux_deduction_tva = ?');
+                values.push(taux_deduction_tva);
+            }
+            if (typeof compte_fournisseur_id !== 'undefined') {
+                updates.push('compte_fournisseur_id = ?');
+                values.push(compte_fournisseur_id);
+            }
+            if (description !== undefined) {
+                updates.push('description = ?');
+                values.push(description);
+            }
+
+            if (updates.length > 0) {
+                updates.push('updated_at = NOW()');
+                values.push(typeId);
+
+                await db.execute(`
+                    UPDATE types_frais_personnalises 
+                    SET ${updates.join(', ')} 
+                    WHERE id = ?
+                `, values);
+            }
+
+            return res.json({ 
+                success: true,
+                message: 'Type personnalisé modifié avec succès'
+            });
+
+        } else if (isSystemType) {
+            // Pour les types système : gérer seulement l'activation/désactivation
             if (typeof actif !== 'undefined') {
                 // Vérifier s'il existe déjà une configuration pour cette société
                 const [existingConfig] = await db.execute(`
@@ -618,100 +710,48 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
             }
 
             // Mettre à jour les autres champs pour les types système (TVA, compte, etc.)
-            const updates = [];
-            const values = [];
+            if (tva_deductible || typeof taux_deduction_tva !== 'undefined' || typeof compte_fournisseur_id !== 'undefined' || description !== undefined) {
+                const updates = [];
+                const values = [];
 
-            if (tva_deductible) {
-                updates.push('tva_deductible = ?');
-                values.push(tva_deductible);
+                if (tva_deductible) {
+                    updates.push('tva_deductible = ?');
+                    values.push(tva_deductible);
+                }
+                if (typeof taux_deduction_tva !== 'undefined') {
+                    updates.push('taux_deduction_tva = ?');
+                    values.push(taux_deduction_tva);
+                }
+                if (typeof compte_fournisseur_id !== 'undefined') {
+                    updates.push('compte_fournisseur_id = ?');
+                    values.push(compte_fournisseur_id);
+                }
+                if (description !== undefined) {
+                    updates.push('description = ?');
+                    values.push(description);
+                }
+
+                if (updates.length > 0) {
+                    updates.push('updated_at = NOW()');
+                    values.push(typeId);
+
+                    await db.execute(`
+                        UPDATE types_frais 
+                        SET ${updates.join(', ')} 
+                        WHERE id = ?
+                    `, values);
+                }
             }
 
-            if (typeof taux_deduction_tva !== 'undefined') {
-                updates.push('taux_deduction_tva = ?');
-                values.push(taux_deduction_tva);
-            }
-
-            if (typeof compte_fournisseur_id !== 'undefined') {
-                updates.push('compte_fournisseur_id = ?');
-                values.push(compte_fournisseur_id);
-            }
-
-            if (description !== undefined) {
-                updates.push('description = ?');
-                values.push(description);
-            }
-
-            if (updates.length > 0) {
-                updates.push('updated_at = NOW()');
-                values.push(typeId);
-
-                await db.execute(`
-                    UPDATE types_frais 
-                    SET ${updates.join(', ')} 
-                    WHERE id = ?
-                `, values);
-            }
-
-            // On ne peut pas modifier le libellé des types système
-            if (libelle) {
-                return res.status(403).json({ 
-                    success: false, 
-                    message: 'Impossible de modifier le libellé d\'un type système' 
-                });
-            }
-
-        } else {
-            // Pour les types personnalisés : modification directe
-            const updates = [];
-            const values = [];
-
-            if (libelle) {
-                updates.push('libelle = ?');
-                values.push(libelle);
-            }
-
-            if (typeof actif !== 'undefined') {
-                updates.push('actif = ?');
-                values.push(actif ? 1 : 0);
-            }
-
-            if (tva_deductible) {
-                updates.push('tva_deductible = ?');
-                values.push(tva_deductible);
-            }
-
-            if (typeof taux_deduction_tva !== 'undefined') {
-                updates.push('taux_deduction_tva = ?');
-                values.push(taux_deduction_tva);
-            }
-
-            if (typeof compte_fournisseur_id !== 'undefined') {
-                updates.push('compte_fournisseur_id = ?');
-                values.push(compte_fournisseur_id);
-            }
-
-            if (description !== undefined) {
-                updates.push('description = ?');
-                values.push(description);
-            }
-
-            if (updates.length > 0) {
-                updates.push('updated_at = NOW()');
-                values.push(typeId);
-                values.push(typeInfo[0].societe_id);
-
-                await db.execute(`
-                    UPDATE types_frais 
-                    SET ${updates.join(', ')} 
-                    WHERE id = ? AND societe_id = ?
-                `, values);
-            }
+            return res.json({ 
+                success: true,
+                message: 'Type système mis à jour avec succès'
+            });
         }
 
-        res.json({ 
-            success: true,
-            message: 'Type de frais mis à jour avec succès',
-            type: isSystemType ? 'system' : 'custom'
+        return res.status(404).json({ 
+            success: false, 
+            message: 'Type de frais non trouvé' 
         });
 
     } catch (error) {
