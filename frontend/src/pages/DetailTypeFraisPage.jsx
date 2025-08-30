@@ -14,6 +14,7 @@ const DetailTypeFraisPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [comptesComptables, setComptesComptables] = useState([]);
+  const [champsConfig, setChampsConfig] = useState([]);
   
   // États pour les modifications
   const [formData, setFormData] = useState({
