@@ -1,7 +1,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { GoogleMap, LoadScript, DirectionsRenderer } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, DirectionsRenderer, Autocomplete } from '@react-google-maps/api';
 import axios from 'axios';
+import { useAuth } from '../contexte/AuthContext';
 import './css/FraisKilometriques.css';
 
 const containerStyle = {
@@ -11,7 +12,11 @@ const containerStyle = {
 
 const center = { lat: 48.8566, lng: 2.3522 }; // Paris
 
+// Bibliothèques Google Maps nécessaires
+const libraries = ['places'];
+
 const FraisKilometriques = ({ onCalculationChange }) => {
+  const { societe_id } = useAuth();
   const [directions, setDirections] = useState(null);
   const [distance, setDistance] = useState(null);
   const [distanceKm, setDistanceKm] = useState(0);
@@ -23,22 +28,28 @@ const FraisKilometriques = ({ onCalculationChange }) => {
 
   const originInputRef = useRef(null);
   const destinationInputRef = useRef(null);
+  const originAutocompleteRef = useRef(null);
+  const destinationAutocompleteRef = useRef(null);
 
   // Chargement des barèmes kilométriques au démarrage
   useEffect(() => {
-    fetchBaremes();
-  }, []);
+    if (societe_id) {
+      fetchBaremes();
+    }
+  }, [societe_id]);
 
   const fetchBaremes = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/baremes-kilometriques`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/baremes-kilometriques/societe/${societe_id}`);
       if (response.data.success) {
-        setBaremes(response.data.baremes);
-        if (response.data.baremes.length > 0) {
-          setSelectedBareme(response.data.baremes[0].id.toString());
+        // Filtrer seulement les barèmes actifs
+        const baremesActifs = response.data.baremes_kilometriques.filter(b => b.actif);
+        setBaremes(baremesActifs);
+        if (baremesActifs.length > 0) {
+          setSelectedBareme(baremesActifs[0].id.toString());
         }
-        console.log('✅ Barèmes kilométriques chargés:', response.data.baremes);
+        console.log('✅ Barèmes kilométriques chargés:', baremesActifs);
       }
       setLoading(false);
     } catch (error) {
