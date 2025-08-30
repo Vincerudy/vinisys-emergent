@@ -100,10 +100,24 @@ const DetailTypeFraisPage = () => {
         return;
       }
 
-      await axios.put(`${import.meta.env.VITE_API_URL}/types-frais/${typeId}`, {
-        ...formData,
-        societeId: societe_id
-      });
+      // Préparer les données avec les conversions nécessaires
+      const saveData = {
+        libelle: formData.libelle.trim(),
+        description: formData.description?.trim() || null,
+        actif: formData.actif ? 1 : 0,
+        societeId: societe_id,
+        // Convertir tva_deductible de string vers number
+        tva_deductible: formData.tva_deductible === 'oui' ? 1 : 
+                       formData.tva_deductible === 'non' ? 0 : 
+                       formData.tva_deductible === 'partielle' ? 1 : 1,
+        // Convertir taux_deduction_tva
+        taux_deduction_tva: formData.tva_deductible === 'oui' ? 100 :
+                           formData.tva_deductible === 'non' ? 0 :
+                           parseFloat(formData.taux_deduction_tva) || 100,
+        compte_comptable_id: formData.compte_comptable_id || null
+      };
+
+      await axios.put(`${import.meta.env.VITE_API_URL}/types-frais/${typeId}`, saveData);
 
       Swal.fire({
         icon: 'success',
