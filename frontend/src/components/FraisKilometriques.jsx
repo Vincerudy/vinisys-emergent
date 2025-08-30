@@ -291,12 +291,19 @@ const FraisKilometriques = ({ onCalculationChange }) => {
             <Autocomplete
               onLoad={(autocomplete) => {
                 originAutocompleteRef.current = autocomplete;
+                // Configuration des options pour améliorer les suggestions
+                autocomplete.setOptions({
+                  types: ['geocode'],
+                  componentRestrictions: { country: 'fr' }, // Limiter à la France pour de meilleures suggestions
+                  fields: ['formatted_address', 'geometry', 'name']
+                });
               }}
               onPlaceChanged={() => {
                 if (originAutocompleteRef.current) {
                   const place = originAutocompleteRef.current.getPlace();
                   if (place && place.formatted_address) {
                     console.log('📍 Lieu sélectionné (départ):', place.formatted_address);
+                    // Optionnel : déclencher automatiquement le calcul après sélection
                   }
                 }
               }}
