@@ -106,6 +106,35 @@ const DetailTypeFraisPage = () => {
     }
   };
 
+  const getChampLabel = (nomChamp) => {
+    const labels = {
+      'type_repas': 'Type de repas',
+      'lieu': 'Lieu',
+      'nom_restaurant': 'Nom du restaurant',
+      'date': 'Date',
+      'refacturable': 'Refacturable',
+      'client': 'Client',
+      'dossier': 'Dossier',
+      'fournisseurs': 'Fournisseurs',
+      'motif': 'Motif',
+      'commentaire': 'Commentaire',
+      'justificatif': 'Justificatif',
+      'numero_justificatif': 'N° de justificatif',
+      'piece_jointe': 'Pièce jointe',
+      'nom': 'Nom',
+      'prenom': 'Prénom',
+      'tva_20': 'TVA 20%',
+      'tva_10': 'TVA 10%',
+      'tva_5_5': 'TVA 5.5%',
+      'tva_libre_1': 'TVA libre 1',
+      'tva_libre_2': 'TVA libre 2',
+      'tva_libre_3': 'TVA libre 3',
+      'total_tva': 'Total TVA',
+      'contact_1': 'Contact n°1'
+    };
+    return labels[nomChamp] || nomChamp;
+  };
+
   const loadComptesComptables = async () => {
     try {
       // Charger les comptes disponibles pour cette société (système + personnalisés)
