@@ -39,9 +39,7 @@ const ParametresDepenses = () => {
   }, [activeTab]);
 
   const loadData = async () => {
-    if (activeTab === 'categories') {
-      await loadCategories();
-    } else if (activeTab === 'baremes') {
+    if (activeTab === 'baremes') {
       await loadBaremes();
     } else if (activeTab === 'types-frais') {
       await loadTypesFrais();
