@@ -67,25 +67,42 @@ const DetailTypeFraisPage = () => {
     }
   };
 
-  const loadComptesComptables = async () => {
+  const loadChampsConfig = async () => {
     try {
-      // Charger les comptes disponibles pour cette société (système + personnalisés)
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/comptes-comptables/societe/${societe_id}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/types-frais/${typeId}/champs-config/${societe_id}`);
       if (response.data.success) {
-        // Filtrer uniquement les comptes actifs et trier par personnalisés en premier
-        const comptesActifs = response.data.comptes_comptables.filter(compte => compte.actif);
-        
-        // Trier pour mettre les comptes personnalisés en premier
-        const comptesTries = comptesActifs.sort((a, b) => {
-          if (a.is_personalized && !b.is_personalized) return -1;
-          if (!a.is_personalized && b.is_personalized) return 1;
-          return a.numero_compte.localeCompare(b.numero_compte);
-        });
-        
-        setComptesComptables(comptesTries);
+        setChampsConfig(response.data.champs_config);
       }
     } catch (error) {
-      console.error('Erreur chargement comptes comptables:', error);
+      console.error('Erreur chargement configuration champs:', error);
+    }
+  };
+
+  const handleChampConfigChange = (nomChamp, visibilite) => {
+    setChampsConfig(prev => 
+      prev.map(champ => 
+        champ.nom_champ === nomChamp 
+          ? { ...champ, visibilite }
+          : champ
+      )
+    );
+  };
+
+  const saveChampsConfig = async () => {
+    try {
+      await axios.put(`${import.meta.env.VITE_API_URL}/types-frais/${typeId}/champs-config/${societe_id}`, {
+        champs_config: champsConfig
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Configuration sauvegardée',
+        text: 'La configuration des champs a été mise à jour',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Erreur sauvegarde configuration champs:', error);
+      Swal.fire('Erreur', 'Erreur lors de la sauvegarde de la configuration', 'error');
     }
   };
 
