@@ -3,6 +3,7 @@ import { Modal, Form, Input, DatePicker, Select, Tabs } from 'antd';
 import './css/GestionAdministrativePage.css'; // Import du fichier CSS
 import SocieteConfiguration from '../components/composantsFacture/SocieteConfiguration';
 import ConfigurationTVA from './ConfigurationTVA';
+import ComptesComptablesConfiguration from '../components/ComptesComptablesConfiguration';
  
 const { Option } = Select;
 
