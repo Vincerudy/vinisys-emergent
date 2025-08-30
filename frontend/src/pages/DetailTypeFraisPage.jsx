@@ -13,7 +13,7 @@ const DetailTypeFraisPage = () => {
   const [typeFrais, setTypeFrais] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [comptesFournisseur, setComptesFournisseur] = useState([]);
+  const [comptesComptables, setComptesComptables] = useState([]);
   
   // États pour les modifications
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ const DetailTypeFraisPage = () => {
     actif: true,
     tva_deductible: 'oui', // 'oui', 'non', 'partielle'
     taux_deduction_tva: 100,
-    compte_fournisseur_id: null,
+    compte_comptable_id: null,
     description: ''
   });
 
