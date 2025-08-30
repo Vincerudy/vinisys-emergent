@@ -473,7 +473,9 @@ const NouvelleNoteFraisPage = () => {
                   <option value="">Sélectionner un type</option>
                   {typesFrais.map(type => (
                     <option key={type.id} value={type.id}>
-                      {type.nom}
+                      {type.libelle}
+                      {type.is_personalized && ' (Personnalisé)'}
+                      {type.source_type === 'custom' && ' (Ajouté)'}
                     </option>
                   ))}
                 </select>
