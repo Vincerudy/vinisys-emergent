@@ -563,14 +563,6 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
                 total: allTypes.length
             }
         });
-
-
-            // Exécuter l’insertion avec societeId pour chaque ligne
-
-
-
-
-
     } catch (error) {
         console.error('Erreur gestion types de frais:', error);
         res.status(500).json({ 
