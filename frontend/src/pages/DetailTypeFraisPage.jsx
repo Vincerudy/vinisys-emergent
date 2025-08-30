@@ -45,7 +45,9 @@ const DetailTypeFraisPage = () => {
           setFormData({
             libelle: type.libelle,
             actif: type.actif,
-            tva_deductible: type.tva_deductible || 'oui',
+            // Convertir tva_deductible de number vers string pour le frontend
+            tva_deductible: type.tva_deductible === 1 ? 'oui' : 
+                           type.tva_deductible === 0 ? 'non' : 'oui',
             taux_deduction_tva: type.taux_deduction_tva || 100,
             compte_comptable_id: type.compte_comptable_id || null,
             description: type.description || ''
