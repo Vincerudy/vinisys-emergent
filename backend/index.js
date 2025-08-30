@@ -1205,9 +1205,9 @@ app.put('/api/baremes-kilometriques/:baremeId', async (req, res) => {
             await db.execute(`
                 UPDATE baremes_kilometriques_societe 
                 SET nom = ?, description = ?, puissance_fiscale_min = ?, puissance_fiscale_max = ?, 
-                    tarif_par_km = ?, date_modification = CURRENT_TIMESTAMP
+                    tarif_par_km = ?, actif = ?, date_modification = CURRENT_TIMESTAMP
                 WHERE id = ? AND societe_id = ?
-            `, [nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, baremeId, societeId]);
+            `, [nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, actif ? 1 : 0, baremeId, societeId]);
 
             return res.json({
                 success: true,
