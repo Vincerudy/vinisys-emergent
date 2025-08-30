@@ -495,11 +495,13 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
             ORDER BY tf.libelle ASC
         `, [societeId, societeId]);
 
-        // 2. Récupérer les types personnalisés de la société
-        const [typesPersonnalises] = await db.execute(`
-            SELECT *, 'custom' as source_type, NULL as societe_config_id
-            FROM types_frais 
-            WHERE societe_id = ? AND is_system = FALSE 
+        // 2. Récupérer les types entièrement nouveaux de la société
+        const [typesNouveaux] = await db.execute(`
+            SELECT id, nom, libelle, description, actif, 
+                   tva_deductible, taux_deduction_tva, compte_fournisseur_id,
+                   FALSE as is_system, FALSE as is_personalized, 'custom' as source_type
+            FROM types_frais_personnalises
+            WHERE societe_id = ? AND type_frais_id IS NULL
             ORDER BY libelle ASC
         `, [societeId]);
 
