@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 
 const ParametresDepenses = () => {
   const { id: userId, societe_id } = useAuth();
-  const [activeTab, setActiveTab] = useState('categories');
+  const [activeTab, setActiveTab] = useState('baremes');
   const [loading, setLoading] = useState(false);
   
   // États pour les catégories
