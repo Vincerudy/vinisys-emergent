@@ -483,6 +483,10 @@ export const publicRoute = createHashRouter([
                 element: <ProtectedRoute element={<DetailTypeFraisPage />} />,
             },
             {
+                path: "/depenses/baremes/detail/:baremeId",
+                element: <ProtectedRoute element={<DetailBaremeKilometriquePage />} />,
+            },
+            {
                 path: "/depenses/parametres-tva",
                 element: <ProtectedRoute element={<ParametresTVA />} />,
             },
