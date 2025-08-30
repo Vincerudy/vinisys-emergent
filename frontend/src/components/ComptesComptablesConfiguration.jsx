@@ -63,9 +63,11 @@ const ComptesComptablesConfiguration = () => {
 
   const handleDelete = async (compteId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/comptes-fournisseur/societe/${compteId}`);
-      message.success('Compte supprimé avec succès');
-      await loadComptes();
+      // Pour l'instant, nous n'implémentons pas la suppression
+      message.warning('Fonctionnalité de suppression non implémentée');
+      // await axios.delete(`${import.meta.env.VITE_API_URL}/comptes-comptables/${compteId}`);
+      // message.success('Compte supprimé avec succès');
+      // await loadComptes();
     } catch (error) {
       console.error('Erreur suppression compte:', error);
       message.error('Erreur lors de la suppression');
