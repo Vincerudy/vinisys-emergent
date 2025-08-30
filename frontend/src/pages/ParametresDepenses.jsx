@@ -182,7 +182,8 @@ const ParametresDepenses = () => {
   };
 
   const handleEditBareme = (bareme) => {
-    setEditingBareme(bareme);
+    // Rediriger vers la page de détail du barème
+    navigate(`/depenses/baremes/detail/${bareme.id}`);
   };
 
   // Gestion des types de frais
