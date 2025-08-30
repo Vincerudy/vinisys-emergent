@@ -73,6 +73,25 @@ const NouvelleNoteFraisPage = () => {
     }
   }, [societe_id, noteId, isEditMode]);
 
+  // Charger la configuration des champs pour un type de frais
+  const loadChampsConfig = async (typeId) => {
+    if (!typeId) {
+      setChampsConfig([]);
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/types-frais/${typeId}/champs-config/${societe_id}`);
+      if (response.data.success) {
+        setChampsConfig(response.data.champs_config);
+        console.log('✅ Configuration champs chargée:', response.data.champs_config.length, 'champs');
+      }
+    } catch (error) {
+      console.error('❌ Erreur chargement configuration champs:', error);
+      setChampsConfig([]);
+    }
+  };
+
   // Surveiller le changement de type de frais pour détecter les frais kilométriques
   useEffect(() => {
     const typeSelectionne = typesFrais.find(type => type.id == formData.type_frais_id);
@@ -81,6 +100,11 @@ const NouvelleNoteFraisPage = () => {
       typeSelectionne.nom.toLowerCase().includes('kilomet')
     );
     setIsKilometriqueType(typeKilometrique);
+    
+    // Charger la configuration des champs pour ce type
+    if (formData.type_frais_id) {
+      loadChampsConfig(formData.type_frais_id);
+    }
     
     // Réinitialiser les données si on change de type
     if (!typeKilometrique) {
@@ -92,7 +116,7 @@ const NouvelleNoteFraisPage = () => {
         point_arrivee: ''
       });
     }
-  }, [formData.type_frais_id, typesFrais]);
+  }, [formData.type_frais_id, typesFrais, societe_id]);
 
   const fetchInitialData = async () => {
     try {
