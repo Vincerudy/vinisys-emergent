@@ -16,7 +16,7 @@ import os
 from datetime import datetime
 
 # Backend URL configuration - Using production URL from frontend/.env
-REACT_APP_BACKEND_URL = "https://finance-app-ui.preview.emergentagent.com"
+REACT_APP_BACKEND_URL = "https://vinisys-finance-1.preview.emergentagent.com"
 BASE_URL = REACT_APP_BACKEND_URL
 API_BASE = f"{BASE_URL}/api"
 
