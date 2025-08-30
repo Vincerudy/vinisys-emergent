@@ -50,6 +50,15 @@ const Configuration = () => {
       ),
       children: <ConfigurationTVA />,
     },
+    {
+      key: 'comptes',
+      label: (
+        <span style={{ fontWeight: 'bold', fontSize: 18, color: '#3454d1' }}>
+          Rubrique et compte comptable
+        </span>
+      ),
+      children: <ComptesComptablesConfiguration />,
+    },
   ];
 
   return (
