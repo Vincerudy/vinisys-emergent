@@ -985,6 +985,251 @@ app.put('/api/comptes-comptables/:compteId', async (req, res) => {
     }
 });
 
+// ========== BAREMES KILOMETRIQUES APIs ==========
+
+// GET /api/baremes-kilometriques - Récupérer tous les barèmes système
+app.get('/api/baremes-kilometriques', async (req, res) => {
+    try {
+        const [baremes] = await db.execute(`
+            SELECT id, nom, description, puissance_fiscale, tarif_km, is_system, actif
+            FROM baremes_kilometriques 
+            WHERE actif = 1 
+            ORDER BY puissance_fiscale_min ASC
+        `);
+
+        res.json({ 
+            success: true,
+            baremes_kilometriques: baremes
+        });
+    } catch (error) {
+        console.error('Erreur récupération barèmes kilométriques:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la récupération des barèmes kilométriques' 
+        });
+    }
+});
+
+// GET /api/baremes-kilometriques/societe/:societeId - Barèmes pour une société (système + personnalisés)
+app.get('/api/baremes-kilometriques/societe/:societeId', async (req, res) => {
+    try {
+        const { societeId } = req.params;
+
+        // 1. Récupérer les barèmes système et leurs personnalisations
+        const [baremesSysteme] = await db.execute(`
+            SELECT bk.id, bk.nom, bk.description, bk.puissance_fiscale, bk.tarif_km, bk.is_system, bk.actif,
+                   bks.id as societe_id, bks.nom as societe_nom, bks.description as societe_description,
+                   bks.puissance_fiscale_min as societe_pf_min, bks.puissance_fiscale_max as societe_pf_max,
+                   bks.tarif_par_km as societe_tarif, bks.is_personnalise, bks.actif as societe_actif,
+                   CASE 
+                     WHEN bks.id IS NOT NULL AND bks.is_personnalise = 1 THEN TRUE 
+                     ELSE FALSE 
+                   END as is_personalized
+            FROM baremes_kilometriques bk
+            LEFT JOIN baremes_kilometriques_societe bks ON bk.id = bks.bareme_kilometrique_id AND bks.societe_id = ?
+            WHERE bk.is_system = 1 AND bk.actif = 1
+            ORDER BY bk.puissance_fiscale_min ASC
+        `, [societeId]);
+
+        // 2. Récupérer les barèmes entièrement nouveaux de la société
+        const [baremesCustom] = await db.execute(`
+            SELECT id, nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, 0 as is_system, actif, 1 as is_custom
+            FROM baremes_kilometriques_societe
+            WHERE societe_id = ? AND bareme_kilometrique_id IS NULL AND actif = 1
+            ORDER BY puissance_fiscale_min ASC
+        `, [societeId]);
+
+        // 3. Formater les résultats
+        const allBaremes = [];
+
+        // Ajouter les barèmes système (personnalisés ou non)
+        baremesSysteme.forEach(bareme => {
+            if (bareme.is_personalized) {
+                // Barème système personnalisé
+                allBaremes.push({
+                    id: bareme.id,
+                    nom: bareme.societe_nom || bareme.nom,
+                    description: bareme.societe_description || bareme.description,
+                    puissance_fiscale: `${bareme.societe_pf_min}-${bareme.societe_pf_max} CV`,
+                    tarif_km: bareme.societe_tarif,
+                    actif: bareme.societe_actif !== null ? bareme.societe_actif : bareme.actif,
+                    source_type: 'personalized',
+                    original_id: bareme.id,
+                    is_system: true,
+                    is_personalized: true,
+                    societe_bareme_id: bareme.societe_id
+                });
+            } else {
+                // Barème système non personnalisé
+                allBaremes.push({
+                    id: bareme.id,
+                    nom: bareme.nom,
+                    description: bareme.description,
+                    puissance_fiscale: bareme.puissance_fiscale,
+                    tarif_km: bareme.tarif_km,
+                    actif: bareme.actif,
+                    source_type: 'system',
+                    is_system: true,
+                    is_personalized: false
+                });
+            }
+        });
+
+        // Ajouter les barèmes entièrement nouveaux créés par la société
+        baremesCustom.forEach(bareme => {
+            allBaremes.push({
+                ...bareme,
+                puissance_fiscale: `${bareme.puissance_fiscale_min}-${bareme.puissance_fiscale_max} CV`,
+                tarif_km: bareme.tarif_par_km,
+                source_type: 'custom',
+                is_system: false,
+                is_personalized: false
+            });
+        });
+
+        res.json({ 
+            success: true,
+            baremes_kilometriques: allBaremes,
+            summary: {
+                system_baremes: baremesSysteme.filter(b => !b.is_personalized).length,
+                personalized_baremes: baremesSysteme.filter(b => b.is_personalized).length,
+                custom_baremes: baremesCustom.length,
+                total: allBaremes.length
+            }
+        });
+    } catch (error) {
+        console.error('Erreur gestion barèmes kilométriques société:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la récupération des barèmes kilométriques de la société' 
+        });
+    }
+});
+
+// POST /api/baremes-kilometriques - Créer un nouveau barème personnalisé
+app.post('/api/baremes-kilometriques', async (req, res) => {
+    try {
+        const { nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, societe_id } = req.body;
+
+        if (!nom || !puissance_fiscale_min || !puissance_fiscale_max || !tarif_par_km || !societe_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nom, puissance fiscale et tarif sont requis'
+            });
+        }
+
+        // Créer un nouveau barème personnalisé pour la société
+        const [result] = await db.execute(`
+            INSERT INTO baremes_kilometriques_societe 
+            (societe_id, nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, is_custom, actif)
+            VALUES (?, ?, ?, ?, ?, ?, 1, 1)
+        `, [societe_id, nom.trim(), description || null, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km]);
+
+        res.status(201).json({
+            success: true,
+            message: 'Barème kilométrique personnalisé créé avec succès',
+            data: { 
+                baremeId: result.insertId,
+                nom: nom.trim(),
+                tarif_par_km: tarif_par_km
+            }
+        });
+    } catch (error) {
+        console.error('Erreur création barème kilométrique:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la création du barème kilométrique',
+            details: error.message
+        });
+    }
+});
+
+// PUT /api/baremes-kilometriques/:baremeId - Personnaliser un barème système
+app.put('/api/baremes-kilometriques/:baremeId', async (req, res) => {
+    try {
+        const { baremeId } = req.params;
+        const { nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, societeId } = req.body;
+
+        // Vérifier si le barème existe et s'il est système
+        const [baremeInfo] = await db.execute(`
+            SELECT id, nom, is_system FROM baremes_kilometriques WHERE id = ?
+        `, [baremeId]);
+
+        if (baremeInfo.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Barème kilométrique non trouvé' 
+            });
+        }
+
+        const bareme = baremeInfo[0];
+
+        if (bareme.is_system === 1) {
+            // C'est un barème système, créer ou mettre à jour une personnalisation
+            
+            const [existingPersonalization] = await db.execute(`
+                SELECT id FROM baremes_kilometriques_societe 
+                WHERE bareme_kilometrique_id = ? AND societe_id = ?
+            `, [baremeId, societeId]);
+
+            if (existingPersonalization.length > 0) {
+                // Mettre à jour la personnalisation existante
+                await db.execute(`
+                    UPDATE baremes_kilometriques_societe 
+                    SET nom = ?, description = ?, puissance_fiscale_min = ?, puissance_fiscale_max = ?, 
+                        tarif_par_km = ?, is_personnalise = 1, date_modification = CURRENT_TIMESTAMP
+                    WHERE bareme_kilometrique_id = ? AND societe_id = ?
+                `, [nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, baremeId, societeId]);
+            } else {
+                // Créer une nouvelle personnalisation
+                await db.execute(`
+                    INSERT INTO baremes_kilometriques_societe 
+                    (bareme_kilometrique_id, societe_id, nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, is_personnalise, actif)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 1, 1)
+                `, [baremeId, societeId, nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km]);
+            }
+
+            return res.json({
+                success: true,
+                message: 'Barème kilométrique système personnalisé avec succès',
+                data: { 
+                    baremeId: baremeId,
+                    nom: nom,
+                    tarif_par_km: tarif_par_km,
+                    is_personalized: true
+                }
+            });
+
+        } else {
+            // C'est un barème personnalisé, modification directe dans baremes_kilometriques_societe
+            await db.execute(`
+                UPDATE baremes_kilometriques_societe 
+                SET nom = ?, description = ?, puissance_fiscale_min = ?, puissance_fiscale_max = ?, 
+                    tarif_par_km = ?, date_modification = CURRENT_TIMESTAMP
+                WHERE id = ? AND societe_id = ?
+            `, [nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, baremeId, societeId]);
+
+            return res.json({
+                success: true,
+                message: 'Barème kilométrique personnalisé modifié avec succès',
+                data: { 
+                    baremeId: baremeId,
+                    nom: nom,
+                    tarif_par_km: tarif_par_km
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('Erreur modification barème kilométrique:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Erreur lors de la modification du barème kilométrique',
+            details: error.message 
+        });
+    }
+});
+
 // Notes de frais - Routes simplifiées
 app.post('/api/note-frais/simple', async (req, res) => {
     try {
