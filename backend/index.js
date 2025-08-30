@@ -474,17 +474,26 @@ app.get('/api/types-frais/manage/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
 
-        // 1. Récupérer tous les types système
+        // 1. Récupérer tous les types système avec leurs personnalisations
         const [typesSysteme] = await db.execute(`
-            SELECT tf.*, 
-                   COALESCE(tfs.actif, TRUE) as actif,
-                   tfs.id as societe_config_id,
-                   'system' as source_type
+            SELECT tf.id, tf.nom, tf.libelle, tf.description, tf.actif, tf.is_system,
+                   tf.tva_deductible, tf.taux_deduction_tva, tf.compte_fournisseur_id,
+                   tfs.actif as societe_actif,
+                   tfp.id as pers_id, tfp.nom as pers_nom, tfp.libelle as pers_libelle,
+                   tfp.description as pers_description, tfp.actif as pers_actif,
+                   tfp.tva_deductible as pers_tva_deductible, 
+                   tfp.taux_deduction_tva as pers_taux_deduction_tva,
+                   tfp.compte_fournisseur_id as pers_compte_fournisseur_id,
+                   CASE 
+                     WHEN tfp.id IS NOT NULL THEN TRUE 
+                     ELSE FALSE 
+                   END as is_personalized
             FROM types_frais tf 
             LEFT JOIN types_frais_societe tfs ON tf.id = tfs.type_frais_id AND tfs.societe_id = ?
+            LEFT JOIN types_frais_personnalises tfp ON tf.id = tfp.type_frais_id AND tfp.societe_id = ?
             WHERE tf.is_system = TRUE 
             ORDER BY tf.libelle ASC
-        `, [societeId]);
+        `, [societeId, societeId]);
 
         // 2. Récupérer les types personnalisés de la société
         const [typesPersonnalises] = await db.execute(`
