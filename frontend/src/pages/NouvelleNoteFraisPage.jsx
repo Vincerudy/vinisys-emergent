@@ -74,7 +74,11 @@ const NouvelleNoteFraisPage = () => {
 
   // Surveiller le changement de type de frais pour détecter les frais kilométriques
   useEffect(() => {
-    const typeKilometrique = parseInt(formData.type_frais_id) === 14; // ID du type "Transport - Kilomètres"
+    const typeSelectionne = typesFrais.find(type => type.id == formData.type_frais_id);
+    const typeKilometrique = typeSelectionne && (
+      typeSelectionne.code === 'KM' || 
+      typeSelectionne.nom.toLowerCase().includes('kilomet')
+    );
     setIsKilometriqueType(typeKilometrique);
     
     // Réinitialiser les données si on change de type
@@ -87,7 +91,7 @@ const NouvelleNoteFraisPage = () => {
         point_arrivee: ''
       });
     }
-  }, [formData.type_frais_id]);
+  }, [formData.type_frais_id, typesFrais]);
 
   const fetchInitialData = async () => {
     try {
