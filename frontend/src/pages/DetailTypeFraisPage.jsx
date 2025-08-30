@@ -47,7 +47,7 @@ const DetailTypeFraisPage = () => {
             actif: type.actif,
             tva_deductible: type.tva_deductible || 'oui',
             taux_deduction_tva: type.taux_deduction_tva || 100,
-            compte_fournisseur_id: type.compte_fournisseur_id || null,
+            compte_comptable_id: type.compte_comptable_id || null,
             description: type.description || ''
           });
         } else {
