@@ -507,13 +507,15 @@ const ListeNotesfraisPage = () => {
                       >
                         <FiEye size={14} />
                       </button>
-                      <button 
-                        className="btn-action edit" 
-                        title="Modifier"
-                        onClick={() => handleEditNote(note.id)}
-                      >
-                        <FiEdit size={14} />
-                      </button>
+                      {note.statut !== 'soumise' && note.statut !== 'validee' && note.statut !== 'rejetee' && (
+                        <button 
+                          className="btn-action edit" 
+                          title="Modifier"
+                          onClick={() => handleEditNote(note.id)}
+                        >
+                          <FiEdit size={14} />
+                        </button>
+                      )}
                       {note.statut === 'soumise' && (
                         <button 
                           className="btn-action validate" 
