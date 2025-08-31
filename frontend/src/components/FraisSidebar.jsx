@@ -339,6 +339,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
                     value={formData.type_frais_id}
                     onChange={(e) => handleInputChange('type_frais_id', e.target.value)}
                     className="form-select"
+                    disabled={isReadOnlyMode}
                   >
                     <option value="">Sélectionner un type</option>
                     {typesFrais.map(type => (
