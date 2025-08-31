@@ -354,9 +354,25 @@ const NoteDetailPage = () => {
                       </td>
                       <td className="frais-actions">
                         {note.statut === 'soumise' ? (
-                          <span className="actions-disabled">Soumise</span>
+                          <div className="actions-readonly">
+                            <button
+                              className="btn-action btn-view"
+                              onClick={() => handleViewFrais(fraisItem)}
+                              title="Consulter"
+                            >
+                              <FiEye />
+                            </button>
+                            <span className="status-text">Soumise</span>
+                          </div>
                         ) : (
                           <>
+                            <button
+                              className="btn-action btn-view"
+                              onClick={() => handleViewFrais(fraisItem)}
+                              title="Consulter"
+                            >
+                              <FiEye />
+                            </button>
                             <button
                               className="btn-action btn-edit"
                               onClick={() => handleEditFrais(fraisItem)}
