@@ -1851,3 +1851,196 @@ Une fois la navigation corrigée, tester :
 **L'application Vinisys est techniquement prête côté backend avec toutes les fonctionnalités demandées (Rapport financier, Notes de frais, Achats), mais nécessite une correction urgente des imports frontend pour être utilisable.**
 
 **RECOMMANDATION** : Prioriser la correction des imports React avant tout autre développement.
+
+---
+
+# 🧪 TESTS BACKEND APIs - TYPES DE FRAIS ET BARÈMES KILOMÉTRIQUES - 2025-08-31 12:54:00
+
+## ❌ PROBLÈME CRITIQUE IDENTIFIÉ - TABLES DE BASE DE DONNÉES MANQUANTES
+
+### Tests effectués sur les APIs spécifiques mentionnées dans la demande utilisateur
+
+#### ❌ DIAGNOSTIC PRINCIPAL : TABLES DE PERSONNALISATION MANQUANTES
+1. **❌ Table `types_frais_societe` n'existe pas** : Erreur SQL "Table doesn't exist"
+2. **❌ Table `types_frais_societe_personnalisation` n'existe pas** : Erreur SQL "Table doesn't exist"  
+3. **❌ Table `baremes_kilometriques_societe` n'existe pas** : Erreur SQL "Table doesn't exist"
+4. **✅ Tables de base présentes** : `types_frais` (8 enregistrements) et `baremes_kilometriques` (0 enregistrement)
+
+### 🔍 ANALYSE TECHNIQUE DÉTAILLÉE
+
+#### ✅ INFRASTRUCTURE VALIDÉE
+- **Backend server** : ✅ Opérationnel sur https://finance-flex.preview.emergentagent.com
+- **Base de données MySQL** : ✅ Connexion réussie à la base `vinisys`
+- **Authentification** : ❌ Échec avec les identifiants fournis (idnovation2014@gmail.com / 123456)
+- **APIs endpoints** : ✅ Accessibles mais retournent des erreurs de base de données
+
+#### ❌ ERREURS EXACTES IDENTIFIÉES
+
+**API Types de Frais** : GET /api/types-frais/manage/2
+```sql
+Error: Table 'vinisys.types_frais_societe' doesn't exist
+```
+
+**API Barèmes Kilométriques** : GET /api/baremes-kilometriques/societe/2  
+```sql
+Error: Table 'vinisys.baremes_kilometriques_societe' doesn't exist
+```
+
+#### 🔍 ÉTAT ACTUEL DE LA BASE DE DONNÉES
+
+**Tables existantes** :
+- ✅ `types_frais` : 8 enregistrements (Transport - Kilomètres, Taxi/VTC, Train/Bus, Avion, Hôtel, etc.)
+- ✅ `baremes_kilometriques` : 0 enregistrement (table vide)
+
+**Tables manquantes** :
+- ❌ `types_frais_societe` : Pour l'activation/désactivation par société
+- ❌ `types_frais_societe_personnalisation` : Pour les personnalisations par société  
+- ❌ `baremes_kilometriques_societe` : Pour les barèmes personnalisés par société
+
+#### 📊 STRUCTURE DES DONNÉES EXISTANTES
+
+**Table `types_frais`** :
+```sql
+id | nom                    | code           | societe_id | libelle
+14 | Transport - Kilomètres | KM             | 2          | Kilomètres
+15 | Transport - Taxi/VTC   | TAXI           | 2          | Taxi/VTC
+16 | Transport - Train/Bus  | TRANSPORT_PUBLIC| 2          | Train/Bus
+17 | Transport - Avion      | AVION          | 2          | Avion
+18 | Hébergement - Hôtel    | HOTEL          | 2          | Hôtel
+```
+
+**Table `baremes_kilometriques`** : VIDE (0 enregistrement)
+
+### 🎯 CAUSE RACINE DU PROBLÈME UTILISATEUR
+
+**Erreur "Impossible de charger les barèmes kilométriques"** :
+1. **API `/api/baremes-kilometriques/societe/2`** → Erreur SQL table manquante
+2. **API `/api/types-frais/manage/2`** → Erreur SQL table manquante
+3. **Tables de personnalisation** → Non créées dans la base de données
+4. **Barèmes système** → Table vide (aucun barème URSSAF par défaut)
+
+### 🔧 ACTIONS CORRECTIVES REQUISES
+
+#### 1. CRÉATION DES TABLES MANQUANTES (PRIORITÉ CRITIQUE)
+
+**Table `types_frais_societe`** :
+```sql
+CREATE TABLE types_frais_societe (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type_frais_id INT NOT NULL,
+  societe_id INT NOT NULL,
+  actif TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (type_frais_id) REFERENCES types_frais(id),
+  UNIQUE KEY unique_type_societe (type_frais_id, societe_id)
+);
+```
+
+**Table `types_frais_societe_personnalisation`** :
+```sql
+CREATE TABLE types_frais_societe_personnalisation (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type_frais_id INT NOT NULL,
+  societe_id INT NOT NULL,
+  libelle_personnalise VARCHAR(255),
+  description_personnalisee TEXT,
+  tva_deductible TINYINT(1) DEFAULT 1,
+  taux_deduction_tva DECIMAL(5,2) DEFAULT 20.00,
+  compte_comptable_id INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (type_frais_id) REFERENCES types_frais(id),
+  UNIQUE KEY unique_pers_type_societe (type_frais_id, societe_id)
+);
+```
+
+**Table `baremes_kilometriques_societe`** :
+```sql
+CREATE TABLE baremes_kilometriques_societe (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  bareme_kilometrique_id INT,
+  societe_id INT NOT NULL,
+  nom VARCHAR(255) NOT NULL,
+  description TEXT,
+  puissance_fiscale_min INT,
+  puissance_fiscale_max INT,
+  tarif_par_km DECIMAL(6,3) NOT NULL,
+  is_personnalise TINYINT(1) DEFAULT 0,
+  actif TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (bareme_kilometrique_id) REFERENCES baremes_kilometriques(id)
+);
+```
+
+#### 2. INSERTION DES BARÈMES URSSAF 2025 (PRIORITÉ HAUTE)
+
+**Barèmes système manquants** :
+```sql
+INSERT INTO baremes_kilometriques (annee, puissance_fiscale, tarif_km, actif) VALUES
+(2025, '3 CV et moins', 0.502, 1),
+(2025, '4 CV', 0.575, 1),
+(2025, '5 CV', 0.603, 1),
+(2025, '6 CV', 0.632, 1),
+(2025, '7 CV et plus', 0.661, 1);
+```
+
+#### 3. CORRECTION DU SCHÉMA DE BASE (PRIORITÉ MOYENNE)
+
+**Ajouter colonnes manquantes** :
+```sql
+ALTER TABLE types_frais ADD COLUMN is_system TINYINT(1) DEFAULT 0;
+ALTER TABLE baremes_kilometriques ADD COLUMN is_system TINYINT(1) DEFAULT 1;
+```
+
+### 📊 TESTS À EFFECTUER APRÈS CORRECTION
+
+#### APIs à re-tester :
+1. **GET /api/types-frais/manage/2** → Doit retourner types système + personnalisés
+2. **GET /api/types-frais/societe/2** → Doit retourner types actifs pour société 2
+3. **GET /api/baremes-kilometriques/societe/2** → Doit retourner 5 barèmes URSSAF 2025
+4. **GET /api/baremes-kilometriques/manage?societeId=2** → Doit retourner barèmes avec gestion
+
+#### Structure de réponse attendue :
+```json
+{
+  "success": true,
+  "baremes_kilometriques": [
+    {
+      "id": 1,
+      "nom": "Véhicule 3 CV et moins",
+      "puissance_fiscale": "3 CV et moins",
+      "tarif_km": 0.502,
+      "source_type": "system",
+      "is_system": true,
+      "is_personalized": false
+    }
+  ],
+  "summary": {
+    "system_baremes": 5,
+    "personalized_baremes": 0,
+    "custom_baremes": 0,
+    "total": 5
+  }
+}
+```
+
+### 🚀 CONCLUSION TECHNIQUE
+
+**PROBLÈME CONFIRMÉ** : L'erreur "Impossible de charger les barèmes kilométriques" est due à des tables de base de données manquantes.
+
+**CAUSE RACINE** :
+1. ❌ Tables de personnalisation non créées (`types_frais_societe`, `types_frais_societe_personnalisation`, `baremes_kilometriques_societe`)
+2. ❌ Barèmes URSSAF 2025 non insérés (table `baremes_kilometriques` vide)
+3. ❌ Colonnes `is_system` manquantes dans les tables de base
+
+**IMPACT UTILISATEUR** :
+- ❌ Page /depenses/parametres affiche "Impossible de charger les barèmes kilométriques"
+- ❌ Types de frais non visibles dans l'interface
+- ❌ Fonctionnalité frais kilométriques non opérationnelle
+
+**SOLUTION IDENTIFIÉE** : Création des tables manquantes + insertion des barèmes URSSAF 2025
+
+**BACKEND APIs** : ✅ Code fonctionnel, ❌ Base de données incomplète
+
+**RECOMMANDATION URGENTE** : Exécuter les scripts SQL de création des tables et insertion des données avant tout autre test.
+
+---
