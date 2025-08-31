@@ -88,6 +88,11 @@ const NoteDetailPage = () => {
     setSidebarOpen(true);
   };
 
+  const handleViewFrais = (fraisItem) => {
+    setEditingFrais({ ...fraisItem, readOnly: true });
+    setSidebarOpen(true);
+  };
+
   const handleCloseSidebar = () => {
     setSidebarOpen(false);
     setEditingFrais(null);
