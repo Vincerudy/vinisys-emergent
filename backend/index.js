@@ -1036,7 +1036,7 @@ app.get('/api/baremes-kilometriques/societe/:societeId', async (req, res) => {
             SELECT id, nom, description, puissance_fiscale_min, puissance_fiscale_max, tarif_par_km, 0 as is_system, actif, 1 as is_custom
             FROM baremes_kilometriques_societe
             WHERE societe_id = ? AND bareme_kilometrique_id IS NULL AND actif = 1
-            ORDER BY puissance_fiscale_min ASC
+            ORDER BY id ASC
         `, [societeId]);
 
         // 3. Formater les résultats
