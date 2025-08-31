@@ -2,7 +2,7 @@
 
 /* Variables */
 :root{
-  --bg: #0f1724;
+  --bg: #bababa;
   --card: #0b1220;
   --muted: #9aa6b2;
   --text: #e6eef6;
@@ -110,8 +110,10 @@ button{
 }
 
 .filters-grid{
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+ 
   gap:12px;
 }
 
@@ -366,6 +368,9 @@ select, .range-inputs input[type="number"]{
   min-width:200px;
   border:1px solid rgba(255,255,255,0.02);
 }
+.width33{
+  width: 33%;
+}
 
 .summary-icon{
   width:46px;
@@ -387,6 +392,18 @@ select, .range-inputs input[type="number"]{
 
 /* Responsive */
 @media (max-width: 1100px){
+  .width33{
+    width: 100%;
+  }
+  .filters-grid{
+    display: flex;
+    flex-direction:column;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap:12px;
+  }
+  
+  
   .filters-grid{ grid-template-columns: repeat(2, 1fr); }
   .summary-cards{ justify-content:flex-start; }
   .achats-table{ min-width: 900px; }

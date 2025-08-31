@@ -183,7 +183,7 @@ const ListeAchatsPage = () => {
         </div>
         
         <div className="filters-grid">
-          <div className="filter-group">
+          <div className="filter-group width33">
             <label>Recherche</label>
             <div className="search-input">
               <FiSearch className="search-icon" />
@@ -196,7 +196,7 @@ const ListeAchatsPage = () => {
             </div>
           </div>
 
-          <div className="filter-group">
+          <div className="filter-group width33">
             <label>Période</label>
             <select 
               style={{flex: 1, color: '#3e3e3e'}}
@@ -212,7 +212,7 @@ const ListeAchatsPage = () => {
             </select>
           </div>
 
-          <div className="filter-group">
+          <div className="filter-group width33" >
             <label>Statut</label>
             <select 
               style={{flex: 1, color: '#3e3e3e'}}
@@ -227,11 +227,11 @@ const ListeAchatsPage = () => {
             </select>
           </div>
 
-          <div className="filter-group">
+          <div className="filter-group width33">
             <label>Montant (€)</label>
             <div className="range-inputs">
               <input
-                style={{height: '70px', backgroundColor: '#e5e5e5', color: '#3e3e3e'}}
+                style={{height: '70px', backgroundColor: '#e5e5e5', color: '#3e3e3e' }}
                 type="number"
                 placeholder="Min"
                 value={filters.montant_min}
@@ -239,7 +239,7 @@ const ListeAchatsPage = () => {
               />
               <span>à</span>
               <input
-               style={{height: '70px', backgroundColor: '#e5e5e5', color: '#3e3e3e'}}
+               style={{height: '70px', backgroundColor: '#e5e5e5', color: '#3e3e3e' }}
                 type="number"
                 placeholder="Max"
                 value={filters.montant_max}
