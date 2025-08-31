@@ -82,12 +82,15 @@ const NoteDetailPage = () => {
   const handleNewFrais = () => {
     // Vérifier le paramètre OCR depuis le localStorage
     const ocrEnabled = localStorage.getItem(`ocr_enabled_${societe_id}`) === 'true';
+    console.log('🔍 Debug OCR:', { societe_id, ocrEnabled, localStorage_value: localStorage.getItem(`ocr_enabled_${societe_id}`) });
     
     if (ocrEnabled) {
       // OCR activé : Afficher la modale de choix
+      console.log('✅ OCR activé - Affichage de la modale');
       setOcrModalOpen(true);
     } else {
       // OCR désactivé : Ouvrir directement la sidebar
+      console.log('❌ OCR désactivé - Ouverture directe de la sidebar');
       setEditingFrais(null);
       setSidebarOpen(true);
     }
