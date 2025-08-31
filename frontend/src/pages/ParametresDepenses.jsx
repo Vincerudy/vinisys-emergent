@@ -236,7 +236,8 @@ const ParametresDepenses = () => {
 
       await axios.put(`${import.meta.env.VITE_API_URL}/types-frais/${editingType.id}`, {
         libelle: editingType.libelle.trim(),
-        actif: editingType.actif
+        actif: editingType.actif,
+        societeId: societe_id
       });
 
       // Mettre à jour l'état local
