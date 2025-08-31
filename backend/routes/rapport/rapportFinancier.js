@@ -137,7 +137,7 @@ router.get('/:societeId', async (req, res) => {
             LEFT JOIN achats a ON ca.id = a.categorie_achat_id 
                 AND a.societe_id = ? 
                 AND a.date_achat BETWEEN ? AND ?
-                AND a.statut IN ('valide', 'brouillon')
+                AND a.statut = 'valide'
             WHERE ca.actif = 1
             GROUP BY ca.id, ca.nom
             HAVING montant > 0
