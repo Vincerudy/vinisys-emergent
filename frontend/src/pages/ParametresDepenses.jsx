@@ -35,6 +35,10 @@ const ParametresDepenses = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // États pour les paramètres généraux
+  const [ocrEnabled, setOcrEnabled] = useState(false);
+  const [savingOcr, setSavingOcr] = useState(false);
+
   useEffect(() => {
     loadData();
   }, [activeTab]);
