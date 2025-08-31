@@ -121,10 +121,10 @@ router.get('/:societeId', async (req, res) => {
                 COALESCE(SUM(CASE WHEN ca.tva_deductible = 1 THEN a.montant_tva ELSE 0 END), 0) as tva_deductible,
                 COALESCE(SUM(CASE WHEN ca.tva_deductible = 0 OR ca.tva_deductible IS NULL THEN a.montant_tva ELSE 0 END), 0) as tva_non_deductible
             FROM achats a
-            LEFT JOIN categories_achats ca ON a.categorie_id = ca.id 
+            LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id 
             WHERE a.societe_id = ? 
                 AND a.date_achat BETWEEN ? AND ?
-                AND a.statut = 'valide'
+                AND a.statut IN ('valide', 'brouillon')
         `, [societeId, date_debut, date_fin]);
 
         // Répartition des dépenses par catégorie
