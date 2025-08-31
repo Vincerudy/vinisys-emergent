@@ -268,7 +268,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
         <div className="sidebar-header">
           <h2>
             <FiFileText />
-            {isEditMode ? 'Modifier le frais' : 'Nouveau frais'}
+            {isReadOnlyMode ? 'Consulter le frais' : isEditMode ? 'Modifier le frais' : 'Nouveau frais'}
           </h2>
           <button className="btn-close" onClick={onClose}>
             <FiX />
