@@ -703,9 +703,16 @@ const ParametresDepenses = () => {
                         Activation/désactivation de la reconnaissance automatique de documents
                       </p>
                       <div className="form-check form-switch">
-                        <input className="form-check-input" type="checkbox" id="ocrSwitch" defaultChecked />
+                        <input 
+                          className="form-check-input" 
+                          type="checkbox" 
+                          id="ocrSwitch" 
+                          checked={ocrEnabled}
+                          onChange={(e) => handleOcrToggle(e.target.checked)}
+                          disabled={savingOcr}
+                        />
                         <label className="form-check-label" htmlFor="ocrSwitch">
-                          Activer l'OCR
+                          {savingOcr ? 'Mise à jour...' : 'Activer l\'OCR'}
                         </label>
                       </div>
                     </div>
