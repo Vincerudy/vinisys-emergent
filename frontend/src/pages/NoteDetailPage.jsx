@@ -476,6 +476,13 @@ const NoteDetailPage = () => {
         type="warning"
       />
 
+      {/* Composant de capture OCR */}
+      <OCRCapture
+        isOpen={ocrCaptureOpen}
+        onClose={() => setOcrCaptureOpen(false)}
+        onDataExtracted={handleOcrDataExtracted}
+      />
+
       {/* Modale de choix OCR */}
       {ocrModalOpen && (
         <div className="modal-overlay" onClick={() => setOcrModalOpen(false)}>
