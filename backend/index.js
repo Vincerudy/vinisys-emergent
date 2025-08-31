@@ -632,7 +632,7 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
                     INSERT INTO types_frais_societe_personnalisation 
                     (type_frais_id, societe_id, libelle_personnalise, description_personnalisee, tva_deductible, taux_deduction_tva, compte_comptable_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                `, [typeId, societeId, libelle, description, tva_deductible, taux_deduction_tva, compte_comptable_id]);
+                `, [typeId, societeId, libelle, safeDescription, safeTvaDeductible, safeTauxDeductionTva, safeCompteComptableId]);
 
                 console.log('Nouvelle personnalisation créée pour le type système', typeId);
             }
