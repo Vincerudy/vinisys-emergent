@@ -231,7 +231,7 @@ router.get('/:societeId', async (req, res) => {
                 total_ht: parseFloat(depensesTotal[0]?.total_ht || 0),
                 total_tva: parseFloat(depensesTotal[0]?.total_tva || 0),
                 total_ttc: depenses_ttc,
-                tva_deductible: tva_deductible,
+                tva_recuperable: tva_recuperable,
                 tva_non_deductible: tva_non_deductible,
                 categories: categoriesAvecPourcentage
             },
