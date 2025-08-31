@@ -1028,7 +1028,7 @@ app.get('/api/baremes-kilometriques/societe/:societeId', async (req, res) => {
             FROM baremes_kilometriques bk
             LEFT JOIN baremes_kilometriques_societe bks ON bk.id = bks.bareme_kilometrique_id AND bks.societe_id = ?
             WHERE bk.is_system = 1 AND bk.actif = 1
-            ORDER BY bk.puissance_fiscale_min ASC
+            ORDER BY bk.id ASC
         `, [societeId]);
 
         // 2. Récupérer les barèmes entièrement nouveaux de la société
