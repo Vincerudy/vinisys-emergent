@@ -124,7 +124,7 @@ router.get('/:societeId', async (req, res) => {
             LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id 
             WHERE a.societe_id = ? 
                 AND a.date_achat BETWEEN ? AND ?
-                AND a.statut IN ('valide', 'brouillon')
+                AND a.statut = 'valide'
         `, [societeId, date_debut, date_fin]);
 
         // Répartition des dépenses par catégorie
