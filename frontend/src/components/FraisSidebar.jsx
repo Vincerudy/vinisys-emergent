@@ -64,13 +64,17 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
         date_frais: ocrData.date_frais || prevData.date_frais,
         description: ocrData.description || prevData.description,
         tva_taux: ocrData.tva_taux || prevData.tva_taux,
-        moyen_paiement: ocrData.moyen_paiement || prevData.moyen_paiement
+        moyen_paiement: ocrData.moyen_paiement || prevData.moyen_paiement,
+        // Ajouter l'image OCR comme justificatif
+        justificatifs: ocrData.ocrImage ? [{
+          file: ocrData.ocrImage,
+          name: 'Reçu scanné (OCR)',
+          type: 'image/ocr',
+          isOCR: true
+        }] : prevData.justificatifs
       }));
 
-      // Stocker l'image et le texte OCR
-      if (ocrData.ocrImage) {
-        setOcrImage(ocrData.ocrImage);
-      }
+      // Stocker le texte OCR pour référence
       if (ocrData.ocrText) {
         setOcrText(ocrData.ocrText);
       }
