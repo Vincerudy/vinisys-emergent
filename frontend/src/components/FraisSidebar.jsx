@@ -46,6 +46,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
   });
 
   const isEditMode = !!fraisData;
+  const isReadOnlyMode = !!(fraisData && fraisData.readOnly);
 
   useEffect(() => {
     fetchInitialData();
