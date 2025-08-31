@@ -176,11 +176,13 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
       // Validation
       if (!formData.vendeur.trim()) {
         alert('Veuillez remplir le champ vendeur');
+        setSaving(false);
         return;
       }
 
       if (!formData.montant_ttc) {
         alert('Veuillez remplir le montant TTC');
+        setSaving(false);
         return;
       }
 
