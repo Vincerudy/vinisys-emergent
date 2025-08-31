@@ -107,10 +107,21 @@ const NoteDetailPage = () => {
   };
 
   const handlePhotoCapture = () => {
-    // Prendre une photo : Pour l'instant, on simule en ouvrant la sidebar
-    // TODO: Implémenter la capture photo OCR
+    // Fermer la modale de choix et ouvrir l'interface OCR
     setOcrModalOpen(false);
-    alert('Fonctionnalité de capture photo OCR à implémenter');
+    setOcrCaptureOpen(true);
+  };
+
+  const handleOcrDataExtracted = (ocrData) => {
+    console.log('🎯 Données OCR extraites:', ocrData);
+    
+    // Fermer l'interface OCR
+    setOcrCaptureOpen(false);
+    
+    // Stocker les données OCR pour les passer à la sidebar
+    setOcrDataForSidebar(ocrData);
+    
+    // Ouvrir la sidebar avec les données pré-remplies
     setEditingFrais(null);
     setSidebarOpen(true);
   };
