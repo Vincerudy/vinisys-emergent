@@ -34,7 +34,37 @@ const ParametrageFraisPage = () => {
   useEffect(() => {
     fetchTypesFrais();
     fetchCategoriesAchats();
+    fetchParametresGeneraux();
   }, [societe_id]);
+
+  const fetchParametresGeneraux = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/parametres-notes-frais/${societe_id}`);
+      if (response.data.success) {
+        setOcrEnabled(response.data.parametres.ocr_enabled || false);
+      }
+    } catch (error) {
+      console.error('Erreur chargement paramètres généraux:', error);
+      // Si l'API n'existe pas encore, utiliser la valeur par défaut
+      setOcrEnabled(false);
+    }
+  };
+
+  const saveParametreOcr = async (enabled) => {
+    try {
+      setLoadingOcr(true);
+      await axios.put(`${import.meta.env.VITE_API_URL}/parametres-notes-frais/${societe_id}`, {
+        ocr_enabled: enabled
+      });
+      setOcrEnabled(enabled);
+      Swal.fire('Succès', 'Paramètre OCR mis à jour', 'success');
+    } catch (error) {
+      console.error('Erreur sauvegarde OCR:', error);
+      Swal.fire('Erreur', 'Erreur lors de la sauvegarde du paramètre OCR', 'error');
+    } finally {
+      setLoadingOcr(false);
+    }
+  };
 
   const fetchCategoriesAchats = async () => {
     try {
