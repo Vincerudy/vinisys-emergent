@@ -134,10 +134,10 @@ router.get('/:societeId', async (req, res) => {
                 COALESCE(SUM(a.montant_ttc), 0) as montant,
                 COUNT(a.id) as nombre
             FROM categories_achats ca
-            LEFT JOIN achats a ON ca.id = a.categorie_id 
+            LEFT JOIN achats a ON ca.id = a.categorie_achat_id 
                 AND a.societe_id = ? 
                 AND a.date_achat BETWEEN ? AND ?
-                AND a.statut = 'valide'
+                AND a.statut IN ('valide', 'brouillon')
             WHERE ca.actif = 1
             GROUP BY ca.id, ca.nom
             HAVING montant > 0
