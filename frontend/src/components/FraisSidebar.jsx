@@ -521,6 +521,53 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
           </div>
         </div>
 
+        {/* Section OCR - Pièces jointes */}
+        {(ocrImage || ocrText) && (
+          <div className="sidebar-section ocr-section">
+            <div className="section-header">
+              <h3>📷 Justificatif OCR</h3>
+              <small>Image analysée automatiquement</small>
+            </div>
+            
+            {ocrImage && (
+              <div className="ocr-attachment">
+                <div className="attachment-preview">
+                  <img 
+                    src={typeof ocrImage === 'string' ? ocrImage : URL.createObjectURL(ocrImage)} 
+                    alt="Justificatif OCR" 
+                    className="ocr-image-preview"
+                    onClick={() => {
+                      // Ouvrir l'image en grand
+                      const imgUrl = typeof ocrImage === 'string' ? ocrImage : URL.createObjectURL(ocrImage);
+                      window.open(imgUrl, '_blank');
+                    }}
+                  />
+                  <div className="attachment-info">
+                    <span className="attachment-name">Reçu scanné</span>
+                    <span className="attachment-type">Image • OCR</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {ocrText && (
+              <div className="ocr-text-section">
+                <details className="ocr-text-details">
+                  <summary>Texte extrait (pour vérification)</summary>
+                  <div className="ocr-text-content">
+                    <textarea 
+                      value={ocrText} 
+                      readOnly 
+                      rows={4}
+                      className="ocr-text-display"
+                    />
+                  </div>
+                </details>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Footer */}
         <div className="sidebar-footer">
           <div className="footer-info">
