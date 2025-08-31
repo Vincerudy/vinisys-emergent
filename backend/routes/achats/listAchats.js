@@ -36,7 +36,7 @@ router.get('/:societeId', async (req, res) => {
             whereClause += ' AND a.fournisseur_id = ?';
             params.push(fournisseur);
         }
-        if (statut) {
+        if (statut && statut !== 'all') {
             whereClause += ' AND a.statut = ?';
             params.push(statut);
         }
