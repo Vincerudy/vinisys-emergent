@@ -90,23 +90,51 @@ router.get('/:societeId', async (req, res) => {
                 AND total IS NOT NULL
         `, [societeId, date_debut, date_fin]);
 
-        // Répartition par TVA sur les factures  
+        // Répartition par TVA NETTE (collectée - déductible)
         const [tvaRepartition] = await connection.execute(`
             SELECT 
-                ROUND((total_tva / CAST(ht AS DECIMAL(10,2))) * 100, 2) as taux,
-                SUM(total_tva) as montant_tva,
-                SUM(CAST(ht AS DECIMAL(10,2))) as montant_ht
-            FROM factures
-            WHERE societe_id = ? 
-                AND date_facture BETWEEN ? AND ?
-                AND statut != 'annulée'
-                AND type_fact != 'avoir'
-                AND total IS NOT NULL
-                AND ht IS NOT NULL
-                AND total_tva > 0
-            GROUP BY ROUND((total_tva / CAST(ht AS DECIMAL(10,2))) * 100, 2)
-            ORDER BY taux
-        `, [societeId, date_debut, date_fin]);
+                taux_tva as taux,
+                COALESCE(SUM(tva_collectee), 0) as tva_collectee, 
+                COALESCE(SUM(tva_deductible), 0) as tva_deductible,
+                COALESCE(SUM(tva_collectee), 0) - COALESCE(SUM(tva_deductible), 0) as montant_tva,
+                COALESCE(SUM(montant_ht_collecte), 0) as montant_ht
+            FROM (
+                -- TVA collectée des factures
+                SELECT 
+                    ROUND((total_tva / CAST(ht AS DECIMAL(10,2))) * 100, 2) as taux_tva,
+                    SUM(total_tva) as tva_collectee,
+                    0 as tva_deductible,
+                    SUM(CAST(ht AS DECIMAL(10,2))) as montant_ht_collecte
+                FROM factures
+                WHERE societe_id = ? 
+                    AND date_facture BETWEEN ? AND ?
+                    AND statut != 'annulée'
+                    AND type_fact != 'avoir'
+                    AND total IS NOT NULL
+                    AND ht IS NOT NULL
+                    AND total_tva > 0
+                GROUP BY ROUND((total_tva / CAST(ht AS DECIMAL(10,2))) * 100, 2)
+                
+                UNION ALL
+                
+                -- TVA déductible des achats
+                SELECT 
+                    a.taux_tva,
+                    0 as tva_collectee,
+                    SUM(CASE WHEN ca.tva_deductible = 1 THEN a.montant_tva ELSE 0 END) as tva_deductible,
+                    0 as montant_ht_collecte
+                FROM achats a
+                LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id
+                WHERE a.societe_id = ? 
+                    AND a.date_achat BETWEEN ? AND ?
+                    AND a.statut = 'valide'
+                    AND a.montant_tva > 0
+                GROUP BY a.taux_tva
+            ) AS tva_combined
+            GROUP BY taux_tva
+            HAVING COALESCE(SUM(tva_collectee), 0) > 0 OR COALESCE(SUM(tva_deductible), 0) > 0
+            ORDER BY taux_tva
+        `, [societeId, date_debut, date_fin, societeId, date_debut, date_fin]);
 
         // =====================================================
         // SECTION 2: DÉPENSES ET ACHATS
