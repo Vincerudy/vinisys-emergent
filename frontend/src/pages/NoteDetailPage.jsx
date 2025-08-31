@@ -84,8 +84,17 @@ const NoteDetailPage = () => {
 
   const handleNewFrais = () => {
     // Vérifier le paramètre OCR depuis le localStorage
-    const ocrEnabled = localStorage.getItem(`ocr_enabled_${societe_id}`) === 'true';
-    console.log('🔍 Debug OCR:', { societe_id, ocrEnabled, localStorage_value: localStorage.getItem(`ocr_enabled_${societe_id}`) });
+    const storageKey = `ocr_enabled_${societe_id}`;
+    const ocrSetting = localStorage.getItem(storageKey);
+    const ocrEnabled = ocrSetting === 'true';
+    
+    console.log('🔍 Debug handleNewFrais:', { 
+      societe_id, 
+      storageKey, 
+      ocrSetting, 
+      ocrEnabled,
+      localStorage_keys: Object.keys(localStorage)
+    });
     
     if (ocrEnabled) {
       // OCR activé : Afficher la modale de choix
