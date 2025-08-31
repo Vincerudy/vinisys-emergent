@@ -80,6 +80,31 @@ const NoteDetailPage = () => {
   };
 
   const handleNewFrais = () => {
+    // Vérifier le paramètre OCR depuis le localStorage
+    const ocrEnabled = localStorage.getItem(`ocr_enabled_${societe_id}`) === 'true';
+    
+    if (ocrEnabled) {
+      // OCR activé : Afficher la modale de choix
+      setOcrModalOpen(true);
+    } else {
+      // OCR désactivé : Ouvrir directement la sidebar
+      setEditingFrais(null);
+      setSidebarOpen(true);
+    }
+  };
+
+  const handleManualEntry = () => {
+    // Saisie manuelle : Fermer la modale et ouvrir la sidebar
+    setOcrModalOpen(false);
+    setEditingFrais(null);
+    setSidebarOpen(true);
+  };
+
+  const handlePhotoCapture = () => {
+    // Prendre une photo : Pour l'instant, on simule en ouvrant la sidebar
+    // TODO: Implémenter la capture photo OCR
+    setOcrModalOpen(false);
+    alert('Fonctionnalité de capture photo OCR à implémenter');
     setEditingFrais(null);
     setSidebarOpen(true);
   };
