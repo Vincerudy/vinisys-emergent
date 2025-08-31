@@ -500,16 +500,18 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved }) => {
           
           <div className="footer-actions">
             <button className="btn-cancel" onClick={onClose}>
-              Annuler
+              {isReadOnlyMode ? 'Fermer' : 'Annuler'}
             </button>
-            <button 
-              className="btn-save-frais" 
-              onClick={handleSave}
-              disabled={saving}
-            >
-              <FiSave />
-              {saving ? 'Sauvegarde...' : isEditMode ? 'Modifier' : 'Ajouter frais'}
-            </button>
+            {!isReadOnlyMode && (
+              <button 
+                className="btn-save-frais" 
+                onClick={handleSave}
+                disabled={saving}
+              >
+                <FiSave />
+                {saving ? 'Sauvegarde...' : isEditMode ? 'Modifier' : 'Ajouter frais'}
+              </button>
+            )}
           </div>
         </div>
       </div>
