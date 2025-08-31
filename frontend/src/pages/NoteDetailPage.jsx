@@ -36,6 +36,7 @@ const NoteDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingFrais, setEditingFrais] = useState(null);
+  const [ocrModalOpen, setOcrModalOpen] = useState(false);
   const [noteTitle, setNoteTitle] = useState('');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
