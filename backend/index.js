@@ -583,6 +583,12 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
 
         console.log('PUT /api/types-frais/:typeId - Données reçues:', { typeId, libelle, actif, societeId, tva_deductible, taux_deduction_tva, compte_comptable_id, description });
 
+        // Gérer les valeurs undefined en les convertissant en null
+        const safeDescription = description || null;
+        const safeTvaDeductible = tva_deductible || null;
+        const safeTauxDeductionTva = taux_deduction_tva || null;
+        const safeCompteComptableId = compte_comptable_id || null;
+
         // Vérifier si le type existe et s'il est système
         const [typeInfo] = await db.execute(`
             SELECT id, nom, libelle, is_system FROM types_frais WHERE id = ?
