@@ -51,6 +51,33 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
   const isEditMode = !!fraisData;
   const isReadOnlyMode = !!(fraisData && fraisData.readOnly);
 
+  // Gérer les données OCR
+  useEffect(() => {
+    if (ocrData) {
+      console.log('📷 Données OCR reçues:', ocrData);
+      
+      // Préremplir le formulaire avec les données OCR
+      setFormData(prevData => ({
+        ...prevData,
+        vendeur: ocrData.vendeur || prevData.vendeur,
+        montant_ttc: ocrData.montant_ttc || prevData.montant_ttc,
+        date_frais: ocrData.date_frais || prevData.date_frais,
+        description: ocrData.description || prevData.description,
+        tva_taux: ocrData.tva_taux || prevData.tva_taux,
+        moyen_paiement: ocrData.moyen_paiement || prevData.moyen_paiement
+      }));
+
+      // Stocker l'image et le texte OCR
+      if (ocrData.ocrImage) {
+        setOcrImage(ocrData.ocrImage);
+      }
+      if (ocrData.ocrText) {
+        setOcrText(ocrData.ocrText);
+      }
+    }
+  }, [ocrData]);
+
+  // Charger les données existantes pour l'édition
   useEffect(() => {
     fetchInitialData();
     if (fraisData) {
