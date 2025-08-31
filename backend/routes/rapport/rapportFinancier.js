@@ -296,6 +296,13 @@ router.get('/:societeId', async (req, res) => {
         console.log(`📉 Dépenses TTC: ${depenses_ttc}€`);
         console.log(`🏆 Bénéfice net: ${benefice_net}€`);
 
+        // Empêcher la mise en cache
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
+
         res.json(rapport);
 
     } catch (error) {
