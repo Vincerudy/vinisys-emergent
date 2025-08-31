@@ -118,7 +118,7 @@ router.get('/:societeId', async (req, res) => {
                 COALESCE(SUM(a.montant_ht), 0) as total_ht,
                 COALESCE(SUM(a.montant_tva), 0) as total_tva,
                 COALESCE(SUM(a.montant_ttc), 0) as total_ttc,
-                COALESCE(SUM(CASE WHEN ca.tva_deductible = 1 THEN a.montant_tva ELSE 0 END), 0) as tva_deductible,
+                COALESCE(SUM(CASE WHEN ca.tva_deductible = 1 THEN a.montant_tva ELSE 0 END), 0) as tva_recuperable,
                 COALESCE(SUM(CASE WHEN ca.tva_deductible = 0 OR ca.tva_deductible IS NULL THEN a.montant_tva ELSE 0 END), 0) as tva_non_deductible
             FROM achats a
             LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id 
