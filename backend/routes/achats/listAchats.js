@@ -32,7 +32,7 @@ router.get('/:societeId', async (req, res) => {
             whereClause += ' AND a.date_achat <= ?';
             params.push(dateFin);
         }
-        if (fournisseur) {
+        if (fournisseur && fournisseur.trim() !== '') {
             whereClause += ' AND a.fournisseur_id = ?';
             params.push(fournisseur);
         }
@@ -40,7 +40,7 @@ router.get('/:societeId', async (req, res) => {
             whereClause += ' AND a.statut = ?';
             params.push(statut);
         }
-        if (categorie) {
+        if (categorie && categorie.trim() !== '') {
             whereClause += ' AND a.categorie_achat_id = ?';
             params.push(categorie);
         }
