@@ -27,7 +27,9 @@ const ParametrageFraisPage = () => {
   const [newType, setNewType] = useState({ nom: '', libelle: '' });
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('types-frais'); // 'types-frais' ou 'tva-categories'
+  const [activeTab, setActiveTab] = useState('general'); // 'general', 'types-frais' ou 'tva-categories'
+  const [ocrEnabled, setOcrEnabled] = useState(false);
+  const [loadingOcr, setLoadingOcr] = useState(false);
 
   useEffect(() => {
     fetchTypesFrais();
