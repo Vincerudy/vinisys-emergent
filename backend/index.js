@@ -647,7 +647,7 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
                 // Mettre à jour l'état actif
                 await db.execute(`
                     UPDATE types_frais_societe 
-                    SET actif = ?, date_modification = CURRENT_TIMESTAMP
+                    SET actif = ?, updated_at = CURRENT_TIMESTAMP
                     WHERE type_frais_id = ? AND societe_id = ?
                 `, [actif ? 1 : 0, typeId, societeId]);
             } else {
