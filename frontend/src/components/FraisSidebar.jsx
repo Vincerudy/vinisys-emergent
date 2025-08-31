@@ -30,6 +30,9 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
     projet_id: ''
   });
 
+  const [ocrImage, setOcrImage] = useState(null);
+  const [ocrText, setOcrText] = useState('');
+
   const [projets, setProjets] = useState([]);
   const [typesFrais, setTypesFrais] = useState([]);
   const [saving, setSaving] = useState(false);
