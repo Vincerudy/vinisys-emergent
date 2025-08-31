@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Barèmes Kilométriques APIs
-Tests the new APIs for barèmes kilométriques management:
-1. GET /api/baremes-kilometriques/societe/2 - Get all barèmes for company ID 2 (system + personalized + custom)
-Expected: 6 system barèmes by default, 1 personalized barème (ID 6 "Véhicule économique personnalisé" with 0.55€ tariff)
-Structure: summary with system_baremes, personalized_baremes, custom_baremes
-Barèmes with source_type: 'system', 'personalized', or 'custom'
-Database: MySQL local connection with tables baremes_kilometriques, baremes_kilometriques_societe
-Company ID: 2
+Backend API Testing Script for Vinisys Application - Types de Frais et Barèmes Kilométriques APIs
+Tests the APIs for types de frais and barèmes kilométriques management:
+
+APIs à tester:
+1. GET /api/types-frais/manage?societeId=2 - Types de frais avec personnalisations
+2. GET /api/types-frais/societe/2 - Types de frais pour société (si existe)
+3. GET /api/baremes-kilometriques/societe/2 - Barèmes kilométriques pour société
+4. GET /api/baremes-kilometriques/manage?societeId=2 - Barèmes avec gestion (si existe)
+
+Tables de base de données à vérifier:
+- types_frais (types de frais système)
+- types_frais_societe_personnalisation (personnalisations par société)
+- baremes_kilometriques (barèmes système)  
+- baremes_kilometriques_societe (barèmes personnalisés par société)
+
+Société connectée: ID 2 (utilisateur idnovation2014@gmail.com)
 """
 
 import requests
