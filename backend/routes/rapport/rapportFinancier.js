@@ -199,7 +199,7 @@ router.get('/:societeId', async (req, res) => {
         const notes_frais_rembourse = parseFloat(notesFraisTotal[0]?.total_rembourse || 0);
 
         // Formule: Bénéfice net = (CA encaissé - Avoirs) - (Dépenses TTC - TVA déductible) - Notes de frais
-        const benefice_net = (ca_encaisse - total_avoirs) - (depenses_ttc - tva_deductible) - notes_frais_rembourse;
+        const benefice_net = (ca_encaisse - total_avoirs) - (depenses_ttc - tva_recuperable) - notes_frais_rembourse;
 
         // =====================================================
         // STRUCTURE DE LA RÉPONSE
