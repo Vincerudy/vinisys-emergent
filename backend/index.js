@@ -994,7 +994,7 @@ app.get('/api/baremes-kilometriques', async (req, res) => {
             SELECT id, nom, description, puissance_fiscale, tarif_km, is_system, actif
             FROM baremes_kilometriques 
             WHERE actif = 1 
-            ORDER BY puissance_fiscale_min ASC
+            ORDER BY id ASC
         `);
 
         res.json({ 
