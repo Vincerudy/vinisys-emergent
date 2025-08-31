@@ -77,10 +77,10 @@ const ParametresDepenses = () => {
   const loadTypesFrais = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/types-frais/manage/${societe_id}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/types-frais`);
       
       if (response.data.success) {
-        setTypesFrais(response.data.types_frais);
+        setTypesFrais(response.data.types);
       }
     } catch (error) {
       console.error('Erreur chargement types de frais:', error);
