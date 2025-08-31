@@ -1,0 +1,263 @@
+/* Composant OCR Capture */
+.ocr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.ocr-modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 0;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.ocr-modal-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.ocr-modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.ocr-modal-header .btn-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  font-size: 1.25rem;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.ocr-modal-header .btn-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ocr-modal-body {
+  padding: 32px 24px;
+}
+
+/* Étape de capture */
+.capture-options {
+  text-align: center;
+}
+
+.capture-options p {
+  margin: 0 0 32px;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.upload-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px;
+  border: 3px dashed #d1d5db;
+  border-radius: 16px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 200px;
+  gap: 12px;
+}
+
+.upload-btn:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+}
+
+.camera-btn:hover {
+  border-color: #059669;
+  background: #f0fdf4;
+  box-shadow: 0 10px 25px rgba(5, 150, 105, 0.15);
+}
+
+.upload-btn svg {
+  font-size: 3rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.camera-btn svg {
+  color: #059669;
+}
+
+.file-btn svg {
+  color: #3b82f6;
+}
+
+.upload-btn span {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.upload-btn small {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Étape de traitement */
+.processing-view {
+  text-align: center;
+}
+
+.captured-image {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  max-height: 300px;
+  display: flex;
+  justify-content: center;
+}
+
+.captured-image img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.processing-status h4 {
+  margin: 0 0 8px;
+  color: #1f2937;
+  font-size: 1.3rem;
+}
+
+.processing-status p {
+  margin: 0 0 24px;
+  color: #6b7280;
+}
+
+.spinner {
+  font-size: 2rem;
+  color: #3b82f6;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Étape de révision */
+.review-view {
+  text-align: center;
+}
+
+.success-message {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.success-message h4 {
+  margin: 0 0 8px;
+  color: #166534;
+  font-size: 1.2rem;
+}
+
+.success-message p {
+  margin: 0;
+  color: #15803d;
+  line-height: 1.5;
+}
+
+.extracted-text {
+  text-align: left;
+}
+
+.extracted-text h5 {
+  margin: 0 0 12px;
+  color: #374151;
+  font-size: 1rem;
+}
+
+.text-preview {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  resize: vertical;
+  background: #f9fafb;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .upload-buttons {
+    flex-direction: column;
+  }
+  
+  .upload-btn {
+    min-width: auto;
+  }
+  
+  .ocr-modal-content {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .ocr-modal-body {
+    padding: 24px 16px;
+  }
+}
