@@ -453,6 +453,35 @@ const NoteDetailPage = () => {
         cancelText="Annuler"
         type="warning"
       />
+
+      {/* Modale de choix OCR */}
+      {ocrModalOpen && (
+        <div className="modal-overlay" onClick={() => setOcrModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Ajouter un frais</h3>
+              <button className="btn-close" onClick={() => setOcrModalOpen(false)}>
+                <FiX />
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>Comment souhaitez-vous ajouter ce frais ?</p>
+              <div className="choice-buttons">
+                <button className="btn-choice btn-manual" onClick={handleManualEntry}>
+                  <FiEdit />
+                  <span>Saisie manuelle</span>
+                  <small>Saisir les informations manuellement</small>
+                </button>
+                <button className="btn-choice btn-photo" onClick={handlePhotoCapture}>
+                  <FiUpload />
+                  <span>Prendre une photo</span>
+                  <small>Scanner un reçu ou facture</small>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
