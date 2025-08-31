@@ -41,7 +41,43 @@ const ParametresDepenses = () => {
 
   useEffect(() => {
     loadData();
+    if (activeTab === 'general') {
+      loadParametresGeneraux();
+    }
   }, [activeTab]);
+
+  const loadParametresGeneraux = async () => {
+    try {
+      // Pour l'instant, on utilise le localStorage en attendant l'API backend
+      const savedOcrSetting = localStorage.getItem(`ocr_enabled_${societe_id}`);
+      setOcrEnabled(savedOcrSetting === 'true');
+    } catch (error) {
+      console.error('Erreur chargement paramètres généraux:', error);
+    }
+  };
+
+  const handleOcrToggle = async (enabled) => {
+    try {
+      setSavingOcr(true);
+      // Pour l'instant, on sauvegarde dans le localStorage
+      localStorage.setItem(`ocr_enabled_${societe_id}`, enabled.toString());
+      setOcrEnabled(enabled);
+      
+      // Message de confirmation
+      Swal.fire({
+        title: 'Paramètre mis à jour',
+        text: `OCR ${enabled ? 'activé' : 'désactivé'} avec succès`,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Erreur sauvegarde OCR:', error);
+      Swal.fire('Erreur', 'Erreur lors de la sauvegarde', 'error');
+    } finally {
+      setSavingOcr(false);
+    }
+  };
 
   const loadData = async () => {
     if (activeTab === 'baremes') {
