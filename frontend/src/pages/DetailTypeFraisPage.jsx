@@ -36,11 +36,11 @@ const DetailTypeFraisPage = () => {
     try {
       setLoading(true);
       
-      // Récupérer tous les types pour trouver celui qui nous intéresse
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/types-frais/manage/${societe_id}`);
+      // Récupérer tous les types avec l'API simple qui fonctionne
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/types-frais`);
       
       if (response.data.success) {
-        const type = response.data.types_frais.find(t => t.id == typeId);
+        const type = response.data.types.find(t => t.id == typeId);
         
         if (type) {
           setTypeFrais(type);
