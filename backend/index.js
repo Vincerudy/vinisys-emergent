@@ -623,7 +623,7 @@ app.put('/api/types-frais/:typeId', async (req, res) => {
                         compte_comptable_id = ?,
                         date_modification = CURRENT_TIMESTAMP
                     WHERE type_frais_id = ? AND societe_id = ?
-                `, [libelle, description, tva_deductible, taux_deduction_tva, compte_comptable_id, typeId, societeId]);
+                `, [libelle, safeDescription, safeTvaDeductible, safeTauxDeductionTva, safeCompteComptableId, typeId, societeId]);
 
                 console.log('Personnalisation mise à jour pour le type système', typeId);
             } else {
