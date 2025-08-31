@@ -140,6 +140,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
       projet_id: ''
     });
     setJustificatif(null);
+    setOcrText(''); // Reset OCR text
   };
 
   const handleInputChange = (field, value) => {
