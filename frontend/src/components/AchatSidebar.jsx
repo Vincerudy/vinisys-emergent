@@ -118,6 +118,8 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       return;
     }
 
+    setLoading(true);
+
     const formData = new FormData();
     
     // Données de l'achat
