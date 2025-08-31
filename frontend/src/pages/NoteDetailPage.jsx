@@ -19,6 +19,7 @@ import {
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
 import FraisSidebar from '../components/FraisSidebar';
+import OCRCapture from '../components/OCRCapture';
 import ConfirmationModal from '../components/ConfirmationModal';
 import './css/NoteDetailPage.css';
 import { Modal } from 'antd';
