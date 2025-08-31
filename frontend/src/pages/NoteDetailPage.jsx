@@ -452,10 +452,15 @@ const NoteDetailPage = () => {
       {sidebarOpen && (
         <FraisSidebar
           isOpen={sidebarOpen}
-          onClose={handleCloseSidebar}
+          onClose={() => {
+            setSidebarOpen(false);
+            setEditingFrais(null);
+            setOcrDataForSidebar(null); // Nettoyer les données OCR
+          }}
           noteId={noteId}
           fraisData={editingFrais}
           onSaved={handleFraisSaved}
+          ocrData={ocrDataForSidebar} // Passer les données OCR
         />
       )}
 
