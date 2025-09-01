@@ -86,6 +86,26 @@
   background: #f0f9ff;
 }
 
+/* Styles pour les IDs des sous-catégories */
+.sous-category-id {
+  background: #52c41a;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.sous-category-id-inline {
+  background: #f6ffed;
+  color: #52c41a;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
 /* Breadcrumb personnalisé */
 .ant-breadcrumb {
   margin-left: 16px;
