@@ -6,28 +6,36 @@ const db = require('../../config/db');
 router.get('/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
-        const { mois, annee, utilisateur_id } = req.query;
+        const { periode_debut, periode_fin, utilisateur_id } = req.query;
         
+        // Définir les périodes par défaut (mois en cours)
         const currentDate = new Date();
-        const currentMonth = mois || (currentDate.getMonth() + 1);
-        const currentYear = annee || currentDate.getFullYear();
+        const defaultPeriodeDebut = periode_debut || `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-01`;
+        const defaultPeriodeFin = periode_fin || `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()}`;
+
+        console.log('📊 Dashboard notes de frais:', {
+            societeId,
+            periode_debut: defaultPeriodeDebut,
+            periode_fin: defaultPeriodeFin,
+            utilisateur_id
+        });
 
         let userFilter = '';
-        const params = [societeId, currentMonth, currentYear];
+        const params = [societeId, defaultPeriodeDebut, defaultPeriodeFin];
         
         if (utilisateur_id) {
             userFilter = ' AND nf.user_id = ?';
             params.push(utilisateur_id);
         }
 
-        // Indicateurs clés du mois
+        // Indicateurs clés de la période (uniquement notes validées)
         const [indicateurs] = await db.execute(`
             SELECT 
                 COUNT(*) as nb_notes,
-                ROUND(SUM(total_ttc), 2) as montant_total_soumis,
-                ROUND(SUM(CASE WHEN statut = 'validee' THEN total_ttc ELSE 0 END), 2) as montant_valide,
-                ROUND(SUM(CASE WHEN statut = 'payee' THEN total_ttc ELSE 0 END), 2) as montant_rembourse,
-                ROUND(SUM(CASE WHEN statut = 'refusee' THEN total_ttc ELSE 0 END), 2) as montant_refuse,
+                ROUND(SUM(montant_total), 2) as montant_total_soumis,
+                ROUND(SUM(CASE WHEN statut = 'validee' THEN montant_total ELSE 0 END), 2) as montant_valide,
+                ROUND(SUM(CASE WHEN statut = 'payee' THEN montant_total ELSE 0 END), 2) as montant_rembourse,
+                ROUND(SUM(CASE WHEN statut = 'refusee' THEN montant_total ELSE 0 END), 2) as montant_refuse,
                 COUNT(CASE WHEN statut = 'soumise' THEN 1 END) as nb_notes_en_attente,
                 COUNT(CASE WHEN statut = 'validee' THEN 1 END) as nb_notes_validees,
                 COUNT(CASE WHEN statut = 'payee' THEN 1 END) as nb_notes_payees,
@@ -35,12 +43,25 @@ router.get('/:societeId', async (req, res) => {
                 ROUND((COUNT(CASE WHEN statut = 'refusee' THEN 1 END) * 100.0) / NULLIF(COUNT(*), 0), 1) as taux_refus
             FROM notes_frais nf
             WHERE nf.societe_id = ? 
-                AND MONTH(nf.periode_debut) <= ? 
-                AND MONTH(nf.periode_fin) >= ?
-                AND YEAR(nf.periode_debut) <= ?
-                AND YEAR(nf.periode_fin) >= ?
+                AND DATE(nf.created_at) >= ?
+                AND DATE(nf.created_at) <= ?
                 ${userFilter}
-        `, [societeId, currentMonth, currentMonth, currentYear, currentYear, ...(utilisateur_id ? [utilisateur_id] : [])]);
+        `, params);
+
+        // Montant total des dépenses validées seulement
+        const [depensesValidees] = await db.execute(`
+            SELECT 
+                ROUND(SUM(lf.montant), 2) as montant_depenses_validees,
+                ROUND(SUM(lf.montant_tva), 2) as montant_tva_validees,
+                COUNT(lf.id) as nb_lignes_validees
+            FROM lignes_frais lf
+            INNER JOIN notes_frais nf ON lf.note_frais_id = nf.id
+            WHERE nf.societe_id = ? 
+                AND nf.statut = 'validee'
+                AND DATE(nf.created_at) >= ?
+                AND DATE(nf.created_at) <= ?
+                ${userFilter}
+        `, params);
 
         // Répartition par utilisateur (si admin/manager)
         let utilisateursData = [];
