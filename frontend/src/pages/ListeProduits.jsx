@@ -28,11 +28,7 @@ import {
 
 const { Option } = Select;
 
-const categorieOptions = ['Tous', 'Matériel', 'Service'];
-const sousCategorieMap = {
-  Matériel: ['Imprimantes', 'Ordinateurs', 'Accessoires'],
-  Service: ['Installation'],
-};
+// Les catégories et sous-catégories seront chargées dynamiquement
 
 const generateGradient = () => {
   const hue1 = Math.floor(Math.random() * 360);
