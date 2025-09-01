@@ -72,13 +72,13 @@ router.get('/:societeId', async (req, res) => {
             FROM achats a
             LEFT JOIN fournisseurs f ON a.fournisseur_id = f.id
             WHERE a.societe_id = ? 
-                AND MONTH(a.date_achat) = ? 
-                AND YEAR(a.date_achat) = ?
+                AND DATE(a.date_achat) >= ?
+                AND DATE(a.date_achat) <= ?
                 AND a.statut = 'valide'
             GROUP BY a.fournisseur_id, f.nom
             ORDER BY montant_total DESC
             LIMIT 10
-        `, [societeId, currentMonth, currentYear]);
+        `, [societeId, dateDebut, dateFin]);
 
         // Évolution mensuelle (12 derniers mois)
         const [evolutionData] = await db.execute(`
