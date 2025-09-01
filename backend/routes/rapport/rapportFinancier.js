@@ -229,6 +229,12 @@ router.get('/:societeId', async (req, res) => {
         // Formule: Bénéfice net = (CA encaissé - Avoirs) - (Dépenses TTC - TVA déductible) - Notes de frais
         const benefice_net = (ca_encaisse - total_avoirs) - (depenses_ttc - tva_recuperable) - notes_frais_rembourse;
 
+        // Calculer les totaux TVA
+        const tva_collectee_totale = tvaRepartition.reduce((sum, tva) => sum + parseFloat(tva.tva_collectee || 0), 0);
+        const tva_deductible_totale = tvaRepartition.reduce((sum, tva) => sum + parseFloat(tva.tva_deductible || 0), 0);
+        const tva_a_decaisser = Math.max(0, tva_collectee_totale - tva_recuperable);
+        const tva_credit = Math.max(0, tva_recuperable - tva_collectee_totale);
+
         // =====================================================
         // STRUCTURE DE LA RÉPONSE
         // =====================================================
@@ -244,6 +250,7 @@ router.get('/:societeId', async (req, res) => {
                 encaisse: parseFloat(caDetaille[0]?.ca_encaisse || 0), 
                 en_attente: parseFloat(caDetaille[0]?.ca_en_attente || 0),
                 avoirs: parseFloat(avoirs[0]?.total_avoirs || 0),
+                tva_collectee: tva_collectee_totale, // ← NOUVEAU: Total TVA collectée
                 tva_repartition: tvaRepartition.map(tva => ({
                     taux: parseFloat(tva.taux),
                     montant: parseFloat(tva.montant_tva),
