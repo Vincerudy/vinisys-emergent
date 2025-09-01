@@ -40,8 +40,8 @@ const AchatsPage = () => {
           `${import.meta.env.VITE_API_URL}/achats/dashboard/${societe_id}`,
           {
             params: {
-              mois: selectedPeriod.mois,
-              annee: selectedPeriod.annee,
+              periode_debut: selectedPeriod.debut,
+              periode_fin: selectedPeriod.fin,
               ...filters
             }
           }
