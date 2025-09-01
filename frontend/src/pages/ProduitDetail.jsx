@@ -26,13 +26,6 @@ const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
-const categoriesDisponibles = ['Matériel', 'Logiciel', 'Services'];
-const sousCategoriesDisponibles = {
-  Matériel: ['Imprimantes', 'Accessoires', 'PC'],
-  Logiciel: ['ERP', 'Antivirus', 'Bureautique'],
-  Services: ['Installation', 'Maintenance'],
-};
-
 const TVA_OPTIONS = [
   { label: '20%', value: 20 },
   { label: '10%', value: 10 },
@@ -50,6 +43,8 @@ const ProduitDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [lastChangedField, setLastChangedField] = useState(null); // Pour savoir quel champ a été modifié en dernier (HT ou TTC)
+  const [categoriesStock, setCategoriesStock] = useState([]);
+  const [sousCategoriesStock, setSousCategoriesStock] = useState([]);
 
   const isNew = !id;
   const API_URL = import.meta.env.VITE_API_URL;
