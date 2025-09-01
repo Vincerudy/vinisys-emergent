@@ -40,7 +40,7 @@ router.get('/:societeId', async (req, res) => {
             WHERE a.societe_id = ? 
                 AND MONTH(a.date_achat) = ? 
                 AND YEAR(a.date_achat) = ?
-                AND a.statut != 'annule'
+                AND a.statut = 'valide'
             GROUP BY a.categorie_achat_id, ca.nom
             ORDER BY montant_total DESC
             LIMIT 10
