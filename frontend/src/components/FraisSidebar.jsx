@@ -240,14 +240,17 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
     // Charger les justificatifs existants
     if (data.justificatifs && data.justificatifs.length > 0) {
       const premierJustificatif = data.justificatifs[0]; // Prendre le premier justificatif
+      // L'URL du justificatif est déjà une URL complète relative (/api/image/...)
+      const backendBaseUrl = import.meta.env.VITE_API_URL.replace('/api', ''); // Retirer /api pour avoir l'URL de base
       setJustificatif({
-        url: `${import.meta.env.REACT_APP_BACKEND_URL}${premierJustificatif.url}`,
+        url: `${backendBaseUrl}${premierJustificatif.url}`,
         nom: premierJustificatif.nom_fichier,
         type: premierJustificatif.type_mime,
         file: null, // Pas de fichier local pour un justificatif existant
         isExisting: true // Marquer comme justificatif existant
       });
       console.log('📎 Justificatif existant chargé:', premierJustificatif.nom_fichier);
+      console.log('🔗 URL justificatif:', `${backendBaseUrl}${premierJustificatif.url}`);
     } else {
       setJustificatif(null);
       console.log('📝 Aucun justificatif existant pour ce frais');
