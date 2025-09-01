@@ -55,13 +55,13 @@ router.get('/:societeId', async (req, res) => {
             FROM achats a
             LEFT JOIN categories_achats ca ON a.categorie_achat_id = ca.id
             WHERE a.societe_id = ? 
-                AND MONTH(a.date_achat) = ? 
-                AND YEAR(a.date_achat) = ?
+                AND DATE(a.date_achat) >= ?
+                AND DATE(a.date_achat) <= ?
                 AND a.statut = 'valide'
             GROUP BY a.categorie_achat_id, ca.nom
             ORDER BY montant_total DESC
             LIMIT 10
-        `, [societeId, currentMonth, currentYear]);
+        `, [societeId, dateDebut, dateFin]);
 
         // Top fournisseurs
         const [fournisseursData] = await db.execute(`
