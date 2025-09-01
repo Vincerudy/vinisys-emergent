@@ -1,0 +1,61 @@
+/* Page de gestion des catégories de stock */
+
+.categories-stock-page {
+  padding: 24px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h1 {
+  margin: 0;
+  color: #1890ff;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.categories-content {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Personnalisation du tableau */
+.ant-table-thead > tr > th {
+  background: #f0f9ff;
+  color: #1890ff;
+  font-weight: 600;
+  border-bottom: 2px solid #1890ff;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f0f9ff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .categories-stock-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+}
