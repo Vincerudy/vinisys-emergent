@@ -145,25 +145,58 @@ const AchatsPage = () => {
         <div className="filters-grid">
           <div className="filter-group">
             <label>Période</label>
-            <div className="period-row">
-              <select 
-                value={selectedPeriod.mois}
-                onChange={(e) => setSelectedPeriod({...selectedPeriod, mois: parseInt(e.target.value)})}
+            <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+              <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
+                <label style={{fontSize: '12px', color: '#666'}}>Du</label>
+                <input 
+                  type="date"
+                  value={selectedPeriod.debut}
+                  onChange={(e) => setSelectedPeriod({...selectedPeriod, debut: e.target.value})}
+                  style={{
+                    padding: '8px 12px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
+                <label style={{fontSize: '12px', color: '#666'}}>Au</label>
+                <input 
+                  type="date"
+                  value={selectedPeriod.fin}
+                  onChange={(e) => setSelectedPeriod({...selectedPeriod, fin: e.target.value})}
+                  style={{
+                    padding: '8px 12px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <button 
+                onClick={() => {
+                  const today = new Date();
+                  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+                  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                  setSelectedPeriod({
+                    debut: firstDay.toISOString().split('T')[0],
+                    fin: lastDay.toISOString().split('T')[0]
+                  });
+                }}
+                style={{
+                  padding: '8px 12px',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  marginTop: '20px'
+                }}
               >
-                {Array.from({length: 12}, (_, i) => (
-                  <option key={i+1} value={i+1}>
-                    {new Date(0, i).toLocaleString('fr-FR', {month: 'short'})}
-                  </option>
-                ))}
-              </select>
-              <select 
-                value={selectedPeriod.annee}
-                onChange={(e) => setSelectedPeriod({...selectedPeriod, annee: parseInt(e.target.value)})}
-              >
-                {[2023, 2024, 2025].map(year => (
-                  <option key={year} value={year}>{year}</option>
-                ))}
-              </select>
+                Mois actuel
+              </button>
             </div>
           </div>
           
