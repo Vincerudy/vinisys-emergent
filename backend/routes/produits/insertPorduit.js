@@ -38,6 +38,8 @@ router.post('/produit', upload.single('image'), async (req, res) => {
     dateDerniereEntree,
     categorie,
     sousCategorie,
+    categorieId,
+    sousCategorieId,
     societeId,
   } = req.body;
 
