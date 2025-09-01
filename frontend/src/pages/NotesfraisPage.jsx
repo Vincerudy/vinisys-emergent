@@ -96,8 +96,8 @@ const NotesfraisPage = () => {
         `${import.meta.env.VITE_API_URL}/notes-frais/export/${type}/${societe_id}`,
         { 
           params: {
-            mois: selectedPeriod.mois,
-            annee: selectedPeriod.annee
+            periode_debut: selectedPeriod.debut,
+            periode_fin: selectedPeriod.fin
           },
           responseType: 'blob'
         }
