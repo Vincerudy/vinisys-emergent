@@ -63,7 +63,7 @@ router.get('/:societeId', async (req, res) => {
                 ${userFilter}
         `, params);
 
-        // Répartition par utilisateur (si admin/manager)
+        // Répartition par utilisateur (si admin/manager) - données validées uniquement
         let utilisateursData = [];
         if (!utilisateur_id) {
             const [userData] = await db.execute(`
@@ -72,20 +72,18 @@ router.get('/:societeId', async (req, res) => {
                     u.lastName,
                     u.id as utilisateur_id,
                     COUNT(nf.id) as nb_notes,
-                    ROUND(SUM(nf.total_ttc), 2) as montant_total,
+                    ROUND(SUM(CASE WHEN nf.statut = 'validee' THEN nf.montant_total ELSE 0 END), 2) as montant_total,
                     COUNT(CASE WHEN nf.statut = 'soumise' THEN 1 END) as nb_en_attente
                 FROM users u
                 LEFT JOIN notes_frais nf ON u.id = nf.user_id 
                     AND nf.societe_id = ? 
-                    AND MONTH(nf.periode_debut) <= ? 
-                    AND MONTH(nf.periode_fin) >= ?
-                    AND YEAR(nf.periode_debut) <= ?
-                    AND YEAR(nf.periode_fin) >= ?
+                    AND DATE(nf.created_at) >= ?
+                    AND DATE(nf.created_at) <= ?
                 WHERE u.societe_id = ?
                 GROUP BY u.id, u.firstName, u.lastName
                 ORDER BY montant_total DESC
                 LIMIT 10
-            `, [societeId, currentMonth, currentMonth, currentYear, currentYear, societeId]);
+            `, [societeId, defaultPeriodeDebut, defaultPeriodeFin, societeId]);
             utilisateursData = userData;
         }
 
@@ -100,42 +98,38 @@ router.get('/:societeId', async (req, res) => {
             INNER JOIN types_frais tf ON lf.type_frais_id = tf.id
             WHERE nf.societe_id = ? 
                 AND nf.statut = 'validee'
-                AND MONTH(nf.periode_debut) <= ? 
-                AND MONTH(nf.periode_fin) >= ?
-                AND YEAR(nf.periode_debut) <= ?
-                AND YEAR(nf.periode_fin) >= ?
+                AND DATE(nf.created_at) >= ?
+                AND DATE(nf.created_at) <= ?
                 ${userFilter}
             GROUP BY tf.id, tf.nom
             ORDER BY montant_total DESC
-        `, [societeId, currentMonth, currentMonth, currentYear, currentYear, ...(utilisateur_id ? [utilisateur_id] : [])]);
+        `, params);
 
-        // Évolution mensuelle (12 derniers mois)
+        // Évolution mensuelle (12 derniers mois) - uniquement validées
         const [evolutionData] = await db.execute(`
             SELECT 
-                YEAR(periode_debut) as annee,
-                MONTH(periode_debut) as mois,
-                COUNT(*) as nb_notes,
-                ROUND(SUM(total_ttc), 2) as montant_total
+                YEAR(created_at) as annee,
+                MONTH(created_at) as mois,
+                COUNT(CASE WHEN statut = 'validee' THEN 1 END) as nb_notes,
+                ROUND(SUM(CASE WHEN statut = 'validee' THEN montant_total ELSE 0 END), 2) as montant_total
             FROM notes_frais nf
             WHERE nf.societe_id = ? 
-                AND periode_debut >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+                AND created_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
                 ${userFilter}
-            GROUP BY YEAR(periode_debut), MONTH(periode_debut)
+            GROUP BY YEAR(created_at), MONTH(created_at)
             ORDER BY annee DESC, mois DESC
         `, [societeId, ...(utilisateur_id ? [utilisateur_id] : [])]);
 
-        // Répartition par statut
+        // Répartition par statut (toutes les notes de la période)
         const [statutsData] = await db.execute(`
             SELECT 
                 statut,
                 COUNT(*) as nb_notes,
-                ROUND(SUM(total_ttc), 2) as montant_total
+                ROUND(SUM(montant_total), 2) as montant_total
             FROM notes_frais nf
             WHERE nf.societe_id = ? 
-                AND MONTH(periode_debut) <= ? 
-                AND MONTH(periode_fin) >= ?
-                AND YEAR(periode_debut) <= ?
-                AND YEAR(periode_fin) >= ?
+                AND DATE(created_at) >= ?
+                AND DATE(created_at) <= ?
                 ${userFilter}
             GROUP BY statut
             ORDER BY 
@@ -146,7 +140,7 @@ router.get('/:societeId', async (req, res) => {
                     WHEN 'payee' THEN 4
                     WHEN 'refusee' THEN 5
                 END
-        `, [societeId, currentMonth, currentMonth, currentYear, currentYear, ...(utilisateur_id ? [utilisateur_id] : [])]);
+        `, params);
 
         // Top frais kilométriques (uniquement dépenses validées)
         const [kmData] = await db.execute(`
@@ -160,17 +154,15 @@ router.get('/:societeId', async (req, res) => {
             WHERE nf.societe_id = ? 
                 AND nf.statut = 'validee'
                 AND tf.code = 'KM'
-                AND MONTH(nf.periode_debut) <= ? 
-                AND MONTH(nf.periode_fin) >= ?
-                AND YEAR(nf.periode_debut) <= ?
-                AND YEAR(nf.periode_fin) >= ?
+                AND DATE(nf.created_at) >= ?
+                AND DATE(nf.created_at) <= ?
                 ${userFilter}
-        `, [societeId, currentMonth, currentMonth, currentYear, currentYear, ...(utilisateur_id ? [utilisateur_id] : [])]);
+        `, params);
 
         res.json({
             periode: {
-                mois: currentMonth,
-                annee: currentYear
+                debut: defaultPeriodeDebut,
+                fin: defaultPeriodeFin
             },
             indicateurs: indicateurs[0] || {
                 nb_notes: 0,
@@ -180,6 +172,11 @@ router.get('/:societeId', async (req, res) => {
                 montant_refuse: 0,
                 nb_notes_en_attente: 0,
                 taux_refus: 0
+            },
+            depenses_validees: depensesValidees[0] || {
+                montant_depenses_validees: 0,
+                montant_tva_validees: 0,
+                nb_lignes_validees: 0
             },
             utilisateurs: utilisateursData,
             types_frais: typesData,
