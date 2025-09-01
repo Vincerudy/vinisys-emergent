@@ -43,6 +43,45 @@
   background: #f0f9ff;
 }
 
+/* Styles pour les IDs de catégories */
+.category-id {
+  background: #1890ff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.category-id-inline {
+  background: #e6f7ff;
+  color: #1890ff;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.sous-category-id {
+  background: #52c41a;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.sous-category-id-inline {
+  background: #f6ffed;
+  color: #52c41a;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .categories-stock-page {
