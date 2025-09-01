@@ -50,42 +50,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
   const isEditMode = !!fraisData;
   const isReadOnlyMode = !!(fraisData && fraisData.readOnly);
 
-  // Gérer les données OCR
-  useEffect(() => {
-    if (ocrData) {
-      console.log('📷 Données OCR reçues:', ocrData);
-      
-      // Préremplir le formulaire avec les données OCR
-      setFormData(prevData => ({
-        ...prevData,
-        vendeur: ocrData.vendeur || prevData.vendeur,
-        montant_ttc: ocrData.montant_ttc || prevData.montant_ttc,
-        date_frais: ocrData.date_frais || prevData.date_frais,
-        description: ocrData.description || prevData.description,
-        tva_taux: ocrData.tva_taux || prevData.tva_taux,
-        moyen_paiement: ocrData.moyen_paiement || prevData.moyen_paiement
-      }));
-
-      // Ajouter l'image OCR comme justificatif principal
-      if (ocrData.ocrImage) {
-        const imageUrl = typeof ocrData.ocrImage === 'string' ? ocrData.ocrImage : URL.createObjectURL(ocrData.ocrImage);
-        setJustificatif({
-          url: imageUrl,
-          nom: 'Reçu scanné (OCR)',
-          type: 'image/ocr',
-          file: ocrData.ocrImage,
-          isOCR: true
-        });
-      }
-
-      // Stocker le texte OCR pour référence
-      if (ocrData.ocrText) {
-        setOcrText(ocrData.ocrText);
-      }
-    }
-  }, [ocrData]);
-
-  // Charger les données existantes pour l'édition
+  // Charger les données existantes pour l'édition (AVANT les données OCR)
   useEffect(() => {
     fetchInitialData();
     if (fraisData) {
@@ -94,6 +59,63 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
       resetForm();
     }
   }, [fraisData, isOpen]);
+
+  // Gérer les données OCR (APRÈS le reset/load initial pour éviter l'écrasement)
+  useEffect(() => {
+    if (ocrData && isOpen) {
+      console.log('📷 Données OCR reçues pour pré-remplissage:', ocrData);
+      
+      // Attendre un tick pour que le formulaire soit initialisé
+      setTimeout(() => {
+        // Préremplir le formulaire avec les données OCR
+        setFormData(prevData => {
+          const newFormData = {
+            ...prevData,
+            vendeur: ocrData.vendeur || prevData.vendeur,
+            montant_ttc: ocrData.montant_ttc || prevData.montant_ttc,
+            date_frais: ocrData.date_frais || prevData.date_frais,
+            description: ocrData.description || prevData.description,
+            moyen_paiement: ocrData.moyen_paiement || prevData.moyen_paiement
+          };
+          
+          console.log('✅ Formulaire pré-rempli avec OCR:', newFormData);
+          return newFormData;
+        });
+
+        // Calculer automatiquement HT et TVA si TTC est fourni
+        if (ocrData.montant_ttc) {
+          const ttc = parseFloat(ocrData.montant_ttc.replace(',', '.')) || 0;
+          const tva = ttc * 0.2; // TVA à 20%
+          const ht = ttc - tva;
+          
+          setFormData(prevData => ({
+            ...prevData,
+            montant_ht: ht.toFixed(2).replace('.', ','),
+            montant_tva: tva.toFixed(2).replace('.', ',')
+          }));
+        }
+
+        // Ajouter l'image OCR comme justificatif principal
+        if (ocrData.ocrImage) {
+          const imageUrl = typeof ocrData.ocrImage === 'string' ? ocrData.ocrImage : URL.createObjectURL(ocrData.ocrImage);
+          setJustificatif({
+            url: imageUrl,
+            nom: 'Reçu scanné (OCR)',
+            type: 'image/ocr',
+            file: ocrData.ocrImage,
+            isOCR: true
+          });
+          console.log('📸 Image OCR ajoutée comme justificatif');
+        }
+
+        // Stocker le texte OCR pour référence
+        if (ocrData.ocrText) {
+          setOcrText(ocrData.ocrText);
+          console.log('📝 Texte OCR stocké:', ocrData.ocrText.substring(0, 100) + '...');
+        }
+      }, 100); // Délai de 100ms pour permettre l'initialisation
+    }
+  }, [ocrData, isOpen]);
 
   const fetchInitialData = async () => {
     try {
