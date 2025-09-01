@@ -14,10 +14,9 @@ router.get('/:societeId', async (req, res) => {
                 c.description,
                 c.created_at,
                 COUNT(DISTINCT sc.id) as nb_sous_categories,
-                COUNT(DISTINCT p.id) as nb_produits
+                0 as nb_produits
             FROM categories_stock c
             LEFT JOIN sous_categories_stock sc ON c.id = sc.categorie_parent_id
-            LEFT JOIN produits p ON c.id = p.categorie_id
             WHERE c.societe_id = ?
             GROUP BY c.id, c.nom, c.description, c.created_at
             ORDER BY c.nom ASC
