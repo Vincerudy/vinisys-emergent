@@ -224,11 +224,12 @@ const ListeProduits = () => {
           allowClear
           style={{ width: '45%', height: '50px', border: 'none' }}
         >
-          {categorieOptions.map(cat => (
-            <Option key={cat} value={cat}>{cat}</Option>
+          <Option key="Tous" value="Tous">Tous</Option>
+          {categoriesStock.map(cat => (
+            <Option key={cat.id} value={cat.nom}>{cat.nom}</Option>
           ))}
         </Select>
-        {selectedCategorie !== 'Tous' && sousCategorieMap[selectedCategorie] && (
+        {selectedCategorie !== 'Tous' && sousCategoriesStock.length > 0 && (
           <Select
             placeholder="Sous-catégorie"
             value={selectedSousCategorie}
@@ -236,8 +237,8 @@ const ListeProduits = () => {
             allowClear
             style={{ width: '45%', height: '50px', border: 'none' }}
           >
-            {sousCategorieMap[selectedCategorie].map(sc => (
-              <Option key={sc} value={sc}>{sc}</Option>
+            {sousCategoriesStock.map(sc => (
+              <Option key={sc.id} value={sc.nom}>{sc.nom}</Option>
             ))}
           </Select>
         )}
