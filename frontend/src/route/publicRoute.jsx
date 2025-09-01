@@ -258,6 +258,14 @@ export const publicRoute = createHashRouter([
                 element: <ProtectedRoute element={<ListeProduits />} requiredPermissions="view_stock"  />,
             },
             {
+                path: "/categories-stock",
+                element: <ProtectedRoute element={<CategoriesStockPage />} requiredPermissions="view_stock"  />,
+            },
+            {
+                path: "/categorie-stock/:id",
+                element: <ProtectedRoute element={<DetailCategorieStockPage />} requiredPermissions="view_stock"  />,
+            },
+            {
                 path: "/produit/:id",
                 element: <ProtectedRoute element={<ProduitDetail />} requiredPermissions="view_stock"  />,
 
