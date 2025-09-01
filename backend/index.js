@@ -194,6 +194,10 @@ app.use('/api/achats/fournisseurs', require('./routes/achats/fournisseurs'));
 // Catégories achats
 app.use('/api/categories-achats', require('./routes/achats/categoriesAchats'));
 
+// Routes stock - catégories
+app.use('/api/categories-stock', require('./routes/stock/categoriesStock'));
+app.use('/api/sous-categories-stock', require('./routes/stock/sousCategoriesStock'));
+
 // Module Notes de frais (Employés)
 app.use('/api/notes-frais', require('./routes/notes-frais/listNotesfrais'));
 app.use('/api/note-frais', require('./routes/notes-frais/createNoteFrais'));
