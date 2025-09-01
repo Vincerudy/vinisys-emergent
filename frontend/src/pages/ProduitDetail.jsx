@@ -414,14 +414,18 @@ const ProduitDetail = () => {
 
               <Descriptions.Item label="Sous-catégorie">
                 <Select
-                  value={editedProduit.sousCategorie || undefined}
-                  onChange={(value) => handleChange('sousCategorie', value)}
+                  value={editedProduit.sousCategorieId}
+                  onChange={(value) => {
+                    const selectedSousCategory = sousCategoriesStock.find(sousCat => sousCat.id === value);
+                    handleChange('sousCategorieId', value);
+                    handleChange('sousCategorie', selectedSousCategory?.nom || '');
+                  }}
                   placeholder="Sélectionner une sous-catégorie"
-                  disabled={!editedProduit.categorie}
+                  disabled={!editedProduit.categorieId}
                 >
-                  {sousCategories.map((sousCat) => (
-                    <Option key={sousCat} value={sousCat}>
-                      {sousCat}
+                  {sousCategoriesStock.map((sousCat) => (
+                    <Option key={sousCat.id} value={sousCat.id}>
+                      {sousCat.nom}
                     </Option>
                   ))}
                 </Select>
