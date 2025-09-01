@@ -142,8 +142,11 @@ router.get('/:societeId', async (req, res) => {
 
         res.json({
             periode: {
-                mois: currentMonth,
-                annee: currentYear
+                debut: dateDebut,
+                fin: dateFin,
+                // Rétrocompatibilité
+                mois: periode_debut && periode_fin ? null : (mois || (new Date().getMonth() + 1)),
+                annee: periode_debut && periode_fin ? null : (annee || new Date().getFullYear())
             },
             indicateurs: indicateurs[0] || {
                 nb_achats: 0,
