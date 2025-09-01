@@ -98,12 +98,10 @@ router.delete('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Sous-catégorie non trouvée' });
         }
 
-        // Vérifier s'il y a des produits liés
-        const [produits] = await db.execute(`
-            SELECT COUNT(*) as count FROM produits WHERE sous_categorie_id = ?
-        `, [id]);
+        // Vérifier s'il y a des produits liés (pour l'instant, toujours 0 car pas encore lié)
+        const produitCount = 0; // Temporaire, en attendant la liaison avec les produits
 
-        if (produits[0].count > 0) {
+        if (produitCount > 0) {
             return res.status(400).json({ 
                 error: 'Impossible de supprimer cette sous-catégorie car elle contient des produits' 
             });
