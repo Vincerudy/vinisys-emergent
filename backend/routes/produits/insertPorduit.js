@@ -56,8 +56,8 @@ router.post('/produit', upload.single('image'), async (req, res) => {
     if (!produitId) {
       const [result] = await db.query(
         `INSERT INTO produits_services 
-         (nom, prixUnitaireHT, tva,  description, prix_unitaire, quantite_en_stock, seuil_minimum, fournisseur, categorie, sous_categorie, date_derniere_entree, societe_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (nom, prixUnitaireHT, tva, description, prix_unitaire, quantite_en_stock, seuil_minimum, fournisseur, categorie, sous_categorie, categorie_id, sous_categorie_id, date_derniere_entree, societe_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           nom || 'Produit sans nom',
           prixUnitaireHT || '0', 
@@ -67,11 +67,12 @@ router.post('/produit', upload.single('image'), async (req, res) => {
           quantiteEnStock,
           seuil || 0,
           fournisseur || null,
-          categorie || null ,
+          categorie || null,
           sousCategorie || null,
+          categorieId || null,
+          sousCategorieId || null,
           dateDerniereEntree || null,
           societeId,
-          
         ]
       );
       produitId = result.insertId;
