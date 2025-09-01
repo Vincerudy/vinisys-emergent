@@ -68,6 +68,8 @@ const ProduitDetail = () => {
             seuil: data.seuil || 0,
             categorie: data.categorie || '',
             sousCategorie: data.sous_categorie || '',
+            categorieId: data.categorie_id || null,
+            sousCategorieId: data.sous_categorie_id || null,
             image: data.image_path
               ? `${API_URL}/${data.image_path}`
               : '',
