@@ -349,6 +349,39 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
       }
 
       if (response.data.success) {
+        const fraisId = response.data.fraisId || response.data.id || fraisData?.id;
+        
+        // Si on a un justificatif (notamment venant d'OCR), l'uploader
+        if (justificatif && justificatif.file && fraisId) {
+          console.log('📎 Upload du justificatif OCR pour frais ID:', fraisId);
+          
+          try {
+            const formDataUpload = new FormData();
+            formDataUpload.append('file', justificatif.file);
+            formDataUpload.append('frais_id', fraisId);
+            formDataUpload.append('nom_fichier', justificatif.nom || 'justificatif_ocr');
+            
+            const uploadResponse = await axios.post(
+              `${import.meta.env.VITE_API_URL}/frais/upload-justificatif`,
+              formDataUpload,
+              { 
+                headers: { 
+                  'Content-Type': 'multipart/form-data' 
+                } 
+              }
+            );
+            
+            if (uploadResponse.data.success) {
+              console.log('✅ Justificatif OCR sauvegardé avec succès');
+            } else {
+              console.warn('⚠️ Échec sauvegarde justificatif:', uploadResponse.data.message);
+            }
+          } catch (uploadError) {
+            console.error('❌ Erreur upload justificatif:', uploadError);
+            // Ne pas bloquer la sauvegarde du frais pour autant
+          }
+        }
+        
         alert(isEditMode ? 'Frais modifié avec succès' : 'Frais ajouté avec succès');
         onSaved();
       }
