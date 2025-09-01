@@ -393,17 +393,20 @@ const ProduitDetail = () => {
 
               <Descriptions.Item label="Catégorie">
                 <Select
-                  value={editedProduit.categorie || undefined}
+                  value={editedProduit.categorieId}
                   onChange={(value) => {
-                    handleChange('categorie', value);
-                    // Reset sous-catégorie quand catégorie change
+                    const selectedCategory = categoriesStock.find(cat => cat.id === value);
+                    handleChange('categorieId', value);
+                    handleChange('categorie', selectedCategory?.nom || '');
+                    // Réinitialiser la sous-catégorie
+                    handleChange('sousCategorieId', null);
                     handleChange('sousCategorie', '');
                   }}
                   placeholder="Sélectionner une catégorie"
                 >
-                  {categoriesDisponibles.map((cat) => (
-                    <Option key={cat} value={cat}>
-                      {cat}
+                  {categoriesStock.map((cat) => (
+                    <Option key={cat.id} value={cat.id}>
+                      {cat.nom}
                     </Option>
                   ))}
                 </Select>
