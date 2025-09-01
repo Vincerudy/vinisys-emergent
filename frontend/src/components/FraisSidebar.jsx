@@ -69,27 +69,47 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
       setTimeout(() => {
         // Préremplir le formulaire avec les données OCR
         setFormData(prevData => {
-          // Chercher l'ID du type de frais "Repas" dans la liste des types
-          let repasTypeId = '';
-          const repasType = typesFrais.find(type => 
-            type.nom && (
-              type.nom.toLowerCase().includes('repas') || 
-              type.libelle.toLowerCase().includes('repas')
-            )
-          );
+          // Déterminer le type de frais à utiliser
+          let selectedTypeId = '';
           
-          if (repasType) {
-            repasTypeId = repasType.id.toString();
-            console.log('🍽️ Type frais "Repas" trouvé, ID:', repasTypeId);
-          } else {
-            // Fallback : utiliser l'ID 1 par défaut (souvent le premier type)
-            repasTypeId = '1';
-            console.log('⚠️ Type frais "Repas" non trouvé, utilisation de l\'ID par défaut:', repasTypeId);
+          // Si l'OCR a détecté un type spécifique, l'utiliser
+          if (ocrData.type_frais) {
+            // Chercher le type correspondant dans la liste
+            const detectedType = typesFrais.find(type => 
+              type.nom && (
+                type.nom.toLowerCase().includes(ocrData.type_frais) ||
+                type.libelle.toLowerCase().includes(ocrData.type_frais)
+              )
+            );
+            
+            if (detectedType) {
+              selectedTypeId = detectedType.id.toString();
+              console.log(`🎯 Type frais détecté par OCR: "${ocrData.type_frais}" (ID: ${selectedTypeId})`);
+            }
+          }
+          
+          // Si aucun type détecté ou non trouvé, utiliser "Repas" par défaut
+          if (!selectedTypeId) {
+            const repasType = typesFrais.find(type => 
+              type.nom && (
+                type.nom.toLowerCase().includes('repas') || 
+                type.libelle.toLowerCase().includes('repas')
+              )
+            );
+            
+            if (repasType) {
+              selectedTypeId = repasType.id.toString();
+              console.log('🍽️ Type frais "Repas" par défaut, ID:', selectedTypeId);
+            } else {
+              // Fallback ultime : utiliser l'ID 1
+              selectedTypeId = '1';
+              console.log('⚠️ Type frais par défaut, utilisation de l\'ID:', selectedTypeId);
+            }
           }
           
           const newFormData = {
             ...prevData,
-            type_frais_id: repasTypeId, // Positionner automatiquement sur "Repas"
+            type_frais_id: selectedTypeId,
             vendeur: ocrData.vendeur || prevData.vendeur,
             montant_ttc: ocrData.montant_ttc || prevData.montant_ttc,
             date_frais: ocrData.date_frais || prevData.date_frais,
@@ -97,7 +117,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
             moyen_paiement: ocrData.moyen_paiement || prevData.moyen_paiement
           };
           
-          console.log('✅ Formulaire pré-rempli avec OCR (type=Repas):', newFormData);
+          console.log('✅ Formulaire pré-rempli avec OCR:', newFormData);
           return newFormData;
         });
 
