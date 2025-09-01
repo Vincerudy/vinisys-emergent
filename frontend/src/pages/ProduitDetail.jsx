@@ -105,6 +105,8 @@ const ProduitDetail = () => {
         seuil: 0,
         categorie: '',
         sousCategorie: '',
+        categorieId: null,
+        sousCategorieId: null,
         image: '',
       };
       setProduit(nouveauProduit);
