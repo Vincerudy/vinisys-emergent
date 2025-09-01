@@ -187,6 +187,8 @@ const ProduitDetail = () => {
       formData.append('seuil', editedProduit.seuil || 0);
       formData.append('categorie', editedProduit.categorie || '');
       formData.append('sousCategorie', editedProduit.sousCategorie || '');
+      formData.append('categorieId', editedProduit.categorieId || '');
+      formData.append('sousCategorieId', editedProduit.sousCategorieId || '');
       formData.append('societeId', societe_id);
 
       if (selectedFile) {
