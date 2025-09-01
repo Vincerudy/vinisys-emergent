@@ -118,7 +118,7 @@ router.get('/:societeId', async (req, res) => {
             WHERE societe_id = ? 
                 AND MONTH(date_achat) = ? 
                 AND YEAR(date_achat) = ?
-                AND statut != 'annule'
+                AND statut = 'valide'
             GROUP BY mode_paiement
             ORDER BY montant_total DESC
         `, [societeId, currentMonth, currentYear]);
