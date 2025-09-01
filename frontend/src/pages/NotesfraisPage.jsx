@@ -38,8 +38,8 @@ const NotesfraisPage = () => {
       try {
         setLoading(true);
         const params = {
-          mois: selectedPeriod.mois,
-          annee: selectedPeriod.annee
+          periode_debut: selectedPeriod.debut,
+          periode_fin: selectedPeriod.fin
         };
         
         if (viewMode === 'validation') {
