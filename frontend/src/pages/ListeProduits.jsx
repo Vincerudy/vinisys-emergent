@@ -22,7 +22,8 @@ import {
   FiDollarSign,
   FiCheck,
   FiX,
-  FiPieChart
+  FiPieChart,
+  FiGrid
 } from 'react-icons/fi';
 
 const { Option } = Select;
