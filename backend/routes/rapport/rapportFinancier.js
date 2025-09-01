@@ -268,6 +268,8 @@ router.get('/:societeId', async (req, res) => {
                 total_ttc: depenses_ttc,
                 tva_recuperable: tva_recuperable,
                 tva_non_deductible: tva_non_deductible,
+                tva_a_decaisser: tva_a_decaisser, // ← NOUVEAU: TVA à décaisser
+                tva_credit: tva_credit, // ← NOUVEAU: TVA crédit à reporter
                 categories: categoriesAvecPourcentage
             },
             notes_frais: {
