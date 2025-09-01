@@ -113,8 +113,8 @@ router.get('/:societeId', async (req, res) => {
                 ROUND(SUM(montant_ttc), 2) as montant_total
             FROM achats 
             WHERE societe_id = ? 
-                AND MONTH(date_achat) = ? 
-                AND YEAR(date_achat) = ?
+                AND DATE(date_achat) >= ?
+                AND DATE(date_achat) <= ?
             GROUP BY statut
             ORDER BY 
                 CASE statut 
@@ -123,7 +123,7 @@ router.get('/:societeId', async (req, res) => {
                     WHEN 'paye' THEN 3
                     WHEN 'annule' THEN 4
                 END
-        `, [societeId, currentMonth, currentYear]);
+        `, [societeId, dateDebut, dateFin]);
 
         // Répartition par mode de paiement
         const [paymentsData] = await db.execute(`
