@@ -116,6 +116,46 @@ const ProduitDetail = () => {
     }
   }, [id, societe_id, isNew, API_URL, navigate]);
 
+  // Charger les catégories de stock
+  useEffect(() => {
+    const chargerCategories = async () => {
+      try {
+        const response = await fetch(`${API_URL}/categories-stock/${societe_id}`);
+        if (response.ok) {
+          const categories = await response.json();
+          setCategoriesStock(categories);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des catégories:', error);
+      }
+    };
+
+    if (societe_id) {
+      chargerCategories();
+    }
+  }, [API_URL, societe_id]);
+
+  // Charger les sous-catégories quand une catégorie est sélectionnée
+  useEffect(() => {
+    const chargerSousCategories = async () => {
+      try {
+        if (editedProduit?.categorieId) {
+          const response = await fetch(`${API_URL}/sous-categories-stock/${editedProduit.categorieId}/${societe_id}`);
+          if (response.ok) {
+            const sousCategories = await response.json();
+            setSousCategoriesStock(sousCategories);
+          }
+        } else {
+          setSousCategoriesStock([]);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des sous-catégories:', error);
+      }
+    };
+
+    chargerSousCategories();
+  }, [editedProduit?.categorieId, API_URL, societe_id]);
+
   const handleRetour = () => navigate(-1);
 
   const handleEdit = () => setIsEditing(true);
