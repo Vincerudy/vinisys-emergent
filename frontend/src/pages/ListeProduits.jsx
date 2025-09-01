@@ -70,8 +70,10 @@ const ListeProduits = () => {
           prixUnitaire: parseFloat(prod.prixUnitaire) || 0,
           prixUnitaireHT: parseFloat(prod.prixUnitaireHT) || 0,
           quantiteEnStock: prod.quantite_en_stock,
-          categorie: prod.categorie || 'Non défini',
-          sousCategorie: prod.sous_categorie || '',
+          categorie: prod.categorie_nom || prod.categorie || 'Non défini',
+          sousCategorie: prod.sous_categorie_nom || prod.sous_categorie || '',
+          categorieId: prod.categorie_id,
+          sousCategorieId: prod.sous_categorie_id,
           image: prod.image_path || '',
         }));
         const sorted = mapped.sort((a, b) => b.id - a.id);
