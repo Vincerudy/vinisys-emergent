@@ -1,21 +1,36 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Types de Frais et Barèmes Kilométriques APIs
-Tests the APIs for types de frais and barèmes kilométriques management:
+Backend API Testing Script for Vinisys Application - Test Correction Justificatifs OCR
+Tests the OCR justificatif persistence corrections as requested by user:
 
-APIs à tester:
-1. GET /api/types-frais/manage?societeId=2 - Types de frais avec personnalisations
-2. GET /api/types-frais/societe/2 - Types de frais pour société (si existe)
-3. GET /api/baremes-kilometriques/societe/2 - Barèmes kilométriques pour société
-4. GET /api/baremes-kilometriques/manage?societeId=2 - Barèmes avec gestion (si existe)
+TEST DE VALIDATION DE LA CORRECTION:
 
-Tables de base de données à vérifier:
-- types_frais (types de frais système)
-- types_frais_societe_personnalisation (personnalisations par société)
-- baremes_kilometriques (barèmes système)  
-- baremes_kilometriques_societe (barèmes personnalisés par société)
+1. **Connexion** : idnovation2014@gmail.com / Cinema12
+2. **Créer un nouveau frais de test** avec justificatif :
+   - POST /api/frais pour créer un frais
+   - Utiliser les données suivantes :
+     - note_frais_id: 69 (note existante)
+     - type_frais_id: 1 (type repas)
+     - vendeur: "Test Restaurant Correction"
+     - montant: 42.50
+     - description: "Test correction justificatif OCR"
 
-Société connectée: ID 2 (utilisateur idnovation2014@gmail.com)
+3. **Tester le nouvel endpoint upload** :
+   - POST /api/frais/upload-justificatif avec le frais_id récupéré
+   - Uploader un fichier test
+   - Vérifier que la réponse indique le succès
+
+4. **Vérifier la persistance** :
+   - GET /api/note-frais/69 pour récupérer la note complète
+   - Vérifier que le nouveau frais apparaît avec son justificatif
+   - Valider que l'URL du justificatif est accessible
+
+5. **Test d'accès au fichier** :
+   - Tester l'URL du justificatif avec GET
+
+**OBJECTIF** : Confirmer que les corrections apportées (récupération correcte de l'ID frais + nouvel endpoint upload) permettent maintenant la persistance des justificatifs OCR.
+
+**RÉSULTAT ATTENDU** : Un frais créé avec un justificatif qui reste visible et accessible après création.
 """
 
 import requests
