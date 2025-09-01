@@ -1,72 +1,198 @@
 <analysis>
-The previous AI engineer's work primarily focused on stabilizing the application environment, addressing UI/UX enhancements, and implementing complex financial features. Initial efforts involved frequent re-installation and configuration of MariaDB/MySQL due to environment instability, along with fixing frontend startup issues related to file watchers in Kubernetes. A major thrust was the implementation of robust customization for system and custom expense types, and accounting accounts, involving new database tables (, , ) and extensive modifications to backend APIs () and frontend components (, , ). This included fixing issues where frontend components were calling old, non-existent APIs and ensuring proper data mapping. The engineer also redesigned the Barèmes kilométriques section, adding customization and a dedicated detail page. A significant recent feature was the dynamic configuration of expense entry fields in the sidebar, based on the selected expense type, involving new database structures and frontend logic in . The work concluded with recurring database connectivity issues, requiring repeated MariaDB re-installations.
+The AI engineer's work primarily focused on stabilizing the application environment and implementing several key financial and stock management features. Initial challenges involved persistent MariaDB/MySQL instability and authentication redirection issues, which were frequently addressed through re-installations and service restarts. Significant effort was dedicated to fixing the OCR integration for expense creation, including ensuring the modal displays, data pre-fills, default expense types are set, and most importantly, that OCR-generated justificatifs (receipts) persist and are correctly displayed in both the expense list and sidebar. The dashboard and financial report functionalities were enhanced with accurate validation filtering and period interval selection. Finally, a comprehensive stock category management system was initiated, involving new frontend pages, backend routes, and database tables, with ongoing work on product import.
 </analysis>
 
 <product_requirements>
-The Vinisys application is a financial management system with a focus on intuitive UI/UX and granular control over financial entities. Key requirements included:
-1.  **UI/UX Overhaul:** A simplified sidebar menu () with fixed width, icon-over-text layout, and a new  with a grid layout.
-2.  **Expense Management:** Initial mileage expense tracking with Google Maps (though autocomplete was problematic).
-3.  **Customizable Financial Entities:**
-    *   **Expense Types:** Default system expense types activatable/deactivatable by companies, alongside company-specific custom types. The most recent and critical update was to enable *full customization* of system expense types, removing prior modification restrictions.
-    *   **Accounting Accounts:** System accounts that could be personalized or entirely new ones created per company, accessible via a Rubrique et compte comptable tab in .
-    *   **Mileage Scales (Barèmes kilométriques):** System mileage scales that can be personalized by clients, displayed in a dedicated tab.
-4.  **Dynamic Field Configuration:** The ability to define per-expense-type which input fields (e.g., Date, Location, VAT, etc.) are non-visible, optional, or mandatory, with these settings dynamically applied in the expense creation sidebar.
+The Vinisys application aims to be an intuitive financial management system. Key requirements included:
+1.  **Environment Stability:** Stable MariaDB/MySQL and functional frontend/backend services.
+2.  **Expense Management:**
+    *   Full customization of expense types, accounting accounts, and mileage scales.
+    *   Dynamic field configuration for expense creation.
+    *   Read-only access for submitted expense notes.
+    *   Correct save functionality and data display for expenses/purchases.
+3.  **Financial Report:** Accurate display of validated expenses, VAT calculations (collected, deductible, non-deductible, to be disbursed, credit) with summary blocks and period intervals.
+4.  **OCR Integration:**
+    *   OCR choice modal on Nouveau frais if enabled, direct sidebar if disabled.
+    *   Sidebar pre-filled with OCR data (vendor, amount, date, VAT), with image as attachment.
+    *   Default expense type Repas for OCR-created expenses.
+    *   OCR justificatifs must persist and be viewable after browser refresh and in the expense sidebar.
+5.  **Dashboard (Expenses & Purchases):** Display only validated expenses/purchases and their VAT, with period interval selection.
+6.  **Stock Management:** New Catégories block on  leading to a category list page, detail page (with sub-categories), and the ability to add/edit/delete categories/sub-categories. Product import via XLSX should use category IDs.
 </product_requirements>
 
 <key_technical_concepts>
 -   **Full-Stack Development:** React.js (Vite) for frontend, Express.js (Node.js) for backend.
--   **Database:** MySQL/MariaDB () for data storage and management.
--   **API Communication:** RESTful APIs using Axios,  prefix for Kubernetes ingress.
--   **UI/UX:** React Components, Ant Design, CSS Flexbox/Grid, /, Google Maps API integration.
--   **Environment Management:**  files, backend                          RUNNING   pid 28, uptime 0:00:03
-code-server                      RUNNING   pid 29, uptime 0:00:03
-frontend                         STOPPED   Aug 31 12:32 PM
-mongodb                          RUNNING   pid 34, uptime 0:00:03
-supervisor>  for service control.
+-   **Database:** MySQL/MariaDB () for data storage.
+-   **API Communication:** RESTful APIs using Axios,  prefix.
+-   **UI/UX:** React Components, Ant Design, CSS, /.
+-   **OCR:** Tesseract.js for client-side image analysis.
+-   **Environment:**  files, backend                          RUNNING   pid 28, uptime 0:00:04
+code-server                      RUNNING   pid 29, uptime 0:00:04
+frontend                         RUNNING   pid 33, uptime 0:00:04
+mongodb                          RUNNING   pid 35, uptime 0:00:04
+supervisor> , Git.
 </key_technical_concepts>
 
 <code_architecture>
+The application follows a standard MERN-like stack, with a React frontend and an Express.js backend, backed by a MariaDB/MySQL database.
 
+**Directory Structure:**
+/app/
+├── backend/
+│   ├── config/
+│   ├── jobs/
+│   ├── routes/
+│   │   ├── abonnement/
+│   │   ├── auth.js
+│   │   ├── client/
+│   │   ├── depenses/
+│   │   ├── facture/
+│   │   ├── common/
+│   │   ├── achats/
+│   │   │   └── dashboardAchats.js (MODIFIED)
+│   │   ├── notes-frais/
+│   │   │   └── dashboardNotesfrais.js (MODIFIED)
+│   │   ├── rapport/
+│   │   │   └── rapportFinancier.js (MODIFIED)
+│   │   ├── sql/
+│   │   ├── images/
+│   │   ├── login.js
+│   │   ├── stock/ (NEW)
+│   │   │   ├── categoriesStock.js (NEW)
+│   │   │   └── sousCategoriesStock.js (NEW)
+│   │   └── token/
+│   ├── uploads/
+│   │   └── notes-frais/
+│   ├── .env
+│   ├── .env.example
+│   ├── index.js (MODIFIED)
+│   └── package.json
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── components/
+│   │   │   ├── shared/
+│   │   │   ├── FraisSidebar.jsx (MODIFIED)
+│   │   │   ├── OCRCapture.jsx (MODIFIED)
+│   │   │   ├── AchatSidebar.jsx
+│   │   │   ├── css/
+│   │   │   ├── ConfirmationModal.jsx
+│   │   │   ├── composantsFacture/
+│   │   │   └── ComptesComptablesConfiguration.jsx
+│   │   ├── contexte/
+│   │   │   └── Api.js
+│   │   ├── hooks/
+│   │   ├── layout/
+│   │   ├── pages/
+│   │   │   ├── AccueilPage.jsx
+│   │   │   ├── Connexion.jsx
+│   │   │   ├── DepensesPage.jsx
+│   │   │   ├── FacturationDashboardPage.jsx
+│   │   │   ├── ListeNotesfraisPage.jsx
+│   │   │   ├── NouvelleNoteFraisPage.jsx
+│   │   │   ├── NoteDetailPage.jsx (MODIFIED)
+│   │   │   ├── NotesfraisPage.jsx (MODIFIED)
+│   │   │   ├── ParametrageFraisPage.jsx
+│   │   │   ├── ParametresDepenses.jsx (MODIFIED)
+│   │   │   ├── ParametresTVA.jsx
+│   │   │   ├── ParametragePage.jsx
+│   │   │   ├── PlansPage.jsx
+│   │   │   ├── RapportPage.jsx (MODIFIED)
+│   │   │   ├── TableauBordDepenses.jsx
+│   │   │   ├── ValidationAchats.jsx
+│   │   │   ├── ValidationDepenses.jsx
+│   │   │   ├── DetailCategorieAchatPage.jsx
+│   │   │   ├── CompetencesPage.jsx
+│   │   │   ├── SimulationBudgetPage.jsx
+│   │   │   ├── ImportExportPage.jsx
+│   │   │   ├── LecturePage.jsx
+│   │   │   ├── home.jsx
+│   │   │   ├── DetailTypeFraisPage.jsx
+│   │   │   ├── DetailBaremeKilometriquePage.jsx
+│   │   │   ├── Configuration.jsx
+│   │   │   ├── ListeAchatsPage.jsx
+│   │   │   ├── AchatsPage.jsx (MODIFIED)
+│   │   │   ├── ListeProduits.jsx (MODIFIED)
+│   │   │   ├── CategoriesStockPage.jsx (NEW)
+│   │   │   ├── DetailCategorieStockPage.jsx (NEW)
+│   │   │   └── css/
+│   │   │       ├── NoteDetailPage.css (MODIFIED)
+│   │   │       ├── RapportPage.css (MODIFIED)
+│   │   │       ├── CategoriesStockPage.css (NEW)
+│   │   │       ├── DetailCategorieStockPage.css (NEW)
+│   │   │       └── ListeProduits.css (MODIFIED)
+│   │   ├── route/
+│   │   │   └── publicRoute.jsx (MODIFIED)
+│   │   ├── utils/
+│   │   └── global-layout-fix.css
+├── mjupgupviniprod.sql
+├── mjupgupviniprod_export_20250808_164014.sql
+├── nouvelle_ergo.sql (USED for DB import)
+├── nouvelle-ergo-2.sql (NEW, DB export)
+├── CHANGELOG_nouvelle-ergo-2.md (NEW)
+├── vinisys_clean.sql
+├── vinisys_latest.sql
+├── vinisys_project.sql
+├── README.md
+├── setup.sh
+└── vinisys.sql
 
 **Key Files and Changes:**
+*   : Main Express app. Modified to add a combined endpoint for OCR justificatif upload and association () and integrated new stock category routes. Fixed endpoint responses (e.g.,  path).
+*   : Modified to filter expenses by  and accept / parameters for period selection instead of /.
+*   : Modified to filter purchases by  and accept / for period selection.
+*   : Modified to calculate and return , , , ,  for the financial report.
+*    (NEW): Backend routes for CRUD operations on stock categories, initially without product joins.
+*    (NEW): Backend routes for CRUD operations on stock sub-categories.
+*   : Modified to correctly display the OCR choice modal based on  setting. Added a Justificatifs column to the expense list table, showing attached files with download links, using  and  icons.
+*   : (Implicitly used) Handles  setting.
+*   : Critical component for expense creation. Modified to:
+    *   Ensure OCR extracted data correctly pre-fills fields by adjusting  execution order.
+    *   Set Repas as the default expense type for OCR-created expenses.
+    *   Correctly handle OCR justificatif upload and association, ensuring persistence by capturing the correct  from the backend response and converting Blob to File.
+    *   Load and display existing justificatifs when editing/viewing an expense, ensuring correct URL construction for the image preview.
+*   : Modified to include logic for potentially detecting expense type (e.g., Repas).
+*   : Modified to use / for dashboard API calls and implemented date pickers in the UI.
+*   : Modified to use / for dashboard API calls and implemented date pickers in the UI.
+*   : Modified to display new TVA total blocks (TVA collectée, déductible, non déductible, à décaisser, crédit) with color-coded labels. Already had period interval selection.
+*   : Modified to add a Catégories block with a link to the new categories list page. Added  icon import.
+*    (NEW): Page to list stock categories, allow adding new ones. (Planned to display IDs).
+*    (NEW): Page to show category details and manage sub-categories. (Planned to display IDs).
+*   : Added styles for the Justificatifs column.
+*   : Added styles for the new TVA total blocks.
+*    (NEW): CSS for the new categories list page. (Modified to add styles for IDs).
+*    (NEW): CSS for the new category detail page. (Modified to add styles for IDs).
+*    (MODIFIED): Added CSS for the new category block.
+*   : Added new routes for stock categories (, ).
+*    (NEW): Database export created containing all new tables and data, including , , .
+*    (NEW): Markdown file summarizing changes in the  export.
 
-*   : Configures MariaDB/MySQL connection using environment variables.
-*   : Stores backend environment variables, including , , , .
-*   : Main Express.js application, significantly modified to host new API endpoints for , , , and . This file contains the core logic for fetching, creating, updating, and personalizing these financial entities. Extensive updates were made to correct API paths and data handling (e.g., converting string 'oui' to integer 1 for boolean fields).
-*   : Frontend environment variables, including  and .
-*    (NEW): Manages system and personalized accounting accounts. Modified to use correct API endpoints () and data fields (, ).
-*    (NEW): Detailed configuration of individual expense types. Heavily modified to remove frontend restrictions on modifying system types, handle  as numerical, and integrate the new Configuration des champs de saisie section with radio buttons for field visibility.
-*   : Expense parameters page. Modified to remove the TVA and Catégories tabs, integrate Types de frais and Barèmes kilométriques tabs, and dynamically display customizable mileage scales. Removed frontend restrictions on editing system expense types.
-*    (NEW): Created to manage system and personalized mileage scales. Includes a form for editing bareme details and an  switch.
-*   : Expense creation page. Modified to fetch expense types from the new  endpoint, use expense type  for mileage detection, and dynamically render 23 configurable fields based on the selected expense type's field configuration.
-*   : Component for mileage expenses. Modified to use the new  API, integrate Google Maps Autocomplete with dynamic suggestions, and use an environment variable for the Google Maps API key.
-*   : Updated to include routes for  and .
-*   **Database Tables (Newly created or significantly modified during the trajectory):**
-    *   : Stores per-company customizations for system expense types.
-    *   : Stores system accounting accounts.
-    *   : Stores personalized versions of system accounting accounts and new custom accounts per company.
-    *   : Stores system mileage scales.
-    *   : Stores personalized mileage scales per company.
-    *   : Stores the visibility/mandatoriness configuration for fields per expense type and company.
 </code_architecture>
 
 <pending_tasks>
--   **Google Maps Places API Activation:** The Places API needs to be explicitly enabled in the Google Cloud Console for the provided API key to get autocomplete suggestions working correctly. This is an external configuration step for the user.
--   **Database Stability:** The MariaDB/MySQL service requires re-stabilization due to recurring  errors, which impacts all backend operations.
+-   **Google Maps Places API Activation:** External configuration needed.
+-   **Database Stability:** Recurring MariaDB  errors might need more robust solutions, though current restarts resolve them temporarily.
+-   **Frontend Session Stability:** Frequent login redirects/expirations need investigation.
+-   **Product Import with Categories:** Implement product import via XLSX using category and sub-category IDs at the  route.
+-   **Display Category IDs on Frontend:** Ensure category and sub-category IDs are visibly displayed in the stock management UI.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary, the AI engineer was addressing a recurring  which was traced back to MariaDB/MySQL not running or being inaccessible (). This is a critical environment stability issue that has caused previous interruptions and requires re-installation and configuration of MariaDB.
+Immediately before this summary request, the AI engineer was working on enhancing the stock management module. The user requested to display the database  of each category and sub-category in the frontend list and detail pages. This is to facilitate product import via an XLSX file, where products would be categorized by entering the corresponding category/sub-category ID.
 
-Prior to this database issue, the engineer successfully implemented and tested the dynamic configuration of expense fields:
-1.  **:** The UI for configuring fields (non-visible, optional, mandatory) was enhanced, replacing icons with text.
-2.  **:** This sidebar dynamically adjusts its input fields based on the selected expense type's configuration. It fetches the  for the chosen  and company, then conditionally renders 23 different fields (including 3 standard and 3 free TVA fields). Fields marked 'obligatoire' display a red asterisk and border, and 'non_visible' fields are hidden.
-3.  **CSS:** Styling was added to support these new dynamic fields and indicators.
-4.  **Testing:** The system was tested by setting different field configurations for Transport - Kilomètres and Hébergement - Autre expense types, and verifying that the fields in the  sidebar changed correctly.
+The AI had already:
+1.  Created the new frontend pages (, ) and their associated CSS files.
+2.  Created the backend routes (, ) and integrated them.
+3.  Created the  and  database tables.
+4.  Added test data to these new tables.
+5.  Modified  to include a Catégories block linking to the new pages.
+6.  Fixed initial backend API errors for categories by adjusting SQL queries due to a lack of  in the  table.
 
-The product's functionality for dynamic field configuration is complete and verified, but it is currently impacted by the database connectivity problem.
+The last action performed was downloading the user-provided  file and then modifying  and  to display category and sub-category IDs, including adding necessary CSS styles. The next step was to find and modify the  page. The trajectory ended while trying to locate the correct file for the  route.
 </current_work>
 
 <optional_next_step>
-Re-install and start MariaDB/MySQL, ensuring database connectivity is stable.
+Locate and modify the product import page () to handle XLSX file uploads and categorize products using category/sub-category IDs.
 </optional_next_step>
+
