@@ -320,7 +320,7 @@ const ProduitDetail = () => {
 
   if (!produit || !editedProduit) return null;
 
-  const sousCategories = sousCategoriesDisponibles[editedProduit.categorie] || [];
+  // Les sous-catégories sont déjà chargées dans sousCategoriesStock
 
   return (
     <div className="produit-detail-container">
