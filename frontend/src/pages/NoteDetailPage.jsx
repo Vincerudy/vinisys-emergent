@@ -426,6 +426,36 @@ const NoteDetailPage = () => {
                       <td className="frais-paiement">
                         {fraisItem.moyen_paiement}
                       </td>
+                      <td className="frais-justificatifs">
+                        {fraisItem.justificatifs && fraisItem.justificatifs.length > 0 ? (
+                          <div className="justificatifs-list">
+                            {fraisItem.justificatifs.map((justif, index) => (
+                              <div key={justif.id || index} className="justificatif-item">
+                                <a 
+                                  href={`${import.meta.env.REACT_APP_BACKEND_URL}${justif.url}`}
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="justificatif-link"
+                                  title={`Voir ${justif.nom_fichier}`}
+                                >
+                                  <FiPaperclip />
+                                  <span className="justificatif-name">
+                                    {justif.nom_fichier || 'Justificatif'}
+                                  </span>
+                                </a>
+                                <span className="justificatif-size">
+                                  ({Math.round(justif.taille_fichier / 1024)} KB)
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="no-justificatif">
+                            <FiX className="icon-missing" />
+                            Aucun
+                          </span>
+                        )}
+                      </td>
                       <td className="frais-actions">
                         {note.statut === 'soumise' ? (
                           <div className="actions-readonly">
