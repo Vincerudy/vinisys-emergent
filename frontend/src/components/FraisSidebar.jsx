@@ -136,15 +136,54 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
 
         // Ajouter l'image OCR comme justificatif principal
         if (ocrData.ocrImage) {
-          const imageUrl = typeof ocrData.ocrImage === 'string' ? ocrData.ocrImage : URL.createObjectURL(ocrData.ocrImage);
-          setJustificatif({
-            url: imageUrl,
-            nom: 'Reçu scanné (OCR)',
-            type: 'image/ocr',
-            file: ocrData.ocrImage,
-            isOCR: true
-          });
-          console.log('📸 Image OCR ajoutée comme justificatif');
+          console.log('📸 Traitement image OCR:', typeof ocrData.ocrImage, ocrData.ocrImage);
+          
+          let imageFile = null;
+          let imageUrl = null;
+          
+          // Si c'est déjà un File, l'utiliser directement
+          if (ocrData.ocrImage instanceof File) {
+            imageFile = ocrData.ocrImage;
+            imageUrl = URL.createObjectURL(ocrData.ocrImage);
+          }
+          // Si c'est un Blob, le convertir en File
+          else if (ocrData.ocrImage instanceof Blob) {
+            imageFile = new File([ocrData.ocrImage], 'recu_ocr.jpg', { type: 'image/jpeg' });
+            imageUrl = URL.createObjectURL(imageFile);
+          }
+          // Si c'est une URL data: ou une URL string
+          else if (typeof ocrData.ocrImage === 'string') {
+            if (ocrData.ocrImage.startsWith('data:')) {
+              // Convertir data URL en File
+              const response = await fetch(ocrData.ocrImage);
+              const blob = await response.blob();
+              imageFile = new File([blob], 'recu_ocr.jpg', { type: 'image/jpeg' });
+              imageUrl = ocrData.ocrImage; // Utiliser la data URL directement
+            } else {
+              imageUrl = ocrData.ocrImage;
+              // Pour une URL existante, on ne peut pas créer un File
+            }
+          }
+          
+          if (imageFile) {
+            setJustificatif({
+              url: imageUrl,
+              nom: 'Reçu scanné (OCR)',
+              type: 'image/jpeg',
+              file: imageFile,
+              isOCR: true
+            });
+            console.log('📸 Image OCR ajoutée comme justificatif avec File:', imageFile.name, imageFile.size, 'bytes');
+          } else if (imageUrl) {
+            setJustificatif({
+              url: imageUrl,
+              nom: 'Reçu scanné (OCR)',
+              type: 'image/jpeg',
+              file: null,
+              isOCR: true
+            });
+            console.log('📸 Image OCR ajoutée comme justificatif URL seulement');
+          }
         }
 
         // Stocker le texte OCR pour référence
