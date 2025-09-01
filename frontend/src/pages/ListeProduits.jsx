@@ -43,6 +43,8 @@ const ListeProduits = () => {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategorie, setSelectedCategorie] = useState('Tous');
   const [selectedSousCategorie, setSelectedSousCategorie] = useState('');
+  const [categoriesStock, setCategoriesStock] = useState([]);
+  const [sousCategoriesStock, setSousCategoriesStock] = useState([]);
   const navigate = useNavigate();
 
   const gradients = useMemo(() => {
