@@ -69,8 +69,27 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
       setTimeout(() => {
         // Préremplir le formulaire avec les données OCR
         setFormData(prevData => {
+          // Chercher l'ID du type de frais "Repas" dans la liste des types
+          let repasTypeId = '';
+          const repasType = typesFrais.find(type => 
+            type.nom && (
+              type.nom.toLowerCase().includes('repas') || 
+              type.libelle.toLowerCase().includes('repas')
+            )
+          );
+          
+          if (repasType) {
+            repasTypeId = repasType.id.toString();
+            console.log('🍽️ Type frais "Repas" trouvé, ID:', repasTypeId);
+          } else {
+            // Fallback : utiliser l'ID 1 par défaut (souvent le premier type)
+            repasTypeId = '1';
+            console.log('⚠️ Type frais "Repas" non trouvé, utilisation de l\'ID par défaut:', repasTypeId);
+          }
+          
           const newFormData = {
             ...prevData,
+            type_frais_id: repasTypeId, // Positionner automatiquement sur "Repas"
             vendeur: ocrData.vendeur || prevData.vendeur,
             montant_ttc: ocrData.montant_ttc || prevData.montant_ttc,
             date_frais: ocrData.date_frais || prevData.date_frais,
@@ -78,7 +97,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
             moyen_paiement: ocrData.moyen_paiement || prevData.moyen_paiement
           };
           
-          console.log('✅ Formulaire pré-rempli avec OCR:', newFormData);
+          console.log('✅ Formulaire pré-rempli avec OCR (type=Repas):', newFormData);
           return newFormData;
         });
 
