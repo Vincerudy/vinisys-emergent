@@ -21,8 +21,8 @@ const AchatsPage = () => {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState({
-    mois: new Date().getMonth() + 1,
-    annee: new Date().getFullYear()
+    debut: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0], // Premier jour du mois en cours
+    fin: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0] // Dernier jour du mois en cours
   });
   const [filters, setFilters] = useState({
     fournisseur: '',
