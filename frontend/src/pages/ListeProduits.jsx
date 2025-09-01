@@ -149,6 +149,16 @@ const ListeProduits = () => {
             <div className="quick-link-text">Inventaire automatique</div>
           </div>
           
+          <div 
+            className="quick-link-card"
+            onClick={() => window.location.hash = '#/categories-stock'}
+          >
+            <div className="quick-link-icon">
+              <FiGrid />
+            </div>
+            <div className="quick-link-text">Catégories</div>
+          </div>
+          
         </div>
         <div style={{width:'100%'}} className="modern-filters-row">
         <Input
