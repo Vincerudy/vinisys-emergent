@@ -126,17 +126,28 @@ const NoteDetailPage = () => {
   };
 
   const handleOcrDataExtracted = (ocrData) => {
-    console.log('🎯 Données OCR extraites:', ocrData);
+    console.log('🎯 Données OCR extraites reçues:', ocrData);
     
     // Fermer l'interface OCR
     setOcrCaptureOpen(false);
     
+    // Vérifier que les données existent
+    if (!ocrData) {
+      console.error('❌ Aucune donnée OCR fournie');
+      return;
+    }
+    
     // Stocker les données OCR pour les passer à la sidebar
     setOcrDataForSidebar(ocrData);
+    console.log('💾 Données OCR stockées dans le state:', ocrData);
     
-    // Ouvrir la sidebar avec les données pré-remplies
-    setEditingFrais(null);
-    setSidebarOpen(true);
+    // Attendre un petit délai pour que le state soit mis à jour
+    setTimeout(() => {
+      // Ouvrir la sidebar avec les données pré-remplies
+      setEditingFrais(null);
+      setSidebarOpen(true);
+      console.log('🚀 Sidebar ouverte avec données OCR');
+    }, 100);
   };
 
   const handleEditFrais = (fraisItem) => {
