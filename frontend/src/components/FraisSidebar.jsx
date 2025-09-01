@@ -349,7 +349,10 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
       }
 
       if (response.data.success) {
-        const fraisId = response.data.fraisId || response.data.id || fraisData?.id;
+        // Récupérer l'ID du frais créé - l'endpoint retourne data.fraisId
+        const fraisId = response.data.data?.fraisId || response.data.fraisId || response.data.id || fraisData?.id;
+        
+        console.log('🆔 ID du frais récupéré:', fraisId, 'depuis response:', response.data);
         
         // Si on a un justificatif (notamment venant d'OCR), l'uploader
         if (justificatif && justificatif.file && fraisId) {
@@ -380,6 +383,8 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
             console.error('❌ Erreur upload justificatif:', uploadError);
             // Ne pas bloquer la sauvegarde du frais pour autant
           }
+        } else if (justificatif && justificatif.file && !fraisId) {
+          console.error('❌ Impossible d\'uploader le justificatif - ID frais manquant');
         }
         
         alert(isEditMode ? 'Frais modifié avec succès' : 'Frais ajouté avec succès');
