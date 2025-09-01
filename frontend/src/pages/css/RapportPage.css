@@ -432,3 +432,149 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* === NOUVEAUX STYLES - BLOCS TOTAUX TVA === */
+
+/* Section Synthèse TVA */
+.tva-totaux-section {
+  margin-bottom: 32px;
+}
+
+.tva-totaux-section h3 {
+  color: #1e293b;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Grille des blocs TVA */
+.tva-totaux-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+/* Cartes TVA de base */
+.tva-total-card {
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.tva-total-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* En-tête de carte TVA */
+.tva-total-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tva-total-icon {
+  font-size: 18px;
+}
+
+.tva-total-label {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Valeur principale */
+.tva-total-value {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* Description */
+.tva-total-desc {
+  font-size: 12px;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* === COULEURS SPÉCIFIQUES PAR TYPE DE TVA === */
+
+/* TVA collectée - Rouge (dette) */
+.tva-total-card.rouge {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  border-color: #ef4444;
+  color: #7f1d1d;
+}
+
+.tva-total-card.rouge:hover {
+  background: linear-gradient(135deg, #fecaca, #fca5a5);
+}
+
+/* TVA déductible - Vert (récupérable) */
+.tva-total-card.vert {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  border-color: #22c55e;
+  color: #14532d;
+}
+
+.tva-total-card.vert:hover {
+  background: linear-gradient(135deg, #bbf7d0, #86efac);
+}
+
+/* TVA non déductible - Gris (neutralisée) */
+.tva-total-card.gris {
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  border-color: #64748b;
+  color: #1e293b;
+}
+
+.tva-total-card.gris:hover {
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+}
+
+/* TVA à décaisser - Orange (alerte) */
+.tva-total-card.orange {
+  background: linear-gradient(135deg, #fed7aa, #fdba74);
+  border-color: #f97316;
+  color: #7c2d12;
+}
+
+.tva-total-card.orange:hover {
+  background: linear-gradient(135deg, #fdba74, #fb923c);
+}
+
+/* TVA à reporter - Bleu (crédit) */
+.tva-total-card.bleu {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border-color: #3b82f6;
+  color: #1e3a8a;
+}
+
+.tva-total-card.bleu:hover {
+  background: linear-gradient(135deg, #bfdbfe, #93c5fd);
+}
+
+/* Responsive pour les blocs TVA */
+@media (max-width: 768px) {
+  .tva-totaux-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .tva-total-value {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tva-totaux-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tva-total-card {
+    padding: 16px;
+  }
+}
