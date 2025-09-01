@@ -93,17 +93,21 @@ const NoteDetailPage = () => {
       storageKey, 
       ocrSetting, 
       ocrEnabled,
+      localStorage_all: JSON.stringify(localStorage),
       localStorage_keys: Object.keys(localStorage)
     });
     
     if (ocrEnabled) {
       // OCR activé : Afficher la modale de choix
       console.log('✅ OCR activé - Affichage de la modale');
+      // Nettoyer les données OCR précédentes
+      setOcrDataForSidebar(null);
       setOcrModalOpen(true);
     } else {
       // OCR désactivé : Ouvrir directement la sidebar
       console.log('❌ OCR désactivé - Ouverture directe de la sidebar');
       setEditingFrais(null);
+      setOcrDataForSidebar(null); // S'assurer qu'il n'y a pas de données OCR
       setSidebarOpen(true);
     }
   };
