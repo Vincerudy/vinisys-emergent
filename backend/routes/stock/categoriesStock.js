@@ -42,11 +42,9 @@ router.get('/:id/details', async (req, res) => {
                 c.description,
                 c.societe_id,
                 c.created_at,
-                COUNT(DISTINCT p.id) as nb_produits
+                0 as nb_produits
             FROM categories_stock c
-            LEFT JOIN produits p ON c.id = p.categorie_id
             WHERE c.id = ?
-            GROUP BY c.id, c.nom, c.description, c.societe_id, c.created_at
         `, [id]);
 
         if (categoryResult.length === 0) {
@@ -62,11 +60,9 @@ router.get('/:id/details', async (req, res) => {
                 sc.nom,
                 sc.description,
                 sc.created_at,
-                COUNT(DISTINCT p.id) as nb_produits
+                0 as nb_produits
             FROM sous_categories_stock sc
-            LEFT JOIN produits p ON sc.id = p.sous_categorie_id
             WHERE sc.categorie_parent_id = ?
-            GROUP BY sc.id, sc.nom, sc.description, sc.created_at
             ORDER BY sc.nom ASC
         `, [id]);
 
