@@ -14,7 +14,8 @@ import {
   FiFolder,
   FiArrowLeft,
   FiCheck,
-  FiEye
+  FiEye,
+  FiPaperclip
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useAuth } from '../contexte/AuthContext';
