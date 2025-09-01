@@ -66,6 +66,7 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
       montant_ttc: '',
       date_frais: '',
       description: '',
+      type_frais: 'repas', // Type par défaut pour OCR
       tva_taux: 20.0,
       moyen_paiement: 'Carte de Crédit Société'
     };
@@ -124,9 +125,27 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
       }
     }
 
-    // Description basée sur le contenu
-    data.description = `Frais saisi via OCR - ${data.vendeur || 'Reçu'}`;
+    // Détection intelligente du type de frais basée sur le contenu
+    const textLower = text.toLowerCase();
+    if (textLower.includes('restaurant') || textLower.includes('café') || textLower.includes('bar') || 
+        textLower.includes('brasserie') || textLower.includes('pizzeria') || textLower.includes('fast') ||
+        textLower.includes('mcdonald') || textLower.includes('kfc') || textLower.includes('burger')) {
+      data.type_frais = 'repas';
+      data.description = `Repas - ${data.vendeur || 'Restaurant'}`;
+    } else if (textLower.includes('transport') || textLower.includes('taxi') || textLower.includes('uber') ||
+               textLower.includes('train') || textLower.includes('sncf') || textLower.includes('métro')) {
+      data.type_frais = 'transport';
+      data.description = `Transport - ${data.vendeur || 'Déplacement'}`;
+    } else if (textLower.includes('hotel') || textLower.includes('hôtel') || textLower.includes('hébergement')) {
+      data.type_frais = 'hebergement';
+      data.description = `Hébergement - ${data.vendeur || 'Hôtel'}`;
+    } else {
+      // Par défaut : repas
+      data.type_frais = 'repas';
+      data.description = `Frais saisi via OCR - ${data.vendeur || 'Reçu'}`;
+    }
 
+    console.log('🔍 Type de frais détecté automatiquement:', data.type_frais);
     return data;
   };
 
