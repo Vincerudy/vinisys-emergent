@@ -79,8 +79,8 @@ router.post('/produit', upload.single('image'), async (req, res) => {
     } else {
       await db.query(
         `UPDATE produits_services SET
-          nom = ?, description = ?, prix_unitaire = ?, prixUnitaireHT = ?, tva = ?,  quantite_en_stock = ?, seuil_minimum = ?,
-          fournisseur = ?, date_derniere_entree = ?, societe_id = ?, categorie = ?, sous_categorie = ?
+          nom = ?, description = ?, prix_unitaire = ?, prixUnitaireHT = ?, tva = ?, quantite_en_stock = ?, seuil_minimum = ?,
+          fournisseur = ?, date_derniere_entree = ?, societe_id = ?, categorie = ?, sous_categorie = ?, categorie_id = ?, sous_categorie_id = ?
           WHERE id = ?`,
         [
           nom || 'Produit sans nom',
@@ -93,8 +93,10 @@ router.post('/produit', upload.single('image'), async (req, res) => {
           fournisseur || null,
           dateDerniereEntree || null,
           societeId,
-          categorie,
-          sousCategorie,
+          categorie || null,
+          sousCategorie || null,
+          categorieId || null,
+          sousCategorieId || null,
           produitId,
         ]
       );
