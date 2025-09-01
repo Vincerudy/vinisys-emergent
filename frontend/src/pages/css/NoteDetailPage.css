@@ -394,6 +394,67 @@
   font-size: 0.9rem;
 }
 
+/* Colonne Justificatifs */
+.frais-justificatifs {
+  min-width: 140px;
+}
+
+.justificatifs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.justificatif-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.justificatif-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #0ea5e9;
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.justificatif-link:hover {
+  background: #f0f9ff;
+  color: #0284c7;
+  text-decoration: none;
+}
+
+.justificatif-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.justificatif-size {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-left: 20px;
+}
+
+.no-justificatif {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #ef4444;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.icon-missing {
+  font-size: 0.9rem;
+}
+
 .frais-actions {
   display: flex;
   gap: 8px;
