@@ -395,6 +395,7 @@ const NoteDetailPage = () => {
                     <th>Montant TTC</th>
                     <th>Pays</th>
                     <th>Moyen paiement</th>
+                    <th>Justificatifs</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
