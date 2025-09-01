@@ -68,7 +68,7 @@ router.get('/:societeId', async (req, res) => {
             utilisateursData = userData;
         }
 
-        // Répartition par type de frais
+        // Répartition par type de frais (uniquement dépenses validées)
         const [typesData] = await db.execute(`
             SELECT 
                 tf.nom as type_frais,
@@ -78,6 +78,7 @@ router.get('/:societeId', async (req, res) => {
             INNER JOIN notes_frais nf ON lf.note_frais_id = nf.id
             INNER JOIN types_frais tf ON lf.type_frais_id = tf.id
             WHERE nf.societe_id = ? 
+                AND nf.statut = 'validee'
                 AND MONTH(nf.periode_debut) <= ? 
                 AND MONTH(nf.periode_fin) >= ?
                 AND YEAR(nf.periode_debut) <= ?
