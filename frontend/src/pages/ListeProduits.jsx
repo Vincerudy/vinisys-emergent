@@ -87,6 +87,50 @@ const ListeProduits = () => {
     fetchProduits();
   }, [societe_id]);
 
+  // Charger les catégories de stock
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/categories-stock/${societe_id}`);
+        if (response.ok) {
+          const categories = await response.json();
+          setCategoriesStock(categories);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des catégories:', error);
+      }
+    };
+
+    if (societe_id) {
+      fetchCategories();
+    }
+  }, [societe_id]);
+
+  // Charger les sous-catégories quand une catégorie est sélectionnée
+  useEffect(() => {
+    const fetchSousCategories = async () => {
+      try {
+        if (selectedCategorie && selectedCategorie !== 'Tous') {
+          const selectedCategoryData = categoriesStock.find(cat => cat.nom === selectedCategorie);
+          if (selectedCategoryData) {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/sous-categories-stock/${selectedCategoryData.id}/${societe_id}`);
+            if (response.ok) {
+              const sousCategories = await response.json();
+              setSousCategoriesStock(sousCategories);
+            }
+          }
+        } else {
+          setSousCategoriesStock([]);
+          setSelectedSousCategorie('');
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des sous-catégories:', error);
+      }
+    };
+
+    fetchSousCategories();
+  }, [selectedCategorie, categoriesStock, societe_id]);
+
   const filteredProduits = produits.filter(prod => {
     const matchesSearch = prod.nom.toLowerCase().includes(searchValue.toLowerCase());
     const matchesCategorie = selectedCategorie === 'Tous' || prod.categorie === selectedCategorie;
