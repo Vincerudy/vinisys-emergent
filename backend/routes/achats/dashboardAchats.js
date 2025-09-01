@@ -73,7 +73,7 @@ router.get('/:societeId', async (req, res) => {
             FROM achats 
             WHERE societe_id = ? 
                 AND date_achat >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-                AND statut != 'annule'
+                AND statut = 'valide'
             GROUP BY YEAR(date_achat), MONTH(date_achat)
             ORDER BY annee DESC, mois DESC
         `, [societeId]);
