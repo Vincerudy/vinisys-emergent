@@ -133,12 +133,12 @@ router.get('/:societeId', async (req, res) => {
                 ROUND(SUM(montant_ttc), 2) as montant_total
             FROM achats 
             WHERE societe_id = ? 
-                AND MONTH(date_achat) = ? 
-                AND YEAR(date_achat) = ?
+                AND DATE(date_achat) >= ?
+                AND DATE(date_achat) <= ?
                 AND statut = 'valide'
             GROUP BY mode_paiement
             ORDER BY montant_total DESC
-        `, [societeId, currentMonth, currentYear]);
+        `, [societeId, dateDebut, dateFin]);
 
         res.json({
             periode: {
