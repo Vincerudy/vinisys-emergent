@@ -26,7 +26,7 @@ router.get('/:societeId', async (req, res) => {
             WHERE societe_id = ? 
                 AND MONTH(date_achat) = ? 
                 AND YEAR(date_achat) = ?
-                AND statut != 'annule'
+                AND statut = 'valide'
         `, [societeId, currentMonth, currentYear]);
 
         // Répartition par catégorie
