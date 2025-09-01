@@ -2,17 +2,34 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/db');
 
-// GET /api/achats/dashboard/:societeId - Tableau de bord achats
+// GET /api/achats/dashboard/:societeId - Tableau de bord achats avec intervalles de périodes
 router.get('/:societeId', async (req, res) => {
     try {
         const { societeId } = req.params;
-        const { mois, annee } = req.query;
+        const { periode_debut, periode_fin, mois, annee } = req.query;
         
-        const currentDate = new Date();
-        const currentMonth = mois || (currentDate.getMonth() + 1);
-        const currentYear = annee || currentDate.getFullYear();
+        // Support rétrocompatibilité avec mois/annee ou nouvelles périodes
+        let dateDebut, dateFin;
+        if (periode_debut && periode_fin) {
+            dateDebut = periode_debut;
+            dateFin = periode_fin;
+        } else {
+            // Fallback sur mois/année actuels ou fournis
+            const currentDate = new Date();
+            const currentMonth = mois || (currentDate.getMonth() + 1);
+            const currentYear = annee || currentDate.getFullYear();
+            
+            dateDebut = `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`;
+            dateFin = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${new Date(currentYear, currentMonth, 0).getDate()}`;
+        }
 
-        // Indicateurs clés du mois
+        console.log('📊 Dashboard achats:', {
+            societeId,
+            periode_debut: dateDebut,
+            periode_fin: dateFin
+        });
+
+        // Indicateurs clés de la période (uniquement achats validés)
         const [indicateurs] = await db.execute(`
             SELECT 
                 COUNT(*) as nb_achats,
@@ -24,10 +41,10 @@ router.get('/:societeId', async (req, res) => {
                 ROUND((SUM(CASE WHEN saisie_ocr = 1 THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 1) as pourcentage_ocr
             FROM achats 
             WHERE societe_id = ? 
-                AND MONTH(date_achat) = ? 
-                AND YEAR(date_achat) = ?
+                AND DATE(date_achat) >= ?
+                AND DATE(date_achat) <= ?
                 AND statut = 'valide'
-        `, [societeId, currentMonth, currentYear]);
+        `, [societeId, dateDebut, dateFin]);
 
         // Répartition par catégorie
         const [categoriesData] = await db.execute(`
