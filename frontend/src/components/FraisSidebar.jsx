@@ -154,11 +154,24 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
           // Si c'est une URL data: ou une URL string
           else if (typeof ocrData.ocrImage === 'string') {
             if (ocrData.ocrImage.startsWith('data:')) {
-              // Convertir data URL en File
-              const response = await fetch(ocrData.ocrImage);
-              const blob = await response.blob();
-              imageFile = new File([blob], 'recu_ocr.jpg', { type: 'image/jpeg' });
-              imageUrl = ocrData.ocrImage; // Utiliser la data URL directement
+              // Convertir data URL en File - version async
+              fetch(ocrData.ocrImage)
+                .then(response => response.blob())
+                .then(blob => {
+                  imageFile = new File([blob], 'recu_ocr.jpg', { type: 'image/jpeg' });
+                  imageUrl = ocrData.ocrImage; // Utiliser la data URL directement
+                  
+                  setJustificatif({
+                    url: imageUrl,
+                    nom: 'Reçu scanné (OCR)',
+                    type: 'image/jpeg',
+                    file: imageFile,
+                    isOCR: true
+                  });
+                  console.log('📸 Image OCR data URL convertie et ajoutée:', imageFile.name, imageFile.size, 'bytes');
+                })
+                .catch(err => console.error('❌ Erreur conversion data URL:', err));
+              return; // Sortir ici car c'est asynchrone
             } else {
               imageUrl = ocrData.ocrImage;
               // Pour une URL existante, on ne peut pas créer un File
