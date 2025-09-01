@@ -213,6 +213,67 @@ const RapportPage = () => {
             </div>
           </div>
 
+          {/* Blocs Totaux TVA */}
+          <div className="tva-totaux-section">
+            <h3>Synthèse TVA</h3>
+            <div className="tva-totaux-grid">
+              <div className="tva-total-card rouge">
+                <div className="tva-total-header">
+                  <span className="tva-total-icon">🔴</span>
+                  <span className="tva-total-label">TVA collectée</span>
+                </div>
+                <div className="tva-total-value">
+                  {formatMontant(rapportData.chiffre_affaires.tva_collectee || 0)}
+                </div>
+                <div className="tva-total-desc">Dette à l'État</div>
+              </div>
+
+              <div className="tva-total-card vert">
+                <div className="tva-total-header">
+                  <span className="tva-total-icon">🟢</span>
+                  <span className="tva-total-label">TVA déductible</span>
+                </div>
+                <div className="tva-total-value">
+                  {formatMontant(rapportData.depenses.tva_recuperable || 0)}
+                </div>
+                <div className="tva-total-desc">Récupérable</div>
+              </div>
+
+              <div className="tva-total-card gris">
+                <div className="tva-total-header">
+                  <span className="tva-total-icon">⚪️</span>
+                  <span className="tva-total-label">TVA non déductible</span>
+                </div>
+                <div className="tva-total-value">
+                  {formatMontant(rapportData.depenses.tva_non_deductible || 0)}
+                </div>
+                <div className="tva-total-desc">Intégrée au coût</div>
+              </div>
+
+              <div className="tva-total-card orange">
+                <div className="tva-total-header">
+                  <span className="tva-total-icon">🟠</span>
+                  <span className="tva-total-label">TVA à décaisser</span>
+                </div>
+                <div className="tva-total-value">
+                  {formatMontant(Math.max(0, (rapportData.chiffre_affaires.tva_collectee || 0) - (rapportData.depenses.tva_recuperable || 0)))}
+                </div>
+                <div className="tva-total-desc">Paiement à prévoir</div>
+              </div>
+
+              <div className="tva-total-card bleu">
+                <div className="tva-total-header">
+                  <span className="tva-total-icon">🔵</span>
+                  <span className="tva-total-label">TVA à reporter</span>
+                </div>
+                <div className="tva-total-value">
+                  {formatMontant(Math.max(0, (rapportData.depenses.tva_recuperable || 0) - (rapportData.chiffre_affaires.tva_collectee || 0)))}
+                </div>
+                <div className="tva-total-desc">Crédit positif</div>
+              </div>
+            </div>
+          </div>
+
           {/* Répartition TVA */}
           <div className="tva-repartition">
             <h3>Répartition par TVA</h3>
