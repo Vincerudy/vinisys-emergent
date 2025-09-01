@@ -1976,6 +1976,82 @@ app.post('/api/frais/upload-auto', upload.single('justificatif'), async (req, re
     }
 });
 
+// POST /api/frais/upload-justificatif - Upload et association d'un justificatif à un frais en une seule étape
+app.post('/api/frais/upload-justificatif', upload.single('file'), async (req, res) => {
+    try {
+        const { frais_id, nom_fichier } = req.body;
+        
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'Aucun fichier fourni'
+            });
+        }
+        
+        if (!frais_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID du frais manquant'
+            });
+        }
+
+        // Vérifier que le frais existe
+        const [fraisExists] = await db.execute(
+            'SELECT id FROM lignes_frais WHERE id = ?',
+            [frais_id]
+        );
+
+        if (fraisExists.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Frais non trouvé'
+            });
+        }
+
+        // Informations du fichier uploadé
+        const fileInfo = {
+            nom_fichier: nom_fichier || req.file.originalname,
+            chemin_fichier: req.file.filename,
+            type_mime: req.file.mimetype,
+            taille_fichier: req.file.size,
+            url: `/api/image/${req.file.filename}`
+        };
+
+        // Insérer le justificatif dans la base de données
+        const [result] = await db.execute(`
+            INSERT INTO justificatifs_frais (
+                ligne_frais_id, nom_fichier, chemin_fichier, type_mime, taille_fichier, created_at
+            ) VALUES (?, ?, ?, ?, ?, NOW())
+        `, [frais_id, fileInfo.nom_fichier, fileInfo.chemin_fichier, fileInfo.type_mime, fileInfo.taille_fichier]);
+
+        console.log('✅ Justificatif OCR uploadé et associé:', {
+            frais_id,
+            justificatif_id: result.insertId,
+            filename: fileInfo.chemin_fichier
+        });
+
+        res.json({
+            success: true,
+            message: 'Justificatif uploadé et associé avec succès',
+            justificatif: {
+                id: result.insertId,
+                nom_fichier: fileInfo.nom_fichier,
+                url: fileInfo.url,
+                type_mime: fileInfo.type_mime,
+                taille_fichier: fileInfo.taille_fichier
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Erreur upload justificatif:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de l\'upload et association du justificatif',
+            error: error.message
+        });
+    }
+});
+
 // POST /api/upload-justificatif - Upload d'un justificatif
 app.post('/api/upload-justificatif', upload.single('justificatif'), async (req, res) => {
     try {
