@@ -2,6 +2,31 @@ const express = require('express');
 const db = require('../../config/db');
 const router = express.Router();
 
+// GET /api/sous-categories-stock/:categorie_id/:societe_id - Récupérer les sous-catégories d'une catégorie
+router.get('/:categorie_id/:societe_id', async (req, res) => {
+    try {
+        const { categorie_id, societe_id } = req.params;
+
+        const [sousCategories] = await db.execute(`
+            SELECT 
+                id,
+                nom,
+                description,
+                categorie_parent_id,
+                created_at,
+                updated_at
+            FROM sous_categories_stock 
+            WHERE categorie_parent_id = ? AND societe_id = ?
+            ORDER BY nom ASC
+        `, [categorie_id, societe_id]);
+
+        res.json(sousCategories);
+    } catch (error) {
+        console.error('Erreur récupération sous-catégories:', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des sous-catégories' });
+    }
+});
+
 // POST /api/sous-categories-stock - Créer une nouvelle sous-catégorie
 router.post('/', async (req, res) => {
     try {
