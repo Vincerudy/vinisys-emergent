@@ -127,7 +127,7 @@ router.get('/:societeId', async (req, res) => {
                 END
         `, [societeId, currentMonth, currentMonth, currentYear, currentYear, ...(utilisateur_id ? [utilisateur_id] : [])]);
 
-        // Top frais kilométriques
+        // Top frais kilométriques (uniquement dépenses validées)
         const [kmData] = await db.execute(`
             SELECT 
                 SUM(lf.distance_km) as total_km,
@@ -137,6 +137,7 @@ router.get('/:societeId', async (req, res) => {
             INNER JOIN notes_frais nf ON lf.note_frais_id = nf.id
             INNER JOIN types_frais tf ON lf.type_frais_id = tf.id
             WHERE nf.societe_id = ? 
+                AND nf.statut = 'validee'
                 AND tf.code = 'KM'
                 AND MONTH(nf.periode_debut) <= ? 
                 AND MONTH(nf.periode_fin) >= ?
