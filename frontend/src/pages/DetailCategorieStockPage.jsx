@@ -97,9 +97,24 @@ const DetailCategorieStockPage = () => {
 
   const columns = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 70,
+      render: (id) => (
+        <span className="sous-category-id">{id}</span>
+      ),
+      sorter: (a, b) => a.id - b.id,
+    },
+    {
       title: 'Nom',
       dataIndex: 'nom',
       key: 'nom',
+      render: (nom, record) => (
+        <span>
+          <strong className="sous-category-id-inline">[{record.id}]</strong> {nom}
+        </span>
+      ),
       sorter: (a, b) => a.nom.localeCompare(b.nom),
     },
     {
