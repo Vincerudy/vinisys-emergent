@@ -37,6 +37,8 @@ import ProjectsCreate from "../pages/projects-create";
 import SettingsGaneral from "../pages/settings-ganeral";
 import LayoutSetting from "../layout/layoutSetting";
 import ListeProduits from "../pages/ListeProduits";
+import CategoriesStockPage from "../pages/CategoriesStockPage";
+import DetailCategorieStockPage from "../pages/DetailCategorieStockPage";
 import MouvementsStockPage from "../pages/MouvementsStockPage";
 import SettingsSeo from "../pages/settings-seo";
 import SettingsTags from "../pages/settings-tags";
