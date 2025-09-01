@@ -1,36 +1,39 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Correction Justificatifs OCR
-Tests the OCR justificatif persistence corrections as requested by user:
+Backend API Testing Script for Vinisys Application - Test Gestion Produits avec Catégories Configurables
 
-TEST DE VALIDATION DE LA CORRECTION:
+Tests des modifications apportées à la gestion des produits dans Vinisys pour utiliser les catégories de stock configurables au lieu de catégories hardcodées.
 
-1. **Connexion** : idnovation2014@gmail.com / Cinema12
-2. **Créer un nouveau frais de test** avec justificatif :
-   - POST /api/frais pour créer un frais
-   - Utiliser les données suivantes :
-     - note_frais_id: 69 (note existante)
-     - type_frais_id: 1 (type repas)
-     - vendeur: "Test Restaurant Correction"
-     - montant: 42.50
-     - description: "Test correction justificatif OCR"
+**MODIFICATIONS TESTÉES :**
 
-3. **Tester le nouvel endpoint upload** :
-   - POST /api/frais/upload-justificatif avec le frais_id récupéré
-   - Uploader un fichier test
-   - Vérifier que la réponse indique le succès
+1. **Base de données :**
+   - Table `produits_services` : Colonnes `categorie_id` et `sous_categorie_id` avec clés étrangères vers `categories_stock` et `sous_categories_stock`
 
-4. **Vérifier la persistance** :
-   - GET /api/note-frais/69 pour récupérer la note complète
-   - Vérifier que le nouveau frais apparaît avec son justificatif
-   - Valider que l'URL du justificatif est accessible
+2. **Backend :**
+   - Endpoint `GET /api/produit/:id/:societe_id` : Modifié pour récupérer les noms des catégories via JOIN
+   - Endpoint `POST /api/produit` : Modifié pour accepter et enregistrer `categorieId` et `sousCategorieId`
+   - Endpoint `GET /api/sous-categories-stock/:categorie_id/:societe_id` : Créé pour récupérer les sous-catégories d'une catégorie spécifique
 
-5. **Test d'accès au fichier** :
-   - Tester l'URL du justificatif avec GET
+**TESTS À EFFECTUER :**
 
-**OBJECTIF** : Confirmer que les corrections apportées (récupération correcte de l'ID frais + nouvel endpoint upload) permettent maintenant la persistance des justificatifs OCR.
+1. **Test de création de produit avec catégories :**
+   - Créer un produit avec categorieId=1, sousCategorieId=1
+   - Vérifier que les IDs sont bien enregistrés dans la base
+   - Vérifier que l'affichage récupère bien les noms des catégories
 
-**RÉSULTAT ATTENDU** : Un frais créé avec un justificatif qui reste visible et accessible après création.
+2. **Test de récupération des sous-catégories :**
+   - Tester `/api/sous-categories-stock/1/2` (catégorie Électronique)
+   - Tester `/api/sous-categories-stock/2/2` (catégorie Mobilier)  
+   - Vérifier que chaque endpoint ne retourne que les sous-catégories de la catégorie demandée
+
+3. **Test de récupération des catégories :**
+   - Tester `/api/categories-stock/2` pour vérifier que toutes les catégories sont listées
+
+4. **Test de modification de produit :**
+   - Modifier un produit existant pour changer ses catégories
+   - Vérifier que les changements sont persistés
+
+Utilise la société ID=2 pour tous les tests. Il y a déjà un produit de test créé avec l'ID 70.
 """
 
 import requests
