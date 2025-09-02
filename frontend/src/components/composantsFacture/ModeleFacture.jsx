@@ -93,10 +93,10 @@ const ModeleFacture = ({ factures, type, parametrage, tvas }) => {
           <p>{factures.vendeur_code_postal}, {factures.vendeur_ville}</p>
           <p>Siret: {factures.siret} 
             {factures.statut === 'payée' && <strong className='tamponPayé'>Payé</strong>}
-            {factures.statut === 'annulée' && !type === 'AVOIR' && <strong className='tamponAnnulé'>ANNULÉ</strong>}
+            {factures.statut === 'annulée' && type !== 'AVOIR' && <strong className='tamponAnnulé'>ANNULÉ</strong>}
             {type === 'AVOIR' && factures.facture_origine_numero && (
-              <strong className='factureOrigine'>
-                Facture d'origine: {factures.facture_origine_numero}
+              <strong className='tamponFactureOrigine'>
+                Facture: {factures.facture_origine_numero}
               </strong>
             )}
           </p>
