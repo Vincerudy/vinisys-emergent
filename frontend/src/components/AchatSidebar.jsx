@@ -162,7 +162,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
             id: j.id,
             name: j.nom_fichier || j.justificatif_path?.split('/').pop() || 'Justificatif',
             type: j.type_fichier || (j.justificatif_path?.includes('.pdf') ? 'application/pdf' : 'image/jpeg'),
-            url: `${import.meta.env.REACT_APP_BACKEND_URL}${fileUrl}`,
+            url: `${window.location.origin}${fileUrl}`,
             isExisting: true
           };
         });
