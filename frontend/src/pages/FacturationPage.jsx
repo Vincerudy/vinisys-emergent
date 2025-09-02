@@ -565,14 +565,14 @@ const handleModalOk = async () => {
         date: formattedDate, // Utilisez la date formatée ici
         products, // Ajout des produits avec leurs détails
         totalAmount, // Ajout du montant total
-        type: isInvoice ? 'FACT' : 'DEVI',
+        type: isAvoir ? 'AVOIR' : isInvoice ? 'FACT' : 'DEVI',
         totalHT,
         totalTTC,
         totalTVA,
         totalTPS, // Ajout du montant TPS
         taxe_secondaire: taxeSecondaire ? taxeSecondaire.value : null, // Taux de la taxe secondaire
         total_taxe_secondaire: totalTPS, // Montant de la taxe secondaire
-        numero: numeroFacture, 
+        numero: isAvoir ? `AV-${dayjs().format('YYYY')}-${String(numeroFacture).padStart(3, '0')}` : numeroFacture, 
         societe_id, 
         id
       };
