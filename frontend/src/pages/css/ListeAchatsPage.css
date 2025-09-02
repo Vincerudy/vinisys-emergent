@@ -302,6 +302,7 @@ select, .range-inputs input[type="number"]{
 }
 
 .status-draft{ background: rgba(255,255,255,0.02); color:var(--muted); border:1px solid rgba(255,255,255,0.03); }
+.status-pending{ background: linear-gradient(90deg,#fff3cd,#ffeaa7); color:#856404; }
 .status-validated{ background: linear-gradient(90deg,#dff6ea,#b7efd3); color:#063e2a; }
 .status-rejected{ background: linear-gradient(90deg,#ffe2e2,#ffc7c7); color:#4a0f0f; }
 .status-exported{ background: linear-gradient(90deg,#e6f0ff,#c7deff); color:#05305d; }
