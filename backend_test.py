@@ -623,9 +623,9 @@ def test_database_verification():
         return False
 
 def main():
-    """Main test execution for ListeAchatsPage Corrections and Justificatifs"""
-    print("🚀 Starting Backend API Tests for ListeAchatsPage Corrections and Justificatifs")
-    print("📊 Testing: Justificatifs endpoint, achats list, and sidebar modes functionality")
+    """Main test execution for AchatSidebar Corrections and Justificatifs"""
+    print("🚀 Starting Backend API Tests for AchatSidebar Corrections and Justificatifs")
+    print("📊 Testing: Critical sidebar corrections, data mapping, and justificatifs functionality")
     print(f"Backend URL: {BASE_URL}")
     print(f"API Base URL: {API_BASE}")
     print(f"Test Email: {TEST_EMAIL}")
@@ -651,19 +651,23 @@ def main():
         print("\n❌ Authentication failed. Cannot proceed with protected endpoint tests.")
         return False
     
-    # Test 2: GET /api/achat/:id/justificatifs - New justificatifs endpoint
+    # Test 2: GET /api/achat/:id/justificatifs - Corrected justificatifs endpoint
     justificatifs_success, justificatifs_data, justificatif_sample = test_justificatifs_endpoint()
     test_results.append(("GET Justificatifs Endpoint", justificatifs_success))
     
-    # Test 3: GET /api/achats/:societeId - Achats list for button functionality
+    # Test 3: GET /api/achats/:societeId - Achats list for corrected button functionality
     achats_list_success, achats_data, achat_sample = test_achat_list_endpoint()
     test_results.append(("GET Achats List", achats_list_success))
     
-    # Test 4: AchatSidebar modes functionality
-    sidebar_modes_success, sidebar_achat, sidebar_achat_id = test_achat_sidebar_modes()
-    test_results.append(("AchatSidebar Modes", sidebar_modes_success))
+    # Test 4: Data mapping functionality - mapApiDataToForm
+    mapping_success, mapped_data, original_data = test_data_mapping_functionality()
+    test_results.append(("Data Mapping Functionality", mapping_success))
     
-    # Test 5: Database verification
+    # Test 5: AchatSidebar corrected modes functionality
+    sidebar_modes_success, sidebar_achat, sidebar_achat_id = test_achat_sidebar_modes()
+    test_results.append(("AchatSidebar Corrected Modes", sidebar_modes_success))
+    
+    # Test 6: Database verification
     db_success = test_database_verification()
     test_results.append(("Database Verification", db_success))
     
