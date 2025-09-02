@@ -103,12 +103,15 @@ const ListeAchatsPage = () => {
   const getStatusBadge = (statut) => {
     const badges = {
       'brouillon': { class: 'status-draft', text: 'Brouillon' },
+      'en_attente': { class: 'status-pending', text: 'En attente' },
       'valide': { class: 'status-validated', text: 'Validé' },
       'refuse': { class: 'status-rejected', text: 'Refusé' },
       'exporte': { class: 'status-exported', text: 'Exporté' }
     };
     
-    const badge = badges[statut] || { class: 'status-draft', text: 'Inconnu' };
+    // Si le statut est null, undefined, ou autre, considérer comme "en attente"
+    const finalStatut = statut || 'en_attente';
+    const badge = badges[finalStatut] || { class: 'status-pending', text: 'En attente' };
     return <span className={`status-badge ${badge.class}`}>{badge.text}</span>;
   };
 
