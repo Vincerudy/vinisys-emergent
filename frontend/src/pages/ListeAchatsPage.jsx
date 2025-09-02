@@ -379,6 +379,7 @@ const ListeAchatsPage = () => {
                   </td>
                   <td className="actions-cell">
                     <div className="action-buttons">
+                      {/* Bouton Voir - toujours visible */}
                       <button 
                         className="btn-action view" 
                         title="Voir"
@@ -386,20 +387,26 @@ const ListeAchatsPage = () => {
                       >
                         <FiEye size={14} />
                       </button>
-                      <button 
-                        className="btn-action edit" 
-                        title="Modifier"
-                        onClick={() => handleEditAchat(achat)}
-                      >
-                        <FiEdit size={14} />
-                      </button>
-                      <button 
-                        className="btn-action delete" 
-                        title="Supprimer"
-                        onClick={() => handleDeleteAchat(achat.id)}
-                      >
-                        <FiTrash2 size={14} />
-                      </button>
+                      
+                      {/* Boutons Modifier et Supprimer - seulement pour les dépenses non validées */}
+                      {achat.statut !== 'valide' && (
+                        <>
+                          <button 
+                            className="btn-action edit" 
+                            title="Modifier"
+                            onClick={() => handleEditAchat(achat)}
+                          >
+                            <FiEdit size={14} />
+                          </button>
+                          <button 
+                            className="btn-action delete" 
+                            title="Supprimer"
+                            onClick={() => handleDeleteAchat(achat.id)}
+                          >
+                            <FiTrash2 size={14} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
