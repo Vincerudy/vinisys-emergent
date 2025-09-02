@@ -222,7 +222,34 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
       }
     }
 
-    // Recherche du vendeur (première ligne souvent)
+    // 4. Recherche de la date
+    const datePatterns = [
+      /(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/g,
+      /(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(\d{2,4})/gi
+    ];
+
+    for (const pattern of datePatterns) {
+      const match = pattern.exec(text);
+      if (match) {
+        if (match[2] && isNaN(match[2])) {
+          // Format avec nom de mois
+          const mois = getMonthNumber(match[2]);
+          if (mois) {
+            data.date_frais = `${match[3]}-${mois.padStart(2, '0')}-${match[1].padStart(2, '0')}`;
+          }
+        } else {
+          // Format numérique
+          let annee = match[3];
+          if (annee.length === 2) {
+            annee = annee < 50 ? `20${annee}` : `19${annee}`;
+          }
+          data.date_frais = `${annee}-${match[2].padStart(2, '0')}-${match[1].padStart(2, '0')}`;
+        }
+        break;
+      }
+    }
+
+    // 5. Recherche du vendeur (première ligne souvent)
     if (lines.length > 0) {
       // Prendre les premières lignes qui ne sont pas des numéros ou dates
       for (const line of lines.slice(0, 5)) {
@@ -233,7 +260,7 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
       }
     }
 
-    // Détection intelligente du type de frais basée sur le contenu
+    // 6. Détection intelligente du type de frais basée sur le contenu
     const textLower = text.toLowerCase();
     if (textLower.includes('restaurant') || textLower.includes('café') || textLower.includes('bar') || 
         textLower.includes('brasserie') || textLower.includes('pizzeria') || textLower.includes('fast') ||
