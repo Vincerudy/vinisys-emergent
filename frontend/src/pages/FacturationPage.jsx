@@ -609,7 +609,7 @@ const handleModalOk = async () => {
         numero: isAvoir ? `AVOI-${dayjs().format('YYYY')}-${String(numeroFacture).padStart(3, '0')}` : numeroFacture,
         // Ajouter la référence à la facture d'origine pour les avoirs
         facture_origine_id: isAvoir ? factureOriginePourAvoir?.id : null,
-        facture_origine_numero: isAvoir ? factureOriginePourAvoir?.numero : null,
+        facture_origine_numero: isAvoir ? factureOriginePourAvoir?.invoiceNumber : null,
         societe_id, 
         id
       };
