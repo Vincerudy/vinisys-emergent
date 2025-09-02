@@ -287,8 +287,9 @@ def test_avoir_verification():
         headers = get_auth_headers()
         
         # Get factures list to verify avoir was created
+        user_id = USER_DATA.get('id') if USER_DATA else 4
         response = requests.get(
-            f"{API_BASE}/listeFacture/listeFacture/{SOCIETE_ID}?page=1",
+            f"{API_BASE}/listeFacture/{user_id}",
             headers=headers,
             timeout=10
         )
