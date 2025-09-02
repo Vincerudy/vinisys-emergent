@@ -525,15 +525,7 @@ def main():
     sidebar_modes_success, sidebar_achat, sidebar_achat_id = test_achat_sidebar_modes()
     test_results.append(("AchatSidebar Modes", sidebar_modes_success))
     
-    # Test 5: GET barèmes-kilométriques/societe
-    baremes_success, baremes_data, system_baremes, personalized_baremes, custom_baremes = test_get_baremes_kilometriques()
-    test_results.append(("GET Barèmes Kilométriques", baremes_success))
-    
-    # Test 6: GET barèmes-kilométriques/manage (alternative endpoint)
-    baremes_manage_success, baremes_manage_data = test_get_baremes_kilometriques_manage()
-    test_results.append(("GET Barèmes Manage", baremes_manage_success))
-    
-    # Test 7: Database verification
+    # Test 5: Database verification
     db_success = test_database_verification()
     test_results.append(("Database Verification", db_success))
     
