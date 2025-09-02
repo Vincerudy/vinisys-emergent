@@ -1006,12 +1006,14 @@ const handleModalOk = async () => {
                 },
               ]
             : []),
-          // Nouvelle option : Générer un avoir
-          {
-            key: '4',
-            label: 'Générer un avoir',
-            onClick: () => handleGenerateAvoir(record),
-          },
+          // Option "Générer un avoir" seulement pour les factures (pas pour les avoirs eux-mêmes)
+          ...(record.type === 'FACT' ? [
+            {
+              key: '4',
+              label: 'Générer un avoir',
+              onClick: () => handleGenerateAvoir(record),
+            }
+          ] : []),
         ];
         
         return (
