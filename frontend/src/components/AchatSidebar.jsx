@@ -132,6 +132,23 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
         compte_comptable_tva: '44566'
       });
       setShowNewFournisseur(false);
+      
+      // Même en mode nouveau, ajouter le fichier OCR s'il y en a un
+      if (attachedFile) {
+        setAttachedFiles([attachedFile]);
+        
+        const ocrFile = {
+          id: `ocr_${Date.now()}`,
+          name: attachedFile.name || 'Justificatif OCR',
+          type: attachedFile.type || 'image/jpeg',
+          url: URL.createObjectURL(attachedFile),
+          file: attachedFile,
+          isOCR: true
+        };
+        
+        setUploadedFiles([ocrFile]);
+        setSelectedFile(ocrFile);
+      }
     } else if (prefilledData) {
       // Appliquer les données pré-remplies (OCR, édition, ou visualisation)
       const mappedData = mapApiDataToForm(prefilledData);
