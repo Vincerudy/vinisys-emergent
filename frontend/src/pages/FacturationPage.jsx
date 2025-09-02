@@ -838,6 +838,7 @@ const handleModalOk = async () => {
   const handleModalCancel = () => {
     setModalVisible(false);
     setIsAvoir(false); // Remettre à false quand on ferme la modale
+    setFactureOriginePourAvoir(null); // Nettoyer la facture d'origine
   };
 
  
