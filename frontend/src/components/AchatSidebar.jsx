@@ -323,61 +323,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     setSelectedFile(file);
   };
 
-  // Convertir une image en PDF
-  const convertImageToPdf = async (imageFile) => {
-    try {
-      // Utilisation de jsPDF pour convertir l'image en PDF
-      const { jsPDF } = await import('jspdf');
-      
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const pdf = new jsPDF();
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          
-          // Calculer les dimensions pour remplir la page A4
-          const pageWidth = pdf.internal.pageSize.getWidth();
-          const pageHeight = pdf.internal.pageSize.getHeight();
-          
-          // Calculer le ratio pour maintenir les proportions
-          const imgRatio = img.width / img.height;
-          const pageRatio = pageWidth / pageHeight;
-          
-          let finalWidth, finalHeight;
-          if (imgRatio > pageRatio) {
-            finalWidth = pageWidth;
-            finalHeight = pageWidth / imgRatio;
-          } else {
-            finalHeight = pageHeight;
-            finalWidth = pageHeight * imgRatio;
-          }
-          
-          // Centrer l'image sur la page
-          const x = (pageWidth - finalWidth) / 2;
-          const y = (pageHeight - finalHeight) / 2;
-          
-          // Redimensionner le canvas
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-          
-          // Ajouter l'image au PDF
-          const imgData = canvas.toDataURL('image/jpeg', 0.95);
-          pdf.addImage(imgData, 'JPEG', x, y, finalWidth, finalHeight);
-          
-          // Créer le blob PDF
-          const pdfBlob = pdf.output('blob');
-          const pdfUrl = URL.createObjectURL(pdfBlob);
-          resolve(pdfUrl);
-        };
-        img.src = imageFile.url;
-      });
-    } catch (error) {
-      console.error('Erreur conversion image vers PDF:', error);
-      return imageFile.url; // Fallback vers l'image originale
-    }
-  };
+  // Note: Fonction de conversion supprimée - affichage direct des images
 
   // Note: Conversion automatique supprimée - les images sont affichées directement
 
