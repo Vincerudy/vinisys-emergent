@@ -120,7 +120,6 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       
       // Charger les justificatifs existants si on édite/visualise un achat
       if (prefilledData.id && (mode === 'edit' || mode === 'view')) {
-        console.log('🔍 Loading justificatifs for achat ID:', prefilledData.id);
         loadExistingJustificatifs(prefilledData.id);
       }
     }
