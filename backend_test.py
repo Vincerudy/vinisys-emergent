@@ -596,12 +596,6 @@ def main():
     else:
         print(f"❌ AchatSidebar modes functionality failed")
     
-    if baremes_success:
-        total_baremes = len(system_baremes) + len(personalized_baremes) + len(custom_baremes)
-        print(f"✅ GET /api/baremes-kilometriques/societe/{SOCIETE_ID} working - {total_baremes} barèmes found")
-    else:
-        print(f"❌ GET /api/baremes-kilometriques/societe/{SOCIETE_ID} failed")
-    
     if db_success:
         print(f"✅ Database connection and tables verified")
     else:
