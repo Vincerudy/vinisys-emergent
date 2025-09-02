@@ -376,9 +376,27 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
               {/* File List */}
               {uploadedFiles.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    Fichiers téléchargés ({uploadedFiles.length})
-                  </h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium text-gray-700">
+                      Fichiers téléchargés ({uploadedFiles.length})
+                    </h4>
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById('file-input').click()}
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
+                    >
+                      <FiPlus size={14} className="mr-1" />
+                      Ajouter
+                    </button>
+                  </div>
+                  <input
+                    id="file-input"
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png,.gif"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
                   <div className="file-list space-y-2 max-h-32 overflow-y-auto">
                     {uploadedFiles.map((file) => (
                       <div
