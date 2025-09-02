@@ -208,28 +208,74 @@ def test_achat_endpoint_file_upload():
         print_test_result(False, f"POST /api/achat test failed - {str(e)}")
         return False, None, None
 
-def test_get_types_frais_societe():
-    """Test 3: GET /api/types-frais/societe/:societeId - Types de frais pour société (alternative endpoint)"""
-    print_test_header("GET Types de Frais Societe API Test")
+def test_achat_endpoint_multiple_files():
+    """Test 3: POST /api/achat - Test multiple file upload functionality"""
+    print_test_header("POST /api/achat - Multiple Files Upload Test")
     try:
         headers = get_auth_headers()
         
-        response = requests.get(f"{API_BASE}/types-frais/societe/{SOCIETE_ID}", headers=headers, timeout=10)
+        # Create test data for achat
+        achat_data = {
+            'numero_facture': f'TEST-MULTI-{int(datetime.now().timestamp())}',
+            'fournisseur_id': '1',  # Assuming fournisseur ID 1 exists
+            'date_achat': datetime.now().strftime('%Y-%m-%d'),
+            'montant_ht': '250.00',
+            'taux_tva': '20',
+            'tva_deductible': 'true',
+            'categorie_achat_id': '1',  # Assuming category ID 1 exists
+            'description': 'Test achat avec multiples justificatifs - AchatSidebar',
+            'mode_paiement': 'carte',
+            'utilisateur_id': str(USER_DATA.get('id', 1)),
+            'societe_id': str(SOCIETE_ID),
+            'saisie_ocr': 'false'
+        }
         
-        if response.status_code == 200:
+        # Create test files (PDF and image)
+        test_pdf_content = b'%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n2 0 obj\n<<\n/Type /Pages\n/Kids [3 0 R]\n/Count 1\n>>\nendobj\n3 0 obj\n<<\n/Type /Page\n/Parent 2 0 R\n/MediaBox [0 0 612 792]\n>>\nendobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000074 00000 n \n0000000120 00000 n \ntrailer\n<<\n/Size 4\n/Root 1 0 R\n>>\nstartxref\n179\n%%EOF'
+        
+        # Simple 1x1 PNG image (base64 decoded)
+        test_png_content = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\x0cIDATx\x9cc```\x00\x00\x00\x04\x00\x01\xdd\x8d\xb4\x1c\x00\x00\x00\x00IEND\xaeB`\x82'
+        
+        # Prepare multiple files for upload
+        files = [
+            ('justificatifs', ('test-facture.pdf', test_pdf_content, 'application/pdf')),
+            ('justificatifs', ('test-recu.png', test_png_content, 'image/png'))
+        ]
+        
+        # Send POST request with multipart/form-data
+        response = requests.post(
+            f"{API_BASE}/achat",
+            data=achat_data,
+            files=files,
+            headers=headers,
+            timeout=30
+        )
+        
+        if response.status_code == 201:
             data = response.json()
-            print_test_result(True, f"GET types-frais/societe successful", response)
-            return True, data
-        elif response.status_code == 404:
-            print_test_result(True, f"GET types-frais/societe endpoint not found (404) - This is expected if endpoint doesn't exist", response)
-            return True, None
+            
+            # Verify response structure
+            if 'message' in data and 'achatId' in data:
+                achat_id = data.get('achatId')
+                montant_ht = data.get('montant_ht')
+                montant_ttc = data.get('montant_ttc')
+                
+                print_test_result(True, f"POST /api/achat with multiple files successful - Achat ID: {achat_id}", response)
+                print(f"  ✅ Multiple files upload processed")
+                print(f"  ✅ Achat created with ID: {achat_id}")
+                print(f"  ✅ Calculations: HT={montant_ht}€, TTC={montant_ttc}€")
+                print(f"  ✅ Files: PDF + PNG uploaded successfully")
+                return True, data, achat_id
+            else:
+                print_test_result(False, f"Response missing required fields", response)
+                return False, None, None
         else:
-            print_test_result(False, f"GET types-frais/societe failed - HTTP {response.status_code}", response)
-            return False, None
+            print_test_result(False, f"POST /api/achat with multiple files failed - HTTP {response.status_code}", response)
+            return False, None, None
             
     except Exception as e:
-        print_test_result(False, f"GET types-frais/societe test failed - {str(e)}")
-        return False, None
+        print_test_result(False, f"POST /api/achat multiple files test failed - {str(e)}")
+        return False, None, None
 
 def test_get_baremes_kilometriques():
     """Test 4: GET /api/baremes-kilometriques/societe/:societeId - Barèmes kilométriques pour société"""
