@@ -159,7 +159,7 @@ def test_factures_list_access():
             # Find a suitable facture for avoir generation
             facture_for_avoir = None
             for facture in factures:
-                if facture.get('type_fact') == 'FACT' and facture.get('statut') != 'brouillon':
+                if facture.get('type') == 'FACT' and facture.get('statut') != 'brouillon':
                     facture_for_avoir = facture
                     break
             
