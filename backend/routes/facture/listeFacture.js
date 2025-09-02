@@ -53,6 +53,7 @@ router.get('/listeFacture/:id', async (req, res) => {
                     CASE 
                         WHEN COUNT(*) > 0 THEN 'payée'
                         WHEN fac.type_fact = 'DEVI' THEN fac.statut
+                        WHEN fac.statut = 'annulée' THEN 'annulée'  -- NOUVEAU: Préserver le statut annulée
                         WHEN DATEDIFF(CURDATE(), fac.date_facture) > (MAX(spf.paymentDelay) - 1) THEN 'En retard'
                         ELSE 'en attente'
                     END
