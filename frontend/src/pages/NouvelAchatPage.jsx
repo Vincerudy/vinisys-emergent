@@ -642,36 +642,7 @@ const NouvelAchatPage = () => {
         </div>
       </form>
       
-      {/* Modale de choix OCR (copié exactement du système qui fonctionne dans NoteDetailPage) */}
-      {ocrModalOpen && (
-        <div className="modal-overlay" onClick={() => setOcrModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Ajouter une dépense</h3>
-              <button className="btn-close" onClick={() => setOcrModalOpen(false)}>
-                <FiX />
-              </button>
-            </div>
-            <div className="modal-body">
-              <p>Comment souhaitez-vous ajouter cette dépense ?</p>
-              <div className="choice-buttons">
-                <button className="btn-choice btn-manual" onClick={handleManualEntry}>
-                  <FiFileText />
-                  <span>Saisie manuelle</span>
-                  <small>Saisir les informations manuellement</small>
-                </button>
-                <button className="btn-choice btn-photo" onClick={handlePhotoCapture}>
-                  <FiUpload />
-                  <span>Prendre une photo</span>
-                  <small>Scanner un reçu ou facture</small>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Composant OCR qui fonctionne bien (utilisé pour les notes de frais) */}
+      {/* OCRCapture - simple et direct */}
       <OCRCapture
         isOpen={ocrCaptureOpen}
         onClose={() => setOcrCaptureOpen(false)}
