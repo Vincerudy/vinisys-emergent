@@ -2,6 +2,13 @@ import React from 'react';
 import './css/ModeleFacture.css';
 
 const ModeleFacture = ({ factures, type, parametrage, tvas }) => {
+  // LOG DE DEBUG pour diagnostiquer le problème
+  console.log('🔍 DEBUG ModeleFacture - Données reçues:');
+  console.log('  - type:', type);
+  console.log('  - factures.facture_origine_numero:', factures?.facture_origine_numero);
+  console.log('  - factures.statut:', factures?.statut);
+  console.log('  - factures (complet):', factures);
+
   // Détail des TVA par taux
   const calculerTVAParTaux = () => {
     const totalTVAParTaux = {};
