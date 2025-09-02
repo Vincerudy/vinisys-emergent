@@ -1147,7 +1147,7 @@ const handleModalOk = async () => {
                   : 
                   <Form.Item
                     name="invoiceNumber"
-                    label={isInvoice ? 'Numéro de facture' : 'Numéro de devis'}
+                    label={isAvoir ? 'Numéro de l\'avoir' : isInvoice ? 'Numéro de facture' : 'Numéro de devis'}
                     rules={[{ required: true, message: 'Veuillez entrer le numéro' }]}
                   >
                     <Input disabled />
