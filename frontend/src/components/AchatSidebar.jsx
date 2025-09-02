@@ -150,9 +150,14 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
   // Fonction pour charger les justificatifs existants
   const loadExistingJustificatifs = async (achatId) => {
     try {
+      console.log('🔍 Fetching justificatifs for achat:', achatId);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/achat/${achatId}/justificatifs`);
+      console.log('🔍 Justificatifs response status:', response.status);
+      
       if (response.ok) {
         const justificatifs = await response.json();
+        console.log('🔍 Justificatifs data:', justificatifs);
+        
         const existingFiles = justificatifs.map(j => ({
           id: j.id,
           name: j.nom_fichier || j.justificatif_path?.split('/').pop() || 'Justificatif',
@@ -160,9 +165,13 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
           url: `${import.meta.env.VITE_API_URL}/${j.justificatif_path}`,
           isExisting: true
         }));
+        
+        console.log('🔍 Existing files mapped:', existingFiles);
         setUploadedFiles(existingFiles);
+        
         if (existingFiles.length > 0) {
           setSelectedFile(existingFiles[0]);
+          console.log('🔍 Selected file set:', existingFiles[0]);
         }
       }
     } catch (error) {
