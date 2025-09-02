@@ -250,6 +250,20 @@ def test_ocr_achat_creation():
         print(f"    📄 OCR date_frais: {ocr_data['date_facture']} → achat.date_facture: {achat_data['date_facture']}")
         print(f"    📄 OCR vendeur: {ocr_data['vendeur']} → achat.description: {achat_data['description']}")
         
+        # Debug: Print all achat_data fields
+        print(f"  🔍 DEBUG - All achat_data fields:")
+        for key, value in achat_data.items():
+            print(f"    📋 {key}: '{value}' (type: {type(value).__name__})")
+        
+        # Verify required fields are not empty
+        required_fields = ['date_achat', 'montant_ht', 'societe_id']
+        print(f"  🔍 VALIDATION CHECK:")
+        for field in required_fields:
+            value = achat_data.get(field)
+            is_valid = value is not None and str(value).strip() != ''
+            status = "✅" if is_valid else "❌"
+            print(f"    {status} {field}: '{value}' - Valid: {is_valid}")
+        
         # Verify OCR calculations are correct
         expected_ht = float(ocr_data['montant_ht'])
         expected_tva = float(ocr_data['montant_tva'])
