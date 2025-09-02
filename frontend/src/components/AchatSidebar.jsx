@@ -240,9 +240,11 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
   };
 
   const removeFile = (fileId) => {
-    setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
+    const newFiles = uploadedFiles.filter(f => f.id !== fileId);
+    setUploadedFiles(newFiles);
+    
     if (selectedFile && selectedFile.id === fileId) {
-      setSelectedFile(uploadedFiles.find(f => f.id !== fileId) || null);
+      setSelectedFile(newFiles.length > 0 ? newFiles[0] : null);
     }
   };
 
