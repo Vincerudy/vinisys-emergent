@@ -619,7 +619,17 @@ const handleModalOk = async () => {
       setModalVisible(false);
       setIsAvoir(false); // Remettre isAvoir à false après sauvegarde
       setFactureOriginePourAvoir(null); // Nettoyer la facture d'origine après sauvegarde
-      obtenirFactures();
+      
+      // Recharger la liste avec un petit délai pour s'assurer que la DB est mise à jour
+      setTimeout(() => {
+        obtenirFactures();
+        fetchDataFactures(id);
+      }, 500);
+      
+      // Afficher un message de succès spécifique pour les avoirs
+      if (isAvoir) {
+        console.log('✅ Avoir créé avec succès - statut de la facture originale mis à jour');
+      }
     }
   } catch (error) {
     console.error('Erreur dans la validation du formulaire ou l\'envoi de la facture:', error);
