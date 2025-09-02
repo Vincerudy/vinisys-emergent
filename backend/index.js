@@ -189,6 +189,7 @@ routes.forEach((route) => app.use('/api', route));
 app.use('/api/achats', require('./routes/achats/listAchats'));
 app.use('/api/achat', require('./routes/achats/createAchat'));
 app.use('/api/achat', require('./routes/achats/justificatifsAchat'));
+app.use('/api/achats', require('./routes/achats/bulkActions'));
 app.use('/api/achats/dashboard', require('./routes/achats/dashboardAchats'));
 app.use('/api/achats/fournisseurs', require('./routes/achats/fournisseurs'));
 
