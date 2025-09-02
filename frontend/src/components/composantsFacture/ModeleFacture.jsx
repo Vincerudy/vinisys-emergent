@@ -76,14 +76,20 @@ const ModeleFacture = ({ factures, type, parametrage, tvas }) => {
     return { totalTPS, tauxTPS, labelTPS };
   };
 
+  // Utiliser les montants stockés en base au lieu de recalculer
   const totalHT = factures.produits.reduce((acc, product) => acc + (product.quantite * parseFloat(product.prix || 0)), 0).toFixed(2);
   const { totalTVAParTaux, totalTVA } = calculerTVAParTaux();
   const { totalTPS, tauxTPS, labelTPS } = calculerTaxeSecondaire();
 
-
-  const totalTTC = Object.keys(totalTVAParTaux).reduce((total, taux) => {
-    return total + parseFloat(totalTVAParTaux[taux]);
-  }, parseFloat(factures.type_saisie === 'TTC' ? totalHT : 0)) + (factures.type_saisie === 'HT' ? parseFloat(totalHT) : 0) + totalTPS;
+  // CORRECTION : Utiliser le montant total stocké en base au lieu de recalculer
+  // pour éviter les différences d'arrondi entre la liste et l'aperçu
+  const totalTTC = parseFloat(factures.totalAmount || 0);
+  
+  console.log('💰 DEBUG Montants ModeleFacture:');
+  console.log('  - totalAmount (base):', factures.totalAmount);
+  console.log('  - totalTTC utilisé:', totalTTC);
+  console.log('  - totalHT calculé:', totalHT);
+  console.log('  - totalTVA calculé:', totalTVA);
 
   return (
     <div className="invoice-container">
