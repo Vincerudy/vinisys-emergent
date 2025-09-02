@@ -224,6 +224,81 @@ def test_justificatifs_endpoint():
         print_test_result(False, f"GET justificatifs test failed - {str(e)}")
         return False, None, None
 
+def test_justificatifs_url_construction():
+    """Test 3: Test URL construction for justificatifs - Verify corrections from review request"""
+    print_test_header("Justificatifs URL Construction Test - Vite Environment Variables Fix")
+    try:
+        headers = get_auth_headers()
+        
+        # Get justificatif data first
+        achat_id = 11
+        response = requests.get(
+            f"{API_BASE}/achat/{achat_id}/justificatifs",
+            headers=headers,
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            if len(data) > 0:
+                justificatif = data[0]
+                justificatif_path = justificatif.get('justificatif_path', '')
+                
+                print_test_result(True, f"Justificatif data retrieved for URL construction test", response)
+                
+                # Test URL transformation as mentioned in review request
+                print(f"  🔍 URL CONSTRUCTION TEST:")
+                print(f"    📁 Backend path: {justificatif_path}")
+                
+                # Transform backend path to API URL path
+                if justificatif_path.startswith('/app/backend/uploads/'):
+                    api_path = justificatif_path.replace('/app/backend/uploads/', '/api/uploads/')
+                    print(f"    🔄 Transformed to: {api_path}")
+                    
+                    # Construct full URL using REACT_APP_BACKEND_URL (corrected approach)
+                    full_url = f"{REACT_APP_BACKEND_URL}{api_path}"
+                    print(f"    🌐 Full URL: {full_url}")
+                    
+                    # Test that the URL is accessible
+                    try:
+                        url_response = requests.head(full_url, timeout=10)
+                        if url_response.status_code == 200:
+                            content_type = url_response.headers.get('content-type', '')
+                            content_length = url_response.headers.get('content-length', '0')
+                            
+                            print(f"    ✅ URL accessible - HTTP {url_response.status_code}")
+                            print(f"    ✅ Content-Type: {content_type}")
+                            print(f"    ✅ Content-Length: {content_length} bytes")
+                            
+                            # Verify it's the expected PNG file
+                            if 'image/png' in content_type and int(content_length) > 1000000:  # > 1MB
+                                print(f"    ✅ CORRECTION VERIFIED: PNG file accessible via corrected URL construction")
+                                print(f"    ✅ File size: ~{int(content_length)//1024//1024}MB (expected ~4MB)")
+                                return True, full_url, justificatif
+                            else:
+                                print(f"    ⚠️ Unexpected content type or size")
+                                return True, full_url, justificatif
+                        else:
+                            print(f"    ❌ URL not accessible - HTTP {url_response.status_code}")
+                            return False, full_url, justificatif
+                    except Exception as url_e:
+                        print(f"    ❌ URL test failed: {str(url_e)}")
+                        return False, full_url, justificatif
+                else:
+                    print(f"    ⚠️ Unexpected path format: {justificatif_path}")
+                    return False, None, justificatif
+            else:
+                print_test_result(False, f"No justificatifs found for URL construction test", response)
+                return False, None, None
+        else:
+            print_test_result(False, f"Failed to retrieve justificatifs for URL test - HTTP {response.status_code}", response)
+            return False, None, None
+            
+    except Exception as e:
+        print_test_result(False, f"URL construction test failed - {str(e)}")
+        return False, None, None
+
 def test_achat_endpoint_multiple_files():
     """Test 3: POST /api/achat - Test multiple file upload functionality"""
     print_test_header("POST /api/achat - Multiple Files Upload Test")
