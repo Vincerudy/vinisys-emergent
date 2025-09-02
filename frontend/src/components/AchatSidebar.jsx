@@ -154,13 +154,22 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
         const justificatifs = await response.json();
         console.log('🔍 Justificatifs received:', justificatifs);
         
-        const existingFiles = justificatifs.map(j => ({
-          id: j.id,
-          name: j.nom_fichier || j.justificatif_path?.split('/').pop() || 'Justificatif',
-          type: j.type_fichier || (j.justificatif_path?.includes('.pdf') ? 'application/pdf' : 'image/jpeg'),
-          url: `${import.meta.env.VITE_API_URL}/${j.justificatif_path}`,
-          isExisting: true
-        }));
+        const existingFiles = justificatifs.map(j => {
+          // Construire l'URL correcte en utilisant le chemin relatif
+          let fileUrl = j.justificatif_path;
+          if (fileUrl.startsWith('/app/backend/uploads/')) {
+            // Transformer /app/backend/uploads/achats/... en /api/uploads/achats/...
+            fileUrl = fileUrl.replace('/app/backend/uploads/', '/api/uploads/');
+          }
+          
+          return {
+            id: j.id,
+            name: j.nom_fichier || j.justificatif_path?.split('/').pop() || 'Justificatif',
+            type: j.type_fichier || (j.justificatif_path?.includes('.pdf') ? 'application/pdf' : 'image/jpeg'),
+            url: `${import.meta.env.VITE_API_URL}${fileUrl}`,
+            isExisting: true
+          };
+        });
         
         console.log('🔍 Mapped files:', existingFiles);
         setUploadedFiles(existingFiles);
