@@ -434,35 +434,27 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     }
 
     if (selectedFile.type.includes('image')) {
-      const isConverting = convertingFiles[selectedFile.id];
-      const pdfUrl = convertedPdfUrls[selectedFile.id];
-
-      if (isConverting) {
-        return (
-          <div className="file-viewer">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">{selectedFile.name}</span>
-              <button
-                onClick={() => removeFile(selectedFile.id)}
-                className="text-red-500 hover:text-red-700 p-1"
-              >
-                <FiTrash2 size={16} />
-              </button>
-            </div>
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Conversion en PDF en cours...</p>
-            </div>
+      // Pour les images, on les affiche dans une structure similaire au PDF viewer
+      return (
+        <div className="file-viewer">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">{selectedFile.name}</span>
+            <button
+              onClick={() => removeFile(selectedFile.id)}
+              className="text-red-500 hover:text-red-700 p-1"
+            >
+              <FiTrash2 size={16} />
+            </button>
           </div>
-        );
-      }
-
-      if (pdfUrl) {
-        return renderPdfViewer(pdfUrl, `${selectedFile.name} (PDF)`);
-      }
-
-      // Si pas de conversion en cours et pas de PDF, afficher l'image directement
-      return renderPdfViewer(selectedFile.url, selectedFile.name);
+          <div className="pdf-viewer-container" style={{ height: '500px', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8f9fa' }}>
+            <img
+              src={selectedFile.url}
+              alt={selectedFile.name}
+              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+            />
+          </div>
+        </div>
+      );
     }
 
     return null;
