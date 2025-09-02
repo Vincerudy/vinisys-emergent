@@ -256,6 +256,7 @@ const FacturationPage = ( ) => {
   const [modalMailVisible, setModalMailVisible] = useState(false);
   const [isInvoice, setIsInvoicee] = useState(false);
   const [isAvoir, setIsAvoir] = useState(false);
+  const [factureOriginePourAvoir, setFactureOriginePourAvoir] = useState(null); // Pour stocker la facture d'origine
   const [facturePaye, setFacturePaye] = useState(null)
   const [modaleFacturePayeVisible, setModaleFacturePayeVisible] = useState(false)
   const [produits, setProduits] = useState([])
