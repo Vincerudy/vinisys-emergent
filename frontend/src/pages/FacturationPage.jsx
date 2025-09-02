@@ -634,7 +634,6 @@ const handleModalOk = async () => {
   } catch (error) {
     console.error('Erreur dans la validation du formulaire ou l\'envoi de la facture:', error);
   }
-  fetchDataFactures(id);
 };
   function cleanNumber(value) {
     const number = parseFloat(value);
