@@ -1,50 +1,47 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Nouvelle Intégration OCR Dépenses
+Backend API Testing Script for Vinisys Application - Test Fonctionnalité "Générer un avoir"
 
-Tests de la nouvelle intégration OCR pour les dépenses après remplacement du système défaillant.
+Tests de la fonctionnalité "Générer un avoir" dans le module de facturation.
 
-**PROBLÈME RÉSOLU :**
-- **Ancien système** : `NouvelAchatPage` appelait `/achats/ocr/extract` (API inexistante) ❌
-- **Nouveau système** : Utilise maintenant `OCRCapture` (composant qui fonctionne bien pour les notes de frais) ✅
+**FONCTIONNALITÉ IMPLÉMENTÉE :**
+J'ai ajouté la possibilité de générer des avoirs depuis la page des factures (`/facturation/factures`) :
 
-**CHANGEMENTS EFFECTUÉS :**
-1. **Import ajouté** : `import OCRCapture from '../components/OCRCapture';`
-2. **State ajouté** : `ocrCaptureOpen` pour gérer le modal OCR
-3. **Fonction remplacée** : `handleOcrUpload` → `handleOcrDataExtracted` 
-4. **Boutons modifiés** : Inputs file → Boutons qui ouvrent le modal OCR
-5. **Composant ajouté** : `<OCRCapture>` à la fin du JSX
+1. **Option ajoutée au menu "Plus"** :
+   - Nouvelle option "Générer un avoir" dans le dropdown de chaque ligne de facture
+   - S'ajoute aux options existantes (Marquer comme payé, etc.)
 
-**AVANTAGES DU NOUVEAU SYSTÈME :**
-- ✅ Utilise Tesseract.js côté client (pas besoin d'API serveur)
-- ✅ Parsing OCR amélioré avec regex françaises 
-- ✅ Interface modal moderne avec caméra/fichier
-- ✅ Gestion des montants avec espaces ("5 000€")
-- ✅ Extraction correcte : HT, TVA, TTC séparément
-- ✅ Logs détaillés pour debugging
+2. **Fonction `handleGenerateAvoir`** :
+   - Pré-remplit le formulaire avec les données de la facture originale
+   - Définit `isAvoir = true` pour différencier d'une facture normale
+   - Ouvre la modale de création
 
-**MAPPING DES DONNÉES :**
-Le nouveau système mappe correctement :
-- `ocrData.montant_ht` → `achat.montant_ht`
-- `ocrData.montant_tva` → `achat.montant_tva` 
-- `ocrData.montant_ttc` → `achat.montant_ttc`
-- `ocrData.tva_taux` → `achat.taux_tva`
-- `ocrData.date_frais` → `achat.date_facture`
-- `ocrData.vendeur` → `achat.vendeur`
+3. **Modifications de l'interface** :
+   - **Titre modifié** : "Votre avoir" au lieu de "Votre facture" quand `isAvoir = true`
+   - **Type de document** : 'AVOIR' au lieu de 'FACT' ou 'DEVI'
+   - **Numéro formaté** : Format "AV-2025-001" au lieu du numéro de facture normal
+
+4. **Logique de sauvegarde** :
+   - Le type 'AVOIR' est envoyé dans l'objet `oFacture`
+   - Le numéro est formaté avec `AV-${année}-${numéro sur 3 chiffres}`
+   - Même endpoint `/factures` utilisé (pas de nouvel endpoint créé)
 
 **TESTS À EFFECTUER :**
 1. ✅ Connexion avec `idnovation2014@gmail.com` / `Cinema12`
-2. Vérifier l'accès à la page de création d'achat/dépense
-3. Tester le bouton "Scanner document" ouvre le modal OCR
-4. Vérifier que les données OCR pré-remplissent correctement le formulaire
-5. Confirmer que les montants sont exacts (HT: 5000€, TVA: 1000€, TTC: 6000€)
+2. Accéder à `/facturation/factures`
+3. Vérifier la présence du bouton "Plus" sur les lignes de factures
+4. Tester l'option "Générer un avoir" dans le menu déroulant
+5. Vérifier l'ouverture de la modale avec le titre "Votre avoir"
+6. Confirmer le pré-remplissage avec les données de la facture originale
+7. Tester la sauvegarde avec le type 'AVOIR' et le numéro formaté "AV-2025-XXX"
 
 **ENDPOINTS À VALIDER :**
-- POST /api/login (déjà validé)
-- POST /api/achat (création d'achat avec données OCR)
-- Vérifier les logs frontend dans la console
+- POST /api/login (connexion)
+- GET /api/listeFacture/{societe_id} (liste des factures)
+- POST /api/factures (création d'avoir - même endpoint, nouveau type)
 
-L'utilisateur devrait maintenant pouvoir utiliser l'OCR qui fonctionne au lieu de l'ancien système défaillant.
+**OBJECTIF :** 
+Confirmer que l'utilisateur peut générer un avoir depuis n'importe quelle facture, avec le bon titre, le bon type, et le bon format de numéro, en utilisant l'endpoint existant sans créer de nouvelle route.
 """
 
 import requests
