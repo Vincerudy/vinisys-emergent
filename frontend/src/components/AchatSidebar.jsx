@@ -252,6 +252,62 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     setSelectedFile(file);
   };
 
+  // Convertir une image en PDF
+  const convertImageToPdf = async (imageFile) => {
+    try {
+      // Utilisation de jsPDF pour convertir l'image en PDF
+      const { jsPDF } = await import('jspdf');
+      
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const pdf = new jsPDF();
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Calculer les dimensions pour remplir la page A4
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          
+          // Calculer le ratio pour maintenir les proportions
+          const imgRatio = img.width / img.height;
+          const pageRatio = pageWidth / pageHeight;
+          
+          let finalWidth, finalHeight;
+          if (imgRatio > pageRatio) {
+            finalWidth = pageWidth;
+            finalHeight = pageWidth / imgRatio;
+          } else {
+            finalHeight = pageHeight;
+            finalWidth = pageHeight * imgRatio;
+          }
+          
+          // Centrer l'image sur la page
+          const x = (pageWidth - finalWidth) / 2;
+          const y = (pageHeight - finalHeight) / 2;
+          
+          // Redimensionner le canvas
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          
+          // Ajouter l'image au PDF
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+          pdf.addImage(imgData, 'JPEG', x, y, finalWidth, finalHeight);
+          
+          // Créer le blob PDF
+          const pdfBlob = pdf.output('blob');
+          const pdfUrl = URL.createObjectURL(pdfBlob);
+          resolve(pdfUrl);
+        };
+        img.src = imageFile.url;
+      });
+    } catch (error) {
+      console.error('Erreur conversion image vers PDF:', error);
+      return imageFile.url; // Fallback vers l'image originale
+    }
+  };
+
   const renderFileViewer = () => {
     if (!selectedFile) {
       return (
@@ -265,46 +321,74 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       );
     }
 
-    if (selectedFile.type.includes('pdf')) {
-      return (
-        <div className="file-viewer">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">{selectedFile.name}</span>
-            <button
-              onClick={() => removeFile(selectedFile.id)}
-              className="text-red-500 hover:text-red-700 p-1"
-            >
-              <FiTrash2 size={16} />
-            </button>
-          </div>
+    // Pour les PDF et les images converties, utiliser la même visionneuse
+    const renderPdfViewer = (url, filename) => (
+      <div className="file-viewer">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-gray-700">{filename}</span>
+          <button
+            onClick={() => removeFile(selectedFile.id)}
+            className="text-red-500 hover:text-red-700 p-1"
+          >
+            <FiTrash2 size={16} />
+          </button>
+        </div>
+        <div className="pdf-viewer-container" style={{ height: '500px', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
           <iframe
-            src={selectedFile.url}
-            title={selectedFile.name}
-            className="w-full h-96 border border-gray-300 rounded"
+            src={`${url}#toolbar=1&navpanes=0&scrollbar=1&page=1&view=FitH`}
+            title={filename}
+            className="w-full h-full border-0"
+            style={{ minHeight: '500px' }}
           />
         </div>
-      );
+      </div>
+    );
+
+    if (selectedFile.type.includes('pdf')) {
+      return renderPdfViewer(selectedFile.url, selectedFile.name);
     }
 
     if (selectedFile.type.includes('image')) {
-      return (
-        <div className="file-viewer">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">{selectedFile.name}</span>
-            <button
-              onClick={() => removeFile(selectedFile.id)}
-              className="text-red-500 hover:text-red-700 p-1"
-            >
-              <FiTrash2 size={16} />
-            </button>
+      // Pour les images, on les convertit en PDF et on affiche le PDF
+      const [pdfUrl, setPdfUrl] = useState(null);
+      const [converting, setConverting] = useState(false);
+
+      useEffect(() => {
+        const convertImage = async () => {
+          setConverting(true);
+          const convertedPdfUrl = await convertImageToPdf(selectedFile);
+          setPdfUrl(convertedPdfUrl);
+          setConverting(false);
+        };
+        
+        if (!pdfUrl && selectedFile.type.includes('image')) {
+          convertImage();
+        }
+      }, [selectedFile.id]);
+
+      if (converting) {
+        return (
+          <div className="file-viewer">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">{selectedFile.name}</span>
+              <button
+                onClick={() => removeFile(selectedFile.id)}
+                className="text-red-500 hover:text-red-700 p-1"
+              >
+                <FiTrash2 size={16} />
+              </button>
+            </div>
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Conversion en PDF en cours...</p>
+            </div>
           </div>
-          <img
-            src={selectedFile.url}
-            alt={selectedFile.name}
-            className="w-full h-96 object-contain border border-gray-300 rounded"
-          />
-        </div>
-      );
+        );
+      }
+
+      if (pdfUrl) {
+        return renderPdfViewer(pdfUrl, `${selectedFile.name} (PDF)`);
+      }
     }
 
     return null;
