@@ -282,26 +282,22 @@ const NouvelAchatPage = () => {
               Uploadez votre facture, ticket ou reçu pour extraction automatique des données
             </p>
             <div className="flex justify-center gap-4">
-              <label className="bg-purple-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-purple-700 flex items-center gap-2">
+              <button 
+                type="button"
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-purple-700 flex items-center gap-2"
+                onClick={handleOcrClick}
+              >
                 <FiUpload size={16} />
                 Scanner document
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="image/*,application/pdf"
-                  onChange={(e) => handleOcrUpload(e.target.files[0])}
-                />
-              </label>
-              <label className="bg-gray-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-2">
-                <FiFile size={16} />
-                Fichier PDF
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="application/pdf"
-                  onChange={(e) => handleOcrUpload(e.target.files[0])}
-                />
-              </label>
+              </button>
+              <button 
+                type="button"
+                className="bg-gray-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-2"
+                onClick={handleOcrClick}
+              >
+                <FiFileText size={16} />
+                Analyser facture
+              </button>
             </div>
             {ocrData && (
               <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded-lg">
