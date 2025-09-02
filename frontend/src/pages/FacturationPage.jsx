@@ -351,6 +351,9 @@ const FacturationPage = ( ) => {
     setIsInvoicee(false);
     setIsEditingFacture(false);
     
+    // Stocker la facture d'origine pour référence
+    setFactureOriginePourAvoir(factureRecord);
+    
     console.log('✅ Avoir pré-rempli avec', avoirProduits.length, 'lignes de la facture originale');
     console.log('📋 Produits copiés avec quantités négatives (pour annulation):', avoirProduits);
     console.log('💡 Règles métier avoir:');
