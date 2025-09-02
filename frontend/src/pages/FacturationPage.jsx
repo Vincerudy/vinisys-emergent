@@ -580,6 +580,7 @@ const handleModalOk = async () => {
       // Logique supplémentaire ici, par exemple, envoyer oFacture à une API
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/factures`, oFacture);
       setModalVisible(false);
+      setIsAvoir(false); // Remettre isAvoir à false après sauvegarde
       obtenirFactures();
     }
   } catch (error) {
