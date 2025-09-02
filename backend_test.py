@@ -171,8 +171,8 @@ def test_authentication():
         return False, None
 
 def test_justificatifs_endpoint():
-    """Test 2: GET /api/achat/:id/justificatifs - Test new justificatifs endpoint"""
-    print_test_header("GET /api/achat/:id/justificatifs - Justificatifs Endpoint Test")
+    """Test 2: GET /api/achat/:id/justificatifs - Test corrected justificatifs endpoint"""
+    print_test_header("GET /api/achat/:id/justificatifs - Corrected Justificatifs Endpoint Test")
     try:
         headers = get_auth_headers()
         
@@ -200,23 +200,28 @@ def test_justificatifs_endpoint():
                     all_fields_present = all(field in justificatif for field in required_fields)
                     
                     if all_fields_present:
-                        print(f"  ✅ Justificatif structure valid")
+                        print(f"  ✅ Justificatif structure valid - CORRECTION WORKING")
                         print(f"  ✅ ID: {justificatif.get('id')}")
                         print(f"  ✅ File: {justificatif.get('nom_fichier')}")
                         print(f"  ✅ Type: {justificatif.get('type_fichier')}")
                         print(f"  ✅ Path: {justificatif.get('justificatif_path')}")
+                        
+                        # Verify the expected PNG file is present
+                        if 'achat-1756803688527-228229367.png' in justificatif.get('justificatif_path', ''):
+                            print(f"  ✅ Expected PNG justificatif found - CORRECTION CONFIRMED")
+                        
                         return True, data, justificatif
                     else:
                         print(f"  ⚠️ Missing required fields in justificatif structure")
                         return True, data, None
                 else:
-                    print(f"  ℹ️ No justificatifs found for achat ID {achat_id}")
+                    print(f"  ℹ️ No justificatifs found for achat ID {achat_id} - May need to create test data")
                     return True, data, None
             else:
                 print_test_result(False, f"Response is not a list: {type(data)}", response)
                 return False, None, None
         elif response.status_code == 404:
-            print_test_result(False, f"Achat ID {achat_id} not found", response)
+            print_test_result(False, f"Achat ID {achat_id} not found - May need to create test data", response)
             return False, None, None
         else:
             print_test_result(False, f"GET justificatifs failed - HTTP {response.status_code}", response)
