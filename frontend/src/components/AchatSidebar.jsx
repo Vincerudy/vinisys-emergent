@@ -11,7 +11,9 @@ import {
   FiCalendar,
   FiFileText,
   FiUser,
-  FiCheck
+  FiCheck,
+  FiEye,
+  FiTrash2
 } from 'react-icons/fi';
 import './css/AchatSidebar.css';
 
