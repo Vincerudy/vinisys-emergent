@@ -15,7 +15,7 @@ router.post('/validate-bulk', async (req, res) => {
         const placeholders = achat_ids.map(() => '?').join(',');
         const query = `
             UPDATE achats 
-            SET statut = 'valide', date_validation = NOW()
+            SET statut = 'valide'
             WHERE id IN (${placeholders}) AND societe_id = ?
         `;
 
