@@ -107,10 +107,13 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       return;
     }
     
-    // Réinitialiser les fichiers à chaque ouverture pour éviter les conflits entre différents achats
-    setUploadedFiles([]);
-    setSelectedFile(null);
-    setAttachedFiles([]);
+    // Réinitialiser les fichiers seulement si ce n'est pas de l'OCR avec un fichier attaché
+    if (!attachedFile) {
+      // Pas de fichier OCR, on peut tout nettoyer
+      setUploadedFiles([]);
+      setSelectedFile(null);
+      setAttachedFiles([]);
+    }
     
     if (!prefilledData) {
       // Mode nouveau : réinitialiser
