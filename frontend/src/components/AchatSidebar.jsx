@@ -326,6 +326,8 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
   // Note: Conversion automatique supprimée - les images sont affichées directement
 
   const renderFileViewer = () => {
+    console.log('🔍 renderFileViewer called, selectedFile:', selectedFile);
+    
     if (!selectedFile) {
       return (
         <div className="file-viewer">
