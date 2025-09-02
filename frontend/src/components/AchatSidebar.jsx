@@ -465,7 +465,9 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
           <div className="achat-sidebar-header">
             <h2 className="text-xl font-semibold text-gray-900">
               <FiFileText className="inline mr-2" />
-              Nouvelle Dépense/Achat
+              {mode === 'view' ? 'Visualiser la Dépense' : 
+               mode === 'edit' ? 'Modifier la Dépense' : 
+               'Nouvelle Dépense/Achat'}
             </h2>
             <button
               onClick={onClose}
