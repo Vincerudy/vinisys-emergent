@@ -59,6 +59,18 @@
   padding-right: 10px;
   border: 2px solid #f5c6cb;
 }
+
+.tamponFactureOrigine{
+  background-color: #cce5ff;
+  margin-left: 60px;
+  border-radius: 5px;
+  color: #004085;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px solid #b3d9ff;
+}
 .textPiedDePage{
   font-size: 12px;
   font-style: italic;
