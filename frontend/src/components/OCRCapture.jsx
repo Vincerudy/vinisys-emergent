@@ -98,21 +98,29 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
 
     // 1. Recherche des montants HT, TVA et TTC spécifiquement
     const montantHTPatterns = [
-      /(?:total\s+)?h[.t]\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
-      /(?:sous.?total|base)\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
-      /(\d+[,.]?\d*)\s*€?\s*h[.t]/gi
+      // Pattern spécifique pour "Total H.T."
+      /total\s+h\.?t\.?\s*:?\s*(\d+\s*\d*)\s*€?/gi,
+      /(?:total\s+)?h[.t]\s*:?\s*(\d+\s*\d*)\s*€?/gi,
+      /(?:sous.?total|base)\s*:?\s*(\d+\s*\d*)\s*€?/gi,
+      /(\d+\s*\d*)\s*€?\s*h[.t]/gi,
+      // Pattern pour montants avec espaces (ex: "5 000€")
+      /h\.?t\.?\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi
     ];
 
     const montantTVAPatterns = [
-      /tva?\s*(?:\d+[,.]?\d*\s*%\s*)?:?\s*(\d+[,.]?\d*)\s*€?/gi,
-      /(?:montant\s+)?tva?\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
-      /(\d+[,.]?\d*)\s*€?\s*tva?/gi
+      // Pattern spécifique pour "T.V.A. 20%"
+      /t\.?v\.?a\.?\s*\d+\s*%\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /tva?\s*(?:\d+[,.]?\d*\s*%\s*)?:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /(?:montant\s+)?tva?\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /(\d+(?:\s+\d{3})*)\s*€?\s*tva?/gi
     ];
 
     const montantTTCPatterns = [
-      /(?:total|montant|à\s+payer|net\s+à\s+payer)\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
-      /t[.t]c\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
-      /(\d+[,.]?\d*)\s*€?\s*(?:ttc|total)/gi
+      // Pattern spécifique pour "Total TTC à payer"
+      /total\s+ttc\s+à\s+payer\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /(?:total|montant|à\s+payer|net\s+à\s+payer)\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /t[.t]c\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /(\d+(?:\s+\d{3})*)\s*€?\s*(?:ttc|total)/gi
     ];
 
     // Extraire HT
