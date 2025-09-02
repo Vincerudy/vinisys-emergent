@@ -152,8 +152,7 @@ def test_factures_list_access():
         )
         
         if response.status_code == 200:
-            data = response.json()
-            factures = data.get('factures', [])
+            factures = response.json()  # Direct array response, not wrapped in object
             
             print_test_result(True, f"Factures API accessible - {len(factures)} factures found", response)
             
