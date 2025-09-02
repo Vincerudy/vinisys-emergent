@@ -723,7 +723,11 @@ def main():
     justificatifs_success, justificatifs_data, justificatif_sample = test_justificatifs_endpoint()
     test_results.append(("GET Justificatifs Endpoint", justificatifs_success))
     
-    # Test 3: GET /api/achats/:societeId - Achats list for corrected button functionality
+    # Test 3: Justificatifs URL Construction - Test Vite environment variable corrections
+    url_construction_success, constructed_url, url_justificatif = test_justificatifs_url_construction()
+    test_results.append(("Justificatifs URL Construction", url_construction_success))
+    
+    # Test 4: GET /api/achats/:societeId - Achats list for corrected button functionality
     achats_list_success, achats_data, achat_sample = test_achat_list_endpoint()
     test_results.append(("GET Achats List", achats_list_success))
     
