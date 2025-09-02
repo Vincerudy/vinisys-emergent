@@ -622,13 +622,14 @@ const handleModalOk = async () => {
       
       // Recharger la liste avec un petit délai pour s'assurer que la DB est mise à jour
       setTimeout(() => {
-        obtenirFactures();
-        fetchDataFactures(id);
-      }, 500);
+        // Forcer le rechargement sans cache pour les avoirs
+        window.location.reload();
+      }, 1000);
       
       // Afficher un message de succès spécifique pour les avoirs
       if (isAvoir) {
         console.log('✅ Avoir créé avec succès - statut de la facture originale mis à jour');
+        alert('✅ Avoir créé avec succès ! La facture originale a été mise à jour.');
       }
     }
   } catch (error) {
