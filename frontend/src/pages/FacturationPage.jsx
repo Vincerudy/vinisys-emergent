@@ -1141,7 +1141,7 @@ const handleModalOk = async () => {
             <Row gutter={16} className='dateNumFactureModale'>
               <Col span={12}>
                 {!isEditingFacture ? 
-                  <Form.Item label={isInvoice ? 'Numéro de facture' : 'Numéro de devis'}>
+                  <Form.Item label={isAvoir ? 'Numéro de l\'avoir' : isInvoice ? 'Numéro de facture' : 'Numéro de devis'}>
                     <Input value={numeroFacture} disabled />
                   </Form.Item>
                   : 
