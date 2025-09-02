@@ -116,11 +116,11 @@ router.post('/factures', async (req, res) => {
     if (type === 'AVOIR' && facture_origine_id) {
       console.log('🧾 Traitement avoir - Mise à jour du statut de la facture originale:', facture_origine_id);
       
-      // Calculer le total des avoirs appliqués sur cette facture
+      // Calculer le total des avoirs appliqués sur cette facture (y compris celui en cours de création)
       const [avoirsTotalQuery] = await connection.query(
         `SELECT COALESCE(SUM(ABS(total)), 0) as total_avoirs 
          FROM factures 
-         WHERE type_fact = 'AVOIR' AND facture_origine_id = ? AND statut != 'brouillon'`,
+         WHERE type_fact = 'AVOIR' AND facture_origine_id = ?`,
         [facture_origine_id]
       );
       
@@ -155,9 +155,9 @@ router.post('/factures', async (req, res) => {
           nouveauStatut = 'en attente'; // Facture partiellement réduite, reste à payer
           console.log('🟡 Facture partiellement réduite, solde restant:', soldeRestant + '€');
         } else {
-          // Cas où l'avoir dépasse le montant de la facture (ne devrait pas arriver normalement)
+          // Cas où l'avoir dépasse le montant de la facture 
           nouveauStatut = 'annulée';
-          console.log('⚠️ Avoir supérieur au montant de la facture');
+          console.log('⚠️ Total des avoirs supérieur au montant de la facture - facture annulée');
         }
         
         // Mettre à jour le statut de la facture originale
