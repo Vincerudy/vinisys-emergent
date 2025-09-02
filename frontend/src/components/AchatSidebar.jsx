@@ -124,6 +124,23 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     }
   }, [isOpen, prefilledData, attachedFile, mode]);
 
+  // Fonction pour mapper les données de l'API vers le format du formulaire
+  const mapApiDataToForm = (apiData) => {
+    return {
+      numero_facture: apiData.numero || '',
+      fournisseur_id: apiData.fournisseur_id || '',
+      date_achat: apiData.date_achat ? apiData.date_achat.split('T')[0] : new Date().toISOString().split('T')[0],
+      montant_ht: apiData.montant_ht || '',
+      taux_tva: parseFloat(apiData.taux_tva) || 20,
+      tva_deductible: apiData.tva_deductible === '1' || apiData.tva_deductible === 1 || apiData.tva_deductible === true,
+      categorie_achat_id: apiData.categorie_achat_id || apiData.categorie_id || '',
+      description: apiData.description || '',
+      mode_paiement: apiData.mode_paiement || 'virement',
+      // Garder l'ID pour les opérations d'édition
+      id: apiData.id
+    };
+  };
+
   // Fonction pour charger les justificatifs existants
   const loadExistingJustificatifs = async (achatId) => {
     try {
