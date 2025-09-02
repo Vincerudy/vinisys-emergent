@@ -38,24 +38,25 @@ router.post('/factures', async (req, res) => {
       client, societe_id, date, totalTTC, numero, type, totalHT, entryMode, totalTVA
     });
 
-    // Test avec requête incluant les nouvelles colonnes TPS
+    // Test avec requête incluant les nouvelles colonnes TPS et traçabilité avoir
     const [factureResult] = await connection.query(
-      `INSERT INTO factures (client_id, societe_id, date_facture, total, statut, numero, type_fact, ht, type_saisie, total_tva,   taxe_secondaire, total_taxe_secondaire)
-       VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO factures (client_id, societe_id, date_facture, total, statut, numero, type_fact, ht, type_saisie, total_tva, taxe_secondaire, total_taxe_secondaire, facture_origine_id, facture_origine_numero)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         client,
         societe_id,
         date,
         totalTTC,
-        'en attente',
+        type === 'AVOIR' ? 'brouillon' : 'en attente', // Statut différent pour les avoirs
         numero,
         type,
         totalHT,
         entryMode,
         totalTVA,
- 
         taxe_secondaire || null,
-        total_taxe_secondaire || '0'
+        total_taxe_secondaire || '0',
+        facture_origine_id || null,
+        facture_origine_numero || null
       ]
     );
 
