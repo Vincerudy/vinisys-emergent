@@ -539,7 +539,7 @@ def main():
     
     # Print summary
     print(f"\n{'='*60}")
-    print("TEST SUMMARY - TYPES DE FRAIS ET BARÈMES KILOMÉTRIQUES APIs")
+    print("TEST SUMMARY - LISTEACHATSPAGE CORRECTIONS AND JUSTIFICATIFS")
     print(f"{'='*60}")
     
     passed = 0
@@ -570,33 +570,45 @@ def main():
     else:
         print("❌ Authentication failed with provided credentials")
     
-    if types_manage_success:
-        total_types = len(system_types) + len(personalized_types) + len(custom_types)
-        print(f"✅ GET /api/types-frais/manage/{SOCIETE_ID} working - {total_types} types found")
-        print(f"  - System types: {len(system_types)}")
-        print(f"  - Personalized types: {len(personalized_types)}")
-        print(f"  - Custom types: {len(custom_types)}")
+    if justificatifs_success:
+        if justificatif_sample:
+            print(f"✅ GET /api/achat/11/justificatifs working - Justificatif found")
+            print(f"  - File: {justificatif_sample.get('nom_fichier', 'N/A')}")
+            print(f"  - Type: {justificatif_sample.get('type_fichier', 'N/A')}")
+            print(f"  - Path: {justificatif_sample.get('justificatif_path', 'N/A')}")
+        else:
+            print(f"✅ GET /api/achat/11/justificatifs endpoint working - No justificatifs found")
     else:
-        print(f"❌ GET /api/types-frais/manage/{SOCIETE_ID} failed")
+        print(f"❌ GET /api/achat/11/justificatifs failed")
     
-    if types_societe_success:
-        print(f"✅ GET /api/types-frais/societe/{SOCIETE_ID} endpoint tested")
+    if achats_list_success:
+        if achat_sample:
+            print(f"✅ GET /api/achats/{SOCIETE_ID} working - Achats list retrieved")
+            print(f"  - Sample achat ID: {achat_sample.get('id', 'N/A')}")
+            print(f"  - Description: {achat_sample.get('description', 'N/A')}")
+        else:
+            print(f"✅ GET /api/achats/{SOCIETE_ID} working - Empty list")
     else:
-        print(f"❌ GET /api/types-frais/societe/{SOCIETE_ID} failed")
+        print(f"❌ GET /api/achats/{SOCIETE_ID} failed")
+    
+    if sidebar_modes_success:
+        if sidebar_achat:
+            print(f"✅ AchatSidebar modes functionality validated")
+            print(f"  - Test achat ID: {sidebar_achat_id}")
+            print(f"  - View mode: ✅ Ready")
+            print(f"  - Edit mode: ✅ Ready")
+            print(f"  - Manual mode: ✅ Ready")
+            print(f"  - OCR mode: ✅ Ready")
+        else:
+            print(f"⚠️ AchatSidebar modes - No test data available")
+    else:
+        print(f"❌ AchatSidebar modes functionality failed")
     
     if baremes_success:
         total_baremes = len(system_baremes) + len(personalized_baremes) + len(custom_baremes)
         print(f"✅ GET /api/baremes-kilometriques/societe/{SOCIETE_ID} working - {total_baremes} barèmes found")
-        print(f"  - System barèmes: {len(system_baremes)}")
-        print(f"  - Personalized barèmes: {len(personalized_baremes)}")
-        print(f"  - Custom barèmes: {len(custom_baremes)}")
     else:
         print(f"❌ GET /api/baremes-kilometriques/societe/{SOCIETE_ID} failed")
-    
-    if baremes_manage_success:
-        print(f"✅ GET /api/baremes-kilometriques/manage?societeId={SOCIETE_ID} endpoint tested")
-    else:
-        print(f"❌ GET /api/baremes-kilometriques/manage?societeId={SOCIETE_ID} failed")
     
     if db_success:
         print(f"✅ Database connection and tables verified")
@@ -604,24 +616,26 @@ def main():
         print("❌ Database verification failed")
     
     # Overall assessment
-    critical_tests = ["Server Connectivity", "Authentication", "GET Types Frais Manage", "GET Barèmes Kilométriques Societe"]
+    critical_tests = ["Server Connectivity", "Authentication", "GET Justificatifs Endpoint", "GET Achats List"]
     critical_passed = sum(1 for test_name, result in test_results if test_name in critical_tests and result)
     
     if critical_passed >= 3 and passed >= 4:  # Most critical tests + some functionality tests
-        print(f"\n🎉 TYPES DE FRAIS ET BARÈMES KILOMÉTRIQUES API TESTS MOSTLY SUCCESSFUL!")
+        print(f"\n🎉 LISTEACHATSPAGE CORRECTIONS AND JUSTIFICATIFS TESTS MOSTLY SUCCESSFUL!")
         print("✅ Backend server is responding correctly")
         print("✅ User authentication is working with correct credentials")
         
-        if types_manage_success:
-            print(f"✅ GET /api/types-frais/manage/{SOCIETE_ID} endpoint working correctly")
-        if baremes_success:
-            print(f"✅ GET /api/baremes-kilometriques/societe/{SOCIETE_ID} endpoint working correctly")
+        if justificatifs_success:
+            print(f"✅ GET /api/achat/:id/justificatifs endpoint working correctly")
+        if achats_list_success:
+            print(f"✅ GET /api/achats/{SOCIETE_ID} endpoint working correctly")
+        if sidebar_modes_success:
+            print(f"✅ AchatSidebar modes functionality validated")
         
         print("✅ APIs are accessible and returning data")
-        print("✅ Database tables appear to be functioning")
+        print("✅ Justificatifs functionality appears to be working")
         return True
     else:
-        print(f"\n⚠️ ISSUES DETECTED IN TYPES DE FRAIS ET BARÈMES KILOMÉTRIQUES APIs")
+        print(f"\n⚠️ ISSUES DETECTED IN LISTEACHATSPAGE CORRECTIONS AND JUSTIFICATIFS")
         if critical_passed < 3:
             print("❌ Critical infrastructure issues detected (server/auth/main endpoints)")
         else:
