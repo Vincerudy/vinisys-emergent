@@ -81,85 +81,39 @@ const NouvelAchatPage = () => {
     }
   }, [societe_id]);
 
-  // Gestion OCR (copié exactement du système qui fonctionne dans NoteDetailPage)
+  // Fonction OCR simplifiée - juste ouvrir OCRCapture
   const handleOcrClick = () => {
-    // Vérifier le paramètre OCR depuis le localStorage
-    const storageKey = `ocr_enabled_${societe_id}`;
-    const ocrSetting = localStorage.getItem(storageKey);
-    const ocrEnabled = ocrSetting === 'true';
-    
-    console.log('🔍 Debug handleOcrClick:', { 
-      societe_id, 
-      storageKey, 
-      ocrSetting, 
-      ocrEnabled
-    });
-    
-    if (ocrEnabled) {
-      // OCR activé : Afficher la modale de choix
-      console.log('✅ OCR activé - Affichage de la modale');
-      setOcrModalOpen(true);
-    } else {
-      // OCR désactivé : Ouvrir directement l'OCR
-      console.log('❌ OCR désactivé - Ouverture directe de l\'OCR');
-      setOcrCaptureOpen(true);
-    }
-  };
-
-  const handleManualEntry = () => {
-    // Saisie manuelle : Fermer la modale 
-    setOcrModalOpen(false);
-    console.log('📝 Saisie manuelle sélectionnée');
-  };
-
-  const handlePhotoCapture = () => {
-    // Fermer la modale de choix et ouvrir l'interface OCR
-    setOcrModalOpen(false);
+    console.log('🔍 Ouverture de OCRCapture');
     setOcrCaptureOpen(true);
-    console.log('📷 OCR sélectionné');
   };
 
+  // OCRCapture envoie les données ici, on pré-remplit le formulaire
   const handleOcrDataExtracted = (ocrData) => {
-    console.log('🎯 Données OCR extraites pour achat:', ocrData);
+    console.log('🎯 Données OCR reçues:', ocrData);
     
-    // Fermer le modal OCR
+    // Fermer OCRCapture
     setOcrCaptureOpen(false);
     
-    // Vérifier que les données existent
     if (!ocrData) {
-      console.error('❌ Aucune donnée OCR fournie');
+      console.error('❌ Pas de données OCR');
       return;
     }
     
-    // Stocker les données OCR
-    setOcrData(ocrData);
-    console.log('💾 Données OCR stockées:', ocrData);
-    
-    // Pré-remplir le formulaire avec les données OCR extraites
-    if (ocrData) {
-      console.log('🔄 Pré-remplissage du formulaire avec données OCR:', {
-        montant_ht: ocrData.montant_ht,
-        montant_tva: ocrData.montant_tva, 
-        montant_ttc: ocrData.montant_ttc,
-        taux_tva: ocrData.tva_taux
-      });
+    // Pré-remplir le formulaire principal avec les données OCR
+    setAchat(prev => ({
+      ...prev,
+      numero_facture: ocrData.numero_facture || '',
+      montant_ht: ocrData.montant_ht || '',
+      montant_ttc: ocrData.montant_ttc || '',
+      montant_tva: ocrData.montant_tva || '',
+      taux_tva: ocrData.tva_taux || 20,
+      date_facture: ocrData.date_frais || '',
+      description: ocrData.description || '',
+      // Ajouter le vendeur si disponible
+      ...(ocrData.vendeur && { vendeur: ocrData.vendeur })
+    }));
 
-      setAchat(prev => ({
-        ...prev,
-        numero_facture: ocrData.numero_facture || '',
-        montant_ht: ocrData.montant_ht || '',
-        montant_ttc: ocrData.montant_ttc || '',
-        montant_tva: ocrData.montant_tva || '',
-        taux_tva: ocrData.tva_taux || 20,
-        date_facture: ocrData.date_frais || '', // date_frais devient date_facture
-        description: ocrData.description || '',
-        vendeur: ocrData.vendeur || '' // Nouveau champ du parsing OCR amélioré
-      }));
-
-      // Marquer comme saisie OCR
-      setMode('ocr');
-      console.log('✅ Formulaire pré-rempli avec données OCR');
-    }
+    console.log('✅ Formulaire pré-rempli avec OCR');
   };
 
   // Sauvegarde de l'achat
