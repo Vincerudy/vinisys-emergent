@@ -158,14 +158,20 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
             fileUrl = fileUrl.replace('/app/backend/uploads/', '/api/uploads/');
           }
           
+          const finalUrl = `${window.location.origin}${fileUrl}`;
+          console.log('🔍 File URL constructed:', finalUrl);
+          
           return {
             id: j.id,
             name: j.nom_fichier || j.justificatif_path?.split('/').pop() || 'Justificatif',
             type: j.type_fichier || (j.justificatif_path?.includes('.pdf') ? 'application/pdf' : 'image/jpeg'),
-            url: `${window.location.origin}${fileUrl}`,
+            url: finalUrl,
             isExisting: true
           };
         });
+        
+        console.log('🔍 Total existing files:', existingFiles.length);
+        console.log('🔍 Files:', existingFiles);
         
         setUploadedFiles(existingFiles);
         
