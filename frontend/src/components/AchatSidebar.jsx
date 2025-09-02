@@ -106,11 +106,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       setShowNewFournisseur(false);
     } else if (prefilledData) {
       // Appliquer les données pré-remplies (OCR, édition, ou visualisation)
-      console.log('🔍 PrefilledData received:', prefilledData);
-      console.log('🔍 Current mode:', mode);
-      
       const mappedData = mapApiDataToForm(prefilledData);
-      console.log('🔍 Mapped data:', mappedData);
       
       setAchat(prevAchat => ({
         ...prevAchat,
