@@ -309,6 +309,27 @@ const FacturationPage = ( ) => {
       setModaleFacturePayeVisible(!modaleFacturePayeVisible)
     
 
+  };
+
+  // Fonction pour générer un avoir à partir d'une facture
+  const handleGenerateAvoir = (factureRecord) => {
+    console.log('🧾 Génération d\'un avoir pour la facture:', factureRecord);
+    
+    // Pré-remplir le formulaire avec les données de la facture
+    form.setFieldsValue({
+      client: factureRecord.client,
+      date: dayjs(factureRecord.date, 'DD/MM/YYYY'),
+      totalAmount: factureRecord.totalAmount,
+      // Autres champs selon votre structure
+    });
+
+    // Marquer qu'on crée un avoir (pas une facture)
+    setIsAvoir(true);
+    setIsInvoicee(false);
+    setIsEditingFacture(false);
+    
+    // Ouvrir la modale de création
+    setModalVisible(true);
   }
 
   const transformToInvoiceCancel = (record)=>{
