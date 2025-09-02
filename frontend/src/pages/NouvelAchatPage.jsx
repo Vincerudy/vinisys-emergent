@@ -18,6 +18,7 @@ import {
   FiEye
 } from 'react-icons/fi';
 import './css/NouvelAchatPage.css';
+import OCRCapture from '../components/OCRCapture';
 
 const NouvelAchatPage = () => {
   const { societe_id, id: user_id } = useAuth();
