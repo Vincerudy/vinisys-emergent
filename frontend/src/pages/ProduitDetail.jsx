@@ -468,7 +468,7 @@ const ProduitDetail = () => {
                   onChange={handleTVAChange}
                   style={{ width: 120 }}
                 >
-                  {TVA_OPTIONS.map(({ label, value }) => (
+                  {tvaOptions.map(({ label, value }) => (
                     <Option key={value} value={value}>
                       {label}
                     </Option>
