@@ -1,74 +1,44 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Corrections URL Justificatifs
+Backend API Testing Script for Vinisys Application - Test Corrections OCR Dépenses
 
-Tests des corrections critiques apportées à la construction d'URL des justificatifs dans la visionneuse.
+Tests des corrections OCR pour les dépenses après les modifications apportées.
 
-**PROBLÈME CRITIQUE IDENTIFIÉ ET CORRIGÉ :**
-
-1. **Construction d'URL incorrecte** : Duplication du préfixe `/api` dans l'URL
-   - **Avant** : `${VITE_API_URL}${fileUrl}` où `VITE_API_URL=/api` et `fileUrl=/api/uploads/...`
-   - **Résultat incorrect** : `/api/api/uploads/achats/...` (double `/api`)
-
-2. **URL finale incorrecte** :
-   - **Avant** : `/api/api/uploads/achats/achat-1756803688527-228229367.png` ❌
-   - **Après** : `https://finflow-166.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png` ✅
+**CONTEXTE :** Corrections du problème OCR où les montants HT/TVA ne correspondaient pas aux factures réelles 
+car le système forçait tout à 20% de TVA.
 
 **CORRECTIONS APPORTÉES :**
 
-1. **Variable d'environnement corrigée** :
-   ```jsx
-   // AVANT (incorrect - duplication /api)
-   url: `${import.meta.env.VITE_API_URL}${fileUrl}`
-   // VITE_API_URL = "/api" + fileUrl = "/api/uploads/..." = "/api/api/uploads/..."
-   
-   // APRÈS (correct)
-   url: `${import.meta.env.REACT_APP_BACKEND_URL}${fileUrl}`
-   // REACT_APP_BACKEND_URL = "https://domain.com" + fileUrl = "/api/uploads/..." = URL complète
-   ```
+1. **Dans OCRCapture.jsx :**
+   - Parsing amélioré pour extraire séparément HT, TVA et TTC
+   - Détection des taux de TVA réels depuis les factures
+   - Gestion de plusieurs TVA sur une même facture
+   - Calculs automatiques des montants manquants
 
-2. **Endpoint API corrigé** :
-   ```jsx
-   // AVANT
-   const response = await fetch(`${import.meta.env.VITE_API_URL}/achat/${achatId}/justificatifs`);
-   
-   // APRÈS  
-   const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/achat/${achatId}/justificatifs`);
-   ```
+2. **Dans FraisSidebar.jsx :**
+   - Utilisation des montants extraits par OCR 
+   - Calculs intelligents selon les données disponibles
+   - Plus de forçage à 20% de TVA
 
-**TESTS À EFFECTUER :**
+**TESTS REQUIS :**
+1. Connexion avec `idnovation2014@gmail.com` / `Cinema12` ✅ (déjà validé)
+2. Vérifier que les endpoints de création de dépenses fonctionnent
+3. Simuler des données OCR avec différents taux de TVA (10%, 20%, 5.5%)
+4. Vérifier que les calculs HT/TVA/TTC sont cohérents
+5. Tester le cas d'une facture avec plusieurs TVA
 
-1. **Test de l'URL des justificatifs :**
-   - **URL construite** : `https://finflow-166.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png`
-   - **Test HTTP** : `curl -I "URL"` → Doit retourner HTTP/2 200 
-   - **Taille fichier** : 4,102,537 bytes (≈4MB)
-   - **Type contenu** : `image/png`
+**ENDPOINTS PRINCIPAUX À TESTER :**
+- POST /api/login 
+- POST /api/frais (création de dépenses)
+- GET /api/types-frais (types disponibles)
+- Vérifier les logs de calcul OCR
 
-2. **Test de l'endpoint justificatifs :**
-   - **URL API** : `https://finflow-166.preview.emergentagent.com/api/achat/11/justificatifs`
-   - **Réponse** : JSON avec justificatif_path correct
-   - **Transformation** : `/app/backend/uploads/` → `/api/uploads/`
+**STATUT ACTUEL :**
+- Frontend : ✅ Fonctionnel (page de connexion visible)
+- Backend : ✅ Connexion login validée 
+- MariaDB : ✅ Opérationnel
 
-3. **Test de la visionneuse :**
-   - Ouvrir l'achat ID 11 en mode view/edit
-   - Vérifier que l'image PNG s'affiche immédiatement dans la visionneuse
-   - Pas de nom de fichier seul, mais l'image complète
-   - Conteneur de 500px de hauteur avec image centrée
-
-4. **Test de construction d'URL :**
-   ```
-   justificatif_path: "/app/backend/uploads/achats/achat-1756803688527-228229367.png"
-   transformation: "/api/uploads/achats/achat-1756803688527-228229367.png"  
-   URL finale: "https://finflow-166.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png"
-   ```
-
-**Données de test :**
-- Société ID : 2
-- Achat ID : 11 (avec justificatif PNG)
-- Fichier : `achat-1756803688527-228229367.png`
-- URL complète validée et accessible
-
-La visionneuse devrait maintenant afficher correctement l'image PNG au lieu du nom de fichier seul.
+Effectuer des tests pour confirmer que les corrections OCR fonctionnent comme prévu.
 """
 
 import requests
