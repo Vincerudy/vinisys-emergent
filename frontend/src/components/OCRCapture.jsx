@@ -127,10 +127,17 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     for (const pattern of montantHTPatterns) {
       const matches = [...text.matchAll(pattern)];
       if (matches.length > 0) {
-        const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
-        data.montant_ht = Math.max(...montants).toFixed(2);
-        console.log('💰 Montant HT détecté:', data.montant_ht);
-        break;
+        const montants = matches.map(m => {
+          // Nettoyer le montant (supprimer les espaces dans les nombres)
+          const cleanAmount = m[1].replace(/\s+/g, '').replace(',', '.');
+          return parseFloat(cleanAmount);
+        }).filter(m => !isNaN(m));
+        
+        if (montants.length > 0) {
+          data.montant_ht = Math.max(...montants).toFixed(2);
+          console.log('💰 Montant HT détecté:', data.montant_ht, 'depuis:', matches[0][0]);
+          break;
+        }
       }
     }
 
@@ -138,10 +145,17 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     for (const pattern of montantTVAPatterns) {
       const matches = [...text.matchAll(pattern)];
       if (matches.length > 0) {
-        const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
-        data.montant_tva = montants.reduce((sum, m) => sum + m, 0).toFixed(2); // Somme de toutes les TVA
-        console.log('🏛️ Montant TVA détecté:', data.montant_tva);
-        break;
+        const montants = matches.map(m => {
+          // Nettoyer le montant (supprimer les espaces dans les nombres)
+          const cleanAmount = m[1].replace(/\s+/g, '').replace(',', '.');
+          return parseFloat(cleanAmount);
+        }).filter(m => !isNaN(m));
+        
+        if (montants.length > 0) {
+          data.montant_tva = montants.reduce((sum, m) => sum + m, 0).toFixed(2); // Somme de toutes les TVA
+          console.log('🏛️ Montant TVA détecté:', data.montant_tva, 'depuis:', matches[0][0]);
+          break;
+        }
       }
     }
 
@@ -149,10 +163,17 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     for (const pattern of montantTTCPatterns) {
       const matches = [...text.matchAll(pattern)];
       if (matches.length > 0) {
-        const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
-        data.montant_ttc = Math.max(...montants).toFixed(2);
-        console.log('💳 Montant TTC détecté:', data.montant_ttc);
-        break;
+        const montants = matches.map(m => {
+          // Nettoyer le montant (supprimer les espaces dans les nombres)
+          const cleanAmount = m[1].replace(/\s+/g, '').replace(',', '.');
+          return parseFloat(cleanAmount);
+        }).filter(m => !isNaN(m));
+        
+        if (montants.length > 0) {
+          data.montant_ttc = Math.max(...montants).toFixed(2);
+          console.log('💳 Montant TTC détecté:', data.montant_ttc, 'depuis:', matches[0][0]);
+          break;
+        }
       }
     }
 
