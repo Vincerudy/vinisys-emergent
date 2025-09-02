@@ -379,19 +379,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     }
   };
 
-  // useEffect pour gérer la conversion des images en PDF
-  useEffect(() => {
-    if (selectedFile && selectedFile.type.includes('image') && !convertedPdfUrls[selectedFile.id] && !convertingFiles[selectedFile.id]) {
-      const convertImage = async () => {
-        setConvertingFiles(prev => ({ ...prev, [selectedFile.id]: true }));
-        const convertedPdfUrl = await convertImageToPdf(selectedFile);
-        setConvertedPdfUrls(prev => ({ ...prev, [selectedFile.id]: convertedPdfUrl }));
-        setConvertingFiles(prev => ({ ...prev, [selectedFile.id]: false }));
-      };
-      
-      convertImage();
-    }
-  }, [selectedFile]);
+  // Note: Conversion automatique supprimée - les images sont affichées directement
 
   const renderFileViewer = () => {
     if (!selectedFile) {
