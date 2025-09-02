@@ -291,7 +291,13 @@ def test_ocr_achat_creation():
                 print_test_result(False, f"Response missing required fields", response)
                 return False, None, None, None
         else:
-            print_test_result(False, f"POST /api/achat with OCR data failed - HTTP {response.status_code}", response)
+            # Get detailed error information
+            try:
+                error_data = response.json()
+                error_message = error_data.get('error', 'Unknown error')
+                print_test_result(False, f"POST /api/achat with OCR data failed - HTTP {response.status_code}: {error_message}", response)
+            except:
+                print_test_result(False, f"POST /api/achat with OCR data failed - HTTP {response.status_code}", response)
             return False, None, None, None
             
     except Exception as e:
