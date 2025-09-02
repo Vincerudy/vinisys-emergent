@@ -226,6 +226,53 @@
   justify-content: center;
 }
 
+/* Upload area styling */
+.upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: border-color 0.15s ease-in-out;
+  cursor: pointer;
+  background: #fafbfc;
+}
+
+.upload-area:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.upload-area.drag-over {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.file-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  background: white;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.file-item:hover {
+  background: #f9fafb;
+}
+
+.file-item.selected {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
 .achat-sidebar-footer button {
   border-radius: 0.5rem;
   font-weight: 500;
