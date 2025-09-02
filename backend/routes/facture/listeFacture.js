@@ -136,6 +136,8 @@ router.get('/listeFacture/:id', async (req, res) => {
             client_ville: fac.client_ville,
             client_code_postal: fac.client_code_postal,
             client_phone: fac.client_phone,
+            facture_origine_id: fac.facture_origine_id,
+            facture_origine_numero: fac.facture_origine_numero,
             produits: produitsParFacture[fac.factureId] || []
         }));
 
