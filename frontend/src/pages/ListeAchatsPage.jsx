@@ -180,6 +180,81 @@ const ListeAchatsPage = () => {
     }
   };
 
+  // Handlers pour la validation en masse
+  const handleBulkValidate = async () => {
+    if (selectedAchats.length === 0) {
+      alert('Veuillez sélectionner au moins une dépense à valider.');
+      return;
+    }
+
+    if (window.confirm(`Êtes-vous sûr de vouloir valider ${selectedAchats.length} dépense(s) ?`)) {
+      try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/achats/validate-bulk`, {
+          achat_ids: selectedAchats,
+          societe_id: societe_id
+        });
+        
+        alert('Dépenses validées avec succès');
+        fetchAchats(); // Rafraîchir la liste
+        setSelectedAchats([]); // Vider la sélection
+      } catch (error) {
+        console.error('Erreur validation en masse:', error);
+        alert('Erreur lors de la validation des dépenses');
+      }
+    }
+  };
+
+  const handleBulkReject = async () => {
+    if (selectedAchats.length === 0) {
+      alert('Veuillez sélectionner au moins une dépense à refuser.');
+      return;
+    }
+
+    if (window.confirm(`Êtes-vous sûr de vouloir refuser ${selectedAchats.length} dépense(s) ?`)) {
+      try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/achats/reject-bulk`, {
+          achat_ids: selectedAchats,
+          societe_id: societe_id
+        });
+        
+        alert('Dépenses refusées avec succès');
+        fetchAchats(); // Rafraîchir la liste
+        setSelectedAchats([]); // Vider la sélection
+      } catch (error) {
+        console.error('Erreur refus en masse:', error);
+        alert('Erreur lors du refus des dépenses');
+      }
+    }
+  };
+
+  const handleBulkExport = async () => {
+    if (selectedAchats.length === 0) {
+      alert('Veuillez sélectionner au moins une dépense à exporter.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/achats/export-bulk`, {
+        achat_ids: selectedAchats,
+        societe_id: societe_id
+      }, { responseType: 'blob' });
+      
+      // Créer un lien de téléchargement
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `achats_export_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      
+      alert('Export terminé avec succès');
+    } catch (error) {
+      console.error('Erreur export en masse:', error);
+      alert('Erreur lors de l\'export des dépenses');
+    }
+  };
+
   return (
     <div className="liste-achats-page">
       {/* Header */}
