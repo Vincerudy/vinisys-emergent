@@ -91,7 +91,10 @@ const ModeleFacture = ({ factures, type, parametrage, tvas }) => {
           <p><strong>Tel:</strong> {factures.vendeur_phone}</p>
           <p>{factures.vendeur_adresse}</p>
           <p>{factures.vendeur_code_postal}, {factures.vendeur_ville}</p>
-          <p>Siret: {factures.siret} {factures.statut === 'payée' ? <strong className='tamponPayé'>Payé</strong> : ''}</p>
+          <p>Siret: {factures.siret} 
+            {factures.statut === 'payée' && <strong className='tamponPayé'>Payé</strong>}
+            {factures.statut === 'annulée' && <strong className='tamponAnnulé'>ANNULÉ</strong>}
+          </p>
         </div>
         <div className="invoice-details">
           <div className="NameInvoiceBloc">
