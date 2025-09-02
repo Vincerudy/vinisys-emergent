@@ -64,8 +64,18 @@ router.post('/', upload.array('justificatifs', 5), async (req, res) => {
         const montantTVA = montantHT * (tauxTVA / 100);
         const montantTTC = montantHT + montantTVA;
 
-        // Validation
+        // Validation - Debug logging
+        console.log('🔍 Validation Debug:', {
+            date_achat: date_achat,
+            montant_ht: montant_ht,
+            societe_id: societe_id,
+            date_achat_check: !date_achat,
+            montant_ht_check: !montant_ht,
+            societe_id_check: !societe_id
+        });
+        
         if (!date_achat || !montant_ht || !societe_id) {
+            console.log('❌ Validation failed - Required fields missing');
             throw new Error('Champs obligatoires manquants');
         }
 
