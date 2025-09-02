@@ -2,6 +2,13 @@ import React from 'react';
 import './css/ModeleFacture.css';
 
 const ModeleFacture = ({ factures, type, parametrage, tvas }) => {
+  // LOG DE DEBUG pour diagnostiquer le problème
+  console.log('🔍 DEBUG ModeleFacture - Données reçues:');
+  console.log('  - type:', type);
+  console.log('  - factures.facture_origine_numero:', factures?.facture_origine_numero);
+  console.log('  - factures.statut:', factures?.statut);
+  console.log('  - factures (complet):', factures);
+
   // Détail des TVA par taux
   const calculerTVAParTaux = () => {
     const totalTVAParTaux = {};
@@ -69,14 +76,20 @@ const ModeleFacture = ({ factures, type, parametrage, tvas }) => {
     return { totalTPS, tauxTPS, labelTPS };
   };
 
+  // Utiliser les montants stockés en base au lieu de recalculer
   const totalHT = factures.produits.reduce((acc, product) => acc + (product.quantite * parseFloat(product.prix || 0)), 0).toFixed(2);
   const { totalTVAParTaux, totalTVA } = calculerTVAParTaux();
   const { totalTPS, tauxTPS, labelTPS } = calculerTaxeSecondaire();
 
-
-  const totalTTC = Object.keys(totalTVAParTaux).reduce((total, taux) => {
-    return total + parseFloat(totalTVAParTaux[taux]);
-  }, parseFloat(factures.type_saisie === 'TTC' ? totalHT : 0)) + (factures.type_saisie === 'HT' ? parseFloat(totalHT) : 0) + totalTPS;
+  // CORRECTION : Utiliser le montant total stocké en base au lieu de recalculer
+  // pour éviter les différences d'arrondi entre la liste et l'aperçu
+  const totalTTC = parseFloat(factures.totalAmount || 0);
+  
+  console.log('💰 DEBUG Montants ModeleFacture:');
+  console.log('  - totalAmount (base):', factures.totalAmount);
+  console.log('  - totalTTC utilisé:', totalTTC);
+  console.log('  - totalHT calculé:', totalHT);
+  console.log('  - totalTVA calculé:', totalTVA);
 
   return (
     <div className="invoice-container">
@@ -91,11 +104,21 @@ const ModeleFacture = ({ factures, type, parametrage, tvas }) => {
           <p><strong>Tel:</strong> {factures.vendeur_phone}</p>
           <p>{factures.vendeur_adresse}</p>
           <p>{factures.vendeur_code_postal}, {factures.vendeur_ville}</p>
-          <p>Siret: {factures.siret} {factures.statut === 'payée' ? <strong className='tamponPayé'>Payé</strong> : ''}</p>
+          <p>Siret: {factures.siret} 
+            {factures.statut === 'payée' && <strong className='tamponPayé'>Payé</strong>}
+            {factures.statut === 'annulée' && type !== 'AVOIR' && <strong className='tamponAnnulé'>ANNULÉ</strong>}
+            {type === 'AVOIR' && factures.facture_origine_numero && (
+              <strong className='tamponFactureOrigine'>
+                Facture: {factures.facture_origine_numero}
+              </strong>
+            )}
+          </p>
         </div>
         <div className="invoice-details">
           <div className="NameInvoiceBloc">
-            <p className="titleIvoice"><strong>{type === 'DEVI' ? 'Devis' : 'Facture'} N° {factures.invoiceNumber}</strong></p>
+            <p className="titleIvoice"><strong>
+              {type === 'DEVI' ? 'Devis' : type === 'AVOIR' ? 'Avoir' : 'Facture'} N° {factures.invoiceNumber}
+            </strong></p>
             <p className='datefacture'><strong>Date:</strong> {factures.date}</p>
           </div>
           <div className='infoClient'>

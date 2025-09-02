@@ -18,6 +18,7 @@ import {
   FiEye
 } from 'react-icons/fi';
 import './css/NouvelAchatPage.css';
+import OCRCapture from '../components/OCRCapture';
 
 const NouvelAchatPage = () => {
   const { societe_id, id: user_id } = useAuth();
@@ -46,7 +47,9 @@ const NouvelAchatPage = () => {
   });
 
   const [justificatifs, setJustificatifs] = useState([]);
-  const [ocrData, setOcrData] = useState(null);
+  
+  // États pour OCR (simplifié)
+  const [ocrCaptureOpen, setOcrCaptureOpen] = useState(false);
   const [showNewFournisseur, setShowNewFournisseur] = useState(false);
 
   // Calculs automatiques
@@ -78,42 +81,39 @@ const NouvelAchatPage = () => {
     }
   }, [societe_id]);
 
-  // Gestion OCR
-  const handleOcrUpload = async (file) => {
-    if (!file) return;
+  // Fonction OCR simplifiée - juste ouvrir OCRCapture
+  const handleOcrClick = () => {
+    console.log('🔍 Ouverture de OCRCapture');
+    setOcrCaptureOpen(true);
+  };
 
-    const formData = new FormData();
-    formData.append('document', file);
+  // OCRCapture envoie les données ici, on pré-remplit le formulaire
+  const handleOcrDataExtracted = (ocrData) => {
+    console.log('🎯 Données OCR reçues:', ocrData);
     
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/achats/ocr/extract`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-
-      const ocrResult = response.data;
-      setOcrData(ocrResult);
-
-      // Pré-remplir le formulaire avec les données OCR
-      if (ocrResult.data) {
-        setAchat(prev => ({
-          ...prev,
-          numero_facture: ocrResult.data.numero_facture || '',
-          montant_ht: ocrResult.data.montant_ht || '',
-          montant_ttc: ocrResult.data.montant_ttc || '',
-          taux_tva: ocrResult.data.taux_tva || 20,
-          date_facture: ocrResult.data.date_facture || '',
-          description: ocrResult.data.description || ''
-        }));
-      }
-    } catch (error) {
-      console.error('Erreur OCR:', error);
-      alert('Erreur lors de la lecture OCR du document');
-    } finally {
-      setLoading(false);
+    // Fermer OCRCapture
+    setOcrCaptureOpen(false);
+    
+    if (!ocrData) {
+      console.error('❌ Pas de données OCR');
+      return;
     }
+    
+    // Pré-remplir le formulaire principal avec les données OCR
+    setAchat(prev => ({
+      ...prev,
+      numero_facture: ocrData.numero_facture || '',
+      montant_ht: ocrData.montant_ht || '',
+      montant_ttc: ocrData.montant_ttc || '',
+      montant_tva: ocrData.montant_tva || '',
+      taux_tva: ocrData.tva_taux || 20,
+      date_facture: ocrData.date_frais || '',
+      description: ocrData.description || '',
+      // Ajouter le vendeur si disponible
+      ...(ocrData.vendeur && { vendeur: ocrData.vendeur })
+    }));
+
+    console.log('✅ Formulaire pré-rempli avec OCR');
   };
 
   // Sauvegarde de l'achat
@@ -267,26 +267,22 @@ const NouvelAchatPage = () => {
               Uploadez votre facture, ticket ou reçu pour extraction automatique des données
             </p>
             <div className="flex justify-center gap-4">
-              <label className="bg-purple-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-purple-700 flex items-center gap-2">
+              <button 
+                type="button"
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-purple-700 flex items-center gap-2"
+                onClick={handleOcrClick}
+              >
                 <FiUpload size={16} />
                 Scanner document
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="image/*,application/pdf"
-                  onChange={(e) => handleOcrUpload(e.target.files[0])}
-                />
-              </label>
-              <label className="bg-gray-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-2">
-                <FiFile size={16} />
-                Fichier PDF
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="application/pdf"
-                  onChange={(e) => handleOcrUpload(e.target.files[0])}
-                />
-              </label>
+              </button>
+              <button 
+                type="button"
+                className="bg-gray-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-gray-700 flex items-center gap-2"
+                onClick={handleOcrClick}
+              >
+                <FiFileText size={16} />
+                Analyser facture
+              </button>
             </div>
             {ocrData && (
               <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded-lg">
@@ -645,6 +641,13 @@ const NouvelAchatPage = () => {
           </div>
         </div>
       </form>
+      
+      {/* OCRCapture - simple et direct */}
+      <OCRCapture
+        isOpen={ocrCaptureOpen}
+        onClose={() => setOcrCaptureOpen(false)}
+        onDataExtracted={handleOcrDataExtracted}
+      />
     </div>
   );
 };

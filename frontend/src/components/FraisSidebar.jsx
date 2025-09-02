@@ -121,17 +121,65 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
           return newFormData;
         });
 
-        // Calculer automatiquement HT et TVA si TTC est fourni
-        if (ocrData.montant_ttc) {
-          const ttc = parseFloat(ocrData.montant_ttc.replace(',', '.')) || 0;
-          const tva = ttc * 0.2; // TVA à 20%
-          const ht = ttc - tva;
+        // Utiliser les montants extraits par OCR ou calculer si nécessaire
+        if (ocrData.montant_ttc || ocrData.montant_ht || ocrData.montant_tva) {
+          console.log('💰 Traitement montants OCR:', {
+            ttc: ocrData.montant_ttc,
+            ht: ocrData.montant_ht,
+            tva: ocrData.montant_tva,
+            taux: ocrData.tva_taux
+          });
+
+          const ttc = ocrData.montant_ttc ? parseFloat(ocrData.montant_ttc.replace(',', '.')) : 0;
+          const ht = ocrData.montant_ht ? parseFloat(ocrData.montant_ht.replace(',', '.')) : 0;
+          const tva = ocrData.montant_tva ? parseFloat(ocrData.montant_tva.replace(',', '.')) : 0;
+          const tauxTva = ocrData.tva_taux || 20.0; // Fallback sur 20% si pas détecté
+
+          let finalHT = ht;
+          let finalTVA = tva;
+          let finalTTC = ttc;
+
+          // Si on a les 3 montants de l'OCR, les utiliser directement
+          if (ht > 0 && tva > 0 && ttc > 0) {
+            console.log('✅ Utilisation des montants OCR extraits directement');
+            finalHT = ht;
+            finalTVA = tva;
+            finalTTC = ttc;
+          }
+          // Si on a seulement le TTC, calculer HT et TVA avec le taux détecté
+          else if (ttc > 0 && tauxTva > 0) {
+            const rate = tauxTva / 100;
+            finalHT = ttc / (1 + rate);
+            finalTVA = ttc - finalHT;
+            finalTTC = ttc;
+            console.log(`🧮 Calcul avec TTC ${ttc}€ et taux ${tauxTva}%: HT=${finalHT.toFixed(2)}€, TVA=${finalTVA.toFixed(2)}€`);
+          }
+          // Si on a HT et TVA, calculer TTC
+          else if (ht > 0 && tva > 0) {
+            finalHT = ht;
+            finalTVA = tva;
+            finalTTC = ht + tva;
+            console.log(`🧮 Calcul avec HT ${ht}€ et TVA ${tva}€: TTC=${finalTTC.toFixed(2)}€`);
+          }
+
+          // Afficher les taux de TVA multiples si détectés
+          if (ocrData.tva_multiple && ocrData.tva_multiple.length > 1) {
+            console.log('🏛️ Plusieurs taux de TVA détectés:', ocrData.tva_multiple);
+            // Ici on pourrait ajouter une logique pour gérer plusieurs lignes de TVA
+          }
           
           setFormData(prevData => ({
             ...prevData,
-            montant_ht: ht.toFixed(2).replace('.', ','),
-            montant_tva: tva.toFixed(2).replace('.', ',')
+            montant_ht: finalHT.toFixed(2).replace('.', ','),
+            montant_tva: finalTVA.toFixed(2).replace('.', ','),
+            montant_ttc: finalTTC.toFixed(2).replace('.', ',')
           }));
+
+          console.log('✅ Montants finaux calculés:', {
+            ht: finalHT.toFixed(2),
+            tva: finalTVA.toFixed(2),
+            ttc: finalTTC.toFixed(2)
+          });
         }
 
         // Ajouter l'image OCR comme justificatif principal

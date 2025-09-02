@@ -227,7 +227,8 @@ const FacturationPage = ( ) => {
       statusFilter === 'all' ||
       (statusFilter === 'payée' && invoice.statut === 'payée') ||
       (statusFilter === 'en attente' && invoice.statut === 'en attente') ||
-      (statusFilter === 'En retard' && invoice.statut === 'En retard') 
+      (statusFilter === 'En retard' && invoice.statut === 'En retard') ||
+      (statusFilter === 'avoir' && invoice.type === 'AVOIR') 
       
   
     // Convertir la chaîne de date en objet dayjs
@@ -255,6 +256,8 @@ const FacturationPage = ( ) => {
   const [factures, setFactures] = useState(null);
   const [modalMailVisible, setModalMailVisible] = useState(false);
   const [isInvoice, setIsInvoicee] = useState(false);
+  const [isAvoir, setIsAvoir] = useState(false);
+  const [factureOriginePourAvoir, setFactureOriginePourAvoir] = useState(null); // Pour stocker la facture d'origine
   const [facturePaye, setFacturePaye] = useState(null)
   const [modaleFacturePayeVisible, setModaleFacturePayeVisible] = useState(false)
   const [produits, setProduits] = useState([])
@@ -309,7 +312,61 @@ const FacturationPage = ( ) => {
       setModaleFacturePayeVisible(!modaleFacturePayeVisible)
     
 
-  }
+  };
+
+  // Fonction pour générer un avoir à partir d'une facture
+  const handleGenerateAvoir = (factureRecord) => {
+    console.log('🧾 Génération d\'un avoir pour la facture:', factureRecord);
+    
+    // Récupérer et mapper tous les produits de la facture originale
+    const avoirProduits = factureRecord.produits ? factureRecord.produits.map(product => ({
+      productName: product.nom,
+      quantity: -Math.abs(product.quantite), // Quantité négative pour l'avoir (annulation)
+      price: parseFloat(product.prix), // Prix unitaire reste positif
+      tva: parseFloat(product.tva) + '%' // Même taux de TVA
+    })) : [{ productName: '', quantity: -1, price: 0 }];
+
+    // Pré-remplir les produits de l'avoir avec ceux de la facture
+    setProducts(avoirProduits);
+
+    // Gestion de la taxe secondaire si elle existe sur la facture originale
+    if (factureRecord.taxe_secondaire && parseFloat(factureRecord.taxe_secondaire) > 0) {
+      setUseTaxeSecondaire(true);
+      setEditingTaxeSecondaire({
+        value: factureRecord.taxe_secondaire
+      });
+    } else {
+      setUseTaxeSecondaire(false);
+      setEditingTaxeSecondaire(null);
+    }
+    
+    // Pré-remplir le formulaire avec les données de la facture
+    form.setFieldsValue({
+      client: factureRecord.client_id,
+      date: dayjs(factureRecord.date, 'DD/MM/YYYY'),
+      // Autres champs selon votre structure
+    });
+
+    // Marquer qu'on crée un avoir (pas une facture)
+    setIsAvoir(true);
+    setIsInvoicee(false);
+    setIsEditingFacture(false);
+    
+    // Stocker la facture d'origine pour référence
+    setFactureOriginePourAvoir(factureRecord);
+    
+    console.log('✅ Avoir pré-rempli avec', avoirProduits.length, 'lignes de la facture originale');
+    console.log('📋 Produits copiés avec quantités négatives (pour annulation):', avoirProduits);
+    console.log('💡 Règles métier avoir:');
+    console.log('   - Quantités négatives = annulation de la facture');
+    console.log('   - Avoir partiel: modifier les quantités pour réduction partielle');
+    console.log('   - Avoir total: toutes les quantités négatives = annulation complète');
+    console.log('   - Format numéro: AVOI-2025-XXX');
+    console.log('   - Type: AVOIR au lieu de FACT/DEVI');
+    
+    // Ouvrir la modale de création
+    setModalVisible(true);
+  };
 
   const transformToInvoiceCancel = (record)=>{
     setFacturePaye([])
@@ -543,14 +600,17 @@ const handleModalOk = async () => {
         date: formattedDate, // Utilisez la date formatée ici
         products, // Ajout des produits avec leurs détails
         totalAmount, // Ajout du montant total
-        type: isInvoice ? 'FACT' : 'DEVI',
+        type: isAvoir ? 'AVOIR' : isInvoice ? 'FACT' : 'DEVI',
         totalHT,
         totalTTC,
         totalTVA,
         totalTPS, // Ajout du montant TPS
         taxe_secondaire: taxeSecondaire ? taxeSecondaire.value : null, // Taux de la taxe secondaire
         total_taxe_secondaire: totalTPS, // Montant de la taxe secondaire
-        numero: numeroFacture, 
+        numero: isAvoir ? `AVOI-${dayjs().format('YYYY')}-${String(numeroFacture).padStart(3, '0')}` : numeroFacture,
+        // Ajouter la référence à la facture d'origine pour les avoirs
+        facture_origine_id: isAvoir ? factureOriginePourAvoir?.id : null,
+        facture_origine_numero: isAvoir ? factureOriginePourAvoir?.invoiceNumber : null,
         societe_id, 
         id
       };
@@ -558,12 +618,24 @@ const handleModalOk = async () => {
       // Logique supplémentaire ici, par exemple, envoyer oFacture à une API
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/factures`, oFacture);
       setModalVisible(false);
-      obtenirFactures();
+      setIsAvoir(false); // Remettre isAvoir à false après sauvegarde
+      setFactureOriginePourAvoir(null); // Nettoyer la facture d'origine après sauvegarde
+      
+      // Recharger la liste avec un petit délai pour s'assurer que la DB est mise à jour
+      setTimeout(() => {
+        // Forcer le rechargement sans cache pour les avoirs
+        window.location.reload();
+      }, 1000);
+      
+      // Afficher un message de succès spécifique pour les avoirs
+      if (isAvoir) {
+        console.log('✅ Avoir créé avec succès - statut de la facture originale mis à jour');
+        alert('✅ Avoir créé avec succès ! La facture originale a été mise à jour.');
+      }
     }
   } catch (error) {
     console.error('Erreur dans la validation du formulaire ou l\'envoi de la facture:', error);
   }
-  fetchDataFactures(id);
 };
   function cleanNumber(value) {
     const number = parseFloat(value);
@@ -777,6 +849,8 @@ const handleModalOk = async () => {
 
   const handleModalCancel = () => {
     setModalVisible(false);
+    setIsAvoir(false); // Remettre à false quand on ferme la modale
+    setFactureOriginePourAvoir(null); // Nettoyer la facture d'origine
   };
 
  
@@ -890,9 +964,41 @@ const handleModalOk = async () => {
       },
     },
     { title: 'Client', dataIndex: 'client', key: 'client' },
-    { title: 'Numéro de Facture', dataIndex: 'invoiceNumber', key: 'invoiceNumber' },
+    { 
+      title: 'Numéro', 
+      dataIndex: 'invoiceNumber', 
+      key: 'invoiceNumber',
+      render: (text, record) => (
+        <span style={{
+          color: record.type === 'AVOIR' ? '#d32f2f' : 'inherit',
+          fontWeight: record.type === 'AVOIR' ? 'bold' : 'normal'
+        }}>
+          {text}
+          {record.type === 'AVOIR' && (
+            <div style={{ fontSize: '0.8em', color: '#666', marginTop: '2px' }}>
+              <div>AVOIR</div>
+              {record.facture_origine_numero && (
+                <div>→ {record.facture_origine_numero}</div>
+              )}
+            </div>
+          )}
+        </span>
+      )
+    },
     { title: 'Date', dataIndex: 'date', key: 'date', },
-    { title: 'Montant Total', dataIndex: 'totalAmount', key: 'totalAmount' },
+    { 
+      title: 'Montant Total', 
+      dataIndex: 'totalAmount', 
+      key: 'totalAmount',
+      render: (amount, record) => (
+        <span style={{
+          color: record.type === 'AVOIR' ? '#d32f2f' : 'inherit',
+          fontWeight: record.type === 'AVOIR' ? 'bold' : 'normal'
+        }}>
+          {record.type === 'AVOIR' && amount > 0 ? `-${amount}€` : `${amount}€`}
+        </span>
+      )
+    },
     {
       title: 'Actions',
       key: 'actions',
@@ -918,6 +1024,14 @@ const handleModalOk = async () => {
                 },
               ]
             : []),
+          // Option "Générer un avoir" seulement pour les factures (pas pour les avoirs eux-mêmes)
+          ...(record.type === 'FACT' ? [
+            {
+              key: '4',
+              label: 'Générer un avoir',
+              onClick: () => handleGenerateAvoir(record),
+            }
+          ] : []),
         ];
         
         return (
@@ -992,6 +1106,7 @@ const handleModalOk = async () => {
                               <Option value="payée">Payée</Option>
                               <Option value="en attente">En attente</Option>
                               <Option value="En retard">En retard</Option>
+                              <Option value="avoir">Avoir</Option>
                             </Select>
                           </div>
                           {hasPermission('create_invoices') ? 
@@ -1014,7 +1129,7 @@ const handleModalOk = async () => {
                               dataSource={
                                 filteredInvoices
                                   ? filteredInvoices
-                                      .filter((invoice) => invoice.type === 'FACT')
+                                      .filter((invoice) => invoice.type === 'FACT' || invoice.type === 'AVOIR')
                                       .sort((a, b) => b.id - a.id)
                                   : []
                               }
@@ -1075,7 +1190,9 @@ const handleModalOk = async () => {
               <img src={facture} alt="Facture ou Devis" />
             </div>
             <div>
-              <h1 className='TextTitleModale'>{isInvoice ? 'Votre facture' : 'Votre devis'}</h1>
+              <h1 className='TextTitleModale'>
+                {isAvoir ? 'Votre avoir' : isInvoice ? 'Votre facture' : 'Votre devis'}
+              </h1>
             </div>
           </div>
           <hr className="hr" />
@@ -1085,13 +1202,13 @@ const handleModalOk = async () => {
             <Row gutter={16} className='dateNumFactureModale'>
               <Col span={12}>
                 {!isEditingFacture ? 
-                  <Form.Item label={isInvoice ? 'Numéro de facture' : 'Numéro de devis'}>
+                  <Form.Item label={isAvoir ? 'Numéro de l\'avoir' : isInvoice ? 'Numéro de facture' : 'Numéro de devis'}>
                     <Input value={numeroFacture} disabled />
                   </Form.Item>
                   : 
                   <Form.Item
                     name="invoiceNumber"
-                    label={isInvoice ? 'Numéro de facture' : 'Numéro de devis'}
+                    label={isAvoir ? 'Numéro de l\'avoir' : isInvoice ? 'Numéro de facture' : 'Numéro de devis'}
                     rules={[{ required: true, message: 'Veuillez entrer le numéro' }]}
                   >
                     <Input disabled />
@@ -1376,7 +1493,7 @@ const handleModalOk = async () => {
           }} 
         >
             <div ref={factureRef} className='divModalModeleFacture'>
-              <ModeleFacture factures={factures} parametrage={parametrage}  type={isInvoice ? 'FACT' : 'DEVI'} tvas={tvas}/>
+              <ModeleFacture factures={factures} parametrage={parametrage}  type={isAvoir ? 'AVOIR' : isInvoice ? 'FACT' : 'DEVI'} tvas={tvas}/>
             </div>
         </Modal>
         

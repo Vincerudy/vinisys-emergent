@@ -61,33 +61,198 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
   const parseReceiptData = (text) => {
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     
+    // Utilitaire pour convertir nom de mois en numéro
+    const getMonthNumber = (monthName) => {
+      const months = {
+        'jan': '01', 'janvier': '01',
+        'feb': '02', 'février': '02', 'fev': '02',
+        'mar': '03', 'mars': '03',
+        'apr': '04', 'avril': '04', 'avr': '04',
+        'may': '05', 'mai': '05',
+        'jun': '06', 'juin': '06',
+        'jul': '07', 'juillet': '07',
+        'aug': '08', 'août': '08', 'aout': '08',
+        'sep': '09', 'septembre': '09',
+        'oct': '10', 'octobre': '10',
+        'nov': '11', 'novembre': '11',
+        'dec': '12', 'décembre': '12', 'decembre': '12'
+      };
+      return months[monthName.toLowerCase()];
+    };
+    
     const data = {
       vendeur: '',
       montant_ttc: '',
+      montant_ht: '',
+      montant_tva: '',
       date_frais: '',
       description: '',
       type_frais: 'repas', // Type par défaut pour OCR
-      tva_taux: 20.0,
+      tva_taux: null, // Ne pas forcer un taux par défaut
+      tva_multiple: [], // Pour gérer plusieurs TVA
       moyen_paiement: 'Carte de Crédit Société'
     };
 
-    // Recherche du montant (patterns courants)
-    const montantPatterns = [
-      /(?:total|montant|à payer|ttc|due)\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
-      /(\d+[,.]?\d*)\s*€\s*(?:ttc|total)?/gi,
-      /€\s*(\d+[,.]?\d*)/gi
+    const textLower = text.toLowerCase();
+    console.log('🔍 Analyse OCR du texte:', text.substring(0, 200) + '...');
+
+    // 1. Recherche des montants HT, TVA et TTC spécifiquement
+    const montantHTPatterns = [
+      // Pattern spécifique pour "Total H.T."
+      /total\s+h\.?t\.?\s*:?\s*(\d+\s*\d*)\s*€?/gi,
+      /(?:total\s+)?h[.t]\s*:?\s*(\d+\s*\d*)\s*€?/gi,
+      /(?:sous.?total|base)\s*:?\s*(\d+\s*\d*)\s*€?/gi,
+      /(\d+\s*\d*)\s*€?\s*h[.t]/gi,
+      // Pattern pour montants avec espaces (ex: "5 000€")
+      /h\.?t\.?\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi
     ];
 
-    for (const pattern of montantPatterns) {
+    const montantTVAPatterns = [
+      // Pattern spécifique pour "T.V.A. 20%"
+      /t\.?v\.?a\.?\s*\d+\s*%\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /tva?\s*(?:\d+[,.]?\d*\s*%\s*)?:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /(?:montant\s+)?tva?\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /(\d+(?:\s+\d{3})*)\s*€?\s*tva?/gi
+    ];
+
+    const montantTTCPatterns = [
+      // Pattern spécifique pour "Total TTC à payer"
+      /total\s+ttc\s+à\s+payer\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /(?:total|montant|à\s+payer|net\s+à\s+payer)\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /t[.t]c\s*:?\s*(\d+(?:\s+\d{3})*)\s*€?/gi,
+      /(\d+(?:\s+\d{3})*)\s*€?\s*(?:ttc|total)/gi
+    ];
+
+    // Extraire HT
+    for (const pattern of montantHTPatterns) {
       const matches = [...text.matchAll(pattern)];
       if (matches.length > 0) {
-        const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
-        data.montant_ttc = Math.max(...montants).toString(); // Prendre le plus gros montant
-        break;
+        const montants = matches.map(m => {
+          // Nettoyer le montant (supprimer les espaces dans les nombres)
+          const cleanAmount = m[1].replace(/\s+/g, '').replace(',', '.');
+          return parseFloat(cleanAmount);
+        }).filter(m => !isNaN(m));
+        
+        if (montants.length > 0) {
+          data.montant_ht = Math.max(...montants).toFixed(2);
+          console.log('💰 Montant HT détecté:', data.montant_ht, 'depuis:', matches[0][0]);
+          break;
+        }
       }
     }
 
-    // Recherche de la date
+    // Extraire TVA
+    for (const pattern of montantTVAPatterns) {
+      const matches = [...text.matchAll(pattern)];
+      if (matches.length > 0) {
+        const montants = matches.map(m => {
+          // Nettoyer le montant (supprimer les espaces dans les nombres)
+          const cleanAmount = m[1].replace(/\s+/g, '').replace(',', '.');
+          return parseFloat(cleanAmount);
+        }).filter(m => !isNaN(m));
+        
+        if (montants.length > 0) {
+          data.montant_tva = montants.reduce((sum, m) => sum + m, 0).toFixed(2); // Somme de toutes les TVA
+          console.log('🏛️ Montant TVA détecté:', data.montant_tva, 'depuis:', matches[0][0]);
+          break;
+        }
+      }
+    }
+
+    // Extraire TTC
+    for (const pattern of montantTTCPatterns) {
+      const matches = [...text.matchAll(pattern)];
+      if (matches.length > 0) {
+        const montants = matches.map(m => {
+          // Nettoyer le montant (supprimer les espaces dans les nombres)
+          const cleanAmount = m[1].replace(/\s+/g, '').replace(',', '.');
+          return parseFloat(cleanAmount);
+        }).filter(m => !isNaN(m));
+        
+        if (montants.length > 0) {
+          data.montant_ttc = Math.max(...montants).toFixed(2);
+          console.log('💳 Montant TTC détecté:', data.montant_ttc, 'depuis:', matches[0][0]);
+          break;
+        }
+      }
+    }
+
+    // Si pas de TTC trouvé, utiliser le pattern général comme fallback
+    if (!data.montant_ttc) {
+      const fallbackPatterns = [
+        // Pattern pour montants avec espaces (ex: "6 000€")
+        /(\d+(?:\s+\d{3})*)\s*€/gi,
+        /(\d+[,.]?\d*)\s*€/gi
+      ];
+      
+      for (const pattern of fallbackPatterns) {
+        const matches = [...text.matchAll(pattern)];
+        if (matches.length > 0) {
+          const montants = matches.map(m => {
+            // Nettoyer le montant (supprimer les espaces dans les nombres)
+            const cleanAmount = m[1].replace(/\s+/g, '').replace(',', '.');
+            return parseFloat(cleanAmount);
+          }).filter(m => !isNaN(m));
+          
+          if (montants.length > 0) {
+            data.montant_ttc = Math.max(...montants).toFixed(2);
+            console.log('🔄 Montant TTC fallback:', data.montant_ttc);
+            break;
+          }
+        }
+      }
+    }
+
+    // 2. Détecter les taux de TVA
+    const tvaRatePatterns = [
+      /tva?\s*(\d+[,.]?\d*)\s*%/gi,
+      /(\d+[,.]?\d*)\s*%\s*tva?/gi,
+      /taux.*?(\d+[,.]?\d*)\s*%/gi
+    ];
+
+    const detectedRates = [];
+    for (const pattern of tvaRatePatterns) {
+      const matches = [...text.matchAll(pattern)];
+      for (const match of matches) {
+        const rate = parseFloat(match[1].replace(',', '.'));
+        if (rate > 0 && rate <= 30) { // Taux de TVA raisonnables
+          detectedRates.push(rate);
+        }
+      }
+    }
+
+    if (detectedRates.length > 0) {
+      data.tva_multiple = [...new Set(detectedRates)]; // Supprimer les doublons
+      data.tva_taux = detectedRates[0]; // Prendre le premier taux trouvé
+      console.log('📊 Taux TVA détectés:', data.tva_multiple);
+    }
+
+    // 3. Calculer les montants manquants si possible
+    const ht = data.montant_ht ? parseFloat(data.montant_ht) : null;
+    const tva = data.montant_tva ? parseFloat(data.montant_tva) : null;
+    const ttc = data.montant_ttc ? parseFloat(data.montant_ttc) : null;
+
+    // Si on a HT et TVA mais pas TTC
+    if (ht && tva && !ttc) {
+      data.montant_ttc = (ht + tva).toFixed(2);
+      console.log('🧮 TTC calculé: HT + TVA =', data.montant_ttc);
+    }
+    // Si on a TTC et TVA mais pas HT
+    else if (ttc && tva && !ht) {
+      data.montant_ht = (ttc - tva).toFixed(2);
+      console.log('🧮 HT calculé: TTC - TVA =', data.montant_ht);
+    }
+    // Si on a TTC et taux TVA mais pas les montants HT/TVA
+    else if (ttc && data.tva_taux && !ht && !tva) {
+      const rate = data.tva_taux / 100;
+      const calculatedHT = ttc / (1 + rate);
+      const calculatedTVA = ttc - calculatedHT;
+      data.montant_ht = calculatedHT.toFixed(2);
+      data.montant_tva = calculatedTVA.toFixed(2);
+      console.log('🧮 HT/TVA calculés avec taux:', data.montant_ht, '/', data.montant_tva);
+    }
+
+    // 4. Recherche de la date
     const datePatterns = [
       /(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/g,
       /(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(\d{2,4})/gi
@@ -114,7 +279,7 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
       }
     }
 
-    // Recherche du vendeur (première ligne souvent)
+    // 5. Recherche du vendeur (première ligne souvent)
     if (lines.length > 0) {
       // Prendre les premières lignes qui ne sont pas des numéros ou dates
       for (const line of lines.slice(0, 5)) {
@@ -125,8 +290,7 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
       }
     }
 
-    // Détection intelligente du type de frais basée sur le contenu
-    const textLower = text.toLowerCase();
+    // 6. Détection intelligente du type de frais basée sur le contenu
     if (textLower.includes('restaurant') || textLower.includes('café') || textLower.includes('bar') || 
         textLower.includes('brasserie') || textLower.includes('pizzeria') || textLower.includes('fast') ||
         textLower.includes('mcdonald') || textLower.includes('kfc') || textLower.includes('burger')) {
@@ -146,27 +310,10 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     }
 
     console.log('🔍 Type de frais détecté automatiquement:', data.type_frais);
+    console.log('✅ Données OCR finales extraites:', data);
     return data;
   };
 
-  // Utilitaire pour convertir nom de mois en numéro
-  const getMonthNumber = (monthName) => {
-    const months = {
-      'jan': '01', 'janvier': '01',
-      'feb': '02', 'février': '02', 'fev': '02',
-      'mar': '03', 'mars': '03',
-      'apr': '04', 'avril': '04', 'avr': '04',
-      'may': '05', 'mai': '05',
-      'jun': '06', 'juin': '06',
-      'jul': '07', 'juillet': '07',
-      'aug': '08', 'août': '08', 'aout': '08',
-      'sep': '09', 'septembre': '09',
-      'oct': '10', 'octobre': '10',
-      'nov': '11', 'novembre': '11',
-      'dec': '12', 'décembre': '12', 'decembre': '12'
-    };
-    return months[monthName.toLowerCase()];
-  };
 
   // Gérer l'upload de fichier
   const handleFileUpload = (event) => {

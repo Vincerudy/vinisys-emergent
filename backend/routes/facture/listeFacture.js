@@ -29,6 +29,8 @@ router.get('/listeFacture/:id', async (req, res) => {
             fac.type_fact AS type,
             fac.taxe_secondaire,
             fac.total_taxe_secondaire,
+            fac.facture_origine_id,
+            fac.facture_origine_numero,
             soci.companyName AS vendeur_nom,
             soci.companyAddress AS vendeur_adresse,
             soci.code_postal AS vendeur_code_postal,
@@ -51,6 +53,7 @@ router.get('/listeFacture/:id', async (req, res) => {
                     CASE 
                         WHEN COUNT(*) > 0 THEN 'payée'
                         WHEN fac.type_fact = 'DEVI' THEN fac.statut
+                        WHEN fac.statut = 'annulée' THEN 'annulée'  -- NOUVEAU: Préserver le statut annulée
                         WHEN DATEDIFF(CURDATE(), fac.date_facture) > (MAX(spf.paymentDelay) - 1) THEN 'En retard'
                         ELSE 'en attente'
                     END
@@ -133,6 +136,8 @@ router.get('/listeFacture/:id', async (req, res) => {
             client_ville: fac.client_ville,
             client_code_postal: fac.client_code_postal,
             client_phone: fac.client_phone,
+            facture_origine_id: fac.facture_origine_id,
+            facture_origine_numero: fac.facture_origine_numero,
             produits: produitsParFacture[fac.factureId] || []
         }));
 
