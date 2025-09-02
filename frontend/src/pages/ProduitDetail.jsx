@@ -470,7 +470,7 @@ const ProduitDetail = () => {
                 >
                   {tvaOptions.map(({ label, value }) => (
                     <Option key={value} value={value}>
-                      TVA {value}% ({label})
+                      {label} ({value}%)
                     </Option>
                   ))}
                 </Select>
