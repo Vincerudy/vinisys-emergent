@@ -137,9 +137,14 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     formData.append('societe_id', societe_id);
     formData.append('saisie_ocr', mode === 'ocr');
 
-    // Ajout des justificatifs (fichiers attachés + justificatifs normaux)
+    // Ajout des justificatifs (fichiers attachés + nouveaux fichiers téléchargés)
     attachedFiles.forEach((file, index) => {
       formData.append('justificatifs', file);
+    });
+
+    // Ajout des nouveaux fichiers téléchargés
+    uploadedFiles.forEach((fileObj, index) => {
+      formData.append('justificatifs', fileObj.file);
     });
 
     try {
