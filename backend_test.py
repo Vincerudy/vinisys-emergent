@@ -63,7 +63,6 @@ TEST_PASSWORD = "Cinema12"  # Password as specified in request
 AUTH_TOKEN = None  # Will be set after login
 USER_DATA = None  # Will be set after login
 SOCIETE_ID = 2  # Societe ID to use for testing as specified in request
-NOTE_FRAIS_ID = 69  # Note ID specified in request
 
 def print_test_header(test_name):
     """Print formatted test header"""
