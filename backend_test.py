@@ -485,9 +485,9 @@ def test_database_verification():
         return False
 
 def main():
-    """Main test execution for Types de Frais et Barèmes Kilométriques APIs"""
-    print("🚀 Starting Backend API Tests for Types de Frais et Barèmes Kilométriques")
-    print("📊 Testing: Types de frais and barèmes kilométriques management APIs")
+    """Main test execution for ListeAchatsPage Corrections and Justificatifs"""
+    print("🚀 Starting Backend API Tests for ListeAchatsPage Corrections and Justificatifs")
+    print("📊 Testing: Justificatifs endpoint, achats list, and sidebar modes functionality")
     print(f"Backend URL: {BASE_URL}")
     print(f"API Base URL: {API_BASE}")
     print(f"Test Email: {TEST_EMAIL}")
@@ -513,23 +513,27 @@ def main():
         print("\n❌ Authentication failed. Cannot proceed with protected endpoint tests.")
         return False
     
-    # Test 2: GET types-frais/manage
-    types_manage_success, types_manage_data, system_types, personalized_types, custom_types = test_get_types_frais_manage()
-    test_results.append(("GET Types Frais Manage", types_manage_success))
+    # Test 2: GET /api/achat/:id/justificatifs - New justificatifs endpoint
+    justificatifs_success, justificatifs_data, justificatif_sample = test_justificatifs_endpoint()
+    test_results.append(("GET Justificatifs Endpoint", justificatifs_success))
     
-    # Test 3: GET types-frais/societe (alternative endpoint)
-    types_societe_success, types_societe_data = test_get_types_frais_societe()
-    test_results.append(("GET Types Frais Societe", types_societe_success))
+    # Test 3: GET /api/achats/:societeId - Achats list for button functionality
+    achats_list_success, achats_data, achat_sample = test_achat_list_endpoint()
+    test_results.append(("GET Achats List", achats_list_success))
     
-    # Test 4: GET barèmes-kilométriques/societe
+    # Test 4: AchatSidebar modes functionality
+    sidebar_modes_success, sidebar_achat, sidebar_achat_id = test_achat_sidebar_modes()
+    test_results.append(("AchatSidebar Modes", sidebar_modes_success))
+    
+    # Test 5: GET barèmes-kilométriques/societe
     baremes_success, baremes_data, system_baremes, personalized_baremes, custom_baremes = test_get_baremes_kilometriques()
-    test_results.append(("GET Barèmes Kilométriques Societe", baremes_success))
+    test_results.append(("GET Barèmes Kilométriques", baremes_success))
     
-    # Test 5: GET barèmes-kilométriques/manage (alternative endpoint)
+    # Test 6: GET barèmes-kilométriques/manage (alternative endpoint)
     baremes_manage_success, baremes_manage_data = test_get_baremes_kilometriques_manage()
-    test_results.append(("GET Barèmes Kilométriques Manage", baremes_manage_success))
+    test_results.append(("GET Barèmes Manage", baremes_manage_success))
     
-    # Test 6: Database verification
+    # Test 7: Database verification
     db_success = test_database_verification()
     test_results.append(("Database Verification", db_success))
     
