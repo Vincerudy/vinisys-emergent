@@ -346,30 +346,32 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
                 Justificatifs
               </h3>
               
-              {/* Upload Area */}
-              <div
-                className={`upload-area ${isDragOver ? 'drag-over' : ''}`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={() => document.getElementById('file-input').click()}
-              >
-                <FiUpload size={32} className="mx-auto mb-3 text-gray-400" />
-                <p className="text-gray-600 mb-2">
-                  Cliquez ou glissez-déposez vos fichiers ici
-                </p>
-                <p className="text-sm text-gray-500">
-                  PDF, Images (max 10MB)
-                </p>
-                <input
-                  id="file-input"
-                  type="file"
-                  multiple
-                  accept=".pdf,.jpg,.jpeg,.png,.gif"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </div>
+              {/* Upload Area - Masquée si des fichiers sont présents */}
+              {uploadedFiles.length === 0 && (
+                <div
+                  className={`upload-area ${isDragOver ? 'drag-over' : ''}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('file-input').click()}
+                >
+                  <FiUpload size={32} className="mx-auto mb-3 text-gray-400" />
+                  <p className="text-gray-600 mb-2">
+                    Cliquez ou glissez-déposez vos fichiers ici
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    PDF, Images (max 10MB)
+                  </p>
+                  <input
+                    id="file-input"
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png,.gif"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </div>
+              )}
 
               {/* File List */}
               {uploadedFiles.length > 0 && (
