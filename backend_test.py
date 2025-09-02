@@ -301,8 +301,8 @@ def test_achat_endpoint_multiple_files():
         return False, None, None
 
 def test_achat_list_endpoint():
-    """Test 3: GET /api/achats/:societeId - Test achats list for button functionality"""
-    print_test_header("GET /api/achats/:societeId - Achats List Test")
+    """Test 3: GET /api/achats/:societeId - Test achats list for corrected button functionality"""
+    print_test_header("GET /api/achats/:societeId - Achats List for Button Handlers Test")
     try:
         headers = get_auth_headers()
         
@@ -328,17 +328,29 @@ def test_achat_list_endpoint():
                         break
                 
                 if achat_11:
-                    print(f"  ✅ Achat ID 11 found in list")
+                    print(f"  ✅ Achat ID 11 found in list - BUTTON HANDLERS CAN ACCESS DATA")
                     print(f"  ✅ Description: {achat_11.get('description', 'N/A')}")
                     print(f"  ✅ Fournisseur: {achat_11.get('fournisseur_nom_table', 'N/A')}")
                     print(f"  ✅ Montant TTC: {achat_11.get('montant_ttc', 'N/A')}€")
                     print(f"  ✅ Statut: {achat_11.get('statut', 'N/A')}")
+                    
+                    # Test data mapping fields that were corrected
+                    mapping_fields = ['numero', 'fournisseur_id', 'date_achat', 'montant_ht', 'taux_tva', 'tva_deductible']
+                    print(f"  🔍 Testing mapApiDataToForm fields:")
+                    for field in mapping_fields:
+                        if field in achat_11:
+                            print(f"    ✅ {field}: {achat_11.get(field)}")
+                        else:
+                            print(f"    ⚠️ {field}: Missing")
+                    
                     return True, data, achat_11
                 else:
                     print(f"  ⚠️ Achat ID 11 not found in list")
                     # Return first achat for testing if available
                     if len(achats) > 0:
-                        return True, data, achats[0]
+                        first_achat = achats[0]
+                        print(f"  ✅ Using first achat ID {first_achat.get('id')} for testing")
+                        return True, data, first_achat
                     else:
                         return True, data, None
             else:
