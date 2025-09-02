@@ -44,7 +44,7 @@ router.post('/reject-bulk', async (req, res) => {
         const placeholders = achat_ids.map(() => '?').join(',');
         const query = `
             UPDATE achats 
-            SET statut = 'refuse', date_refus = NOW()
+            SET statut = 'refuse'
             WHERE id IN (${placeholders}) AND societe_id = ?
         `;
 
