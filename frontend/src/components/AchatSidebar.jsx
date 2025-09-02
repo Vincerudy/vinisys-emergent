@@ -310,6 +310,20 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     }
   };
 
+  // useEffect pour gérer la conversion des images en PDF
+  useEffect(() => {
+    if (selectedFile && selectedFile.type.includes('image') && !convertedPdfUrls[selectedFile.id] && !convertingFiles[selectedFile.id]) {
+      const convertImage = async () => {
+        setConvertingFiles(prev => ({ ...prev, [selectedFile.id]: true }));
+        const convertedPdfUrl = await convertImageToPdf(selectedFile);
+        setConvertedPdfUrls(prev => ({ ...prev, [selectedFile.id]: convertedPdfUrl }));
+        setConvertingFiles(prev => ({ ...prev, [selectedFile.id]: false }));
+      };
+      
+      convertImage();
+    }
+  }, [selectedFile]);
+
   const renderFileViewer = () => {
     if (!selectedFile) {
       return (
@@ -351,24 +365,10 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     }
 
     if (selectedFile.type.includes('image')) {
-      // Pour les images, on les convertit en PDF et on affiche le PDF
-      const [pdfUrl, setPdfUrl] = useState(null);
-      const [converting, setConverting] = useState(false);
+      const isConverting = convertingFiles[selectedFile.id];
+      const pdfUrl = convertedPdfUrls[selectedFile.id];
 
-      useEffect(() => {
-        const convertImage = async () => {
-          setConverting(true);
-          const convertedPdfUrl = await convertImageToPdf(selectedFile);
-          setPdfUrl(convertedPdfUrl);
-          setConverting(false);
-        };
-        
-        if (!pdfUrl && selectedFile.type.includes('image')) {
-          convertImage();
-        }
-      }, [selectedFile.id]);
-
-      if (converting) {
+      if (isConverting) {
         return (
           <div className="file-viewer">
             <div className="flex items-center justify-between mb-2">
