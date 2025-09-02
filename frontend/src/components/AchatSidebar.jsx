@@ -145,13 +145,10 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
   // Fonction pour charger les justificatifs existants
   const loadExistingJustificatifs = async (achatId) => {
     try {
-      console.log('🔍 Loading justificatifs for achat ID:', achatId);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/achat/${achatId}/justificatifs`);
-      console.log('🔍 Response status:', response.status);
       
       if (response.ok) {
         const justificatifs = await response.json();
-        console.log('🔍 Justificatifs received:', justificatifs);
         
         const existingFiles = justificatifs.map(j => {
           // Construire l'URL correcte en utilisant le chemin relatif
@@ -170,15 +167,11 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
           };
         });
         
-        console.log('🔍 Mapped files:', existingFiles);
         setUploadedFiles(existingFiles);
         
         if (existingFiles.length > 0) {
           setSelectedFile(existingFiles[0]);
-          console.log('🔍 Selected file set:', existingFiles[0]);
         }
-      } else {
-        console.log('🔍 Response not OK:', response.status);
       }
     } catch (error) {
       console.error('❌ Erreur chargement justificatifs:', error);
