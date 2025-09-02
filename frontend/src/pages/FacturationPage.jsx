@@ -596,7 +596,7 @@ const handleModalOk = async () => {
         totalTPS, // Ajout du montant TPS
         taxe_secondaire: taxeSecondaire ? taxeSecondaire.value : null, // Taux de la taxe secondaire
         total_taxe_secondaire: totalTPS, // Montant de la taxe secondaire
-        numero: isAvoir ? `AV-${dayjs().format('YYYY')}-${String(numeroFacture).padStart(3, '0')}` : numeroFacture, 
+        numero: isAvoir ? `AVOI-${dayjs().format('YYYY')}-${String(numeroFacture).padStart(3, '0')}` : numeroFacture, 
         societe_id, 
         id
       };
