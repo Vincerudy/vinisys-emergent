@@ -152,6 +152,25 @@ const ProduitDetail = () => {
     chargerSousCategories();
   }, [editedProduit?.categorieId, API_URL, societe_id]);
 
+  // Charger les options de TVA
+  useEffect(() => {
+    const fetchTvaOptions = async () => {
+      try {
+        const response = await fetch(`${API_URL}/tva/active/${societe_id}`);
+        if (response.ok) {
+          const tvaData = await response.json();
+          setTvaOptions(tvaData);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des TVA:', error);
+      }
+    };
+
+    if (societe_id) {
+      fetchTvaOptions();
+    }
+  }, [API_URL, societe_id]);
+
   const handleRetour = () => navigate(-1);
 
   const handleEdit = () => setIsEditing(true);
