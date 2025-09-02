@@ -18,7 +18,10 @@ router.post('/factures', async (req, res) => {
     total_taxe_secondaire,
     entryMode,
     numero,
-    societe_id
+    societe_id,
+    // Nouveaux champs pour les avoirs
+    facture_origine_id,
+    facture_origine_numero
   } = req.body;
 
   // Validation des données
