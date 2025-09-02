@@ -316,11 +316,32 @@ const FacturationPage = ( ) => {
   const handleGenerateAvoir = (factureRecord) => {
     console.log('🧾 Génération d\'un avoir pour la facture:', factureRecord);
     
+    // Récupérer et mapper tous les produits de la facture originale
+    const avoirProduits = factureRecord.produits ? factureRecord.produits.map(product => ({
+      productName: product.nom,
+      quantity: product.quantite, // Même quantité, mais l'utilisateur peut modifier
+      price: parseFloat(product.prix), // Même prix unitaire
+      tva: parseFloat(product.tva) + '%' // Même taux de TVA
+    })) : [{ productName: '', quantity: 1, price: 0 }];
+
+    // Pré-remplir les produits de l'avoir avec ceux de la facture
+    setProducts(avoirProduits);
+
+    // Gestion de la taxe secondaire si elle existe sur la facture originale
+    if (factureRecord.taxe_secondaire && parseFloat(factureRecord.taxe_secondaire) > 0) {
+      setUseTaxeSecondaire(true);
+      setEditingTaxeSecondaire({
+        value: factureRecord.taxe_secondaire
+      });
+    } else {
+      setUseTaxeSecondaire(false);
+      setEditingTaxeSecondaire(null);
+    }
+    
     // Pré-remplir le formulaire avec les données de la facture
     form.setFieldsValue({
-      client: factureRecord.client,
+      client: factureRecord.client_id,
       date: dayjs(factureRecord.date, 'DD/MM/YYYY'),
-      totalAmount: factureRecord.totalAmount,
       // Autres champs selon votre structure
     });
 
@@ -329,9 +350,12 @@ const FacturationPage = ( ) => {
     setIsInvoicee(false);
     setIsEditingFacture(false);
     
+    console.log('✅ Avoir pré-rempli avec', avoirProduits.length, 'lignes de la facture originale');
+    console.log('📋 Produits copiés:', avoirProduits);
+    
     // Ouvrir la modale de création
     setModalVisible(true);
-  }
+  };
 
   const transformToInvoiceCancel = (record)=>{
     setFacturePaye([])
