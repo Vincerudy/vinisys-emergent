@@ -1,47 +1,70 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Fonctionnalité "Générer un avoir"
+Backend API Testing Script for Vinisys Application - Test Sauvegarde Complète des Avoirs
 
-Tests de la fonctionnalité "Générer un avoir" dans le module de facturation.
+Tests de la sauvegarde complète des avoirs et la logique de mise à jour du statut des factures.
 
-**FONCTIONNALITÉ IMPLÉMENTÉE :**
-J'ai ajouté la possibilité de générer des avoirs depuis la page des factures (`/facturation/factures`) :
+**PROBLÈME RÉSOLU :**
+1. ✅ **Champ `type_fact` élargi** : `VARCHAR(4)` → `VARCHAR(10)` pour permettre "AVOIR"
+2. ✅ **Colonnes ajoutées** : `facture_origine_id`, `facture_origine_numero` pour traçabilité
+3. ✅ **Logique métier implémentée** dans `/backend/routes/facture/insertFacture.js`
 
-1. **Option ajoutée au menu "Plus"** :
-   - Nouvelle option "Générer un avoir" dans le dropdown de chaque ligne de facture
-   - S'ajoute aux options existantes (Marquer comme payé, etc.)
+**LOGIQUE MÉTIER COMPLÈTE :**
 
-2. **Fonction `handleGenerateAvoir`** :
-   - Pré-remplit le formulaire avec les données de la facture originale
-   - Définit `isAvoir = true` pour différencier d'une facture normale
-   - Ouvre la modale de création
+## 1. **Sauvegarde Avoir**
+- ✅ Statut initial: "brouillon" (au lieu de "en attente")
+- ✅ Type: "AVOIR" (sauvegardé correctement)
+- ✅ Numéro: "AVOI-2025-XXX"
+- ✅ Quantités négatives pour annulation
+- ✅ Traçabilité: `facture_origine_id` et `facture_origine_numero`
 
-3. **Modifications de l'interface** :
-   - **Titre modifié** : "Votre avoir" au lieu de "Votre facture" quand `isAvoir = true`
-   - **Type de document** : 'AVOIR' au lieu de 'FACT' ou 'DEVI'
-   - **Numéro formaté** : Format "AV-2025-001" au lieu du numéro de facture normal
+## 2. **Mise à Jour Automatique du Statut Facture Originale**
+```javascript
+// Calcul du solde restant
+soldeRestant = montantFactureOriginale - totalAvoirsAppliques
 
-4. **Logique de sauvegarde** :
-   - Le type 'AVOIR' est envoyé dans l'objet `oFacture`
-   - Le numéro est formaté avec `AV-${année}-${numéro sur 3 chiffres}`
-   - Même endpoint `/factures` utilisé (pas de nouvel endpoint créé)
+if (soldeRestant ≈ 0) {
+  → statut = "annulée" (facture complètement annulée)
+} else if (soldeRestant > 0) {
+  → statut = "en attente" (facture partiellement réduite)
+}
+```
+
+## 3. **Logs Détaillés**
+- 💰 Montant facture originale
+- 📋 Avoirs existants sur cette facture  
+- 🧾 Montant avoir actuel
+- 📊 Total avoirs appliqués
+- 💯 Solde restant calculé
+- ✅ Nouveau statut appliqué
 
 **TESTS À EFFECTUER :**
 1. ✅ Connexion avec `idnovation2014@gmail.com` / `Cinema12`
 2. Accéder à `/facturation/factures`
-3. Vérifier la présence du bouton "Plus" sur les lignes de factures
-4. Tester l'option "Générer un avoir" dans le menu déroulant
-5. Vérifier l'ouverture de la modale avec le titre "Votre avoir"
-6. Confirmer le pré-remplissage avec les données de la facture originale
-7. Tester la sauvegarde avec le type 'AVOIR' et le numéro formaté "AV-2025-XXX"
+3. **TEST AVOIR PARTIEL** :
+   - Générer avoir avec quantités réduites (ex: -1 au lieu de -5)
+   - Vérifier sauvegarde réussie
+   - Vérifier que facture originale passe à "en attente" 
+   - Vérifier solde restant > 0
 
-**ENDPOINTS À VALIDER :**
-- POST /api/login (connexion)
-- GET /api/listeFacture/{societe_id} (liste des factures)
-- POST /api/factures (création d'avoir - même endpoint, nouveau type)
+4. **TEST AVOIR TOTAL** :
+   - Générer avoir avec toutes les quantités négatives complètes
+   - Vérifier sauvegarde réussie
+   - Vérifier que facture originale passe à "annulée"
+   - Vérifier solde = 0
 
-**OBJECTIF :** 
-Confirmer que l'utilisateur peut générer un avoir depuis n'importe quelle facture, avec le bon titre, le bon type, et le bon format de numéro, en utilisant l'endpoint existant sans créer de nouvelle route.
+5. **TEST TRAÇABILITÉ** :
+   - Vérifier `facture_origine_id` et `facture_origine_numero` dans BDD
+   - Vérifier logs détaillés des calculs
+
+**ENDPOINTS MODIFIÉS :**
+- POST /api/factures (avec nouveaux champs et logique métier)
+- Base de données : colonnes ajoutées, type_fact élargi
+
+**OBJECTIF :**
+Confirmer que la sauvegarde fonctionne et que la logique métier met automatiquement à jour le statut de la facture originale selon les règles :
+- Avoir partiel → facture "en attente" avec solde réduit
+- Avoir total → facture "annulée" avec solde = 0
 """
 
 import requests
