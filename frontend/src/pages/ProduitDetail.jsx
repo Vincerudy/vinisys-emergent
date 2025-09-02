@@ -40,6 +40,7 @@ const ProduitDetail = () => {
   const [lastChangedField, setLastChangedField] = useState(null); // Pour savoir quel champ a été modifié en dernier (HT ou TTC)
   const [categoriesStock, setCategoriesStock] = useState([]);
   const [sousCategoriesStock, setSousCategoriesStock] = useState([]);
+  const [tvaOptions, setTvaOptions] = useState([]);
 
   const isNew = !id;
   const API_URL = import.meta.env.VITE_API_URL;
