@@ -258,6 +258,58 @@ def test_achat_endpoint_multiple_files():
         print_test_result(False, f"POST /api/achat multiple files test failed - {str(e)}")
         return False, None, None
 
+def test_achat_list_endpoint():
+    """Test 3: GET /api/achats/:societeId - Test achats list for button functionality"""
+    print_test_header("GET /api/achats/:societeId - Achats List Test")
+    try:
+        headers = get_auth_headers()
+        
+        response = requests.get(
+            f"{API_BASE}/achats/{SOCIETE_ID}",
+            headers=headers,
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Verify response structure
+            if 'achats' in data and isinstance(data['achats'], list):
+                achats = data['achats']
+                print_test_result(True, f"GET /api/achats/{SOCIETE_ID} successful - {len(achats)} achats found", response)
+                
+                # Check if achat ID 11 exists in the list
+                achat_11 = None
+                for achat in achats:
+                    if achat.get('id') == 11:
+                        achat_11 = achat
+                        break
+                
+                if achat_11:
+                    print(f"  ✅ Achat ID 11 found in list")
+                    print(f"  ✅ Description: {achat_11.get('description', 'N/A')}")
+                    print(f"  ✅ Fournisseur: {achat_11.get('fournisseur_nom_table', 'N/A')}")
+                    print(f"  ✅ Montant TTC: {achat_11.get('montant_ttc', 'N/A')}€")
+                    print(f"  ✅ Statut: {achat_11.get('statut', 'N/A')}")
+                    return True, data, achat_11
+                else:
+                    print(f"  ⚠️ Achat ID 11 not found in list")
+                    # Return first achat for testing if available
+                    if len(achats) > 0:
+                        return True, data, achats[0]
+                    else:
+                        return True, data, None
+            else:
+                print_test_result(False, f"Response missing 'achats' field or not a list", response)
+                return False, None, None
+        else:
+            print_test_result(False, f"GET achats list failed - HTTP {response.status_code}", response)
+            return False, None, None
+            
+    except Exception as e:
+        print_test_result(False, f"GET achats list test failed - {str(e)}")
+        return False, None, None
+
 def test_get_baremes_kilometriques():
     """Test 4: GET /api/baremes-kilometriques/societe/:societeId - Barèmes kilométriques pour société"""
     print_test_header("GET Barèmes Kilométriques Societe API Test")
