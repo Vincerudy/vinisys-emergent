@@ -1,44 +1,81 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Corrections ListeAchatsPage et Justificatifs
+Backend API Testing Script for Vinisys Application - Test Corrections AchatSidebar et Justificatifs
 
-Tests des corrections apportées à la liste des dépenses (ListeAchatsPage.jsx) et l'affichage des justificatifs.
+Tests des corrections critiques apportées à la sidebar de dépenses qui n'affichait aucune donnée ni justificatifs.
 
-**PROBLÈMES CORRIGÉS TESTÉS :**
+**PROBLÈME CRITIQUE IDENTIFIÉ ET CORRIGÉ :**
 
-1. **Boutons non fonctionnels dans la liste des dépenses :**
-   - **Problème** : Les boutons œil (FiEye) et crayon (FiEdit) dans la liste des achats n'avaient pas de handlers onClick
-   - **Solution** : Ajout des handlers `handleViewAchat`, `handleEditAchat`, et `handleDeleteAchat`
-   - **Modes ajoutés** : 'view' (lecture seule) et 'edit' (édition) en plus du mode 'manuel'
+1. **Problème principal** : Conflit dans la gestion de la prop `mode` dans AchatSidebar.jsx
+   - **Avant** : `mode: initialMode = 'manuel'` + `useState(initialMode)` → écrasait la prop
+   - **Après** : `mode = 'manuel'` directement utilisé comme prop
 
-2. **Récupération et affichage des justificatifs existants :**
-   - **Problème** : Les fichiers uploadés lors de la création n'étaient pas récupérés lors de l'édition/visualisation
-   - **Solution** : Création d'un nouvel endpoint `/api/achat/:id/justificatifs` et fonction `loadExistingJustificatifs()`
-   - **Endpoint** : `GET /api/achat/:id/justificatifs` dans `/backend/routes/achats/justificatifsAchat.js`
+2. **Mapping des données API → Formulaire :**
+   - **Problème** : Les champs API ne correspondaient pas aux champs du formulaire
+   - **Solution** : Fonction `mapApiDataToForm()` pour convertir les données
+   - **Mapping** : `numero` → `numero_facture`, formatage dates, conversion booléens, etc.
 
-3. **Intégration dans AchatSidebar :**
-   - **Modes supportés** : 'manuel', 'ocr', 'view', 'edit'
-   - **Chargement automatique** : Les justificatifs existants sont chargés automatiquement en mode edit/view
-   - **Visionneuse** : Les fichiers existants s'affichent dans la visionneuse PDF avec conversion automatique
+3. **Debug et logs ajoutés :**
+   - Logs dans `useEffect` pour tracer les données reçues
+   - Logs dans `loadExistingJustificatifs` pour tracer le chargement des fichiers
+   - Vérification du mode et de l'ID pour le chargement des justificatifs
+
+**CORRECTIONS APPORTÉES :**
+
+1. **Prop mode corrigée** :
+   ```jsx
+   // AVANT (incorrect)
+   const AchatSidebar = ({ mode: initialMode = 'manuel' }) => {
+     const [mode, setMode] = useState(initialMode);
+
+   // APRÈS (correct)  
+   const AchatSidebar = ({ mode = 'manuel' }) => {
+   ```
+
+2. **Fonction de mapping ajoutée** :
+   ```jsx
+   const mapApiDataToForm = (apiData) => {
+     return {
+       numero_facture: apiData.numero || '',
+       fournisseur_id: apiData.fournisseur_id || '',
+       date_achat: apiData.date_achat ? apiData.date_achat.split('T')[0] : '',
+       montant_ht: apiData.montant_ht || '',
+       taux_tva: parseFloat(apiData.taux_tva) || 20,
+       tva_deductible: apiData.tva_deductible === '1' || apiData.tva_deductible === 1,
+       categorie_achat_id: apiData.categorie_achat_id || apiData.categorie_id || '',
+       description: apiData.description || '',
+       mode_paiement: apiData.mode_paiement || 'virement',
+       id: apiData.id
+     };
+   };
+   ```
 
 **TESTS À EFFECTUER :**
 
-1. **Test de l'endpoint justificatifs :**
-   - **URL** : `GET /api/achat/11/justificatifs`
-   - **Réponse** : JSON avec id, justificatif_path, nom_fichier, type_fichier, date_creation
-   - **Statut** : ✅ Fonctionnel (testé avec l'achat ID 11)
+1. **Test de l'API des achats :**
+   - `GET /api/achats/2` → Vérifier que les achats sont listés
+   - Valider la structure des données (id, numero, montant_ht, fournisseur_id, etc.)
+   - Confirmer que l'achat ID 11 a un justificatif_path
 
-2. **Test de l'intégration frontend :**
-   - Handlers ajoutés aux boutons de la liste
-   - Modes 'view' et 'edit' implémentés
-   - Chargement automatique des justificatifs existants
+2. **Test de l'endpoint justificatifs :**
+   - `GET /api/achat/11/justificatifs` → Doit retourner le justificatif
+   - Vérifier la structure de la réponse (id, justificatif_path, nom_fichier, type_fichier)
 
-3. **Test de persistance :**
-   - Les fichiers uploadés sont stockés dans `achats.justificatif_path`
-   - L'endpoint récupère correctement les fichiers avec le bon type MIME
-   - Support PDF et images avec conversion automatique
+3. **Test du mapping des données :**
+   - Vérifier que la fonction `mapApiDataToForm` convertit correctement les données API
+   - Tester avec les données d'achat réelles de la base
 
-Société ID utilisée : 2. L'achat ID 11 contient un justificatif de test pour les validations.
+4. **Test de fonctionnement complet :**
+   - Cliquer sur l'œil → Sidebar s'ouvre en mode 'view' avec données pré-remplies
+   - Cliquer sur le crayon → Sidebar s'ouvre en mode 'edit' avec données pré-remplies
+   - Vérifier que les justificatifs se chargent automatiquement
+
+**Données de test :**
+- Société ID : 2
+- Achat de test avec justificatif : ID 11 (avec image PNG)
+- URL justificatif : `/app/backend/uploads/achats/achat-1756803688527-228229367.png`
+
+Les corrections devraient maintenant permettre à la sidebar d'afficher les données de l'achat et de charger les justificatifs automatiquement.
 """
 
 import requests
