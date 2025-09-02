@@ -953,7 +953,20 @@ const handleModalOk = async () => {
       },
     },
     { title: 'Client', dataIndex: 'client', key: 'client' },
-    { title: 'Numéro de Facture', dataIndex: 'invoiceNumber', key: 'invoiceNumber' },
+    { 
+      title: 'Numéro', 
+      dataIndex: 'invoiceNumber', 
+      key: 'invoiceNumber',
+      render: (text, record) => (
+        <span style={{
+          color: record.type === 'AVOIR' ? '#d32f2f' : 'inherit',
+          fontWeight: record.type === 'AVOIR' ? 'bold' : 'normal'
+        }}>
+          {text}
+          {record.type === 'AVOIR' && <small style={{ display: 'block', color: '#666' }}>AVOIR</small>}
+        </span>
+      )
+    },
     { title: 'Date', dataIndex: 'date', key: 'date', },
     { title: 'Montant Total', dataIndex: 'totalAmount', key: 'totalAmount' },
     {
