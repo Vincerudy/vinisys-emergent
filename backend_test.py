@@ -1,49 +1,44 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test AchatSidebar avec Visionneuse de Fichiers
+Backend API Testing Script for Vinisys Application - Test Corrections ListeAchatsPage et Justificatifs
 
-Tests des modifications apportées à la sidebar de création de dépense (AchatSidebar.jsx) pour implémenter une structure à deux colonnes avec visionneuse de fichiers.
+Tests des corrections apportées à la liste des dépenses (ListeAchatsPage.jsx) et l'affichage des justificatifs.
 
-**MODIFICATIONS TESTÉES :**
+**PROBLÈMES CORRIGÉS TESTÉS :**
 
-1. **Structure CSS :**
-   - Largeur de la sidebar augmentée de 600px à 1200px
-   - Ajout de `.achat-sidebar-body-left` et `.achat-sidebar-body-right` (50% chacune)
-   - Styles pour la visionneuse de fichiers (`.file-viewer`)
-   - Styles pour l'upload de fichiers (`.upload-area`, `.file-list`, `.file-item`)
+1. **Boutons non fonctionnels dans la liste des dépenses :**
+   - **Problème** : Les boutons œil (FiEye) et crayon (FiEdit) dans la liste des achats n'avaient pas de handlers onClick
+   - **Solution** : Ajout des handlers `handleViewAchat`, `handleEditAchat`, et `handleDeleteAchat`
+   - **Modes ajoutés** : 'view' (lecture seule) et 'edit' (édition) en plus du mode 'manuel'
 
-2. **Fonctionnalités ajoutées :**
-   - Upload de fichiers par glisser-déposer et clic
-   - Support PDF et images (max 10MB)
-   - Visionneuse intégrée : iframe pour PDF, img pour images
-   - Liste des fichiers téléchargés avec sélection
-   - Suppression individuelle des fichiers
-   - Persistance des fichiers lors de la soumission du formulaire
+2. **Récupération et affichage des justificatifs existants :**
+   - **Problème** : Les fichiers uploadés lors de la création n'étaient pas récupérés lors de l'édition/visualisation
+   - **Solution** : Création d'un nouvel endpoint `/api/achat/:id/justificatifs` et fonction `loadExistingJustificatifs()`
+   - **Endpoint** : `GET /api/achat/:id/justificatifs` dans `/backend/routes/achats/justificatifsAchat.js`
 
-3. **Structure JSX :**
-   - Colonne gauche : Zone d'upload, liste des fichiers, visionneuse
-   - Colonne droite : Formulaire de saisie des données (inchangé)
-   - Intégration des nouveaux fichiers dans FormData lors de la soumission
+3. **Intégration dans AchatSidebar :**
+   - **Modes supportés** : 'manuel', 'ocr', 'view', 'edit'
+   - **Chargement automatique** : Les justificatifs existants sont chargés automatiquement en mode edit/view
+   - **Visionneuse** : Les fichiers existants s'affichent dans la visionneuse PDF avec conversion automatique
 
 **TESTS À EFFECTUER :**
 
-1. **Test de l'endpoint backend :**
-   - Vérifier que l'endpoint `/api/achat` accepte toujours les fichiers `justificatifs`
-   - Tester la sauvegarde des fichiers sur le serveur
-   - Vérifier que les métadonnées sont correctement enregistrées
+1. **Test de l'endpoint justificatifs :**
+   - **URL** : `GET /api/achat/11/justificatifs`
+   - **Réponse** : JSON avec id, justificatif_path, nom_fichier, type_fichier, date_creation
+   - **Statut** : ✅ Fonctionnel (testé avec l'achat ID 11)
 
-2. **Test de structure :**
-   - Vérifier que la sidebar s'ouvre avec la nouvelle largeur (1200px)
-   - Tester que les deux colonnes s'affichent correctement
-   - Valider que le scroll fonctionne dans chaque colonne
+2. **Test de l'intégration frontend :**
+   - Handlers ajoutés aux boutons de la liste
+   - Modes 'view' et 'edit' implémentés
+   - Chargement automatique des justificatifs existants
 
-3. **Test de l'upload :**
-   - Tester l'upload de fichiers PDF et images
-   - Vérifier la validation de taille (max 10MB)
-   - Tester le glisser-déposer
-   - Vérifier la persistance lors de la soumission
+3. **Test de persistance :**
+   - Les fichiers uploadés sont stockés dans `achats.justificatif_path`
+   - L'endpoint récupère correctement les fichiers avec le bon type MIME
+   - Support PDF et images avec conversion automatique
 
-Utilise la société ID=2 pour les tests. L'endpoint d'achat existe déjà et gère les justificatifs.
+Société ID utilisée : 2. L'achat ID 11 contient un justificatif de test pour les validations.
 """
 
 import requests
