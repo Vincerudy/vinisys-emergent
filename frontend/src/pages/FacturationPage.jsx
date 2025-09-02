@@ -963,7 +963,14 @@ const handleModalOk = async () => {
           fontWeight: record.type === 'AVOIR' ? 'bold' : 'normal'
         }}>
           {text}
-          {record.type === 'AVOIR' && <small style={{ display: 'block', color: '#666' }}>AVOIR</small>}
+          {record.type === 'AVOIR' && (
+            <div style={{ fontSize: '0.8em', color: '#666', marginTop: '2px' }}>
+              <div>AVOIR</div>
+              {record.facture_origine_numero && (
+                <div>→ {record.facture_origine_numero}</div>
+              )}
+            </div>
+          )}
         </span>
       )
     },
