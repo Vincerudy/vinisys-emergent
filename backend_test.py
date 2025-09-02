@@ -12,7 +12,7 @@ Tests des corrections critiques apportées à la construction d'URL des justific
 
 2. **URL finale incorrecte** :
    - **Avant** : `/api/api/uploads/achats/achat-1756803688527-228229367.png` ❌
-   - **Après** : `https://expense-ocr-sys.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png` ✅
+   - **Après** : `https://finflow-166.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png` ✅
 
 **CORRECTIONS APPORTÉES :**
 
@@ -39,13 +39,13 @@ Tests des corrections critiques apportées à la construction d'URL des justific
 **TESTS À EFFECTUER :**
 
 1. **Test de l'URL des justificatifs :**
-   - **URL construite** : `https://expense-ocr-sys.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png`
+   - **URL construite** : `https://finflow-166.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png`
    - **Test HTTP** : `curl -I "URL"` → Doit retourner HTTP/2 200 
    - **Taille fichier** : 4,102,537 bytes (≈4MB)
    - **Type contenu** : `image/png`
 
 2. **Test de l'endpoint justificatifs :**
-   - **URL API** : `https://expense-ocr-sys.preview.emergentagent.com/api/achat/11/justificatifs`
+   - **URL API** : `https://finflow-166.preview.emergentagent.com/api/achat/11/justificatifs`
    - **Réponse** : JSON avec justificatif_path correct
    - **Transformation** : `/app/backend/uploads/` → `/api/uploads/`
 
@@ -59,7 +59,7 @@ Tests des corrections critiques apportées à la construction d'URL des justific
    ```
    justificatif_path: "/app/backend/uploads/achats/achat-1756803688527-228229367.png"
    transformation: "/api/uploads/achats/achat-1756803688527-228229367.png"  
-   URL finale: "https://expense-ocr-sys.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png"
+   URL finale: "https://finflow-166.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png"
    ```
 
 **Données de test :**
@@ -78,7 +78,7 @@ import os
 from datetime import datetime
 
 # Backend URL configuration - Using production URL from frontend/.env
-REACT_APP_BACKEND_URL = "https://expense-ocr-sys.preview.emergentagent.com"
+REACT_APP_BACKEND_URL = "https://finflow-166.preview.emergentagent.com"
 BASE_URL = REACT_APP_BACKEND_URL
 API_BASE = f"{BASE_URL}/api"
 

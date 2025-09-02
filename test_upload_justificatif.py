@@ -9,7 +9,7 @@ import io
 import sys
 
 # Configuration
-REACT_APP_BACKEND_URL = "https://expense-ocr-sys.preview.emergentagent.com"
+REACT_APP_BACKEND_URL = "https://finflow-166.preview.emergentagent.com"
 API_BASE = f"{REACT_APP_BACKEND_URL}/api"
 TEST_EMAIL = "idnovation2014@gmail.com"
 TEST_PASSWORD = "Cinema12"
