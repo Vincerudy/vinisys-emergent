@@ -148,6 +148,35 @@ const ListeAchatsPage = () => {
     setModeModalOpen(true);
   };
 
+  const handleViewAchat = (achat) => {
+    // Ouvrir la sidebar en mode lecture seule avec les données de l'achat
+    setSidebarPrefilledData(achat);
+    setSidebarAttachedFile(null);
+    setSidebarMode('view');
+    setSidebarOpen(true);
+  };
+
+  const handleEditAchat = (achat) => {
+    // Ouvrir la sidebar en mode édition avec les données de l'achat
+    setSidebarPrefilledData(achat);
+    setSidebarAttachedFile(null);
+    setSidebarMode('edit');
+    setSidebarOpen(true);
+  };
+
+  const handleDeleteAchat = async (achatId) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) {
+      try {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/achat/${achatId}`);
+        fetchAchats(); // Rafraîchir la liste
+        alert('Dépense supprimée avec succès');
+      } catch (error) {
+        console.error('Erreur suppression:', error);
+        alert('Erreur lors de la suppression de la dépense');
+      }
+    }
+  };
+
   return (
     <div className="liste-achats-page">
       {/* Header */}
