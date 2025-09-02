@@ -364,15 +364,27 @@ const ListeAchatsPage = () => {
             {selectedAchats.length} élément(s) sélectionné(s)
           </div>
           <div className="bulk-buttons">
-            <button className="btn-success">
+            <button 
+              className="btn-success"
+              onClick={handleBulkValidate}
+              disabled={selectedAchats.length === 0}
+            >
               <FiCheck size={16} />
               Valider la sélection
             </button>
-            <button className="btn-danger">
+            <button 
+              className="btn-danger"
+              onClick={handleBulkReject}
+              disabled={selectedAchats.length === 0}
+            >
               <FiX size={16} />
               Refuser la sélection
             </button>
-            <button className="btn-secondary">
+            <button 
+              className="btn-secondary"
+              onClick={handleBulkExport}
+              disabled={selectedAchats.length === 0}
+            >
               <FiDownload size={16} />
               Exporter la sélection
             </button>
