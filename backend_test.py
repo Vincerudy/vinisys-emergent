@@ -1,39 +1,49 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Gestion Produits avec Catégories Configurables
+Backend API Testing Script for Vinisys Application - Test AchatSidebar avec Visionneuse de Fichiers
 
-Tests des modifications apportées à la gestion des produits dans Vinisys pour utiliser les catégories de stock configurables au lieu de catégories hardcodées.
+Tests des modifications apportées à la sidebar de création de dépense (AchatSidebar.jsx) pour implémenter une structure à deux colonnes avec visionneuse de fichiers.
 
 **MODIFICATIONS TESTÉES :**
 
-1. **Base de données :**
-   - Table `produits_services` : Colonnes `categorie_id` et `sous_categorie_id` avec clés étrangères vers `categories_stock` et `sous_categories_stock`
+1. **Structure CSS :**
+   - Largeur de la sidebar augmentée de 600px à 1200px
+   - Ajout de `.achat-sidebar-body-left` et `.achat-sidebar-body-right` (50% chacune)
+   - Styles pour la visionneuse de fichiers (`.file-viewer`)
+   - Styles pour l'upload de fichiers (`.upload-area`, `.file-list`, `.file-item`)
 
-2. **Backend :**
-   - Endpoint `GET /api/produit/:id/:societe_id` : Modifié pour récupérer les noms des catégories via JOIN
-   - Endpoint `POST /api/produit` : Modifié pour accepter et enregistrer `categorieId` et `sousCategorieId`
-   - Endpoint `GET /api/sous-categories-stock/:categorie_id/:societe_id` : Créé pour récupérer les sous-catégories d'une catégorie spécifique
+2. **Fonctionnalités ajoutées :**
+   - Upload de fichiers par glisser-déposer et clic
+   - Support PDF et images (max 10MB)
+   - Visionneuse intégrée : iframe pour PDF, img pour images
+   - Liste des fichiers téléchargés avec sélection
+   - Suppression individuelle des fichiers
+   - Persistance des fichiers lors de la soumission du formulaire
+
+3. **Structure JSX :**
+   - Colonne gauche : Zone d'upload, liste des fichiers, visionneuse
+   - Colonne droite : Formulaire de saisie des données (inchangé)
+   - Intégration des nouveaux fichiers dans FormData lors de la soumission
 
 **TESTS À EFFECTUER :**
 
-1. **Test de création de produit avec catégories :**
-   - Créer un produit avec categorieId=1, sousCategorieId=1
-   - Vérifier que les IDs sont bien enregistrés dans la base
-   - Vérifier que l'affichage récupère bien les noms des catégories
+1. **Test de l'endpoint backend :**
+   - Vérifier que l'endpoint `/api/achat` accepte toujours les fichiers `justificatifs`
+   - Tester la sauvegarde des fichiers sur le serveur
+   - Vérifier que les métadonnées sont correctement enregistrées
 
-2. **Test de récupération des sous-catégories :**
-   - Tester `/api/sous-categories-stock/1/2` (catégorie Électronique)
-   - Tester `/api/sous-categories-stock/2/2` (catégorie Mobilier)  
-   - Vérifier que chaque endpoint ne retourne que les sous-catégories de la catégorie demandée
+2. **Test de structure :**
+   - Vérifier que la sidebar s'ouvre avec la nouvelle largeur (1200px)
+   - Tester que les deux colonnes s'affichent correctement
+   - Valider que le scroll fonctionne dans chaque colonne
 
-3. **Test de récupération des catégories :**
-   - Tester `/api/categories-stock/2` pour vérifier que toutes les catégories sont listées
+3. **Test de l'upload :**
+   - Tester l'upload de fichiers PDF et images
+   - Vérifier la validation de taille (max 10MB)
+   - Tester le glisser-déposer
+   - Vérifier la persistance lors de la soumission
 
-4. **Test de modification de produit :**
-   - Modifier un produit existant pour changer ses catégories
-   - Vérifier que les changements sont persistés
-
-Utilise la société ID=2 pour tous les tests. Il y a déjà un produit de test créé avec l'ID 70.
+Utilise la société ID=2 pour les tests. L'endpoint d'achat existe déjà et gère les justificatifs.
 """
 
 import requests
