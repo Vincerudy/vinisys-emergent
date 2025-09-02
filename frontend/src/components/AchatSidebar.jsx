@@ -99,7 +99,6 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
 
   // useEffect pour gérer les données pré-remplies et les fichiers attachés
   useEffect(() => {
-    console.log('🔍 useEffect triggered - isOpen:', isOpen, 'mode:', mode, 'prefilledData:', !!prefilledData);
     if (!isOpen) return;
     
     if (!prefilledData) {
