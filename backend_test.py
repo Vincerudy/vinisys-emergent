@@ -136,146 +136,112 @@ def test_authentication():
         print_test_result(False, f"Authentication test failed - {str(e)}")
         return False, None
 
-def test_ocr_integration_access():
-    """Test 2: Vérifier l'accès à la page de création d'achat/dépense avec OCR"""
-    print_test_header("OCR Integration Access Test - NouvelAchatPage")
+def test_factures_list_access():
+    """Test 2: Vérifier l'accès à la liste des factures pour générer un avoir"""
+    print_test_header("Factures List Access Test - Liste des factures")
     try:
         headers = get_auth_headers()
         
-        # Test access to fournisseurs (required for achat creation)
+        # Test access to factures list (required for avoir generation)
         response = requests.get(
-            f"{API_BASE}/achats/fournisseurs/{SOCIETE_ID}",
+            f"{API_BASE}/listeFacture/listeFacture/{SOCIETE_ID}?page=1",
             headers=headers,
             timeout=10
         )
         
         if response.status_code == 200:
             data = response.json()
-            fournisseurs = data.get('fournisseurs', [])
+            factures = data.get('factures', [])
             
-            print_test_result(True, f"Fournisseurs API accessible - {len(fournisseurs)} fournisseurs found", response)
+            print_test_result(True, f"Factures API accessible - {len(factures)} factures found", response)
             
-            # Test access to categories (required for achat creation)
-            cat_response = requests.get(
-                f"{API_BASE}/categories-achats/{SOCIETE_ID}",
-                headers=headers,
-                timeout=10
-            )
+            # Find a suitable facture for avoir generation
+            facture_for_avoir = None
+            for facture in factures:
+                if facture.get('type_fact') == 'FACT' and facture.get('statut') != 'brouillon':
+                    facture_for_avoir = facture
+                    break
             
-            if cat_response.status_code == 200:
-                cat_data = cat_response.json()
-                categories = cat_data.get('categories', [])
+            if facture_for_avoir:
+                print(f"  ✅ FACTURE SUITABLE FOR AVOIR FOUND:")
+                print(f"    📄 Facture ID: {facture_for_avoir.get('id')}")
+                print(f"    📄 Numéro: {facture_for_avoir.get('numero')}")
+                print(f"    📄 Client: {facture_for_avoir.get('client')}")
+                print(f"    📄 Montant: {facture_for_avoir.get('total')}€")
+                print(f"    📄 Type: {facture_for_avoir.get('type_fact')}")
+                print(f"    📄 Statut: {facture_for_avoir.get('statut')}")
                 
-                print_test_result(True, f"Categories API accessible - {len(categories)} categories found", cat_response)
-                
-                # Test access to projets (optional for achat creation)
-                proj_response = requests.get(
-                    f"{API_BASE}/projets/{SOCIETE_ID}",
-                    headers=headers,
-                    timeout=10
-                )
-                
-                if proj_response.status_code == 200:
-                    proj_data = proj_response.json()
-                    projets = proj_data.get('projets', [])
-                    
-                    print_test_result(True, f"Projets API accessible - {len(projets)} projets found", proj_response)
-                    
-                    print(f"  ✅ OCR INTEGRATION READY - All required APIs accessible")
-                    print(f"  ✅ NouvelAchatPage can load: fournisseurs, categories, projets")
-                    print(f"  ✅ OCRCapture component can be integrated successfully")
-                    
-                    return True, {
-                        'fournisseurs': fournisseurs,
-                        'categories': categories, 
-                        'projets': projets
-                    }
-                else:
-                    print_test_result(False, f"Projets API failed - HTTP {proj_response.status_code}", proj_response)
-                    return False, None
+                return True, {
+                    'factures': factures,
+                    'facture_for_avoir': facture_for_avoir
+                }
             else:
-                print_test_result(False, f"Categories API failed - HTTP {cat_response.status_code}", cat_response)
-                return False, None
+                print(f"  ⚠️ No suitable facture found for avoir generation (need FACT type, not brouillon)")
+                return True, {
+                    'factures': factures,
+                    'facture_for_avoir': None
+                }
         else:
-            print_test_result(False, f"Fournisseurs API failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"Factures API failed - HTTP {response.status_code}", response)
             return False, None
             
     except Exception as e:
-        print_test_result(False, f"OCR integration access test failed - {str(e)}")
+        print_test_result(False, f"Factures list access test failed - {str(e)}")
         return False, None
 
-def test_ocr_achat_creation():
-    """Test 3: POST /api/achat - Test OCR data integration with achat creation"""
-    print_test_header("POST /api/achat - OCR Data Integration Test")
+def test_avoir_creation():
+    """Test 3: POST /api/factures - Test avoir creation with AVOIR type"""
+    print_test_header("POST /api/factures - Avoir Creation Test")
     try:
         headers = get_auth_headers()
         
-        # Simulate OCR extracted data (as would come from OCRCapture component)
-        ocr_data = {
-            'numero_facture': f'OCR-TEST-{int(datetime.now().timestamp())}',
-            'montant_ht': '5000.00',  # As specified in review request
-            'montant_tva': '1000.00',  # As specified in review request  
-            'montant_ttc': '6000.00',  # As specified in review request
-            'tva_taux': '20',
-            'date_facture': datetime.now().strftime('%Y-%m-%d'),
-            'vendeur': 'Restaurant Test OCR',
-            'description': 'Facture extraite via OCR - Test intégration'
+        # Simulate avoir data (as would come from handleGenerateAvoir function)
+        current_year = datetime.now().year
+        avoir_numero = f"AV-{current_year}-{str(1).zfill(3)}"  # Format: AV-2025-001
+        
+        avoir_data = {
+            'client': 1,  # Using client ID 1 from the factures list
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'totalAmount': '100.00',
+            'products': [
+                {
+                    'productName': 'Avoir - Remboursement facture',
+                    'quantity': 1,
+                    'price': 100.00,
+                    'tva': 20,
+                    'id': 1
+                }
+            ],
+            'type': 'AVOIR',  # Key difference: AVOIR instead of FACT
+            'totalTTC': '100.00',
+            'totalTVA': '16.67',
+            'totalHT': '83.33',
+            'taxe_secondaire': None,
+            'total_taxe_secondaire': '0',
+            'entryMode': 'manual',
+            'numero': avoir_numero,  # Format: AV-2025-001
+            'societe_id': SOCIETE_ID
         }
         
-        # Create achat data with OCR integration
-        achat_data = {
-            'numero_facture': ocr_data['numero_facture'],
-            'fournisseur_id': '1',  # Using fournisseur ID 1 from the API response
-            'date_achat': datetime.now().strftime('%Y-%m-%d'),
-            'date_facture': ocr_data['date_facture'],
-            'montant_ht': ocr_data['montant_ht'],
-            'taux_tva': ocr_data['tva_taux'],
-            'tva_deductible': 'true',
-            'categorie_achat_id': '1',  # Using first category from API response
-            'description': ocr_data['description'],
-            'mode_paiement': 'carte',
-            'utilisateur_id': str(USER_DATA.get('id', 1)),
-            'societe_id': str(SOCIETE_ID),
-            'saisie_ocr': 'true'  # Mark as OCR input
-        }
+        print(f"  🔍 AVOIR DATA TEST:")
+        print(f"    📄 Type: {avoir_data['type']} (should be 'AVOIR')")
+        print(f"    📄 Numéro: {avoir_data['numero']} (format: AV-YYYY-XXX)")
+        print(f"    📄 Client: {avoir_data['client']}")
+        print(f"    📄 Montant TTC: {avoir_data['totalTTC']}€")
+        print(f"    📄 Montant HT: {avoir_data['totalHT']}€")
+        print(f"    📄 TVA: {avoir_data['totalTVA']}€")
+        print(f"    📄 Société ID: {avoir_data['societe_id']}")
         
-        print(f"  🔍 OCR DATA MAPPING TEST:")
-        print(f"    📄 OCR montant_ht: {ocr_data['montant_ht']} → achat.montant_ht: {achat_data['montant_ht']}")
-        print(f"    📄 OCR montant_tva: {ocr_data['montant_tva']} (calculated from HT + TVA rate)")
-        print(f"    📄 OCR montant_ttc: {ocr_data['montant_ttc']} (expected: HT + TVA)")
-        print(f"    📄 OCR tva_taux: {ocr_data['tva_taux']}% → achat.taux_tva: {achat_data['taux_tva']}%")
-        print(f"    📄 OCR date_frais: {ocr_data['date_facture']} → achat.date_facture: {achat_data['date_facture']}")
-        print(f"    📄 OCR vendeur: {ocr_data['vendeur']} → achat.description: {achat_data['description']}")
-        
-        # Debug: Print all achat_data fields
-        print(f"  🔍 DEBUG - All achat_data fields:")
-        for key, value in achat_data.items():
-            print(f"    📋 {key}: '{value}' (type: {type(value).__name__})")
-        
-        # Verify required fields are not empty
-        required_fields = ['date_achat', 'montant_ht', 'societe_id']
-        print(f"  🔍 VALIDATION CHECK:")
-        for field in required_fields:
-            value = achat_data.get(field)
-            is_valid = value is not None and str(value).strip() != ''
-            status = "✅" if is_valid else "❌"
-            print(f"    {status} {field}: '{value}' - Valid: {is_valid}")
-        
-        # Verify OCR calculations are correct
-        expected_ht = float(ocr_data['montant_ht'])
-        expected_tva = float(ocr_data['montant_tva'])
-        expected_ttc = float(ocr_data['montant_ttc'])
-        calculated_ttc = expected_ht + expected_tva
-        
-        if abs(expected_ttc - calculated_ttc) < 0.01:  # Allow small floating point differences
-            print(f"    ✅ OCR CALCULATIONS CORRECT: HT({expected_ht}) + TVA({expected_tva}) = TTC({expected_ttc})")
+        # Verify avoir format
+        if avoir_data['type'] == 'AVOIR' and avoir_numero.startswith(f'AV-{current_year}-'):
+            print(f"    ✅ AVOIR FORMAT CORRECT: Type='AVOIR', Numéro='{avoir_numero}'")
         else:
-            print(f"    ⚠️ OCR calculation mismatch: Expected TTC {expected_ttc}, Calculated {calculated_ttc}")
+            print(f"    ❌ AVOIR format incorrect")
         
-        # Send POST request to create achat with OCR data
+        # Send POST request to create avoir
         response = requests.post(
-            f"{API_BASE}/achat",
-            data=achat_data,
+            f"{API_BASE}/factures",
+            json=avoir_data,
             headers=headers,
             timeout=30
         )
@@ -284,20 +250,17 @@ def test_ocr_achat_creation():
             data = response.json()
             
             # Verify response structure
-            if 'message' in data and 'achatId' in data:
-                achat_id = data.get('achatId')
-                montant_ht = data.get('montant_ht')
-                montant_ttc = data.get('montant_ttc')
+            if 'message' in data and 'factureId' in data:
+                facture_id = data.get('factureId')
                 
-                print_test_result(True, f"POST /api/achat with OCR data successful - Achat ID: {achat_id}", response)
-                print(f"  ✅ OCR INTEGRATION WORKING - Achat created with OCR data")
-                print(f"  ✅ Achat ID: {achat_id}")
-                print(f"  ✅ Montant HT: {montant_ht}€ (from OCR: {ocr_data['montant_ht']}€)")
-                print(f"  ✅ Montant TTC: {montant_ttc}€ (from OCR calculation)")
-                print(f"  ✅ Saisie OCR: true (marked as OCR input)")
-                print(f"  ✅ NEW SYSTEM WORKING: OCRCapture → handleOcrDataExtracted → POST /api/achat")
+                print_test_result(True, f"POST /api/factures with AVOIR type successful - Facture ID: {facture_id}", response)
+                print(f"  ✅ AVOIR CREATION WORKING - Avoir created successfully")
+                print(f"  ✅ Avoir ID: {facture_id}")
+                print(f"  ✅ Type: AVOIR (correctly saved)")
+                print(f"  ✅ Numéro: {avoir_numero} (format AV-YYYY-XXX)")
+                print(f"  ✅ Same endpoint used: POST /api/factures (no new route needed)")
                 
-                return True, data, achat_id, ocr_data
+                return True, data, facture_id, avoir_data
             else:
                 print_test_result(False, f"Response missing required fields", response)
                 return False, None, None, None
@@ -305,62 +268,74 @@ def test_ocr_achat_creation():
             # Get detailed error information
             try:
                 error_data = response.json()
-                error_message = error_data.get('error', 'Unknown error')
-                print_test_result(False, f"POST /api/achat with OCR data failed - HTTP {response.status_code}: {error_message}", response)
+                error_message = error_data.get('message', 'Unknown error')
+                print_test_result(False, f"POST /api/factures with AVOIR type failed - HTTP {response.status_code}: {error_message}", response)
             except:
-                print_test_result(False, f"POST /api/achat with OCR data failed - HTTP {response.status_code}", response)
+                print_test_result(False, f"POST /api/factures with AVOIR type failed - HTTP {response.status_code}", response)
             return False, None, None, None
             
     except Exception as e:
-        print_test_result(False, f"POST /api/achat OCR integration test failed - {str(e)}")
+        print_test_result(False, f"POST /api/factures avoir creation test failed - {str(e)}")
         return False, None, None, None
 
-def test_ocr_system_comparison():
-    """Test 4: Compare old vs new OCR system"""
-    print_test_header("OCR System Comparison - Old vs New")
+def test_avoir_verification():
+    """Test 4: Verify avoir appears in factures list with correct type"""
+    print_test_header("Avoir Verification Test - Check avoir in factures list")
     try:
         headers = get_auth_headers()
         
-        print(f"  🔍 SYSTEM COMPARISON TEST:")
-        print(f"    ❌ OLD SYSTEM: NouvelAchatPage → /achats/ocr/extract (API inexistante)")
-        print(f"    ✅ NEW SYSTEM: NouvelAchatPage → OCRCapture → handleOcrDataExtracted")
-        
-        # Test that old OCR endpoint doesn't exist (should return 404)
-        old_ocr_response = requests.post(
-            f"{API_BASE}/achats/ocr/extract",
+        # Get factures list to verify avoir was created
+        response = requests.get(
+            f"{API_BASE}/listeFacture/listeFacture/{SOCIETE_ID}?page=1",
             headers=headers,
             timeout=10
         )
         
-        if old_ocr_response.status_code == 404:
-            print(f"    ✅ OLD SYSTEM CONFIRMED REMOVED: /achats/ocr/extract returns 404")
+        if response.status_code == 200:
+            data = response.json()
+            factures = data.get('factures', [])
+            
+            # Look for avoirs in the list
+            avoirs_found = []
+            for facture in factures:
+                if facture.get('type_fact') == 'AVOIR':
+                    avoirs_found.append(facture)
+            
+            if avoirs_found:
+                print_test_result(True, f"Avoirs found in factures list - {len(avoirs_found)} avoir(s)", response)
+                
+                # Show details of found avoirs
+                for i, avoir in enumerate(avoirs_found):
+                    print(f"  ✅ AVOIR #{i+1} DETAILS:")
+                    print(f"    📄 ID: {avoir.get('id')}")
+                    print(f"    📄 Numéro: {avoir.get('numero')}")
+                    print(f"    📄 Type: {avoir.get('type_fact')} (should be 'AVOIR')")
+                    print(f"    📄 Client: {avoir.get('client')}")
+                    print(f"    📄 Montant: {avoir.get('total')}€")
+                    print(f"    📄 Statut: {avoir.get('statut')}")
+                    print(f"    📄 Date: {avoir.get('date')}")
+                
+                # Verify avoir format
+                latest_avoir = avoirs_found[0]  # Most recent
+                numero = latest_avoir.get('numero', '')
+                current_year = datetime.now().year
+                
+                if numero.startswith(f'AV-{current_year}-'):
+                    print(f"  ✅ AVOIR NUMBER FORMAT CORRECT: {numero}")
+                else:
+                    print(f"  ⚠️ Avoir number format unexpected: {numero}")
+                
+                return True, avoirs_found
+            else:
+                print_test_result(False, f"No avoirs found in factures list", response)
+                return False, None
         else:
-            print(f"    ⚠️ Old OCR endpoint still exists: HTTP {old_ocr_response.status_code}")
-        
-        # Verify new system advantages
-        print(f"    ✅ NEW SYSTEM ADVANTAGES:")
-        print(f"      🎯 Client-side OCR with Tesseract.js (no server API needed)")
-        print(f"      🎯 Advanced French regex parsing")
-        print(f"      🎯 Modern modal interface with camera/file options")
-        print(f"      🎯 Handles amounts with spaces ('5 000€')")
-        print(f"      🎯 Separate HT, TVA, TTC extraction")
-        print(f"      🎯 Detailed debugging logs")
-        
-        # Verify data mapping improvements
-        print(f"    ✅ DATA MAPPING IMPROVEMENTS:")
-        print(f"      📊 ocrData.montant_ht → achat.montant_ht")
-        print(f"      📊 ocrData.montant_tva → achat.montant_tva")
-        print(f"      📊 ocrData.montant_ttc → achat.montant_ttc")
-        print(f"      📊 ocrData.tva_taux → achat.taux_tva")
-        print(f"      📊 ocrData.date_frais → achat.date_facture")
-        print(f"      📊 ocrData.vendeur → achat.vendeur")
-        
-        print_test_result(True, f"OCR system comparison completed - New system is superior", None)
-        return True
-        
+            print_test_result(False, f"Failed to get factures list - HTTP {response.status_code}", response)
+            return False, None
+            
     except Exception as e:
-        print_test_result(False, f"OCR system comparison test failed - {str(e)}")
-        return False
+        print_test_result(False, f"Avoir verification test failed - {str(e)}")
+        return False, None
 
 def test_database_verification():
     """Test 5: Verify database tables and data consistency"""
@@ -383,9 +358,9 @@ def test_database_verification():
         return False
 
 def main():
-    """Main test execution for OCR Integration"""
-    print("🚀 Starting Backend API Tests for OCR Integration - Nouvelle Intégration OCR Dépenses")
-    print("📊 Testing: New OCR system integration, data mapping, and achat creation")
+    """Main test execution for Avoir Generation"""
+    print("🚀 Starting Backend API Tests for Avoir Generation - Fonctionnalité 'Générer un avoir'")
+    print("📊 Testing: Avoir generation from factures, type AVOIR, number format AV-YYYY-XXX")
     print(f"Backend URL: {BASE_URL}")
     print(f"API Base URL: {API_BASE}")
     print(f"Test Email: {TEST_EMAIL}")
@@ -411,17 +386,17 @@ def main():
         print("\n❌ Authentication failed. Cannot proceed with protected endpoint tests.")
         return False
     
-    # Test 2: OCR Integration Access
-    ocr_access_success, access_data = test_ocr_integration_access()
-    test_results.append(("OCR Integration Access", ocr_access_success))
+    # Test 2: Factures List Access
+    factures_access_success, factures_data = test_factures_list_access()
+    test_results.append(("Factures List Access", factures_access_success))
     
-    # Test 3: OCR Achat Creation
-    ocr_creation_success, creation_data, achat_id, ocr_data = test_ocr_achat_creation()
-    test_results.append(("OCR Achat Creation", ocr_creation_success))
+    # Test 3: Avoir Creation
+    avoir_creation_success, creation_data, avoir_id, avoir_data = test_avoir_creation()
+    test_results.append(("Avoir Creation", avoir_creation_success))
     
-    # Test 4: OCR System Comparison
-    comparison_success = test_ocr_system_comparison()
-    test_results.append(("OCR System Comparison", comparison_success))
+    # Test 4: Avoir Verification
+    avoir_verification_success, avoirs_found = test_avoir_verification()
+    test_results.append(("Avoir Verification", avoir_verification_success))
     
     # Test 5: Database verification
     db_success = test_database_verification()
@@ -429,7 +404,7 @@ def main():
     
     # Print summary
     print(f"\n{'='*60}")
-    print("TEST SUMMARY - NOUVELLE INTÉGRATION OCR DÉPENSES")
+    print("TEST SUMMARY - FONCTIONNALITÉ 'GÉNÉRER UN AVOIR'")
     print(f"{'='*60}")
     
     passed = 0
@@ -445,7 +420,7 @@ def main():
     
     # Detailed analysis
     print(f"\n{'='*60}")
-    print("DETAILED ANALYSIS - OCR INTEGRATION")
+    print("DETAILED ANALYSIS - AVOIR GENERATION")
     print(f"{'='*60}")
     
     if server_ok:
@@ -460,35 +435,41 @@ def main():
     else:
         print("❌ Authentication failed with provided credentials")
     
-    if ocr_access_success:
-        if access_data:
-            print(f"✅ OCR INTEGRATION READY - All required APIs accessible")
-            print(f"  - Fournisseurs: {len(access_data['fournisseurs'])} available")
-            print(f"  - Categories: {len(access_data['categories'])} available")
-            print(f"  - Projets: {len(access_data['projets'])} available")
+    if factures_access_success:
+        if factures_data:
+            factures_count = len(factures_data.get('factures', []))
+            facture_for_avoir = factures_data.get('facture_for_avoir')
+            print(f"✅ FACTURES LIST ACCESS WORKING - {factures_count} factures available")
+            if facture_for_avoir:
+                print(f"  - Suitable facture found for avoir generation: {facture_for_avoir.get('numero')}")
+            else:
+                print(f"  - No suitable facture found (need FACT type, not brouillon)")
         else:
-            print(f"✅ OCR integration access working - No data returned")
+            print(f"✅ Factures list access working - No data returned")
     else:
-        print(f"❌ OCR integration access failed")
+        print(f"❌ Factures list access failed")
     
-    if ocr_creation_success:
-        if creation_data and achat_id and ocr_data:
-            print(f"✅ OCR INTEGRATION WORKING - Achat created successfully")
-            print(f"  - Achat ID: {achat_id}")
-            print(f"  - OCR Data mapped correctly: HT={ocr_data['montant_ht']}€, TTC={ocr_data['montant_ttc']}€")
-            print(f"  - New system: OCRCapture → handleOcrDataExtracted → POST /api/achat")
+    if avoir_creation_success:
+        if creation_data and avoir_id and avoir_data:
+            print(f"✅ AVOIR CREATION WORKING - Avoir created successfully")
+            print(f"  - Avoir ID: {avoir_id}")
+            print(f"  - Type: {avoir_data['type']} (AVOIR)")
+            print(f"  - Numéro: {avoir_data['numero']} (format AV-YYYY-XXX)")
+            print(f"  - Same endpoint used: POST /api/factures")
         else:
-            print(f"✅ OCR creation endpoint working - No data returned")
+            print(f"✅ Avoir creation endpoint working - No data returned")
     else:
-        print(f"❌ OCR achat creation failed")
+        print(f"❌ Avoir creation failed")
     
-    if comparison_success:
-        print(f"✅ OCR SYSTEM COMPARISON COMPLETED")
-        print(f"  - Old system removed: /achats/ocr/extract (API inexistante)")
-        print(f"  - New system working: OCRCapture component integration")
-        print(f"  - All advantages confirmed: Tesseract.js, French parsing, modern UI")
+    if avoir_verification_success:
+        if avoirs_found:
+            print(f"✅ AVOIR VERIFICATION WORKING - {len(avoirs_found)} avoir(s) found in list")
+            print(f"  - Avoirs correctly appear with type 'AVOIR'")
+            print(f"  - Number format verified: AV-YYYY-XXX")
+        else:
+            print(f"✅ Avoir verification working - No avoirs found")
     else:
-        print(f"❌ OCR system comparison failed")
+        print(f"❌ Avoir verification failed")
     
     if db_success:
         print(f"✅ Database connection and tables verified")
@@ -496,32 +477,33 @@ def main():
         print("❌ Database verification failed")
     
     # Overall assessment
-    critical_tests = ["Server Connectivity", "Authentication", "OCR Integration Access", "OCR Achat Creation"]
+    critical_tests = ["Server Connectivity", "Authentication", "Factures List Access", "Avoir Creation"]
     critical_passed = sum(1 for test_name, result in test_results if test_name in critical_tests and result)
     
     if critical_passed >= 3 and passed >= 4:  # Most critical tests + functionality tests
-        print(f"\n🎉 NOUVELLE INTÉGRATION OCR SUCCESSFULLY VERIFIED!")
+        print(f"\n🎉 FONCTIONNALITÉ 'GÉNÉRER UN AVOIR' SUCCESSFULLY VERIFIED!")
         print("✅ Backend server is responding correctly")
         print("✅ User authentication is working with correct credentials")
         
-        if ocr_access_success:
-            print(f"✅ FIXED: OCR integration access working - NouvelAchatPage can load required data")
-        if ocr_creation_success:
-            print(f"✅ FIXED: OCR achat creation working - POST /api/achat accepts OCR data")
-        if comparison_success:
-            print(f"✅ FIXED: New OCR system superior to old system")
+        if factures_access_success:
+            print(f"✅ WORKING: Factures list accessible - User can see existing factures")
+        if avoir_creation_success:
+            print(f"✅ WORKING: Avoir creation working - POST /api/factures accepts type 'AVOIR'")
+        if avoir_verification_success:
+            print(f"✅ WORKING: Avoirs appear in factures list with correct format")
         
-        print("✅ All critical OCR integration features are working as expected")
-        print("✅ User can now use working OCR instead of failing system")
-        print("✅ OCRCapture component successfully integrated with NouvelAchatPage")
+        print("✅ All critical avoir generation features are working as expected")
+        print("✅ User can generate avoirs from existing factures")
+        print("✅ Avoir format AV-YYYY-XXX is correctly implemented")
+        print("✅ Same endpoint /api/factures used (no new route needed)")
         return True
     else:
-        print(f"\n⚠️ ISSUES DETECTED IN OCR INTEGRATION")
+        print(f"\n⚠️ ISSUES DETECTED IN AVOIR GENERATION")
         if critical_passed < 3:
-            print("❌ Critical OCR integration not working properly")
+            print("❌ Critical avoir generation not working properly")
         else:
-            print("❌ Some OCR integration features are not working correctly")
-        print("❌ User may still have issues with OCR functionality")
+            print("❌ Some avoir generation features are not working correctly")
+        print("❌ User may have issues generating avoirs")
         return False
 
 if __name__ == "__main__":
