@@ -968,7 +968,19 @@ const handleModalOk = async () => {
       )
     },
     { title: 'Date', dataIndex: 'date', key: 'date', },
-    { title: 'Montant Total', dataIndex: 'totalAmount', key: 'totalAmount' },
+    { 
+      title: 'Montant Total', 
+      dataIndex: 'totalAmount', 
+      key: 'totalAmount',
+      render: (amount, record) => (
+        <span style={{
+          color: record.type === 'AVOIR' ? '#d32f2f' : 'inherit',
+          fontWeight: record.type === 'AVOIR' ? 'bold' : 'normal'
+        }}>
+          {record.type === 'AVOIR' && amount > 0 ? `-${amount}€` : `${amount}€`}
+        </span>
+      )
+    },
     {
       title: 'Actions',
       key: 'actions',
