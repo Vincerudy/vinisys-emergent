@@ -46,6 +46,9 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
 
   const [justificatifs, setJustificatifs] = useState([]);
   const [showNewFournisseur, setShowNewFournisseur] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   // Calculs automatiques
   const montantHT = parseFloat(achat.montant_ht || 0);
