@@ -143,6 +143,19 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       // Ajouter le fichier attaché s'il y en a un (OCR)
       if (attachedFile) {
         setAttachedFiles([attachedFile]);
+        
+        // Ajouter le fichier OCR à la liste des fichiers uploadés pour la visionneuse
+        const ocrFile = {
+          id: `ocr_${Date.now()}`,
+          name: attachedFile.name || 'Justificatif OCR',
+          type: attachedFile.type || 'image/jpeg',
+          url: URL.createObjectURL(attachedFile),
+          file: attachedFile,
+          isOCR: true
+        };
+        
+        setUploadedFiles([ocrFile]);
+        setSelectedFile(ocrFile);
       }
       
       // Charger les justificatifs existants si on édite/visualise un achat
