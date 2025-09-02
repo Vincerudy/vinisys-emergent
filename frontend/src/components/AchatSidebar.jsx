@@ -81,16 +81,16 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     fetchData();
   }, [isOpen, societe_id]);
 
-  // Reset form when closing or apply prefilled data when opening
+  // useEffect pour gérer les données pré-remplies et les fichiers attachés
   useEffect(() => {
-    if (!isOpen) {
+    if (!isOpen) return;
+    
+    if (!prefilledData) {
+      // Mode nouveau : réinitialiser
       setAchat({
         numero_facture: '',
         fournisseur_id: '',
-        nouveau_fournisseur: '',
         date_achat: new Date().toISOString().split('T')[0],
-        date_facture: '',
-        date_echeance: '',
         montant_ht: '',
         taux_tva: 20,
         tva_deductible: true,
@@ -102,20 +102,50 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
         compte_comptable_tva: '44566'
       });
       setAttachedFiles([]);
+      setUploadedFiles([]);
+      setSelectedFile(null);
       setShowNewFournisseur(false);
     } else if (prefilledData) {
-      // Appliquer les données pré-remplies de l'OCR
+      // Appliquer les données pré-remplies (OCR, édition, ou visualisation)
       setAchat(prevAchat => ({
         ...prevAchat,
         ...prefilledData
       }));
       
-      // Ajouter le fichier attaché s'il y en a un
+      // Ajouter le fichier attaché s'il y en a un (OCR)
       if (attachedFile) {
         setAttachedFiles([attachedFile]);
       }
+      
+      // Charger les justificatifs existants si on édite/visualise un achat
+      if (prefilledData.id && (mode === 'edit' || mode === 'view')) {
+        loadExistingJustificatifs(prefilledData.id);
+      }
     }
-  }, [isOpen, prefilledData, attachedFile]);
+  }, [isOpen, prefilledData, attachedFile, mode]);
+
+  // Fonction pour charger les justificatifs existants
+  const loadExistingJustificatifs = async (achatId) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/achat/${achatId}/justificatifs`);
+      if (response.ok) {
+        const justificatifs = await response.json();
+        const existingFiles = justificatifs.map(j => ({
+          id: j.id,
+          name: j.nom_fichier || j.justificatif_path?.split('/').pop() || 'Justificatif',
+          type: j.type_fichier || (j.justificatif_path?.includes('.pdf') ? 'application/pdf' : 'image/jpeg'),
+          url: `${import.meta.env.VITE_API_URL}/${j.justificatif_path}`,
+          isExisting: true
+        }));
+        setUploadedFiles(existingFiles);
+        if (existingFiles.length > 0) {
+          setSelectedFile(existingFiles[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Erreur chargement justificatifs:', error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
