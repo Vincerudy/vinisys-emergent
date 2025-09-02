@@ -166,10 +166,10 @@ def test_factures_list_access():
             if facture_for_avoir:
                 print(f"  ✅ FACTURE SUITABLE FOR AVOIR FOUND:")
                 print(f"    📄 Facture ID: {facture_for_avoir.get('id')}")
-                print(f"    📄 Numéro: {facture_for_avoir.get('numero')}")
+                print(f"    📄 Numéro: {facture_for_avoir.get('invoiceNumber')}")
                 print(f"    📄 Client: {facture_for_avoir.get('client')}")
-                print(f"    📄 Montant: {facture_for_avoir.get('total')}€")
-                print(f"    📄 Type: {facture_for_avoir.get('type_fact')}")
+                print(f"    📄 Montant: {facture_for_avoir.get('totalAmount')}€")
+                print(f"    📄 Type: {facture_for_avoir.get('type')}")
                 print(f"    📄 Statut: {facture_for_avoir.get('statut')}")
                 
                 return True, {
