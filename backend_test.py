@@ -143,8 +143,10 @@ def test_factures_list_access():
         headers = get_auth_headers()
         
         # Test access to factures list (required for avoir generation)
+        # Using user ID instead of societe ID as per the API structure
+        user_id = USER_DATA.get('id') if USER_DATA else 4
         response = requests.get(
-            f"{API_BASE}/listeFacture/listeFacture/{SOCIETE_ID}?page=1",
+            f"{API_BASE}/listeFacture/{user_id}",
             headers=headers,
             timeout=10
         )
