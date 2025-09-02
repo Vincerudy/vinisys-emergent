@@ -1105,6 +1105,7 @@ const handleModalOk = async () => {
                               <Option value="payée">Payée</Option>
                               <Option value="en attente">En attente</Option>
                               <Option value="En retard">En retard</Option>
+                              <Option value="avoir">Avoir</Option>
                             </Select>
                           </div>
                           {hasPermission('create_invoices') ? 
