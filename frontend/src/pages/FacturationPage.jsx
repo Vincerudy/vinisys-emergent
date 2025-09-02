@@ -227,7 +227,8 @@ const FacturationPage = ( ) => {
       statusFilter === 'all' ||
       (statusFilter === 'payée' && invoice.statut === 'payée') ||
       (statusFilter === 'en attente' && invoice.statut === 'en attente') ||
-      (statusFilter === 'En retard' && invoice.statut === 'En retard') 
+      (statusFilter === 'En retard' && invoice.statut === 'En retard') ||
+      (statusFilter === 'avoir' && invoice.type === 'AVOIR') 
       
   
     // Convertir la chaîne de date en objet dayjs
