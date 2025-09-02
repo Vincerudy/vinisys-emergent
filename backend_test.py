@@ -139,13 +139,12 @@ def test_authentication():
         return False, None
 
 def test_factures_list_access():
-    """Test 2: Vérifier l'accès à la liste des factures pour générer un avoir"""
-    print_test_header("Factures List Access Test - Liste des factures")
+    """Test 2: Vérifier l'accès à la liste des factures et analyser les types (FACT vs AVOIR)"""
+    print_test_header("Factures List Access Test - Analyse des types de documents")
     try:
         headers = get_auth_headers()
         
-        # Test access to factures list (required for avoir generation)
-        # Using user ID instead of societe ID as per the API structure
+        # Test access to factures list to analyze document types
         user_id = USER_DATA.get('id') if USER_DATA else 4
         response = requests.get(
             f"{API_BASE}/listeFacture/{user_id}",
@@ -156,34 +155,61 @@ def test_factures_list_access():
         if response.status_code == 200:
             factures = response.json()  # Direct array response, not wrapped in object
             
-            print_test_result(True, f"Factures API accessible - {len(factures)} factures found", response)
+            print_test_result(True, f"Factures API accessible - {len(factures)} documents found", response)
             
-            # Find a suitable facture for avoir generation
-            facture_for_avoir = None
-            for facture in factures:
-                if facture.get('type') == 'FACT' and facture.get('statut') != 'brouillon':
-                    facture_for_avoir = facture
-                    break
+            # Analyze document types
+            factures_count = 0
+            avoirs_count = 0
+            avoirs_found = []
+            factures_found = []
             
-            if facture_for_avoir:
-                print(f"  ✅ FACTURE SUITABLE FOR AVOIR FOUND:")
-                print(f"    📄 Facture ID: {facture_for_avoir.get('id')}")
-                print(f"    📄 Numéro: {facture_for_avoir.get('invoiceNumber')}")
-                print(f"    📄 Client: {facture_for_avoir.get('client')}")
-                print(f"    📄 Montant: {facture_for_avoir.get('totalAmount')}€")
-                print(f"    📄 Type: {facture_for_avoir.get('type')}")
-                print(f"    📄 Statut: {facture_for_avoir.get('statut')}")
+            for document in factures:
+                doc_type = document.get('type')
+                if doc_type == 'AVOIR':
+                    avoirs_count += 1
+                    avoirs_found.append(document)
+                elif doc_type == 'FACT':
+                    factures_count += 1
+                    factures_found.append(document)
+            
+            print(f"  📊 ANALYSE DES TYPES DE DOCUMENTS:")
+            print(f"    📄 Factures (type='FACT'): {factures_count}")
+            print(f"    🧾 Avoirs (type='AVOIR'): {avoirs_count}")
+            print(f"    📋 Total documents: {len(factures)}")
+            
+            # Show details of found avoirs (expected test data)
+            if avoirs_found:
+                print(f"  ✅ AVOIRS TROUVÉS DANS LA BASE:")
+                for i, avoir in enumerate(avoirs_found[:5]):  # Show first 5
+                    print(f"    🧾 Avoir #{i+1}:")
+                    print(f"      - Numéro: {avoir.get('invoiceNumber')}")
+                    print(f"      - Type: {avoir.get('type')}")
+                    print(f"      - Client: {avoir.get('client')}")
+                    print(f"      - Montant: {avoir.get('totalAmount')}€")
+                    print(f"      - Statut: {avoir.get('statut')}")
                 
-                return True, {
-                    'factures': factures,
-                    'facture_for_avoir': facture_for_avoir
-                }
+                # Check for expected test data
+                expected_avoirs = ['AVOI-2025-SE853-1', 'AVOI-2025-SE799-1', 'AVOI-2025-SE657-1']
+                found_expected = []
+                for avoir in avoirs_found:
+                    numero = avoir.get('invoiceNumber', '')
+                    if numero in expected_avoirs:
+                        found_expected.append(numero)
+                
+                if found_expected:
+                    print(f"  ✅ DONNÉES DE TEST ATTENDUES TROUVÉES: {found_expected}")
+                else:
+                    print(f"  ⚠️ Données de test attendues non trouvées, mais {avoirs_count} avoirs présents")
             else:
-                print(f"  ⚠️ No suitable facture found for avoir generation (need FACT type, not brouillon)")
-                return True, {
-                    'factures': factures,
-                    'facture_for_avoir': None
-                }
+                print(f"  ⚠️ Aucun avoir trouvé dans la base de données")
+            
+            return True, {
+                'factures': factures,
+                'avoirs_found': avoirs_found,
+                'factures_found': factures_found,
+                'avoirs_count': avoirs_count,
+                'factures_count': factures_count
+            }
         else:
             print_test_result(False, f"Factures API failed - HTTP {response.status_code}", response)
             return False, None
