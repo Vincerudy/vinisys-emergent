@@ -656,6 +656,13 @@ const NouvelAchatPage = () => {
           </div>
         </div>
       </form>
+      
+      {/* Composant OCR qui fonctionne bien (utilisé pour les notes de frais) */}
+      <OCRCapture
+        isOpen={ocrCaptureOpen}
+        onClose={() => setOcrCaptureOpen(false)}
+        onDataExtracted={handleOcrDataExtracted}
+      />
     </div>
   );
 };
