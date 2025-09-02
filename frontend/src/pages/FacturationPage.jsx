@@ -602,7 +602,10 @@ const handleModalOk = async () => {
         totalTPS, // Ajout du montant TPS
         taxe_secondaire: taxeSecondaire ? taxeSecondaire.value : null, // Taux de la taxe secondaire
         total_taxe_secondaire: totalTPS, // Montant de la taxe secondaire
-        numero: isAvoir ? `AVOI-${dayjs().format('YYYY')}-${String(numeroFacture).padStart(3, '0')}` : numeroFacture, 
+        numero: isAvoir ? `AVOI-${dayjs().format('YYYY')}-${String(numeroFacture).padStart(3, '0')}` : numeroFacture,
+        // Ajouter la référence à la facture d'origine pour les avoirs
+        facture_origine_id: isAvoir ? factureOriginePourAvoir?.id : null,
+        facture_origine_numero: isAvoir ? factureOriginePourAvoir?.numero : null,
         societe_id, 
         id
       };
