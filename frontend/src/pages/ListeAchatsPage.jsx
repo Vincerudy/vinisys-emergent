@@ -376,13 +376,25 @@ const ListeAchatsPage = () => {
                   </td>
                   <td className="actions-cell">
                     <div className="action-buttons">
-                      <button className="btn-action view" title="Voir">
+                      <button 
+                        className="btn-action view" 
+                        title="Voir"
+                        onClick={() => handleViewAchat(achat)}
+                      >
                         <FiEye size={14} />
                       </button>
-                      <button className="btn-action edit" title="Modifier">
+                      <button 
+                        className="btn-action edit" 
+                        title="Modifier"
+                        onClick={() => handleEditAchat(achat)}
+                      >
                         <FiEdit size={14} />
                       </button>
-                      <button className="btn-action delete" title="Supprimer">
+                      <button 
+                        className="btn-action delete" 
+                        title="Supprimer"
+                        onClick={() => handleDeleteAchat(achat.id)}
+                      >
                         <FiTrash2 size={14} />
                       </button>
                     </div>
