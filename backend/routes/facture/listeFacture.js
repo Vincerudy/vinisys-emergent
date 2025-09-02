@@ -29,6 +29,8 @@ router.get('/listeFacture/:id', async (req, res) => {
             fac.type_fact AS type,
             fac.taxe_secondaire,
             fac.total_taxe_secondaire,
+            fac.facture_origine_id,
+            fac.facture_origine_numero,
             soci.companyName AS vendeur_nom,
             soci.companyAddress AS vendeur_adresse,
             soci.code_postal AS vendeur_code_postal,
