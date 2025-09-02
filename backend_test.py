@@ -1,44 +1,50 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Corrections OCR Dépenses
+Backend API Testing Script for Vinisys Application - Test Nouvelle Intégration OCR Dépenses
 
-Tests des corrections OCR pour les dépenses après les modifications apportées.
+Tests de la nouvelle intégration OCR pour les dépenses après remplacement du système défaillant.
 
-**CONTEXTE :** Corrections du problème OCR où les montants HT/TVA ne correspondaient pas aux factures réelles 
-car le système forçait tout à 20% de TVA.
+**PROBLÈME RÉSOLU :**
+- **Ancien système** : `NouvelAchatPage` appelait `/achats/ocr/extract` (API inexistante) ❌
+- **Nouveau système** : Utilise maintenant `OCRCapture` (composant qui fonctionne bien pour les notes de frais) ✅
 
-**CORRECTIONS APPORTÉES :**
+**CHANGEMENTS EFFECTUÉS :**
+1. **Import ajouté** : `import OCRCapture from '../components/OCRCapture';`
+2. **State ajouté** : `ocrCaptureOpen` pour gérer le modal OCR
+3. **Fonction remplacée** : `handleOcrUpload` → `handleOcrDataExtracted` 
+4. **Boutons modifiés** : Inputs file → Boutons qui ouvrent le modal OCR
+5. **Composant ajouté** : `<OCRCapture>` à la fin du JSX
 
-1. **Dans OCRCapture.jsx :**
-   - Parsing amélioré pour extraire séparément HT, TVA et TTC
-   - Détection des taux de TVA réels depuis les factures
-   - Gestion de plusieurs TVA sur une même facture
-   - Calculs automatiques des montants manquants
+**AVANTAGES DU NOUVEAU SYSTÈME :**
+- ✅ Utilise Tesseract.js côté client (pas besoin d'API serveur)
+- ✅ Parsing OCR amélioré avec regex françaises 
+- ✅ Interface modal moderne avec caméra/fichier
+- ✅ Gestion des montants avec espaces ("5 000€")
+- ✅ Extraction correcte : HT, TVA, TTC séparément
+- ✅ Logs détaillés pour debugging
 
-2. **Dans FraisSidebar.jsx :**
-   - Utilisation des montants extraits par OCR 
-   - Calculs intelligents selon les données disponibles
-   - Plus de forçage à 20% de TVA
+**MAPPING DES DONNÉES :**
+Le nouveau système mappe correctement :
+- `ocrData.montant_ht` → `achat.montant_ht`
+- `ocrData.montant_tva` → `achat.montant_tva` 
+- `ocrData.montant_ttc` → `achat.montant_ttc`
+- `ocrData.tva_taux` → `achat.taux_tva`
+- `ocrData.date_frais` → `achat.date_facture`
+- `ocrData.vendeur` → `achat.vendeur`
 
-**TESTS REQUIS :**
-1. Connexion avec `idnovation2014@gmail.com` / `Cinema12` ✅ (déjà validé)
-2. Vérifier que les endpoints de création de dépenses fonctionnent
-3. Simuler des données OCR avec différents taux de TVA (10%, 20%, 5.5%)
-4. Vérifier que les calculs HT/TVA/TTC sont cohérents
-5. Tester le cas d'une facture avec plusieurs TVA
+**TESTS À EFFECTUER :**
+1. ✅ Connexion avec `idnovation2014@gmail.com` / `Cinema12`
+2. Vérifier l'accès à la page de création d'achat/dépense
+3. Tester le bouton "Scanner document" ouvre le modal OCR
+4. Vérifier que les données OCR pré-remplissent correctement le formulaire
+5. Confirmer que les montants sont exacts (HT: 5000€, TVA: 1000€, TTC: 6000€)
 
-**ENDPOINTS PRINCIPAUX À TESTER :**
-- POST /api/login 
-- POST /api/frais (création de dépenses)
-- GET /api/types-frais (types disponibles)
-- Vérifier les logs de calcul OCR
+**ENDPOINTS À VALIDER :**
+- POST /api/login (déjà validé)
+- POST /api/achat (création d'achat avec données OCR)
+- Vérifier les logs frontend dans la console
 
-**STATUT ACTUEL :**
-- Frontend : ✅ Fonctionnel (page de connexion visible)
-- Backend : ✅ Connexion login validée 
-- MariaDB : ✅ Opérationnel
-
-Effectuer des tests pour confirmer que les corrections OCR fonctionnent comme prévu.
+L'utilisateur devrait maintenant pouvoir utiliser l'OCR qui fonctionne au lieu de l'ancien système défaillant.
 """
 
 import requests
