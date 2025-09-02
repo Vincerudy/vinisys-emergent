@@ -106,7 +106,12 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       setShowNewFournisseur(false);
     } else if (prefilledData) {
       // Appliquer les données pré-remplies (OCR, édition, ou visualisation)
+      console.log('🔍 PrefilledData received:', prefilledData);
+      console.log('🔍 Current mode:', mode);
+      
       const mappedData = mapApiDataToForm(prefilledData);
+      console.log('🔍 Mapped data:', mappedData);
+      
       setAchat(prevAchat => ({
         ...prevAchat,
         ...mappedData
@@ -119,6 +124,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       
       // Charger les justificatifs existants si on édite/visualise un achat
       if (prefilledData.id && (mode === 'edit' || mode === 'view')) {
+        console.log('🔍 Loading justificatifs for achat ID:', prefilledData.id);
         loadExistingJustificatifs(prefilledData.id);
       }
     }
