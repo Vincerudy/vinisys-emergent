@@ -49,6 +49,8 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [convertedPdfUrls, setConvertedPdfUrls] = useState({});
+  const [convertingFiles, setConvertingFiles] = useState({});
 
   // Calculs automatiques
   const montantHT = parseFloat(achat.montant_ht || 0);
