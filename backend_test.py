@@ -1,81 +1,74 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Corrections AchatSidebar et Justificatifs
+Backend API Testing Script for Vinisys Application - Test Corrections URL Justificatifs
 
-Tests des corrections critiques apportées à la sidebar de dépenses qui n'affichait aucune donnée ni justificatifs.
+Tests des corrections critiques apportées à la construction d'URL des justificatifs dans la visionneuse.
 
 **PROBLÈME CRITIQUE IDENTIFIÉ ET CORRIGÉ :**
 
-1. **Problème principal** : Conflit dans la gestion de la prop `mode` dans AchatSidebar.jsx
-   - **Avant** : `mode: initialMode = 'manuel'` + `useState(initialMode)` → écrasait la prop
-   - **Après** : `mode = 'manuel'` directement utilisé comme prop
+1. **Construction d'URL incorrecte** : Duplication du préfixe `/api` dans l'URL
+   - **Avant** : `${VITE_API_URL}${fileUrl}` où `VITE_API_URL=/api` et `fileUrl=/api/uploads/...`
+   - **Résultat incorrect** : `/api/api/uploads/achats/...` (double `/api`)
 
-2. **Mapping des données API → Formulaire :**
-   - **Problème** : Les champs API ne correspondaient pas aux champs du formulaire
-   - **Solution** : Fonction `mapApiDataToForm()` pour convertir les données
-   - **Mapping** : `numero` → `numero_facture`, formatage dates, conversion booléens, etc.
-
-3. **Debug et logs ajoutés :**
-   - Logs dans `useEffect` pour tracer les données reçues
-   - Logs dans `loadExistingJustificatifs` pour tracer le chargement des fichiers
-   - Vérification du mode et de l'ID pour le chargement des justificatifs
+2. **URL finale incorrecte** :
+   - **Avant** : `/api/api/uploads/achats/achat-1756803688527-228229367.png` ❌
+   - **Après** : `https://expense-ocr-sys.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png` ✅
 
 **CORRECTIONS APPORTÉES :**
 
-1. **Prop mode corrigée** :
+1. **Variable d'environnement corrigée** :
    ```jsx
-   // AVANT (incorrect)
-   const AchatSidebar = ({ mode: initialMode = 'manuel' }) => {
-     const [mode, setMode] = useState(initialMode);
-
-   // APRÈS (correct)  
-   const AchatSidebar = ({ mode = 'manuel' }) => {
+   // AVANT (incorrect - duplication /api)
+   url: `${import.meta.env.VITE_API_URL}${fileUrl}`
+   // VITE_API_URL = "/api" + fileUrl = "/api/uploads/..." = "/api/api/uploads/..."
+   
+   // APRÈS (correct)
+   url: `${import.meta.env.REACT_APP_BACKEND_URL}${fileUrl}`
+   // REACT_APP_BACKEND_URL = "https://domain.com" + fileUrl = "/api/uploads/..." = URL complète
    ```
 
-2. **Fonction de mapping ajoutée** :
+2. **Endpoint API corrigé** :
    ```jsx
-   const mapApiDataToForm = (apiData) => {
-     return {
-       numero_facture: apiData.numero || '',
-       fournisseur_id: apiData.fournisseur_id || '',
-       date_achat: apiData.date_achat ? apiData.date_achat.split('T')[0] : '',
-       montant_ht: apiData.montant_ht || '',
-       taux_tva: parseFloat(apiData.taux_tva) || 20,
-       tva_deductible: apiData.tva_deductible === '1' || apiData.tva_deductible === 1,
-       categorie_achat_id: apiData.categorie_achat_id || apiData.categorie_id || '',
-       description: apiData.description || '',
-       mode_paiement: apiData.mode_paiement || 'virement',
-       id: apiData.id
-     };
-   };
+   // AVANT
+   const response = await fetch(`${import.meta.env.VITE_API_URL}/achat/${achatId}/justificatifs`);
+   
+   // APRÈS  
+   const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/achat/${achatId}/justificatifs`);
    ```
 
 **TESTS À EFFECTUER :**
 
-1. **Test de l'API des achats :**
-   - `GET /api/achats/2` → Vérifier que les achats sont listés
-   - Valider la structure des données (id, numero, montant_ht, fournisseur_id, etc.)
-   - Confirmer que l'achat ID 11 a un justificatif_path
+1. **Test de l'URL des justificatifs :**
+   - **URL construite** : `https://expense-ocr-sys.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png`
+   - **Test HTTP** : `curl -I "URL"` → Doit retourner HTTP/2 200 
+   - **Taille fichier** : 4,102,537 bytes (≈4MB)
+   - **Type contenu** : `image/png`
 
 2. **Test de l'endpoint justificatifs :**
-   - `GET /api/achat/11/justificatifs` → Doit retourner le justificatif
-   - Vérifier la structure de la réponse (id, justificatif_path, nom_fichier, type_fichier)
+   - **URL API** : `https://expense-ocr-sys.preview.emergentagent.com/api/achat/11/justificatifs`
+   - **Réponse** : JSON avec justificatif_path correct
+   - **Transformation** : `/app/backend/uploads/` → `/api/uploads/`
 
-3. **Test du mapping des données :**
-   - Vérifier que la fonction `mapApiDataToForm` convertit correctement les données API
-   - Tester avec les données d'achat réelles de la base
+3. **Test de la visionneuse :**
+   - Ouvrir l'achat ID 11 en mode view/edit
+   - Vérifier que l'image PNG s'affiche immédiatement dans la visionneuse
+   - Pas de nom de fichier seul, mais l'image complète
+   - Conteneur de 500px de hauteur avec image centrée
 
-4. **Test de fonctionnement complet :**
-   - Cliquer sur l'œil → Sidebar s'ouvre en mode 'view' avec données pré-remplies
-   - Cliquer sur le crayon → Sidebar s'ouvre en mode 'edit' avec données pré-remplies
-   - Vérifier que les justificatifs se chargent automatiquement
+4. **Test de construction d'URL :**
+   ```
+   justificatif_path: "/app/backend/uploads/achats/achat-1756803688527-228229367.png"
+   transformation: "/api/uploads/achats/achat-1756803688527-228229367.png"  
+   URL finale: "https://expense-ocr-sys.preview.emergentagent.com/api/uploads/achats/achat-1756803688527-228229367.png"
+   ```
 
 **Données de test :**
 - Société ID : 2
-- Achat de test avec justificatif : ID 11 (avec image PNG)
-- URL justificatif : `/app/backend/uploads/achats/achat-1756803688527-228229367.png`
+- Achat ID : 11 (avec justificatif PNG)
+- Fichier : `achat-1756803688527-228229367.png`
+- URL complète validée et accessible
 
-Les corrections devraient maintenant permettre à la sidebar d'afficher les données de l'achat et de charger les justificatifs automatiquement.
+La visionneuse devrait maintenant afficher correctement l'image PNG au lieu du nom de fichier seul.
 """
 
 import requests
