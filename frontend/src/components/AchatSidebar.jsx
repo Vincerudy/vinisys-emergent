@@ -99,7 +99,18 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
 
   // useEffect pour gérer les données pré-remplies et les fichiers attachés
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      // Quand la sidebar se ferme, nettoyer tous les états
+      setUploadedFiles([]);
+      setSelectedFile(null);
+      setAttachedFiles([]);
+      return;
+    }
+    
+    // Réinitialiser les fichiers à chaque ouverture pour éviter les conflits entre différents achats
+    setUploadedFiles([]);
+    setSelectedFile(null);
+    setAttachedFiles([]);
     
     if (!prefilledData) {
       // Mode nouveau : réinitialiser
@@ -117,14 +128,10 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
         compte_comptable_achat: '',
         compte_comptable_tva: '44566'
       });
-      setAttachedFiles([]);
-      setUploadedFiles([]);
-      setSelectedFile(null);
       setShowNewFournisseur(false);
     } else if (prefilledData) {
       // Appliquer les données pré-remplies (OCR, édition, ou visualisation)
       const mappedData = mapApiDataToForm(prefilledData);
-      
       setAchat(prevAchat => ({
         ...prevAchat,
         ...mappedData
