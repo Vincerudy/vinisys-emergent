@@ -189,6 +189,120 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     }
   };
 
+  // Gestion des fichiers
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    handleFiles(files);
+  };
+
+  const handleFiles = (files) => {
+    const validFiles = files.filter(file => {
+      const isValidType = file.type.includes('pdf') || file.type.includes('image');
+      const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB max
+      return isValidType && isValidSize;
+    });
+
+    const newFiles = validFiles.map(file => ({
+      file,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file),
+      id: Date.now() + Math.random()
+    }));
+
+    setUploadedFiles(prev => [...prev, ...newFiles]);
+    if (newFiles.length > 0 && !selectedFile) {
+      setSelectedFile(newFiles[0]);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const files = Array.from(e.dataTransfer.files);
+    handleFiles(files);
+  };
+
+  const removeFile = (fileId) => {
+    setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
+    if (selectedFile && selectedFile.id === fileId) {
+      setSelectedFile(uploadedFiles.find(f => f.id !== fileId) || null);
+    }
+  };
+
+  const selectFile = (file) => {
+    setSelectedFile(file);
+  };
+
+  const renderFileViewer = () => {
+    if (!selectedFile) {
+      return (
+        <div className="file-viewer">
+          <div className="text-center text-gray-500 py-8">
+            <FiFileText size={48} className="mx-auto mb-4 text-gray-400" />
+            <p>Aucun fichier sélectionné</p>
+            <p className="text-sm">Téléchargez un fichier pour le visualiser</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedFile.type.includes('pdf')) {
+      return (
+        <div className="file-viewer">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">{selectedFile.name}</span>
+            <button
+              onClick={() => removeFile(selectedFile.id)}
+              className="text-red-500 hover:text-red-700 p-1"
+            >
+              <FiTrash2 size={16} />
+            </button>
+          </div>
+          <iframe
+            src={selectedFile.url}
+            title={selectedFile.name}
+            className="w-full h-96 border border-gray-300 rounded"
+          />
+        </div>
+      );
+    }
+
+    if (selectedFile.type.includes('image')) {
+      return (
+        <div className="file-viewer">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">{selectedFile.name}</span>
+            <button
+              onClick={() => removeFile(selectedFile.id)}
+              className="text-red-500 hover:text-red-700 p-1"
+            >
+              <FiTrash2 size={16} />
+            </button>
+          </div>
+          <img
+            src={selectedFile.url}
+            alt={selectedFile.name}
+            className="w-full h-96 object-contain border border-gray-300 rounded"
+          />
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   if (!isOpen) return null;
 
   return (
