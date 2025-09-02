@@ -47,6 +47,9 @@ const NouvelAchatPage = () => {
   });
 
   const [justificatifs, setJustificatifs] = useState([]);
+  
+  // États pour OCR
+  const [ocrCaptureOpen, setOcrCaptureOpen] = useState(false);
   const [ocrData, setOcrData] = useState(null);
   const [showNewFournisseur, setShowNewFournisseur] = useState(false);
 
