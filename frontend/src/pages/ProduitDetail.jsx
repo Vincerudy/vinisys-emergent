@@ -26,19 +26,7 @@ const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
-const categoriesDisponibles = ['Matériel', 'Logiciel', 'Services'];
-const sousCategoriesDisponibles = {
-  Matériel: ['Imprimantes', 'Accessoires', 'PC'],
-  Logiciel: ['ERP', 'Antivirus', 'Bureautique'],
-  Services: ['Installation', 'Maintenance'],
-};
-
-const TVA_OPTIONS = [
-  { label: '20%', value: 20 },
-  { label: '10%', value: 10 },
-  { label: '5.5%', value: 5.5 },
-  { label: '2.1%', value: 2.1 },
-];
+// Les options de TVA seront chargées dynamiquement depuis l'API
 
 const ProduitDetail = () => {
   const { id } = useParams();
@@ -50,6 +38,9 @@ const ProduitDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [lastChangedField, setLastChangedField] = useState(null); // Pour savoir quel champ a été modifié en dernier (HT ou TTC)
+  const [categoriesStock, setCategoriesStock] = useState([]);
+  const [sousCategoriesStock, setSousCategoriesStock] = useState([]);
+  const [tvaOptions, setTvaOptions] = useState([]);
 
   const isNew = !id;
   const API_URL = import.meta.env.VITE_API_URL;
@@ -73,6 +64,8 @@ const ProduitDetail = () => {
             seuil: data.seuil || 0,
             categorie: data.categorie || '',
             sousCategorie: data.sous_categorie || '',
+            categorieId: data.categorie_id || null,
+            sousCategorieId: data.sous_categorie_id || null,
             image: data.image_path
               ? `${API_URL}/${data.image_path}`
               : '',
@@ -108,6 +101,8 @@ const ProduitDetail = () => {
         seuil: 0,
         categorie: '',
         sousCategorie: '',
+        categorieId: null,
+        sousCategorieId: null,
         image: '',
       };
       setProduit(nouveauProduit);
@@ -116,6 +111,65 @@ const ProduitDetail = () => {
       setSelectedFile(null);
     }
   }, [id, societe_id, isNew, API_URL, navigate]);
+
+  // Charger les catégories de stock
+  useEffect(() => {
+    const chargerCategories = async () => {
+      try {
+        const response = await fetch(`${API_URL}/categories-stock/${societe_id}`);
+        if (response.ok) {
+          const categories = await response.json();
+          setCategoriesStock(categories);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des catégories:', error);
+      }
+    };
+
+    if (societe_id) {
+      chargerCategories();
+    }
+  }, [API_URL, societe_id]);
+
+  // Charger les sous-catégories quand une catégorie est sélectionnée
+  useEffect(() => {
+    const chargerSousCategories = async () => {
+      try {
+        if (editedProduit?.categorieId) {
+          const response = await fetch(`${API_URL}/sous-categories-stock/${editedProduit.categorieId}/${societe_id}`);
+          if (response.ok) {
+            const sousCategories = await response.json();
+            setSousCategoriesStock(sousCategories);
+          }
+        } else {
+          setSousCategoriesStock([]);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des sous-catégories:', error);
+      }
+    };
+
+    chargerSousCategories();
+  }, [editedProduit?.categorieId, API_URL, societe_id]);
+
+  // Charger les options de TVA
+  useEffect(() => {
+    const fetchTvaOptions = async () => {
+      try {
+        const response = await fetch(`${API_URL}/tva/active/${societe_id}`);
+        if (response.ok) {
+          const tvaData = await response.json();
+          setTvaOptions(tvaData);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des TVA:', error);
+      }
+    };
+
+    if (societe_id) {
+      fetchTvaOptions();
+    }
+  }, [API_URL, societe_id]);
 
   const handleRetour = () => navigate(-1);
 
@@ -148,6 +202,8 @@ const ProduitDetail = () => {
       formData.append('seuil', editedProduit.seuil || 0);
       formData.append('categorie', editedProduit.categorie || '');
       formData.append('sousCategorie', editedProduit.sousCategorie || '');
+      formData.append('categorieId', editedProduit.categorieId || '');
+      formData.append('sousCategorieId', editedProduit.sousCategorieId || '');
       formData.append('societeId', societe_id);
 
       if (selectedFile) {
@@ -279,7 +335,7 @@ const ProduitDetail = () => {
 
   if (!produit || !editedProduit) return null;
 
-  const sousCategories = sousCategoriesDisponibles[editedProduit.categorie] || [];
+  // Les sous-catégories sont déjà chargées dans sousCategoriesStock
 
   return (
     <div className="produit-detail-container">
@@ -352,17 +408,20 @@ const ProduitDetail = () => {
 
               <Descriptions.Item label="Catégorie">
                 <Select
-                  value={editedProduit.categorie || undefined}
+                  value={editedProduit.categorieId}
                   onChange={(value) => {
-                    handleChange('categorie', value);
-                    // Reset sous-catégorie quand catégorie change
+                    const selectedCategory = categoriesStock.find(cat => cat.id === value);
+                    handleChange('categorieId', value);
+                    handleChange('categorie', selectedCategory?.nom || '');
+                    // Réinitialiser la sous-catégorie
+                    handleChange('sousCategorieId', null);
                     handleChange('sousCategorie', '');
                   }}
                   placeholder="Sélectionner une catégorie"
                 >
-                  {categoriesDisponibles.map((cat) => (
-                    <Option key={cat} value={cat}>
-                      {cat}
+                  {categoriesStock.map((cat) => (
+                    <Option key={cat.id} value={cat.id}>
+                      {cat.nom}
                     </Option>
                   ))}
                 </Select>
@@ -370,14 +429,18 @@ const ProduitDetail = () => {
 
               <Descriptions.Item label="Sous-catégorie">
                 <Select
-                  value={editedProduit.sousCategorie || undefined}
-                  onChange={(value) => handleChange('sousCategorie', value)}
+                  value={editedProduit.sousCategorieId}
+                  onChange={(value) => {
+                    const selectedSousCategory = sousCategoriesStock.find(sousCat => sousCat.id === value);
+                    handleChange('sousCategorieId', value);
+                    handleChange('sousCategorie', selectedSousCategory?.nom || '');
+                  }}
                   placeholder="Sélectionner une sous-catégorie"
-                  disabled={!editedProduit.categorie}
+                  disabled={!editedProduit.categorieId}
                 >
-                  {sousCategories.map((sousCat) => (
-                    <Option key={sousCat} value={sousCat}>
-                      {sousCat}
+                  {sousCategoriesStock.map((sousCat) => (
+                    <Option key={sousCat.id} value={sousCat.id}>
+                      {sousCat.nom}
                     </Option>
                   ))}
                 </Select>
@@ -405,9 +468,9 @@ const ProduitDetail = () => {
                   onChange={handleTVAChange}
                   style={{ width: 120 }}
                 >
-                  {TVA_OPTIONS.map(({ label, value }) => (
+                  {tvaOptions.map(({ label, value }) => (
                     <Option key={value} value={value}>
-                      {label}
+                      {label} ({value}%)
                     </Option>
                   ))}
                 </Select>

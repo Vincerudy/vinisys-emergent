@@ -38,6 +38,8 @@ router.post('/produit', upload.single('image'), async (req, res) => {
     dateDerniereEntree,
     categorie,
     sousCategorie,
+    categorieId,
+    sousCategorieId,
     societeId,
   } = req.body;
 
@@ -54,8 +56,8 @@ router.post('/produit', upload.single('image'), async (req, res) => {
     if (!produitId) {
       const [result] = await db.query(
         `INSERT INTO produits_services 
-         (nom, prixUnitaireHT, tva,  description, prix_unitaire, quantite_en_stock, seuil_minimum, fournisseur, categorie, sous_categorie, date_derniere_entree, societe_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (nom, prixUnitaireHT, tva, description, prix_unitaire, quantite_en_stock, seuil_minimum, fournisseur, categorie, sous_categorie, categorie_id, sous_categorie_id, date_derniere_entree, societe_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           nom || 'Produit sans nom',
           prixUnitaireHT || '0', 
@@ -65,19 +67,20 @@ router.post('/produit', upload.single('image'), async (req, res) => {
           quantiteEnStock,
           seuil || 0,
           fournisseur || null,
-          categorie || null ,
+          categorie || null,
           sousCategorie || null,
+          categorieId || null,
+          sousCategorieId || null,
           dateDerniereEntree || null,
           societeId,
-          
         ]
       );
       produitId = result.insertId;
     } else {
       await db.query(
         `UPDATE produits_services SET
-          nom = ?, description = ?, prix_unitaire = ?, prixUnitaireHT = ?, tva = ?,  quantite_en_stock = ?, seuil_minimum = ?,
-          fournisseur = ?, date_derniere_entree = ?, societe_id = ?, categorie = ?, sous_categorie = ?
+          nom = ?, description = ?, prix_unitaire = ?, prixUnitaireHT = ?, tva = ?, quantite_en_stock = ?, seuil_minimum = ?,
+          fournisseur = ?, date_derniere_entree = ?, societe_id = ?, categorie = ?, sous_categorie = ?, categorie_id = ?, sous_categorie_id = ?
           WHERE id = ?`,
         [
           nom || 'Produit sans nom',
@@ -90,8 +93,10 @@ router.post('/produit', upload.single('image'), async (req, res) => {
           fournisseur || null,
           dateDerniereEntree || null,
           societeId,
-          categorie,
-          sousCategorie,
+          categorie || null,
+          sousCategorie || null,
+          categorieId || null,
+          sousCategorieId || null,
           produitId,
         ]
       );

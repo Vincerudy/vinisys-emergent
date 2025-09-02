@@ -103,12 +103,15 @@ const ListeAchatsPage = () => {
   const getStatusBadge = (statut) => {
     const badges = {
       'brouillon': { class: 'status-draft', text: 'Brouillon' },
+      'en_attente': { class: 'status-pending', text: 'En attente' },
       'valide': { class: 'status-validated', text: 'Validé' },
       'refuse': { class: 'status-rejected', text: 'Refusé' },
       'exporte': { class: 'status-exported', text: 'Exporté' }
     };
     
-    const badge = badges[statut] || { class: 'status-draft', text: 'Inconnu' };
+    // Si le statut est null, undefined, ou autre, considérer comme "en attente"
+    const finalStatut = statut || 'en_attente';
+    const badge = badges[finalStatut] || { class: 'status-pending', text: 'En attente' };
     return <span className={`status-badge ${badge.class}`}>{badge.text}</span>;
   };
 
@@ -146,6 +149,110 @@ const ListeAchatsPage = () => {
 
   const handleNewExpenseClick = () => {
     setModeModalOpen(true);
+  };
+
+  const handleViewAchat = (achat) => {
+    // Ouvrir la sidebar en mode lecture seule avec les données de l'achat
+    setSidebarPrefilledData(achat);
+    setSidebarAttachedFile(null);
+    setSidebarMode('view');
+    setSidebarOpen(true);
+  };
+
+  const handleEditAchat = (achat) => {
+    // Ouvrir la sidebar en mode édition avec les données de l'achat
+    setSidebarPrefilledData(achat);
+    setSidebarAttachedFile(null);
+    setSidebarMode('edit');
+    setSidebarOpen(true);
+  };
+
+  const handleDeleteAchat = async (achatId) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) {
+      try {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/achat/${achatId}`);
+        fetchAchats(); // Rafraîchir la liste
+        alert('Dépense supprimée avec succès');
+      } catch (error) {
+        console.error('Erreur suppression:', error);
+        alert('Erreur lors de la suppression de la dépense');
+      }
+    }
+  };
+
+  // Handlers pour la validation en masse
+  const handleBulkValidate = async () => {
+    if (selectedAchats.length === 0) {
+      alert('Veuillez sélectionner au moins une dépense à valider.');
+      return;
+    }
+
+    if (window.confirm(`Êtes-vous sûr de vouloir valider ${selectedAchats.length} dépense(s) ?`)) {
+      try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/achats/validate-bulk`, {
+          achat_ids: selectedAchats,
+          societe_id: societe_id
+        });
+        
+        alert('Dépenses validées avec succès');
+        fetchAchats(); // Rafraîchir la liste
+        setSelectedAchats([]); // Vider la sélection
+      } catch (error) {
+        console.error('Erreur validation en masse:', error);
+        alert('Erreur lors de la validation des dépenses');
+      }
+    }
+  };
+
+  const handleBulkReject = async () => {
+    if (selectedAchats.length === 0) {
+      alert('Veuillez sélectionner au moins une dépense à refuser.');
+      return;
+    }
+
+    if (window.confirm(`Êtes-vous sûr de vouloir refuser ${selectedAchats.length} dépense(s) ?`)) {
+      try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/achats/reject-bulk`, {
+          achat_ids: selectedAchats,
+          societe_id: societe_id
+        });
+        
+        alert('Dépenses refusées avec succès');
+        fetchAchats(); // Rafraîchir la liste
+        setSelectedAchats([]); // Vider la sélection
+      } catch (error) {
+        console.error('Erreur refus en masse:', error);
+        alert('Erreur lors du refus des dépenses');
+      }
+    }
+  };
+
+  const handleBulkExport = async () => {
+    if (selectedAchats.length === 0) {
+      alert('Veuillez sélectionner au moins une dépense à exporter.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/achats/export-bulk`, {
+        achat_ids: selectedAchats,
+        societe_id: societe_id
+      }, { responseType: 'blob' });
+      
+      // Créer un lien de téléchargement
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `achats_export_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      
+      alert('Export terminé avec succès');
+    } catch (error) {
+      console.error('Erreur export en masse:', error);
+      alert('Erreur lors de l\'export des dépenses');
+    }
   };
 
   return (
@@ -257,15 +364,27 @@ const ListeAchatsPage = () => {
             {selectedAchats.length} élément(s) sélectionné(s)
           </div>
           <div className="bulk-buttons">
-            <button className="btn-success">
+            <button 
+              className="btn-success"
+              onClick={handleBulkValidate}
+              disabled={selectedAchats.length === 0}
+            >
               <FiCheck size={16} />
               Valider la sélection
             </button>
-            <button className="btn-danger">
+            <button 
+              className="btn-danger"
+              onClick={handleBulkReject}
+              disabled={selectedAchats.length === 0}
+            >
               <FiX size={16} />
               Refuser la sélection
             </button>
-            <button className="btn-secondary">
+            <button 
+              className="btn-secondary"
+              onClick={handleBulkExport}
+              disabled={selectedAchats.length === 0}
+            >
               <FiDownload size={16} />
               Exporter la sélection
             </button>
@@ -347,15 +466,34 @@ const ListeAchatsPage = () => {
                   </td>
                   <td className="actions-cell">
                     <div className="action-buttons">
-                      <button className="btn-action view" title="Voir">
+                      {/* Bouton Voir - toujours visible */}
+                      <button 
+                        className="btn-action view" 
+                        title="Voir"
+                        onClick={() => handleViewAchat(achat)}
+                      >
                         <FiEye size={14} />
                       </button>
-                      <button className="btn-action edit" title="Modifier">
-                        <FiEdit size={14} />
-                      </button>
-                      <button className="btn-action delete" title="Supprimer">
-                        <FiTrash2 size={14} />
-                      </button>
+                      
+                      {/* Boutons Modifier et Supprimer - seulement pour les dépenses non validées */}
+                      {achat.statut !== 'valide' && (
+                        <>
+                          <button 
+                            className="btn-action edit" 
+                            title="Modifier"
+                            onClick={() => handleEditAchat(achat)}
+                          >
+                            <FiEdit size={14} />
+                          </button>
+                          <button 
+                            className="btn-action delete" 
+                            title="Supprimer"
+                            onClick={() => handleDeleteAchat(achat.id)}
+                          >
+                            <FiTrash2 size={14} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

@@ -16,13 +16,21 @@ router.get('/produit/:id/:societe_id', async (req, res) => {
         prod.prix_unitaire as prixUnitaire,
         prod.prixUnitaireHT,
         prod.tva,
+        prod.categorie_id,
+        prod.sous_categorie_id,
         prod.categorie,
         prod.sous_categorie,
         prod.seuil_minimum as seuil,
-        fich.path AS image_path
+        fich.path AS image_path,
+        cat.nom as categorie_nom,
+        sous_cat.nom as sous_categorie_nom
       FROM produits_services prod
       LEFT JOIN upload_fichier fich
         ON fich.fk = prod.id AND fich.societe_id = prod.societe_id AND fich.file_type = 'PROD_IMG_DESC'
+      LEFT JOIN categories_stock cat
+        ON cat.id = prod.categorie_id
+      LEFT JOIN sous_categories_stock sous_cat
+        ON sous_cat.id = prod.sous_categorie_id
       WHERE prod.id = ? AND prod.societe_id = ?
       LIMIT 1
     `, [id, societe_id]);

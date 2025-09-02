@@ -28,11 +28,7 @@ import {
 
 const { Option } = Select;
 
-const categorieOptions = ['Tous', 'Matériel', 'Service'];
-const sousCategorieMap = {
-  Matériel: ['Imprimantes', 'Ordinateurs', 'Accessoires'],
-  Service: ['Installation'],
-};
+// Les catégories et sous-catégories seront chargées dynamiquement
 
 const generateGradient = () => {
   const hue1 = Math.floor(Math.random() * 360);
@@ -47,6 +43,8 @@ const ListeProduits = () => {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategorie, setSelectedCategorie] = useState('Tous');
   const [selectedSousCategorie, setSelectedSousCategorie] = useState('');
+  const [categoriesStock, setCategoriesStock] = useState([]);
+  const [sousCategoriesStock, setSousCategoriesStock] = useState([]);
   const navigate = useNavigate();
 
   const gradients = useMemo(() => {
@@ -72,8 +70,10 @@ const ListeProduits = () => {
           prixUnitaire: parseFloat(prod.prixUnitaire) || 0,
           prixUnitaireHT: parseFloat(prod.prixUnitaireHT) || 0,
           quantiteEnStock: prod.quantite_en_stock,
-          categorie: prod.categorie || 'Non défini',
-          sousCategorie: prod.sous_categorie || '',
+          categorie: prod.categorie_nom || prod.categorie || 'Non défini',
+          sousCategorie: prod.sous_categorie_nom || prod.sous_categorie || '',
+          categorieId: prod.categorie_id,
+          sousCategorieId: prod.sous_categorie_id,
           image: prod.image_path || '',
         }));
         const sorted = mapped.sort((a, b) => b.id - a.id);
@@ -86,6 +86,50 @@ const ListeProduits = () => {
     };
     fetchProduits();
   }, [societe_id]);
+
+  // Charger les catégories de stock
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/categories-stock/${societe_id}`);
+        if (response.ok) {
+          const categories = await response.json();
+          setCategoriesStock(categories);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des catégories:', error);
+      }
+    };
+
+    if (societe_id) {
+      fetchCategories();
+    }
+  }, [societe_id]);
+
+  // Charger les sous-catégories quand une catégorie est sélectionnée
+  useEffect(() => {
+    const fetchSousCategories = async () => {
+      try {
+        if (selectedCategorie && selectedCategorie !== 'Tous') {
+          const selectedCategoryData = categoriesStock.find(cat => cat.nom === selectedCategorie);
+          if (selectedCategoryData) {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/sous-categories-stock/${selectedCategoryData.id}/${societe_id}`);
+            if (response.ok) {
+              const sousCategories = await response.json();
+              setSousCategoriesStock(sousCategories);
+            }
+          }
+        } else {
+          setSousCategoriesStock([]);
+          setSelectedSousCategorie('');
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des sous-catégories:', error);
+      }
+    };
+
+    fetchSousCategories();
+  }, [selectedCategorie, categoriesStock, societe_id]);
 
   const filteredProduits = produits.filter(prod => {
     const matchesSearch = prod.nom.toLowerCase().includes(searchValue.toLowerCase());
@@ -180,11 +224,12 @@ const ListeProduits = () => {
           allowClear
           style={{ width: '45%', height: '50px', border: 'none' }}
         >
-          {categorieOptions.map(cat => (
-            <Option key={cat} value={cat}>{cat}</Option>
+          <Option key="Tous" value="Tous">Tous</Option>
+          {categoriesStock.map(cat => (
+            <Option key={cat.id} value={cat.nom}>{cat.nom}</Option>
           ))}
         </Select>
-        {selectedCategorie !== 'Tous' && sousCategorieMap[selectedCategorie] && (
+        {selectedCategorie !== 'Tous' && sousCategoriesStock.length > 0 && (
           <Select
             placeholder="Sous-catégorie"
             value={selectedSousCategorie}
@@ -192,8 +237,8 @@ const ListeProduits = () => {
             allowClear
             style={{ width: '45%', height: '50px', border: 'none' }}
           >
-            {sousCategorieMap[selectedCategorie].map(sc => (
-              <Option key={sc} value={sc}>{sc}</Option>
+            {sousCategoriesStock.map(sc => (
+              <Option key={sc.id} value={sc.nom}>{sc.nom}</Option>
             ))}
           </Select>
         )}

@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: 9999;
   display: flex;
   align-items: stretch;
 }
@@ -24,15 +24,15 @@
 
 .achat-sidebar-panel {
   position: relative;
-  width: 600px;
-  max-width: 90vw;
+  width: 1200px;
+  max-width: 95vw;
   height: 100vh;
   background: white;
   margin-left: auto;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
   transform: translateX(100%);
   transition: transform 0.3s ease-in-out;
-  z-index: 1001;
+  z-index: 10001;
   display: flex;
   flex-direction: column;
 }
@@ -59,27 +59,87 @@
 
 .achat-sidebar-body {
   flex: 1;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.achat-sidebar-body-left {
+  width: 50%;
+  padding: 1.5rem;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.achat-sidebar-body-right {
+  width: 50%;
   padding: 1.5rem;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e0 #f7fafc;
 }
 
-.achat-sidebar-body::-webkit-scrollbar {
+.achat-sidebar-body-left::-webkit-scrollbar,
+.achat-sidebar-body-right::-webkit-scrollbar {
   width: 6px;
 }
 
-.achat-sidebar-body::-webkit-scrollbar-track {
+.achat-sidebar-body-left::-webkit-scrollbar-track,
+.achat-sidebar-body-right::-webkit-scrollbar-track {
   background: #f7fafc;
 }
 
-.achat-sidebar-body::-webkit-scrollbar-thumb {
+.achat-sidebar-body-left::-webkit-scrollbar-thumb,
+.achat-sidebar-body-right::-webkit-scrollbar-thumb {
   background: #cbd5e0;
   border-radius: 3px;
 }
 
-.achat-sidebar-body::-webkit-scrollbar-thumb:hover {
+.achat-sidebar-body-left::-webkit-scrollbar-thumb:hover,
+.achat-sidebar-body-right::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
+}
+
+/* Visionneuse de fichiers */
+.file-viewer {
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-viewer-container {
+  flex: 1;
+  min-height: 500px;
+  max-height: calc(100vh - 200px);
+  background: white;
+}
+
+.pdf-viewer-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 4px;
+}
+
+.file-viewer iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
+  border-radius: 4px;
+}
+
+.file-viewer img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
 .achat-sidebar-footer {
@@ -181,6 +241,53 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Upload area styling */
+.upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: border-color 0.15s ease-in-out;
+  cursor: pointer;
+  background: #fafbfc;
+}
+
+.upload-area:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.upload-area.drag-over {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.file-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  background: white;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.file-item:hover {
+  background: #f9fafb;
+}
+
+.file-item.selected {
+  background: #eff6ff;
+  border-color: #3b82f6;
 }
 
 .achat-sidebar-footer button {

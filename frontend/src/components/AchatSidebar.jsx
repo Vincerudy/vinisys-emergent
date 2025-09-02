@@ -11,14 +11,15 @@ import {
   FiCalendar,
   FiFileText,
   FiUser,
-  FiCheck
+  FiCheck,
+  FiEye,
+  FiTrash2
 } from 'react-icons/fi';
 import './css/AchatSidebar.css';
 
-const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attachedFile = null, mode: initialMode = 'manuel' }) => {
+const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attachedFile = null, mode = 'manuel' }) => {
   const { societe_id, id: user_id } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState(initialMode); // 'manuel' ou 'ocr'
   const [fournisseurs, setFournisseurs] = useState([]);
   const [categories, setCategories] = useState([]);
   const [projets, setProjets] = useState([]);
@@ -44,6 +45,11 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
 
   const [justificatifs, setJustificatifs] = useState([]);
   const [showNewFournisseur, setShowNewFournisseur] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [convertedPdfUrls, setConvertedPdfUrls] = useState({});
+  const [convertingFiles, setConvertingFiles] = useState({});
 
   // Calculs automatiques
   const montantHT = parseFloat(achat.montant_ht || 0);
@@ -74,16 +80,47 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     fetchData();
   }, [isOpen, societe_id]);
 
-  // Reset form when closing or apply prefilled data when opening
+  // Fonction pour mapper les données de l'API vers le format du formulaire
+  const mapApiDataToForm = (apiData) => {
+    return {
+      numero_facture: apiData.numero || '',
+      fournisseur_id: apiData.fournisseur_id || '',
+      date_achat: apiData.date_achat ? apiData.date_achat.split('T')[0] : new Date().toISOString().split('T')[0],
+      montant_ht: apiData.montant_ht || '',
+      taux_tva: parseFloat(apiData.taux_tva) || 20,
+      tva_deductible: apiData.tva_deductible === '1' || apiData.tva_deductible === 1 || apiData.tva_deductible === true,
+      categorie_achat_id: apiData.categorie_achat_id || apiData.categorie_id || '',
+      description: apiData.description || '',
+      mode_paiement: apiData.mode_paiement || 'virement',
+      // Garder l'ID pour les opérations d'édition
+      id: apiData.id
+    };
+  };
+
+  // useEffect pour gérer les données pré-remplies et les fichiers attachés
   useEffect(() => {
     if (!isOpen) {
+      // Quand la sidebar se ferme, nettoyer tous les états
+      setUploadedFiles([]);
+      setSelectedFile(null);
+      setAttachedFiles([]);
+      return;
+    }
+    
+    // Réinitialiser les fichiers seulement si ce n'est pas de l'OCR avec un fichier attaché
+    if (!attachedFile) {
+      // Pas de fichier OCR, on peut tout nettoyer
+      setUploadedFiles([]);
+      setSelectedFile(null);
+      setAttachedFiles([]);
+    }
+    
+    if (!prefilledData) {
+      // Mode nouveau : réinitialiser
       setAchat({
         numero_facture: '',
         fournisseur_id: '',
-        nouveau_fournisseur: '',
         date_achat: new Date().toISOString().split('T')[0],
-        date_facture: '',
-        date_echeance: '',
         montant_ht: '',
         taux_tva: 20,
         tva_deductible: true,
@@ -94,21 +131,94 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
         compte_comptable_achat: '',
         compte_comptable_tva: '44566'
       });
-      setAttachedFiles([]);
       setShowNewFournisseur(false);
-    } else if (prefilledData) {
-      // Appliquer les données pré-remplies de l'OCR
-      setAchat(prevAchat => ({
-        ...prevAchat,
-        ...prefilledData
-      }));
       
-      // Ajouter le fichier attaché s'il y en a un
+      // Même en mode nouveau, ajouter le fichier OCR s'il y en a un
       if (attachedFile) {
         setAttachedFiles([attachedFile]);
+        
+        const ocrFile = {
+          id: `ocr_${Date.now()}`,
+          name: attachedFile.name || 'Justificatif OCR',
+          type: attachedFile.type || 'image/jpeg',
+          url: URL.createObjectURL(attachedFile),
+          file: attachedFile,
+          isOCR: true
+        };
+        
+        setUploadedFiles([ocrFile]);
+        setSelectedFile(ocrFile);
+      }
+    } else if (prefilledData) {
+      // Appliquer les données pré-remplies (OCR, édition, ou visualisation)
+      const mappedData = mapApiDataToForm(prefilledData);
+      setAchat(prevAchat => ({
+        ...prevAchat,
+        ...mappedData
+      }));
+      
+      // Ajouter le fichier attaché s'il y en a un (OCR)
+      if (attachedFile) {
+        setAttachedFiles([attachedFile]);
+        
+        // Ajouter le fichier OCR à la liste des fichiers uploadés pour la visionneuse
+        const ocrFile = {
+          id: `ocr_${Date.now()}`,
+          name: attachedFile.name || 'Justificatif OCR',
+          type: attachedFile.type || 'image/jpeg',
+          url: URL.createObjectURL(attachedFile),
+          file: attachedFile,
+          isOCR: true
+        };
+        
+        setUploadedFiles([ocrFile]);
+        setSelectedFile(ocrFile);
+      }
+      
+      // Charger les justificatifs existants si on édite/visualise un achat
+      if (prefilledData.id && (mode === 'edit' || mode === 'view')) {
+        loadExistingJustificatifs(prefilledData.id);
       }
     }
-  }, [isOpen, prefilledData, attachedFile]);
+  }, [isOpen, prefilledData, attachedFile, mode]);
+
+  // Fonction pour charger les justificatifs existants
+  const loadExistingJustificatifs = async (achatId) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/achat/${achatId}/justificatifs`);
+      
+      if (response.ok) {
+        const justificatifs = await response.json();
+        
+        const existingFiles = justificatifs.map(j => {
+          // Construire l'URL correcte en utilisant le chemin relatif
+          let fileUrl = j.justificatif_path;
+          if (fileUrl.startsWith('/app/backend/uploads/')) {
+            // Transformer /app/backend/uploads/achats/... en /api/uploads/achats/...
+            fileUrl = fileUrl.replace('/app/backend/uploads/', '/api/uploads/');
+          }
+          
+          const finalUrl = `${window.location.origin}${fileUrl}`;
+          
+          return {
+            id: j.id,
+            name: j.nom_fichier || j.justificatif_path?.split('/').pop() || 'Justificatif',
+            type: j.type_fichier || (j.justificatif_path?.includes('.pdf') ? 'application/pdf' : 'image/jpeg'),
+            url: finalUrl,
+            isExisting: true
+          };
+        });
+        
+        setUploadedFiles(existingFiles);
+        
+        if (existingFiles.length > 0) {
+          setSelectedFile(existingFiles[0]);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur chargement justificatifs:', error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -132,9 +242,14 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     formData.append('societe_id', societe_id);
     formData.append('saisie_ocr', mode === 'ocr');
 
-    // Ajout des justificatifs (fichiers attachés + justificatifs normaux)
+    // Ajout des justificatifs (fichiers attachés + nouveaux fichiers téléchargés)
     attachedFiles.forEach((file, index) => {
       formData.append('justificatifs', file);
+    });
+
+    // Ajout des nouveaux fichiers téléchargés
+    uploadedFiles.forEach((fileObj, index) => {
+      formData.append('justificatifs', fileObj.file);
     });
 
     try {
@@ -184,6 +299,135 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
     }
   };
 
+  // Gestion des fichiers
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    handleFiles(files);
+  };
+
+  const handleFiles = (files) => {
+    const validFiles = files.filter(file => {
+      const isValidType = file.type.includes('pdf') || file.type.includes('image');
+      const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB max
+      return isValidType && isValidSize;
+    });
+
+    const newFiles = validFiles.map(file => ({
+      file,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file),
+      id: Date.now() + Math.random()
+    }));
+
+    setUploadedFiles(prev => [...prev, ...newFiles]);
+    if (newFiles.length > 0 && !selectedFile) {
+      setSelectedFile(newFiles[0]);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const files = Array.from(e.dataTransfer.files);
+    handleFiles(files);
+  };
+
+  const removeFile = (fileId) => {
+    const newFiles = uploadedFiles.filter(f => f.id !== fileId);
+    setUploadedFiles(newFiles);
+    
+    if (selectedFile && selectedFile.id === fileId) {
+      setSelectedFile(newFiles.length > 0 ? newFiles[0] : null);
+    }
+  };
+
+  const selectFile = (file) => {
+    setSelectedFile(file);
+  };
+
+  // Note: Fonction de conversion supprimée - affichage direct des images
+
+  // Note: Conversion automatique supprimée - les images sont affichées directement
+
+  const renderFileViewer = () => {
+    if (!selectedFile) {
+      return (
+        <div className="file-viewer">
+          <div className="text-center text-gray-500 py-8">
+            <FiFileText size={48} className="mx-auto mb-4 text-gray-400" />
+            <p>Aucun fichier sélectionné</p>
+            <p className="text-sm">Téléchargez un fichier pour le visualiser</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Pour les PDF et les images converties, utiliser la même visionneuse
+    const renderPdfViewer = (url, filename) => (
+      <div className="file-viewer">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-gray-700">{filename}</span>
+          <button
+            onClick={() => removeFile(selectedFile.id)}
+            className="text-red-500 hover:text-red-700 p-1"
+          >
+            <FiTrash2 size={16} />
+          </button>
+        </div>
+        <div className="pdf-viewer-container" style={{ height: '500px', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
+          <iframe
+            src={`${url}#toolbar=1&navpanes=0&scrollbar=1&page=1&view=FitH`}
+            title={filename}
+            className="w-full h-full border-0"
+            style={{ minHeight: '500px' }}
+          />
+        </div>
+      </div>
+    );
+
+    if (selectedFile.type.includes('pdf')) {
+      return renderPdfViewer(selectedFile.url, selectedFile.name);
+    }
+
+    if (selectedFile.type.includes('image')) {
+      // Pour les images, on les affiche dans une structure similaire au PDF viewer
+      return (
+        <div className="file-viewer">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">{selectedFile.name}</span>
+            <button
+              onClick={() => removeFile(selectedFile.id)}
+              className="text-red-500 hover:text-red-700 p-1"
+            >
+              <FiTrash2 size={16} />
+            </button>
+          </div>
+          <div className="pdf-viewer-container" style={{ height: '500px', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8f9fa' }}>
+            <img
+              src={selectedFile.url}
+              alt={selectedFile.name}
+              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -201,7 +445,9 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
           <div className="achat-sidebar-header">
             <h2 className="text-xl font-semibold text-gray-900">
               <FiFileText className="inline mr-2" />
-              Nouvelle Dépense/Achat
+              {mode === 'view' ? 'Visualiser la Dépense' : 
+               mode === 'edit' ? 'Modifier la Dépense' : 
+               'Nouvelle Dépense/Achat'}
             </h2>
             <button
               onClick={onClose}
@@ -211,9 +457,88 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
             </button>
           </div>
 
-          {/* Form Body */}
+          {/* Form Body - Two Columns */}
           <div className="achat-sidebar-body">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Left Column - File Viewer */}
+            <div className="achat-sidebar-body-left">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <FiFileText className="inline mr-2" />
+                Justificatifs
+              </h3>
+              
+              {/* Upload Area - Masquée si des fichiers sont présents */}
+              {uploadedFiles.length === 0 && (
+                <div
+                  className={`upload-area ${isDragOver ? 'drag-over' : ''}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('file-input').click()}
+                >
+                  <FiUpload size={32} className="mx-auto mb-3 text-gray-400" />
+                  <p className="text-gray-600 mb-2">
+                    Cliquez ou glissez-déposez vos fichiers ici
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    PDF, Images (max 10MB)
+                  </p>
+                  <input
+                    id="file-input"
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png,.gif"
+                    onChange={handleFileUpload}
+                    style={{ display: 'none' }}
+                  />
+                </div>
+              )}
+
+              {/* File List */}
+              {uploadedFiles.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">
+                    Fichiers téléchargés ({uploadedFiles.length})
+                  </h4>
+                  <div className="file-list space-y-2 max-h-32 overflow-y-auto">
+                    {uploadedFiles.map((file) => (
+                      <div
+                        key={file.id}
+                        className={`file-item ${selectedFile?.id === file.id ? 'selected' : ''}`}
+                        onClick={() => selectFile(file)}
+                      >
+                        <FiFileText className="text-blue-600 mr-2 flex-shrink-0" size={16} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-gray-900 truncate">
+                            {file.name}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFile(file.id);
+                          }}
+                          className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
+                        >
+                          <FiX size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* File Viewer */}
+              <div className="mt-4">
+                {renderFileViewer()}
+              </div>
+            </div>
+
+            {/* Right Column - Form Fields */}
+            <div className="achat-sidebar-body-right">
+              <form onSubmit={handleSubmit} className="space-y-6">
               
               {/* Mode de saisie */}
               <div className="mb-6">
@@ -465,7 +790,8 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
                 </div>
               )}
 
-            </form>
+              </form>
+            </div>
           </div>
 
           {/* Footer */}
