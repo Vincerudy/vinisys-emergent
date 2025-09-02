@@ -661,7 +661,8 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
                 </div>
               )}
 
-            </form>
+              </form>
+            </div>
           </div>
 
           {/* Footer */}
