@@ -98,7 +98,9 @@ const ModeleFacture = ({ factures, type, parametrage, tvas }) => {
         </div>
         <div className="invoice-details">
           <div className="NameInvoiceBloc">
-            <p className="titleIvoice"><strong>{type === 'DEVI' ? 'Devis' : 'Facture'} N° {factures.invoiceNumber}</strong></p>
+            <p className="titleIvoice"><strong>
+              {type === 'DEVI' ? 'Devis' : type === 'AVOIR' ? 'Avoir' : 'Facture'} N° {factures.invoiceNumber}
+            </strong></p>
             <p className='datefacture'><strong>Date:</strong> {factures.date}</p>
           </div>
           <div className='infoClient'>
