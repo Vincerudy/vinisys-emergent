@@ -1083,7 +1083,7 @@ const handleModalOk = async () => {
                               dataSource={
                                 filteredInvoices
                                   ? filteredInvoices
-                                      .filter((invoice) => invoice.type === 'FACT')
+                                      .filter((invoice) => invoice.type === 'FACT' || invoice.type === 'AVOIR')
                                       .sort((a, b) => b.id - a.id)
                                   : []
                               }
