@@ -1491,7 +1491,7 @@ const handleModalOk = async () => {
           }} 
         >
             <div ref={factureRef} className='divModalModeleFacture'>
-              <ModeleFacture factures={factures} parametrage={parametrage}  type={isInvoice ? 'FACT' : 'DEVI'} tvas={tvas}/>
+              <ModeleFacture factures={factures} parametrage={parametrage}  type={isAvoir ? 'AVOIR' : isInvoice ? 'FACT' : 'DEVI'} tvas={tvas}/>
             </div>
         </Modal>
         
