@@ -228,13 +228,13 @@ def test_ocr_achat_creation():
         # Create achat data with OCR integration
         achat_data = {
             'numero_facture': ocr_data['numero_facture'],
-            'fournisseur_id': '1',  # Assuming fournisseur ID 1 exists
+            'fournisseur_id': '1',  # Using fournisseur ID 1 from the API response
             'date_achat': datetime.now().strftime('%Y-%m-%d'),
             'date_facture': ocr_data['date_facture'],
             'montant_ht': ocr_data['montant_ht'],
             'taux_tva': ocr_data['tva_taux'],
             'tva_deductible': 'true',
-            'categorie_achat_id': '1',  # Assuming category ID 1 exists
+            'categorie_achat_id': '1',  # Using first category from API response
             'description': ocr_data['description'],
             'mode_paiement': 'carte',
             'utilisateur_id': str(USER_DATA.get('id', 1)),
