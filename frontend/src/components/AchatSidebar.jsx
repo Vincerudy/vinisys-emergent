@@ -106,9 +106,10 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       setShowNewFournisseur(false);
     } else if (prefilledData) {
       // Appliquer les données pré-remplies (OCR, édition, ou visualisation)
+      const mappedData = mapApiDataToForm(prefilledData);
       setAchat(prevAchat => ({
         ...prevAchat,
-        ...prefilledData
+        ...mappedData
       }));
       
       // Ajouter le fichier attaché s'il y en a un (OCR)
