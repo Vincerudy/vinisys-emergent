@@ -83,10 +83,42 @@ const NouvelAchatPage = () => {
     }
   }, [societe_id]);
 
-  // Gestion OCR avec le composant OCRCapture (qui fonctionne bien)
+  // Gestion OCR (copié exactement du système qui fonctionne dans NoteDetailPage)
   const handleOcrClick = () => {
-    console.log('🔍 Ouverture du composant OCR');
+    // Vérifier le paramètre OCR depuis le localStorage
+    const storageKey = `ocr_enabled_${societe_id}`;
+    const ocrSetting = localStorage.getItem(storageKey);
+    const ocrEnabled = ocrSetting === 'true';
+    
+    console.log('🔍 Debug handleOcrClick:', { 
+      societe_id, 
+      storageKey, 
+      ocrSetting, 
+      ocrEnabled
+    });
+    
+    if (ocrEnabled) {
+      // OCR activé : Afficher la modale de choix
+      console.log('✅ OCR activé - Affichage de la modale');
+      setOcrModalOpen(true);
+    } else {
+      // OCR désactivé : Ouvrir directement l'OCR
+      console.log('❌ OCR désactivé - Ouverture directe de l\'OCR');
+      setOcrCaptureOpen(true);
+    }
+  };
+
+  const handleManualEntry = () => {
+    // Saisie manuelle : Fermer la modale 
+    setOcrModalOpen(false);
+    console.log('📝 Saisie manuelle sélectionnée');
+  };
+
+  const handlePhotoCapture = () => {
+    // Fermer la modale de choix et ouvrir l'interface OCR
+    setOcrModalOpen(false);
     setOcrCaptureOpen(true);
+    console.log('📷 OCR sélectionné');
   };
 
   const handleOcrDataExtracted = (ocrData) => {
