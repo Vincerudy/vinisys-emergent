@@ -64,27 +64,135 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     const data = {
       vendeur: '',
       montant_ttc: '',
+      montant_ht: '',
+      montant_tva: '',
       date_frais: '',
       description: '',
       type_frais: 'repas', // Type par défaut pour OCR
-      tva_taux: 20.0,
+      tva_taux: null, // Ne pas forcer un taux par défaut
+      tva_multiple: [], // Pour gérer plusieurs TVA
       moyen_paiement: 'Carte de Crédit Société'
     };
 
-    // Recherche du montant (patterns courants)
-    const montantPatterns = [
-      /(?:total|montant|à payer|ttc|due)\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
-      /(\d+[,.]?\d*)\s*€\s*(?:ttc|total)?/gi,
-      /€\s*(\d+[,.]?\d*)/gi
+    const textLower = text.toLowerCase();
+    console.log('🔍 Analyse OCR du texte:', text.substring(0, 200) + '...');
+
+    // 1. Recherche des montants HT, TVA et TTC spécifiquement
+    const montantHTPatterns = [
+      /(?:total\s+)?h[.t]\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
+      /(?:sous.?total|base)\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
+      /(\d+[,.]?\d*)\s*€?\s*h[.t]/gi
     ];
 
-    for (const pattern of montantPatterns) {
+    const montantTVAPatterns = [
+      /tva?\s*(?:\d+[,.]?\d*\s*%\s*)?:?\s*(\d+[,.]?\d*)\s*€?/gi,
+      /(?:montant\s+)?tva?\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
+      /(\d+[,.]?\d*)\s*€?\s*tva?/gi
+    ];
+
+    const montantTTCPatterns = [
+      /(?:total|montant|à\s+payer|net\s+à\s+payer)\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
+      /t[.t]c\s*:?\s*(\d+[,.]?\d*)\s*€?/gi,
+      /(\d+[,.]?\d*)\s*€?\s*(?:ttc|total)/gi
+    ];
+
+    // Extraire HT
+    for (const pattern of montantHTPatterns) {
       const matches = [...text.matchAll(pattern)];
       if (matches.length > 0) {
         const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
-        data.montant_ttc = Math.max(...montants).toString(); // Prendre le plus gros montant
+        data.montant_ht = Math.max(...montants).toFixed(2);
+        console.log('💰 Montant HT détecté:', data.montant_ht);
         break;
       }
+    }
+
+    // Extraire TVA
+    for (const pattern of montantTVAPatterns) {
+      const matches = [...text.matchAll(pattern)];
+      if (matches.length > 0) {
+        const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
+        data.montant_tva = montants.reduce((sum, m) => sum + m, 0).toFixed(2); // Somme de toutes les TVA
+        console.log('🏛️ Montant TVA détecté:', data.montant_tva);
+        break;
+      }
+    }
+
+    // Extraire TTC
+    for (const pattern of montantTTCPatterns) {
+      const matches = [...text.matchAll(pattern)];
+      if (matches.length > 0) {
+        const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
+        data.montant_ttc = Math.max(...montants).toFixed(2);
+        console.log('💳 Montant TTC détecté:', data.montant_ttc);
+        break;
+      }
+    }
+
+    // Si pas de TTC trouvé, utiliser le pattern général comme fallback
+    if (!data.montant_ttc) {
+      const fallbackPatterns = [
+        /(\d+[,.]?\d*)\s*€/gi
+      ];
+      
+      for (const pattern of fallbackPatterns) {
+        const matches = [...text.matchAll(pattern)];
+        if (matches.length > 0) {
+          const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
+          data.montant_ttc = Math.max(...montants).toFixed(2);
+          console.log('🔄 Montant TTC fallback:', data.montant_ttc);
+          break;
+        }
+      }
+    }
+
+    // 2. Détecter les taux de TVA
+    const tvaRatePatterns = [
+      /tva?\s*(\d+[,.]?\d*)\s*%/gi,
+      /(\d+[,.]?\d*)\s*%\s*tva?/gi,
+      /taux.*?(\d+[,.]?\d*)\s*%/gi
+    ];
+
+    const detectedRates = [];
+    for (const pattern of tvaRatePatterns) {
+      const matches = [...text.matchAll(pattern)];
+      for (const match of matches) {
+        const rate = parseFloat(match[1].replace(',', '.'));
+        if (rate > 0 && rate <= 30) { // Taux de TVA raisonnables
+          detectedRates.push(rate);
+        }
+      }
+    }
+
+    if (detectedRates.length > 0) {
+      data.tva_multiple = [...new Set(detectedRates)]; // Supprimer les doublons
+      data.tva_taux = detectedRates[0]; // Prendre le premier taux trouvé
+      console.log('📊 Taux TVA détectés:', data.tva_multiple);
+    }
+
+    // 3. Calculer les montants manquants si possible
+    const ht = data.montant_ht ? parseFloat(data.montant_ht) : null;
+    const tva = data.montant_tva ? parseFloat(data.montant_tva) : null;
+    const ttc = data.montant_ttc ? parseFloat(data.montant_ttc) : null;
+
+    // Si on a HT et TVA mais pas TTC
+    if (ht && tva && !ttc) {
+      data.montant_ttc = (ht + tva).toFixed(2);
+      console.log('🧮 TTC calculé: HT + TVA =', data.montant_ttc);
+    }
+    // Si on a TTC et TVA mais pas HT
+    else if (ttc && tva && !ht) {
+      data.montant_ht = (ttc - tva).toFixed(2);
+      console.log('🧮 HT calculé: TTC - TVA =', data.montant_ht);
+    }
+    // Si on a TTC et taux TVA mais pas les montants HT/TVA
+    else if (ttc && data.tva_taux && !ht && !tva) {
+      const rate = data.tva_taux / 100;
+      const calculatedHT = ttc / (1 + rate);
+      const calculatedTVA = ttc - calculatedHT;
+      data.montant_ht = calculatedHT.toFixed(2);
+      data.montant_tva = calculatedTVA.toFixed(2);
+      console.log('🧮 HT/TVA calculés avec taux:', data.montant_ht, '/', data.montant_tva);
     }
 
     // Recherche de la date
