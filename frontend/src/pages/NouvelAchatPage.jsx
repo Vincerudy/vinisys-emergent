@@ -82,41 +82,52 @@ const NouvelAchatPage = () => {
     }
   }, [societe_id]);
 
-  // Gestion OCR
-  const handleOcrUpload = async (file) => {
-    if (!file) return;
+  // Gestion OCR avec le composant OCRCapture (qui fonctionne bien)
+  const handleOcrClick = () => {
+    console.log('🔍 Ouverture du composant OCR');
+    setOcrCaptureOpen(true);
+  };
 
-    const formData = new FormData();
-    formData.append('document', file);
+  const handleOcrDataExtracted = (ocrData) => {
+    console.log('🎯 Données OCR extraites pour achat:', ocrData);
     
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/achats/ocr/extract`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
+    // Fermer le modal OCR
+    setOcrCaptureOpen(false);
+    
+    // Vérifier que les données existent
+    if (!ocrData) {
+      console.error('❌ Aucune donnée OCR fournie');
+      return;
+    }
+    
+    // Stocker les données OCR
+    setOcrData(ocrData);
+    console.log('💾 Données OCR stockées:', ocrData);
+    
+    // Pré-remplir le formulaire avec les données OCR extraites
+    if (ocrData) {
+      console.log('🔄 Pré-remplissage du formulaire avec données OCR:', {
+        montant_ht: ocrData.montant_ht,
+        montant_tva: ocrData.montant_tva, 
+        montant_ttc: ocrData.montant_ttc,
+        taux_tva: ocrData.tva_taux
+      });
 
-      const ocrResult = response.data;
-      setOcrData(ocrResult);
+      setAchat(prev => ({
+        ...prev,
+        numero_facture: ocrData.numero_facture || '',
+        montant_ht: ocrData.montant_ht || '',
+        montant_ttc: ocrData.montant_ttc || '',
+        montant_tva: ocrData.montant_tva || '',
+        taux_tva: ocrData.tva_taux || 20,
+        date_facture: ocrData.date_frais || '', // date_frais devient date_facture
+        description: ocrData.description || '',
+        vendeur: ocrData.vendeur || '' // Nouveau champ du parsing OCR amélioré
+      }));
 
-      // Pré-remplir le formulaire avec les données OCR
-      if (ocrResult.data) {
-        setAchat(prev => ({
-          ...prev,
-          numero_facture: ocrResult.data.numero_facture || '',
-          montant_ht: ocrResult.data.montant_ht || '',
-          montant_ttc: ocrResult.data.montant_ttc || '',
-          taux_tva: ocrResult.data.taux_tva || 20,
-          date_facture: ocrResult.data.date_facture || '',
-          description: ocrResult.data.description || ''
-        }));
-      }
-    } catch (error) {
-      console.error('Erreur OCR:', error);
-      alert('Erreur lors de la lecture OCR du document');
-    } finally {
-      setLoading(false);
+      // Marquer comme saisie OCR
+      setMode('ocr');
+      console.log('✅ Formulaire pré-rempli avec données OCR');
     }
   };
 
