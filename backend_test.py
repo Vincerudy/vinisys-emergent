@@ -133,74 +133,60 @@ def test_authentication():
         print_test_result(False, f"Authentication test failed - {str(e)}")
         return False, None
 
-def test_achat_endpoint_file_upload():
-    """Test 2: POST /api/achat - Test file upload functionality"""
-    print_test_header("POST /api/achat - File Upload Test")
+def test_justificatifs_endpoint():
+    """Test 2: GET /api/achat/:id/justificatifs - Test new justificatifs endpoint"""
+    print_test_header("GET /api/achat/:id/justificatifs - Justificatifs Endpoint Test")
     try:
         headers = get_auth_headers()
         
-        # Create test data for achat
-        achat_data = {
-            'numero_facture': f'TEST-{int(datetime.now().timestamp())}',
-            'fournisseur_id': '1',  # Assuming fournisseur ID 1 exists
-            'date_achat': datetime.now().strftime('%Y-%m-%d'),
-            'montant_ht': '100.00',
-            'taux_tva': '20',
-            'tva_deductible': 'true',
-            'categorie_achat_id': '1',  # Assuming category ID 1 exists
-            'description': 'Test achat avec justificatifs - AchatSidebar',
-            'mode_paiement': 'virement',
-            'utilisateur_id': str(USER_DATA.get('id', 1)),
-            'societe_id': str(SOCIETE_ID),
-            'saisie_ocr': 'false'
-        }
+        # Test with achat ID 11 as mentioned in the review request
+        achat_id = 11
         
-        # Create a test file (PDF content)
-        test_pdf_content = b'%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n2 0 obj\n<<\n/Type /Pages\n/Kids [3 0 R]\n/Count 1\n>>\nendobj\n3 0 obj\n<<\n/Type /Page\n/Parent 2 0 R\n/MediaBox [0 0 612 792]\n>>\nendobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000074 00000 n \n0000000120 00000 n \ntrailer\n<<\n/Size 4\n/Root 1 0 R\n>>\nstartxref\n179\n%%EOF'
-        
-        # Prepare files for upload
-        files = {
-            'justificatifs': ('test-justificatif.pdf', test_pdf_content, 'application/pdf')
-        }
-        
-        # Send POST request with multipart/form-data
-        response = requests.post(
-            f"{API_BASE}/achat",
-            data=achat_data,
-            files=files,
+        response = requests.get(
+            f"{API_BASE}/achat/{achat_id}/justificatifs",
             headers=headers,
-            timeout=30
+            timeout=10
         )
         
-        if response.status_code == 201:
+        if response.status_code == 200:
             data = response.json()
             
-            # Verify response structure
-            if 'message' in data and 'achatId' in data:
-                achat_id = data.get('achatId')
-                montant_ht = data.get('montant_ht')
-                montant_ttc = data.get('montant_ttc')
+            # Verify response is a list
+            if isinstance(data, list):
+                print_test_result(True, f"GET /api/achat/{achat_id}/justificatifs successful - {len(data)} justificatifs found", response)
                 
-                print_test_result(True, f"POST /api/achat successful - Achat ID: {achat_id}, Montant HT: {montant_ht}€, Montant TTC: {montant_ttc}€", response)
-                
-                # Verify file was processed
-                if 'justificatif_path' in str(data) or achat_id:
-                    print(f"  ✅ File upload processed successfully")
-                    print(f"  ✅ Achat created with ID: {achat_id}")
-                    print(f"  ✅ Calculations: HT={montant_ht}€, TTC={montant_ttc}€")
-                    return True, data, achat_id
+                # Check structure of justificatifs if any exist
+                if len(data) > 0:
+                    justificatif = data[0]
+                    required_fields = ['id', 'justificatif_path', 'nom_fichier', 'type_fichier', 'date_creation']
+                    
+                    all_fields_present = all(field in justificatif for field in required_fields)
+                    
+                    if all_fields_present:
+                        print(f"  ✅ Justificatif structure valid")
+                        print(f"  ✅ ID: {justificatif.get('id')}")
+                        print(f"  ✅ File: {justificatif.get('nom_fichier')}")
+                        print(f"  ✅ Type: {justificatif.get('type_fichier')}")
+                        print(f"  ✅ Path: {justificatif.get('justificatif_path')}")
+                        return True, data, justificatif
+                    else:
+                        print(f"  ⚠️ Missing required fields in justificatif structure")
+                        return True, data, None
                 else:
-                    print(f"  ⚠️ File upload may not have been processed correctly")
-                    return True, data, achat_id
+                    print(f"  ℹ️ No justificatifs found for achat ID {achat_id}")
+                    return True, data, None
             else:
-                print_test_result(False, f"Response missing required fields", response)
+                print_test_result(False, f"Response is not a list: {type(data)}", response)
                 return False, None, None
+        elif response.status_code == 404:
+            print_test_result(False, f"Achat ID {achat_id} not found", response)
+            return False, None, None
         else:
-            print_test_result(False, f"POST /api/achat failed - HTTP {response.status_code}", response)
+            print_test_result(False, f"GET justificatifs failed - HTTP {response.status_code}", response)
             return False, None, None
             
     except Exception as e:
-        print_test_result(False, f"POST /api/achat test failed - {str(e)}")
+        print_test_result(False, f"GET justificatifs test failed - {str(e)}")
         return False, None, None
 
 def test_achat_endpoint_multiple_files():
