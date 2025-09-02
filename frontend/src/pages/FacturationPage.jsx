@@ -255,6 +255,7 @@ const FacturationPage = ( ) => {
   const [factures, setFactures] = useState(null);
   const [modalMailVisible, setModalMailVisible] = useState(false);
   const [isInvoice, setIsInvoicee] = useState(false);
+  const [isAvoir, setIsAvoir] = useState(false);
   const [facturePaye, setFacturePaye] = useState(null)
   const [modaleFacturePayeVisible, setModaleFacturePayeVisible] = useState(false)
   const [produits, setProduits] = useState([])
