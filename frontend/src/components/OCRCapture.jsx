@@ -180,16 +180,25 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     // Si pas de TTC trouvé, utiliser le pattern général comme fallback
     if (!data.montant_ttc) {
       const fallbackPatterns = [
+        // Pattern pour montants avec espaces (ex: "6 000€")
+        /(\d+(?:\s+\d{3})*)\s*€/gi,
         /(\d+[,.]?\d*)\s*€/gi
       ];
       
       for (const pattern of fallbackPatterns) {
         const matches = [...text.matchAll(pattern)];
         if (matches.length > 0) {
-          const montants = matches.map(m => parseFloat(m[1].replace(',', '.')));
-          data.montant_ttc = Math.max(...montants).toFixed(2);
-          console.log('🔄 Montant TTC fallback:', data.montant_ttc);
-          break;
+          const montants = matches.map(m => {
+            // Nettoyer le montant (supprimer les espaces dans les nombres)
+            const cleanAmount = m[1].replace(/\s+/g, '').replace(',', '.');
+            return parseFloat(cleanAmount);
+          }).filter(m => !isNaN(m));
+          
+          if (montants.length > 0) {
+            data.montant_ttc = Math.max(...montants).toFixed(2);
+            console.log('🔄 Montant TTC fallback:', data.montant_ttc);
+            break;
+          }
         }
       }
     }
