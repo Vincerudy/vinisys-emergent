@@ -330,9 +330,86 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
             </button>
           </div>
 
-          {/* Form Body */}
+          {/* Form Body - Two Columns */}
           <div className="achat-sidebar-body">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Left Column - File Viewer */}
+            <div className="achat-sidebar-body-left">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <FiFileText className="inline mr-2" />
+                Justificatifs
+              </h3>
+              
+              {/* Upload Area */}
+              <div
+                className={`upload-area ${isDragOver ? 'drag-over' : ''}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById('file-input').click()}
+              >
+                <FiUpload size={32} className="mx-auto mb-3 text-gray-400" />
+                <p className="text-gray-600 mb-2">
+                  Cliquez ou glissez-déposez vos fichiers ici
+                </p>
+                <p className="text-sm text-gray-500">
+                  PDF, Images (max 10MB)
+                </p>
+                <input
+                  id="file-input"
+                  type="file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png,.gif"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </div>
+
+              {/* File List */}
+              {uploadedFiles.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">
+                    Fichiers téléchargés ({uploadedFiles.length})
+                  </h4>
+                  <div className="file-list space-y-2 max-h-32 overflow-y-auto">
+                    {uploadedFiles.map((file) => (
+                      <div
+                        key={file.id}
+                        className={`file-item ${selectedFile?.id === file.id ? 'selected' : ''}`}
+                        onClick={() => selectFile(file)}
+                      >
+                        <FiFileText className="text-blue-600 mr-2 flex-shrink-0" size={16} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-gray-900 truncate">
+                            {file.name}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFile(file.id);
+                          }}
+                          className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
+                        >
+                          <FiX size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* File Viewer */}
+              <div className="mt-4">
+                {renderFileViewer()}
+              </div>
+            </div>
+
+            {/* Right Column - Form Fields */}
+            <div className="achat-sidebar-body-right">
+              <form onSubmit={handleSubmit} className="space-y-6">
               
               {/* Mode de saisie */}
               <div className="mb-6">
