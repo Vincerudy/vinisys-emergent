@@ -368,7 +368,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
                     multiple
                     accept=".pdf,.jpg,.jpeg,.png,.gif"
                     onChange={handleFileUpload}
-                    className="hidden"
+                    style={{ display: 'none' }}
                   />
                 </div>
               )}
