@@ -48,7 +48,8 @@ const NouvelAchatPage = () => {
 
   const [justificatifs, setJustificatifs] = useState([]);
   
-  // États pour OCR
+  // États pour OCR (copié du système qui fonctionne dans NoteDetailPage)
+  const [ocrModalOpen, setOcrModalOpen] = useState(false);
   const [ocrCaptureOpen, setOcrCaptureOpen] = useState(false);
   const [ocrData, setOcrData] = useState(null);
   const [showNewFournisseur, setShowNewFournisseur] = useState(false);
