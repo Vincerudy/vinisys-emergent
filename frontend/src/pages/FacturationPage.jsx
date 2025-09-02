@@ -1103,7 +1103,9 @@ const handleModalOk = async () => {
               <img src={facture} alt="Facture ou Devis" />
             </div>
             <div>
-              <h1 className='TextTitleModale'>{isInvoice ? 'Votre facture' : 'Votre devis'}</h1>
+              <h1 className='TextTitleModale'>
+                {isAvoir ? 'Votre avoir' : isInvoice ? 'Votre facture' : 'Votre devis'}
+              </h1>
             </div>
           </div>
           <hr className="hr" />
