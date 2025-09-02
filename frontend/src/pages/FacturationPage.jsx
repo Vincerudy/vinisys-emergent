@@ -319,10 +319,10 @@ const FacturationPage = ( ) => {
     // Récupérer et mapper tous les produits de la facture originale
     const avoirProduits = factureRecord.produits ? factureRecord.produits.map(product => ({
       productName: product.nom,
-      quantity: product.quantite, // Même quantité, mais l'utilisateur peut modifier
-      price: parseFloat(product.prix), // Même prix unitaire
+      quantity: -Math.abs(product.quantite), // Quantité négative pour l'avoir (annulation)
+      price: parseFloat(product.prix), // Prix unitaire reste positif
       tva: parseFloat(product.tva) + '%' // Même taux de TVA
-    })) : [{ productName: '', quantity: 1, price: 0 }];
+    })) : [{ productName: '', quantity: -1, price: 0 }];
 
     // Pré-remplir les produits de l'avoir avec ceux de la facture
     setProducts(avoirProduits);
