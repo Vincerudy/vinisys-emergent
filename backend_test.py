@@ -294,13 +294,12 @@ def test_avoir_verification():
         )
         
         if response.status_code == 200:
-            data = response.json()
-            factures = data.get('factures', [])
+            factures = response.json()  # Direct array response
             
             # Look for avoirs in the list
             avoirs_found = []
             for facture in factures:
-                if facture.get('type_fact') == 'AVOIR':
+                if facture.get('type') == 'AVOIR':
                     avoirs_found.append(facture)
             
             if avoirs_found:
