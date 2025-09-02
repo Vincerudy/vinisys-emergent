@@ -112,6 +112,64 @@ router.post('/factures', async (req, res) => {
       );
     }
 
+    // LOGIQUE MÉTIER POUR LES AVOIRS : Mise à jour du statut de la facture originale
+    if (type === 'AVOIR' && facture_origine_id) {
+      console.log('🧾 Traitement avoir - Mise à jour du statut de la facture originale:', facture_origine_id);
+      
+      // Calculer le total des avoirs appliqués sur cette facture
+      const [avoirsTotalQuery] = await connection.query(
+        `SELECT COALESCE(SUM(ABS(total)), 0) as total_avoirs 
+         FROM factures 
+         WHERE type_fact = 'AVOIR' AND facture_origine_id = ? AND statut != 'brouillon'`,
+        [facture_origine_id]
+      );
+      
+      // Ajouter le montant de l'avoir actuel (en valeur absolue)
+      const totalAvoirsExistants = parseFloat(avoirsTotalQuery[0].total_avoirs) || 0;
+      const montantAvoirActuel = Math.abs(parseFloat(totalTTC));
+      const totalAvoirsAppliques = totalAvoirsExistants + montantAvoirActuel;
+      
+      // Récupérer le montant original de la facture
+      const [factureOriginaleQuery] = await connection.query(
+        `SELECT total, numero FROM factures WHERE id = ?`,
+        [facture_origine_id]
+      );
+      
+      if (factureOriginaleQuery.length > 0) {
+        const montantFactureOriginale = parseFloat(factureOriginaleQuery[0].total);
+        const numeroFactureOriginale = factureOriginaleQuery[0].numero;
+        const soldeRestant = montantFactureOriginale - totalAvoirsAppliques;
+        
+        console.log('💰 Calcul des montants:');
+        console.log(`   - Facture originale: ${montantFactureOriginale}€`);
+        console.log(`   - Avoirs existants: ${totalAvoirsExistants}€`);
+        console.log(`   - Avoir actuel: ${montantAvoirActuel}€`);
+        console.log(`   - Total avoirs: ${totalAvoirsAppliques}€`);
+        console.log(`   - Solde restant: ${soldeRestant}€`);
+        
+        let nouveauStatut;
+        if (Math.abs(soldeRestant) < 0.01) { // Solde = 0 (avec tolérance pour les arrondis)
+          nouveauStatut = 'annulée';
+          console.log('🔴 Facture complètement annulée par l\'avoir');
+        } else if (soldeRestant > 0) {
+          nouveauStatut = 'en attente'; // Facture partiellement réduite, reste à payer
+          console.log('🟡 Facture partiellement réduite, solde restant:', soldeRestant + '€');
+        } else {
+          // Cas où l'avoir dépasse le montant de la facture (ne devrait pas arriver normalement)
+          nouveauStatut = 'annulée';
+          console.log('⚠️ Avoir supérieur au montant de la facture');
+        }
+        
+        // Mettre à jour le statut de la facture originale
+        await connection.query(
+          `UPDATE factures SET statut = ? WHERE id = ?`,
+          [nouveauStatut, facture_origine_id]
+        );
+        
+        console.log(`✅ Statut facture ${numeroFactureOriginale} mis à jour vers: ${nouveauStatut}`);
+      }
+    }
+
     await connection.commit();
 
     res.status(201).json({
