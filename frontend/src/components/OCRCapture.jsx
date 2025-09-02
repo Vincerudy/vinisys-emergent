@@ -276,24 +276,6 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     return data;
   };
 
-  // Utilitaire pour convertir nom de mois en numéro
-  const getMonthNumber = (monthName) => {
-    const months = {
-      'jan': '01', 'janvier': '01',
-      'feb': '02', 'février': '02', 'fev': '02',
-      'mar': '03', 'mars': '03',
-      'apr': '04', 'avril': '04', 'avr': '04',
-      'may': '05', 'mai': '05',
-      'jun': '06', 'juin': '06',
-      'jul': '07', 'juillet': '07',
-      'aug': '08', 'août': '08', 'aout': '08',
-      'sep': '09', 'septembre': '09',
-      'oct': '10', 'octobre': '10',
-      'nov': '11', 'novembre': '11',
-      'dec': '12', 'décembre': '12', 'decembre': '12'
-    };
-    return months[monthName.toLowerCase()];
-  };
 
   // Gérer l'upload de fichier
   const handleFileUpload = (event) => {
