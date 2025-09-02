@@ -351,7 +351,13 @@ const FacturationPage = ( ) => {
     setIsEditingFacture(false);
     
     console.log('✅ Avoir pré-rempli avec', avoirProduits.length, 'lignes de la facture originale');
-    console.log('📋 Produits copiés:', avoirProduits);
+    console.log('📋 Produits copiés avec quantités négatives (pour annulation):', avoirProduits);
+    console.log('💡 Règles métier avoir:');
+    console.log('   - Quantités négatives = annulation de la facture');
+    console.log('   - Avoir partiel: modifier les quantités pour réduction partielle');
+    console.log('   - Avoir total: toutes les quantités négatives = annulation complète');
+    console.log('   - Format numéro: AVOI-2025-XXX');
+    console.log('   - Type: AVOIR au lieu de FACT/DEVI');
     
     // Ouvrir la modale de création
     setModalVisible(true);
