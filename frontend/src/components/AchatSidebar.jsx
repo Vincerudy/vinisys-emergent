@@ -145,7 +145,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
   // Fonction pour charger les justificatifs existants
   const loadExistingJustificatifs = async (achatId) => {
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/achat/${achatId}/justificatifs`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/achat/${achatId}/justificatifs`);
       
       if (response.ok) {
         const justificatifs = await response.json();
