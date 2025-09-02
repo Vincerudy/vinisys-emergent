@@ -1,70 +1,49 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Vinisys Application - Test Sauvegarde Complète des Avoirs
+Backend API Testing Script for Vinisys Application - Test Filtre "Avoir" dans la Liste des Factures
 
-Tests de la sauvegarde complète des avoirs et la logique de mise à jour du statut des factures.
+Tests du filtre "Avoir" ajouté dans la liste des factures pour afficher uniquement les avoirs.
 
-**PROBLÈME RÉSOLU :**
-1. ✅ **Champ `type_fact` élargi** : `VARCHAR(4)` → `VARCHAR(10)` pour permettre "AVOIR"
-2. ✅ **Colonnes ajoutées** : `facture_origine_id`, `facture_origine_numero` pour traçabilité
-3. ✅ **Logique métier implémentée** dans `/backend/routes/facture/insertFacture.js`
+**FONCTIONNALITÉ TESTÉE :**
+1. ✅ **Option "Avoir" ajoutée au sélecteur de statut** (ligne 1109)
+2. ✅ **Logique de filtrage modifiée** (ligne 231) : `(statusFilter === 'avoir' && invoice.type === 'AVOIR')`
+3. ✅ **Cohérence avec les données existantes** : Avoirs ont `type === 'AVOIR'`, factures ont `type === 'FACT'`
 
-**LOGIQUE MÉTIER COMPLÈTE :**
-
-## 1. **Sauvegarde Avoir**
-- ✅ Statut initial: "brouillon" (au lieu de "en attente")
-- ✅ Type: "AVOIR" (sauvegardé correctement)
-- ✅ Numéro: "AVOI-2025-XXX"
-- ✅ Quantités négatives pour annulation
-- ✅ Traçabilité: `facture_origine_id` et `facture_origine_numero`
-
-## 2. **Mise à Jour Automatique du Statut Facture Originale**
+**FONCTIONNALITÉ COMPLÈTE :**
 ```javascript
-// Calcul du solde restant
-soldeRestant = montantFactureOriginale - totalAvoirsAppliques
-
-if (soldeRestant ≈ 0) {
-  → statut = "annulée" (facture complètement annulée)
-} else if (soldeRestant > 0) {
-  → statut = "en attente" (facture partiellement réduite)
-}
+Options de filtre disponibles :
+- "Toutes" → Toutes les factures et avoirs
+- "Payée" → Factures avec statut "payée"
+- "En attente" → Factures avec statut "en attente"  
+- "En retard" → Factures avec statut "En retard"
+- "Avoir" → Tous les avoirs (type = 'AVOIR')
 ```
-
-## 3. **Logs Détaillés**
-- 💰 Montant facture originale
-- 📋 Avoirs existants sur cette facture  
-- 🧾 Montant avoir actuel
-- 📊 Total avoirs appliqués
-- 💯 Solde restant calculé
-- ✅ Nouveau statut appliqué
 
 **TESTS À EFFECTUER :**
 1. ✅ Connexion avec `idnovation2014@gmail.com` / `Cinema12`
 2. Accéder à `/facturation/factures`
-3. **TEST AVOIR PARTIEL** :
-   - Générer avoir avec quantités réduites (ex: -1 au lieu de -5)
-   - Vérifier sauvegarde réussie
-   - Vérifier que facture originale passe à "en attente" 
-   - Vérifier solde restant > 0
+3. **NOUVEAU** : Vérifier que "Avoir" apparaît dans le sélecteur de statut
+4. **NOUVEAU** : Sélectionner "Avoir" et vérifier que seuls les avoirs s'affichent
+5. **NOUVEAU** : Vérifier que les avoirs disparaissent quand on sélectionne "Payée" ou "En attente"
+6. **NOUVEAU** : Vérifier que "Toutes" affiche bien factures ET avoirs
+7. Tester les autres filtres pour s'assurer qu'ils fonctionnent toujours
 
-4. **TEST AVOIR TOTAL** :
-   - Générer avoir avec toutes les quantités négatives complètes
-   - Vérifier sauvegarde réussie
-   - Vérifier que facture originale passe à "annulée"
-   - Vérifier solde = 0
+**DONNÉES ACTUELLES À TESTER :**
+En base de données nous avons :
+- `AVOI-2025-SE853-1` (type: AVOIR)
+- `AVOI-2025-SE799-1` (type: AVOIR)  
+- `AVOI-2025-SE657-1` (type: AVOIR)
+- Diverses factures (type: FACT)
 
-5. **TEST TRAÇABILITÉ** :
-   - Vérifier `facture_origine_id` et `facture_origine_numero` dans BDD
-   - Vérifier logs détaillés des calculs
-
-**ENDPOINTS MODIFIÉS :**
-- POST /api/factures (avec nouveaux champs et logique métier)
-- Base de données : colonnes ajoutées, type_fact élargi
+**ENDPOINTS UTILISÉS :**
+- GET /api/listeFacture/{user_id} (retourne factures ET avoirs avec leur type)
 
 **OBJECTIF :**
-Confirmer que la sauvegarde fonctionne et que la logique métier met automatiquement à jour le statut de la facture originale selon les règles :
-- Avoir partiel → facture "en attente" avec solde réduit
-- Avoir total → facture "annulée" avec solde = 0
+Confirmer que :
+1. L'option "Avoir" est visible dans le filtre de statut
+2. Le filtre "Avoir" affiche uniquement les documents de type 'AVOIR'
+3. Les autres filtres continuent de fonctionner correctement
+4. Le système de filtrage est maintenant complet
 """
 
 import requests
