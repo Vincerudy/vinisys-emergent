@@ -460,6 +460,9 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
       if (pdfUrl) {
         return renderPdfViewer(pdfUrl, `${selectedFile.name} (PDF)`);
       }
+
+      // Si pas de conversion en cours et pas de PDF, afficher l'image directement
+      return renderPdfViewer(selectedFile.url, selectedFile.name);
     }
 
     return null;
