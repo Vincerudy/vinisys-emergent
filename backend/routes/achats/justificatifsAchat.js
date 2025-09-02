@@ -12,7 +12,7 @@ router.get('/:id/justificatifs', async (req, res) => {
             SELECT 
                 id,
                 justificatif_path,
-                numero_facture,
+                numero,
                 date_achat
             FROM achats 
             WHERE id = ?
