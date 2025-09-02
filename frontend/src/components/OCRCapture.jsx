@@ -61,6 +61,25 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
   const parseReceiptData = (text) => {
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     
+    // Utilitaire pour convertir nom de mois en numéro
+    const getMonthNumber = (monthName) => {
+      const months = {
+        'jan': '01', 'janvier': '01',
+        'feb': '02', 'février': '02', 'fev': '02',
+        'mar': '03', 'mars': '03',
+        'apr': '04', 'avril': '04', 'avr': '04',
+        'may': '05', 'mai': '05',
+        'jun': '06', 'juin': '06',
+        'jul': '07', 'juillet': '07',
+        'aug': '08', 'août': '08', 'aout': '08',
+        'sep': '09', 'septembre': '09',
+        'oct': '10', 'octobre': '10',
+        'nov': '11', 'novembre': '11',
+        'dec': '12', 'décembre': '12', 'decembre': '12'
+      };
+      return months[monthName.toLowerCase()];
+    };
+    
     const data = {
       vendeur: '',
       montant_ttc: '',
@@ -195,33 +214,6 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
       console.log('🧮 HT/TVA calculés avec taux:', data.montant_ht, '/', data.montant_tva);
     }
 
-    // Recherche de la date
-    const datePatterns = [
-      /(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/g,
-      /(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(\d{2,4})/gi
-    ];
-
-    for (const pattern of datePatterns) {
-      const match = pattern.exec(text);
-      if (match) {
-        if (match[2] && isNaN(match[2])) {
-          // Format avec nom de mois
-          const mois = getMonthNumber(match[2]);
-          if (mois) {
-            data.date_frais = `${match[3]}-${mois.padStart(2, '0')}-${match[1].padStart(2, '0')}`;
-          }
-        } else {
-          // Format numérique
-          let annee = match[3];
-          if (annee.length === 2) {
-            annee = annee < 50 ? `20${annee}` : `19${annee}`;
-          }
-          data.date_frais = `${annee}-${match[2].padStart(2, '0')}-${match[1].padStart(2, '0')}`;
-        }
-        break;
-      }
-    }
-
     // 4. Recherche de la date
     const datePatterns = [
       /(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/g,
@@ -261,7 +253,6 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     }
 
     // 6. Détection intelligente du type de frais basée sur le contenu
-    const textLower = text.toLowerCase();
     if (textLower.includes('restaurant') || textLower.includes('café') || textLower.includes('bar') || 
         textLower.includes('brasserie') || textLower.includes('pizzeria') || textLower.includes('fast') ||
         textLower.includes('mcdonald') || textLower.includes('kfc') || textLower.includes('burger')) {
@@ -281,6 +272,7 @@ const OCRCapture = ({ isOpen, onClose, onDataExtracted }) => {
     }
 
     console.log('🔍 Type de frais détecté automatiquement:', data.type_frais);
+    console.log('✅ Données OCR finales extraites:', data);
     return data;
   };
 
