@@ -26,12 +26,7 @@ const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
-const TVA_OPTIONS = [
-  { label: '20%', value: 20 },
-  { label: '10%', value: 10 },
-  { label: '5.5%', value: 5.5 },
-  { label: '2.1%', value: 2.1 },
-];
+// Les options de TVA seront chargées dynamiquement depuis l'API
 
 const ProduitDetail = () => {
   const { id } = useParams();
