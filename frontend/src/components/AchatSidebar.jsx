@@ -166,7 +166,6 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
           }
           
           const finalUrl = `${window.location.origin}${fileUrl}`;
-          console.log('🔍 File URL constructed:', finalUrl);
           
           return {
             id: j.id,
@@ -176,9 +175,6 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
             isExisting: true
           };
         });
-        
-        console.log('🔍 Total existing files:', existingFiles.length);
-        console.log('🔍 Files:', existingFiles);
         
         setUploadedFiles(existingFiles);
         
