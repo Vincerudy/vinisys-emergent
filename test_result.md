@@ -883,7 +883,7 @@ resolve: {
 #### 1. VÉRIFICATION NOTE CORRECTE
 - **Vérifier l'ID de la note** : La note 73 n'existe pas
 - **Utiliser note 34** : Cette note contient effectivement un justificatif
-- **URL correcte** : `https://finance-flex.preview.emergentagent.com/#/notes-frais/note/34`
+- **URL correcte** : `https://fintrack-196.preview.emergentagent.com/#/notes-frais/note/34`
 
 #### 2. TEST DE LA FONCTIONNALITÉ
 Pour tester les justificatifs :
@@ -2015,7 +2015,7 @@ Une fois la navigation corrigée, tester :
 ### 🔍 ANALYSE TECHNIQUE DÉTAILLÉE
 
 #### ✅ INFRASTRUCTURE VALIDÉE
-- **Backend server** : ✅ Opérationnel sur https://finance-flex.preview.emergentagent.com
+- **Backend server** : ✅ Opérationnel sur https://fintrack-196.preview.emergentagent.com
 - **Base de données MySQL** : ✅ Connexion réussie à la base `vinisys`
 - **Authentification** : ❌ Échec avec les identifiants fournis (idnovation2014@gmail.com / 123456)
 - **APIs endpoints** : ✅ Accessibles mais retournent des erreurs de base de données

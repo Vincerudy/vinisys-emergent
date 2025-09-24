@@ -9,7 +9,7 @@ import io
 import sys
 
 # Configuration
-REACT_APP_BACKEND_URL = "https://finfix.preview.emergentagent.com"
+REACT_APP_BACKEND_URL = "https://fintrack-196.preview.emergentagent.com"
 API_BASE = f"{REACT_APP_BACKEND_URL}/api"
 TEST_EMAIL = "idnovation2014@gmail.com"
 TEST_PASSWORD = "Cinema12"
