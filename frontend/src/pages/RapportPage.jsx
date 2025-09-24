@@ -379,7 +379,7 @@ const RapportPage = () => {
         <div className="rapport-section">
           <h2>
             <FiUsers />
-            Notes de Frais Employés
+            Notes de Frais
           </h2>
           
           <div className="metrics-grid">

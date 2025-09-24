@@ -437,25 +437,34 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
         className="achat-sidebar-backdrop" 
         onClick={onClose}
       ></div>
-      
+
       {/* Sidebar Panel */}
       <div className={`achat-sidebar-panel ${isOpen ? 'open' : ''}`}>
-        <div className="achat-sidebar-content">
-          {/* Header */}
-          <div className="achat-sidebar-header">
-            <h2 className="text-xl font-semibold text-gray-900">
-              <FiFileText className="inline mr-2" />
-              {mode === 'view' ? 'Visualiser la Dépense' : 
-               mode === 'edit' ? 'Modifier la Dépense' : 
-               'Nouvelle Dépense/Achat'}
-            </h2>
+        <div className='btn-close-depense'>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-200 rounded-full transition-colors"
             >
               <FiX size={20} />
             </button>
+        </div>
+
+        <div className="achat-sidebar-content">
+          {/* Header */}
+
+          <div className='hederSidebarDepense'>
+          <div className="achat-sidebar-header">
+            
+            <h2 className="texte-color-titre-sidebar-depense  font-semibold text-gray-900">
+              <FiFileText className="inline mr-2" />
+              {mode === 'view' ? 'Visualiser la Dépense' : 
+               mode === 'edit' ? 'Modifier la Dépense' : 
+               'Nouvelle Dépense'}
+            </h2>
+
           </div>
+          </div>
+
 
           {/* Form Body - Two Columns */}
           <div className="achat-sidebar-body">
@@ -494,41 +503,6 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
               )}
 
               {/* File List */}
-              {uploadedFiles.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    Fichiers téléchargés ({uploadedFiles.length})
-                  </h4>
-                  <div className="file-list space-y-2 max-h-32 overflow-y-auto">
-                    {uploadedFiles.map((file) => (
-                      <div
-                        key={file.id}
-                        className={`file-item ${selectedFile?.id === file.id ? 'selected' : ''}`}
-                        onClick={() => selectFile(file)}
-                      >
-                        <FiFileText className="text-blue-600 mr-2 flex-shrink-0" size={16} />
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-gray-900 truncate">
-                            {file.name}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {(file.size / 1024 / 1024).toFixed(2)} MB
-                          </div>
-                        </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeFile(file.id);
-                          }}
-                          className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
-                        >
-                          <FiX size={14} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* File Viewer */}
               <div className="mt-4">
@@ -540,39 +514,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
             <div className="achat-sidebar-body-right">
               <form onSubmit={handleSubmit} className="space-y-6">
               
-              {/* Mode de saisie */}
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">Mode de saisie</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setMode('manuel')}
-                    className={`p-4 border rounded-lg text-center transition-colors ${
-                      mode === 'manuel' 
-                        ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                  >
-                    <FiFileText className="mx-auto mb-2" size={20} />
-                    <div className="text-sm font-medium">Saisie manuelle</div>
-                    <div className="text-xs text-gray-500">Formulaire complet</div>
-                  </button>
-                  
-                  <button
-                    type="button"
-                    onClick={() => setMode('ocr')}
-                    className={`p-4 border rounded-lg text-center transition-colors ${
-                      mode === 'ocr' 
-                        ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                  >
-                    <FiUpload className="mx-auto mb-2" size={20} />
-                    <div className="text-sm font-medium">Saisie OCR</div>
-                    <div className="text-xs text-gray-500">Depuis photo/PDF</div>
-                  </button>
-                </div>
-              </div>
+
 
               {/* Fournisseur */}
               <div>
@@ -680,7 +622,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
               {/* Montants */}
               <div className="bg-yellow-50 p-4 rounded-lg">
                 <h3 className="text-lg font-semibold mb-4 text-yellow-600">
-                  <FiDollarSign className="inline mr-1" />
+               
                   Montants & TVA
                 </h3>
                 
@@ -806,7 +748,7 @@ const AchatSidebar = ({ isOpen, onClose, onSaved, prefilledData = null, attached
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+              className="btn-save-depense px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
             >
               {loading ? (
                 <>

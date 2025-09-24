@@ -132,7 +132,7 @@ const NotesfraisPage = () => {
         <div>
           <h1>
             <FiFileText />
-            Notes de frais Employés
+            Notes de frais
           </h1>
           <p>
             Gestion des notes de frais employés avec validation et remboursements

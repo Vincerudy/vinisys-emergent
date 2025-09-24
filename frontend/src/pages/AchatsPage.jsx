@@ -121,7 +121,7 @@ const AchatsPage = () => {
         <div>
           <h1>
             <FiDollarSign />
-            Achats & Dépenses Entreprise
+            Dépenses
           </h1>
           <p>
             Gestion des achats, fournisseurs et dépenses professionnelles avec suivi TVA

@@ -6,7 +6,7 @@ const pool = mysql.createPool({
   port: 8889,  // Port MySQL de MAMP
   user: 'root',
   password: 'root',
-  database: 'newergo',
+  database: 'nouvelle-ergo',
   multipleStatements: true, // 👉 autorise plusieurs requêtes
   waitForConnections: true,
   connectionLimit: 10,

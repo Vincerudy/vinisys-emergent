@@ -562,10 +562,7 @@ const FraisSidebar = ({ isOpen, onClose, noteId, fraisData, onSaved, ocrData = n
                       <FiUpload />
                       Charger
                     </label>
-                    <button className="camera-btn" disabled>
-                      <FiCamera />
-                      Scanner
-                    </button>
+
                   </div>
                 </div>
                 

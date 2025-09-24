@@ -943,6 +943,10 @@ const handleModalOk = async () => {
           backgroundColor = '#cce5ff'; // Bleu clair
           color = '#004085'; // Bleu foncé
         }
+        else if (text === 'annulée'){
+          backgroundColor = '#dac3f9'; // Bleu clair
+          color = '#6f00ff'; // Bleu foncé
+        }
         else if (text === 'En retard'){
           backgroundColor = '#f9c3c3'; // Bleu clair
           color = '#850000'; // Bleu foncé
@@ -1025,7 +1029,7 @@ const handleModalOk = async () => {
               ]
             : []),
           // Option "Générer un avoir" seulement pour les factures (pas pour les avoirs eux-mêmes)
-          ...(record.type === 'FACT' ? [
+          ...(record.type === 'FACT' && record.statut !== 'annulée'  ? [
             {
               key: '4',
               label: 'Générer un avoir',
@@ -1614,7 +1618,7 @@ const handleModalOk = async () => {
         {/* Modal pour la visualisation des factures (depuis factures en retard) */}
         <Modal
           title={`Visualisation - ${selectedFactureForVisualization ? 
-            `${selectedFactureForVisualization.type_fact === 'DEVI' ? 'Devis' : 'Facture'} N°${selectedFactureForVisualization.numero}` 
+            `${selectedFactureForVisualization.type === 'DEVI' ? 'Devis' : 'Facture'} N°${selectedFactureForVisualization.numero}` 
             : ''}`}
           open={visualizationModalVisible}
           onCancel={() => {
